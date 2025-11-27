@@ -1,0 +1,86 @@
+{
+  "timestamp": 1732738800000,
+  "meta": {
+    "serverNow": "2025-11-27T03:35:00Z"
+  },
+  "status": {
+    "label": "Painel conectado (mock)",
+    "symbol": "BTCUSD",
+    "timeframe": "1m"
+  },
+  "summary": {
+    "stateLabel": "Mercado em tendência",
+    "stateTitle": "Tendência de alta (exemplo)",
+    "bias": "Alta (comprador)",
+    "prob": 68,
+    "conclusion": "Exemplo: fluxo favorece compras em pullbacks leves dentro da tendência."
+  },
+  "console": {
+    "text": "🔍 Exemplo de console do AARON 9 (mock)\n\nAqui o AARON escreveria o resumo do dia com base nos alertas do TradingView e na leitura da estrutura, padrões e fluxo.\n\nPor enquanto é só um painel de demonstração usando um JSON estático (panel.json)."
+  },
+  "structure": {
+    "trendLabel": "Alta",
+    "hh": "presente",
+    "hl": "mantido",
+    "lh": "—",
+    "ll": "—",
+    "comment": "Estrutura HH → HL mantida, sem quebra relevante. Cenário típico de continuação."
+  },
+  "patterns": {
+    "day": {
+      "label": "Padrão do dia",
+      "name": "Canal de alta (exemplo)",
+      "desc": "Mock: o dia está se comportando como um canal de alta com pullbacks suaves."
+    },
+    "short": {
+      "label": "Padrão curto prazo",
+      "name": "Pequeno pullback comprador",
+      "desc": "Mock: próximos 1–3 candles tendem a buscar continuação depois de um respiro leve."
+    }
+  },
+  "radar": {
+    "strength": "Alta forte (mock)",
+    "title": "Dia predominantemente comprador",
+    "desc": "Exemplo: fluxo institucional majoritariamente na compra, com correções sendo usadas como oportunidade.",
+    "conf": 70
+  },
+  "forecast": {
+    "short": {
+      "label": "Continuação provável",
+      "title": "Alta moderada nos próximos candles",
+      "desc": "Mock: probabilidade maior de candles verdes curtos, mantendo a tendência geral.",
+      "conf": 64
+    }
+  },
+  "flow": {
+    "favorPct": 72,
+    "againstPct": 28
+  },
+  "execution": {
+    "mode": "Monitorar para compra",
+    "label": "Aguardar pullback saudável para executar compra",
+    "desc": "Mock: comando de exemplo. Quando o painel real estiver ligado no n8n, esta frase virá da lógica do AARON."
+  },
+  "checklist": {
+    "move": "Direcional",
+    "cont": "Sim (mock)",
+    "rev": "Fraca",
+    "exh": "Normal",
+    "div": "Não clara",
+    "vol": "Dentro da média",
+    "scoreLabel": "Score: 7/10",
+    "comment": "Exemplo: cenário com boa qualidade de continuação, mas ainda exige confirmação nos próximos candles."
+  },
+  "pullback": {
+    "statusLabel": "Pullback saudável (mock)",
+    "atr": 0.85,
+    "trend": "Alta",
+    "structure": "HH → HL mantida",
+    "multiple": 0.6,
+    "multipleLabel": "0.6 × ATR (respiro normal)",
+    "comment": "Mock: movimento atual parece apenas um respiro dentro da tendência, sem quebra de estrutura."
+  },
+  "conclusion": {
+    "text": "Mock: cenário de alta com pullbacks normais. No painel real, essa conclusão virá do AARON com base nos dados do dia."
+  }
+}
