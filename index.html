@@ -8,13 +8,13 @@
     :root {
       --bg: #020617;
       --card: #020617;
-      --card-border: #1e293b;
+      --card-border: #1f293b;
       --accent: #22d3ee;
-      --accent-soft: rgba(34, 211, 238, 0.15);
-      --accent-strong: #38bdf8;
-      --text: #e5e7eb;
-      --muted: #64748b;
+      --accent-soft: rgba(34, 211, 238, 0.12);
       --danger: #f97373;
+      --success: #4ade80;
+      --text-soft: #9ca3af;
+      --text-muted: #6b7280;
     }
 
     * {
@@ -23,386 +23,695 @@
 
     body {
       margin: 0;
-      padding: 16px;
+      padding: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top, #0f172a 0, #020617 55%, #000 100%);
-      color: var(--text);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top left, #0b1120, #020617 55%, #000 100%);
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
-    #app {
+    .app-shell {
+      width: 100%;
       max-width: 1600px;
-      margin: 0 auto;
-      display: flex;
-      gap: 16px;
-      align-items: stretch;
+      padding: 20px 16px 32px;
     }
 
-    .col {
-      flex: 1;
-      background: var(--card);
-      border-radius: 18px;
-      border: 1px solid var(--card-border);
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .col-header {
+    .top-row {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-main {
       font-size: 14px;
-      color: var(--muted);
-    }
-
-    .col-title {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
     }
 
-    .subtitle {
+    .brand-sub {
       font-size: 11px;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
+      color: var(--text-soft);
     }
 
-    .badge-live {
-      padding: 2px 8px;
+    .brand-tag {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .top-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .top-meta-pill {
+      padding: 4px 10px;
       border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
+      border: 1px solid #4b5563;
+      background: rgba(15, 23, 42, 0.9);
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      border: 1px solid rgba(34,211,238,0.35);
-    }
-
-    #tv-container {
-      flex: 1;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid var(--card-border);
-      background: #020617;
-    }
-
-    .panel-root {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex: 1;
-    }
-
-    .panel-status {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .panel-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      flex: 1;
-    }
-
-    .panel-card {
-      background: radial-gradient(circle at top left, rgba(34,211,238,0.09), #020617 55%);
-      border-radius: 14px;
-      border: 1px solid var(--card-border);
-      padding: 10px 12px;
-      font-size: 12px;
-      display: flex;
-      flex-direction: column;
+      display: inline-flex;
+      align-items: center;
       gap: 6px;
     }
 
-    .panel-card h3 {
-      margin: 0;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
+    .top-meta-pill span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.65);
     }
 
-    .metric-row {
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.2fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .card {
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: radial-gradient(circle at top left, #020617, #020617);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.9);
+      padding: 14px 16px;
+      overflow: hidden;
+    }
+
+    /* CARD DO GRÁFICO ------------------------------------------------- */
+
+    .card-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 520px; /* telona longa */
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-soft);
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .chip {
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.95);
+      font-size: 10px;
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip-outline {
+      border-style: dashed;
+      cursor: pointer;
+    }
+
+    .chip-outline:hover {
+      background: rgba(31, 41, 55, 0.98);
+    }
+
+    .chip-strong {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .chart-container {
+      margin-top: 4px;
+      flex: 1;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #020617;
+      background: #020617;
+    }
+
+    #tv-chart {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+    }
+
+    /* CARD DO PAINEL ------------------------------------------------- */
+
+    .card-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-header-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .panel-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .panel-pill {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .panel-sub {
+      font-size: 11px;
+      color: var(--text-soft);
+      max-width: 280px;
+    }
+
+    .panel-updated-box {
+      padding: 6px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #111827;
+      font-size: 11px;
+      min-width: 150px;
+    }
+
+    .panel-updated-label {
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 9px;
+      margin-bottom: 3px;
+    }
+
+    .panel-updated-time {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .panel-sections {
+      margin-top: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background:
+        radial-gradient(circle at top left, #020617, #020617);
+      overflow: hidden;
+    }
+
+    .panel-section {
+      padding: 10px 12px;
+      border-top: 1px solid #111827;
+    }
+
+    .panel-section:first-child {
+      border-top: none;
+    }
+
+    .section-header-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .section-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-soft);
+    }
+
+    .badge-up {
+      border-color: rgba(34, 197, 94, 0.85);
+      color: #bbf7d0;
+      background: rgba(22, 163, 74, 0.25);
+    }
+
+    .badge-down {
+      border-color: rgba(239, 68, 68, 0.9);
+      color: #fecaca;
+      background: rgba(220, 38, 38, 0.25);
+    }
+
+    .badge-neutral {
+      border-color: rgba(148, 163, 184, 0.8);
+      color: #e5e7eb;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 12px;
+      font-size: 11px;
+    }
+
+    .status-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .status-value {
+      font-size: 13px;
+    }
+
+    .status-value-strong {
+      font-weight: 600;
+    }
+
+    .status-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr);
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .box {
+      padding: 8px 9px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: radial-gradient(circle at top left, #020617, #020617);
+    }
+
+    .box-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .small-row {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       gap: 8px;
+      margin-bottom: 2px;
     }
 
-    .metric-label {
+    .muted {
+      color: var(--text-soft);
       font-size: 11px;
-      color: var(--muted);
     }
 
-    .metric-value {
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .metric-value-strong {
-      color: var(--accent-strong);
+    .strong {
       font-weight: 600;
     }
 
-    .metric-value-danger {
+    .sinal-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .sinal-edge {
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .edge-buy {
+      color: var(--success);
+    }
+
+    .edge-sell {
       color: var(--danger);
-      font-weight: 600;
     }
 
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--card-border);
+    .error-msg {
       font-size: 11px;
-      gap: 4px;
+      color: #fecaca;
     }
 
-    .pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--accent-strong);
-    }
-
-    .pill-dot-danger {
-      background: var(--danger);
-    }
-
-    @media (max-width: 960px) {
-      #app {
-        flex-direction: column;
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
       }
-      .panel-grid {
-        grid-template-columns: 1fr;
+
+      .card-chart {
+        min-height: 440px;
+      }
+
+      #tv-chart {
+        min-height: 380px;
       }
     }
   </style>
 </head>
 <body>
-  <div id="app">
-    <!-- ESQUERDA: GRÁFICO TRADINGVIEW -->
-    <section class="col">
-      <div class="col-header">
-        <div>
-          <div class="col-title">Gráfico em Tempo Real</div>
-          <div class="subtitle">THE SIX SEATS INVESTMENTS · AARON 9</div>
-        </div>
-        <span class="badge-live">Live</span>
+  <div class="app-shell">
+    <div class="top-row">
+      <div class="brand-block">
+        <div class="brand-main">The Six Seats Investments</div>
+        <div class="brand-sub">AARON 9 — AI ULTRA</div>
+        <div class="brand-tag">Painel em tempo real (n8n → Vercel → TradingView)</div>
       </div>
-      <div id="tv-container"></div>
-    </section>
-
-    <!-- DIREITA: PAINEL AARON 9 (dados do n8n) -->
-    <section class="col">
-      <div class="col-header">
-        <div>
-          <div class="col-title">AARON 9 · PAINEL IA ULTRA</div>
-          <div class="subtitle">Resumo do fluxo em tempo real (n8n)</div>
+      <div class="top-meta">
+        <div class="top-meta-pill">
+          <span class="dot"></span>
+          <span>Live intraday</span>
         </div>
-        <span class="badge-live" id="panel-status-text">Conectando...</span>
+        <div id="meta-last-update">Aguardando primeira leitura do AARON…</div>
       </div>
+    </div>
 
-      <div class="panel-root">
-        <div class="panel-status">
-          Os blocos abaixo são alimentados pela API JSON do n8n em tempo real.
-        </div>
-
-        <div class="panel-grid">
-          <!-- CARD 1: STATUS GERAL -->
-          <div class="panel-card">
-            <h3>Resumo inteligente</h3>
-            <div class="metric-row">
-              <span class="metric-label">Tendência atual</span>
-              <span id="status-tendencia" class="metric-value">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Direção prevista</span>
-              <span id="status-direcao" class="metric-value-strong">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Convicção da IA</span>
-              <span id="status-conviccao" class="metric-value">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Risco</span>
-              <span id="status-risco" class="metric-value">—</span>
-            </div>
-          </div>
-
-          <!-- CARD 2: ESTRUTURA -->
-          <div class="panel-card">
-            <h3>Estrutura recente</h3>
-            <div class="metric-row">
-              <span class="metric-label">Estrutura atual</span>
-              <span id="estrutura-atual" class="metric-value">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Histórico recente</span>
-              <span id="estrutura-recente" class="metric-value">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Leitura rápida</span>
-              <span id="estrutura-frase" class="metric-value">Aguardando dados...</span>
-            </div>
-          </div>
-
-          <!-- CARD 3: PULLBACK -->
-          <div class="panel-card">
-            <h3>Check de Pullback / Respiro</h3>
-            <div class="metric-row">
-              <span class="metric-label">ATR do candle atual</span>
-              <span id="pullback-atr" class="metric-value">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Profundidade</span>
-              <span id="pullback-multiplo" class="metric-value">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Classificação</span>
-              <span id="pullback-tipo" class="metric-value-strong">—</span>
-            </div>
-          </div>
-
-          <!-- CARD 4: SINAL RÁPIDO -->
-          <div class="panel-card">
-            <h3>Sinal rápido do dia</h3>
-            <div class="metric-row">
-              <span class="metric-label">Conclusão</span>
-              <span id="sinal-frase" class="metric-value-danger">Aguardando dados...</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Edge</span>
-              <span id="sinal-edge" class="metric-value">—</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Status</span>
-              <span class="pill">
-                <span class="pill-dot" id="sinal-dot"></span>
-                <span id="sinal-status-text">Sem dados</span>
-              </span>
-            </div>
+    <div class="layout">
+      <!-- COLUNA ESQUERDA: TRADINGVIEW -->
+      <section class="card card-chart">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Gráfico em tempo real</div>
+            <div class="card-subtitle">The Six Seats Investments · AARON 9</div>
           </div>
         </div>
-      </div>
-    </section>
+
+        <div class="chip-row">
+          <div class="chip chip-strong">
+            <span>Ativo</span>
+            <span id="symbol-label">NVDA</span>
+          </div>
+          <div class="chip chip-outline" onclick="window.location.reload()">
+            Atualizar página
+          </div>
+          <div class="chip">
+            Powered by TradingView
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <div id="tv-chart"></div>
+        </div>
+      </section>
+
+      <!-- COLUNA DIREITA: PAINEL IA -->
+      <section class="card card-panel">
+        <div class="panel-header-main">
+          <div class="panel-title-block">
+            <div class="panel-pill">AARON 9 · Painel IA Ultra</div>
+            <div class="panel-title">Resumo do fluxo em tempo real</div>
+            <div class="panel-sub">
+              Os blocos abaixo são alimentados pela API JSON do n8n a cada poucos segundos.
+            </div>
+          </div>
+          <div class="panel-updated-box">
+            <div class="panel-updated-label">Atualizado às</div>
+            <div class="panel-updated-time" id="updated-at">--:--:--</div>
+          </div>
+        </div>
+
+        <div class="panel-sections">
+          <!-- Resumo inteligente -->
+          <div class="panel-section" id="sec-status">
+            <div class="section-header-line">
+              <div class="section-title">Resumo inteligente</div>
+              <div class="section-pill badge-neutral" id="trend-badge">Carregando…</div>
+            </div>
+            <div id="status-content" class="status-grid">
+              <span class="muted">Carregando dados do AARON…</span>
+            </div>
+            <div id="status-note" class="status-note"></div>
+          </div>
+
+          <!-- Estrutura + Pullback -->
+          <div class="panel-section">
+            <div class="section-header-line">
+              <div class="section-title">Estrutura recente · Check de pullback</div>
+            </div>
+            <div class="two-col">
+              <div class="box" id="estrutura-box">
+                <div class="box-title">Estrutura recente</div>
+                <div class="muted">Aguardando leitura…</div>
+              </div>
+              <div class="box" id="pullback-box">
+                <div class="box-title">Check de pullback / respiro</div>
+                <div class="muted">Aguardando leitura…</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sinal rápido do dia -->
+          <div class="panel-section">
+            <div class="section-header-line">
+              <div class="section-title">Sinal rápido do dia</div>
+            </div>
+            <div class="box" id="sinal-box">
+              <div class="sinal-title">Aguardando AARON…</div>
+              <div class="sinal-edge muted">—</div>
+              <div class="muted" id="sinal-text">
+                Assim que o painel JSON responder, aqui vem o resumo rápido do viés do dia.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
-  <!-- SCRIPT TRADINGVIEW -->
+  <!-- TradingView script -->
   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-  <script type="text/javascript">
-    // Gráfico TradingView
+  <script>
+    // Inicializa o gráfico TradingView
     new TradingView.widget({
-      "container_id": "tv-container",
-      "symbol": "NASDAQ:NVDA",   // Troque aqui para AMD / TSLA / SPY etc
-      "interval": "1",           // 1 minuto
-      "timezone": "America/Denver",
-      "theme": "dark",
-      "style": "1",
-      "locale": "en",
-      "hide_side_toolbar": false,
-      "allow_symbol_change": true,
-      "autosize": true
+      container_id: "tv-chart",
+      autosize: true,
+      symbol: "NASDAQ:NVDA",
+      interval: "1",
+      timezone: "America/New_York",
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      toolbar_bg: "#000000",
+      enable_publishing: false,
+      withdateranges: true,
+      range: "1D",
+      hide_side_toolbar: false,
+      allow_symbol_change: true,
+      details: false,
+      hotlist: false,
+      calendar: false
     });
+  </script>
 
-    // Atualiza os blocos do painel a partir do JSON
-    function updatePanel(panel) {
-      const status = panel.status || {};
-      const estrutura = panel.estrutura || {};
-      const pullback = panel.pullback || {};
+  <!-- Script do painel IA -->
+  <script>
+    const API_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron9-json";
 
-      // STATUS
-      document.getElementById("status-tendencia").textContent =
-        status.tendencia || "—";
-
-      document.getElementById("status-direcao").textContent =
-        status.direcao_prevista || "—";
-
-      document.getElementById("status-conviccao").textContent =
-        (status.confianca != null ? status.confianca + "%" : "—");
-
-      document.getElementById("status-risco").textContent =
-        status.risco || "—";
-
-      // ESTRUTURA
-      document.getElementById("estrutura-atual").textContent =
-        estrutura.atual || "—";
-
-      document.getElementById("estrutura-recente").textContent =
-        estrutura.recente || "—";
-
-      let fraseEstrutura = "Aguardando dados...";
-      if (estrutura.atual === "LH") fraseEstrutura = "Tendência de baixa em construção.";
-      if (estrutura.atual === "HH") fraseEstrutura = "Tendência de alta em construção.";
-      document.getElementById("estrutura-frase").textContent = fraseEstrutura;
-
-      // PULLBACK
-      document.getElementById("pullback-atr").textContent =
-        (pullback.atr_candle != null ? pullback.atr_candle : "—");
-
-      document.getElementById("pullback-multiplo").textContent =
-        (pullback.multiplo_atr != null ? pullback.multiplo_atr + " × ATR" : "—");
-
-      document.getElementById("pullback-tipo").textContent =
-        pullback.tipo || "—";
-
-      // SINAL RÁPIDO
-      let sinalFrase = "Aguardando dados...";
-      let edge = "Sem leitura";
-      let statusTexto = "Neutro";
-      const dot = document.getElementById("sinal-dot");
-
-      dot.classList.remove("pill-dot-danger");
-
-      if (status.direcao_prevista === "baixa") {
-        sinalFrase = "Fluxo favorece movimentos de baixa.";
-        edge = "Edge vendedor";
-        statusTexto = "Viés de venda";
-        dot.classList.add("pill-dot-danger");
-      } else if (status.direcao_prevista === "alta") {
-        sinalFrase = "Fluxo favorece movimentos de alta.";
-        edge = "Edge comprador";
-        statusTexto = "Viés de compra";
-      }
-
-      document.getElementById("sinal-frase").textContent = sinalFrase;
-      document.getElementById("sinal-edge").textContent = edge;
-      document.getElementById("sinal-status-text").textContent = statusTexto;
+    function fmt(v, dec = 2) {
+      if (v === null || v === undefined || v === "") return "-";
+      if (typeof v === "number") return v.toFixed(dec);
+      return v;
     }
 
-    // Busca o painel no n8n
-    const PANEL_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron9-json";
+    function atualizarDom(data) {
+      const status = data.status || {};
+      const estrutura = data.estrutura || {};
+      const pullback = data.pullback || {};
 
-    async function fetchPanel() {
-      const statusText = document.getElementById("panel-status-text");
+      const statusContent = document.getElementById("status-content");
+      const statusNote = document.getElementById("status-note");
+      const trendBadge = document.getElementById("trend-badge");
+      const updatedAt = document.getElementById("updated-at");
+      const metaLastUpdate = document.getElementById("meta-last-update");
+
+      const estruturaBox = document.getElementById("estrutura-box");
+      const pullbackBox = document.getElementById("pullback-box");
+      const sinalBox = document.getElementById("sinal-box");
+      const sinalText = document.getElementById("sinal-text");
+
+      const tendencia = (status.tendencia || "").toString();
+      const dirPrev = (status.direcao_prevista || "").toString();
+      const confianca = typeof status.confianca === "number" ? status.confianca : null;
+      const risco = status.risco || "-";
+
+      // Badge de tendência
+      const trendLower = tendencia.toLowerCase();
+      trendBadge.textContent = tendencia || "Sem tendência clara";
+      trendBadge.classList.remove("badge-up", "badge-down", "badge-neutral");
+      if (trendLower.includes("alta")) {
+        trendBadge.classList.add("badge-up");
+      } else if (trendLower.includes("baixa")) {
+        trendBadge.classList.add("badge-down");
+      } else {
+        trendBadge.classList.add("badge-neutral");
+      }
+
+      // Bloco de status
+      statusContent.innerHTML = `
+        <div>
+          <div class="status-label">Tendência atual</div>
+          <div class="status-value status-value-strong">${tendencia || "-"}</div>
+        </div>
+        <div>
+          <div class="status-label">Direção prevista</div>
+          <div class="status-value">${dirPrev || "-"}</div>
+        </div>
+        <div>
+          <div class="status-label">Confiança da IA</div>
+          <div class="status-value">${confianca !== null ? confianca + "%" : "-"}</div>
+        </div>
+        <div>
+          <div class="status-label">Risco</div>
+          <div class="status-value">${risco}</div>
+        </div>
+      `;
+
+      let nota = "Leitura rápida do fluxo atual.";
+      if (tendencia.toLowerCase().includes("alta")) {
+        nota = "Fluxo geral favorece movimentos de alta. Compras em pullbacks bem posicionados tendem a fazer mais sentido.";
+      } else if (tendencia.toLowerCase().includes("baixa")) {
+        nota = "Fluxo geral favorece movimentos de baixa. Vendas ou proteção em repiques podem ser mais interessantes.";
+      }
+      statusNote.textContent = nota;
+
+      // Estrutura recente
+      estruturaBox.innerHTML = `
+        <div class="box-title">Estrutura recente</div>
+        <div class="small-row">
+          <span class="muted">Estrutura atual</span>
+          <span class="strong">${estrutura.atual || "-"}</span>
+        </div>
+        <div class="small-row">
+          <span class="muted">Histórico recente</span>
+          <span>${estrutura.recente || "-"}</span>
+        </div>
+        <div class="status-note" style="margin-top:6px;">
+          Use isso como o "desenho" do dia (HH, HL, LH, LL) para entender se o preço está construindo tendência ou apenas range.
+        </div>
+      `;
+
+      // Pullback
+      const atr = pullback.atr_candle;
+      const mult = pullback.multiplo_atr;
+      const tipo = pullback.tipo || "-";
+
+      pullbackBox.innerHTML = `
+        <div class="box-title">Check de pullback / respiro</div>
+        <div class="small-row">
+          <span class="muted">ATR do candle atual</span>
+          <span class="strong">${atr != null ? "$" + fmt(atr, 2) : "-"}</span>
+        </div>
+        <div class="small-row">
+          <span class="muted">Profundidade</span>
+          <span class="strong">${mult != null ? fmt(mult, 2) + " × ATR" : "-"}</span>
+        </div>
+        <div class="small-row">
+          <span class="muted">Classificação</span>
+          <span>${tipo}</span>
+        </div>
+        <div class="status-note" style="margin-top:6px;">
+          A ideia aqui é separar se é apenas um respiro dentro da tendência ou se o movimento já parece reversão perigosa.
+        </div>
+      `;
+
+      // Sinal rápido do dia
+      let edgeText = "Neutro";
+      let edgeClass = "";
+      let fraseSinal = "Contexto ainda misto. Trate qualquer operação como risco moderado.";
+
+      const dirLower = dirPrev.toLowerCase();
+      if (tendencia.toLowerCase().includes("alta") || dirLower.includes("alta") || dirLower.includes("up")) {
+        edgeText = "Edge comprador";
+        edgeClass = "edge-buy";
+        fraseSinal = "Fluxo favorece compras. Evite vender contra a tendência principal a não ser em zonas muito claras.";
+      } else if (tendencia.toLowerCase().includes("baixa") || dirLower.includes("baixa") || dirLower.includes("down")) {
+        edgeText = "Edge vendedor";
+        edgeClass = "edge-sell";
+        fraseSinal = "Fluxo favorece vendas / proteção. Evite compras agressivas contra a maré.";
+      }
+
+      sinalBox.innerHTML = `
+        <div class="sinal-title">Fluxo favorece movimentos de ${dirLower.includes("baixa") ? "baixa" :
+          dirLower.includes("alta") ? "alta" : "curto prazo indefinidos"}.</div>
+        <div class="sinal-edge ${edgeClass}">${edgeText}</div>
+        <div class="muted" id="sinal-text">${fraseSinal}</div>
+      `;
+
+      // Horário
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString("pt-BR", { hour12: false });
+      updatedAt.textContent = timeStr;
+      metaLastUpdate.textContent = "Última leitura do AARON: " + timeStr;
+    }
+
+    async function carregarPainel() {
+      const statusContent = document.getElementById("status-content");
+
       try {
-        const res = await fetch(PANEL_URL + "?t=" + Date.now());
+        const res = await fetch(API_URL + "?_=" + Date.now());
         if (!res.ok) throw new Error("HTTP " + res.status);
-
-        // n8n está devolvendo algo como: ={"status":{...}}
-        const raw = await res.text();
-        const cleaned = raw.trim().replace(/^=/, "");
-        const panel = JSON.parse(cleaned);
-
-        updatePanel(panel);
-        statusText.textContent = "Atualizado às " + new Date().toLocaleTimeString();
+        const data = await res.json();
+        atualizarDom(data);
       } catch (err) {
-        console.error("Erro ao buscar painel", err);
-        statusText.textContent = "Erro ao atualizar dados";
+        console.error(err);
+        statusContent.innerHTML = '<span class="error-msg">Erro ao carregar o painel do n8n. Verifique a conexão ou o workflow.</span>';
       }
     }
 
-    // Carrega agora e depois a cada 15s
-    fetchPanel();
-    setInterval(fetchPanel, 15000);
+    carregarPainel();
+    setInterval(carregarPainel, 10000);
   </script>
 </body>
 </html>
