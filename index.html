@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>AARON 9 - Painel em Tempo Real</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #020617;
+      --card-border: #1e293b;
+      --accent: #22d3ee;
+      --accent-soft: rgba(34, 211, 238, 0.15);
+      --accent-strong: #38bdf8;
+      --text: #e5e7eb;
+      --muted: #64748b;
+      --danger: #f97373;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%, #000 100%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    #app {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .col {
+      flex: 1;
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .col-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .badge-live {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(34,211,238,0.35);
+    }
+
+    #tv-container {
+      flex: 1;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      background: #020617;
+    }
+
+    .panel-root {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .panel-status {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      flex: 1;
+    }
+
+    .panel-card {
+      background: radial-gradient(circle at top left, rgba(34,211,238,0.09), #020617 55%);
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      padding: 10px 12px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .panel-card h3 {
+      margin: 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .metric-value {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .metric-value-strong {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    .metric-value-danger {
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      font-size: 11px;
+      gap: 4px;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-strong);
+    }
+
+    .pill-dot-danger {
+      background: var(--danger);
+    }
+
+    @media (max-width: 960px) {
+      #app {
+        flex-direction: column;
+      }
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- ESQUERDA: GRÁFICO TRADINGVIEW -->
+    <section class="col">
+      <div class="col-header">
+        <div>
+          <div class="col-title">Gráfico em Tempo Real</div>
+          <div class="subtitle">THE SIX SEATS INVESTMENTS · AARON 9</div>
+        </div>
+        <span class="badge-live">Live</span>
+      </div>
+      <div id="tv-container"></div>
+    </section>
+
+    <!-- DIREITA: PAINEL AARON 9 (dados do n8n) -->
+    <section class="col">
+      <div class="col-header">
+        <div>
+          <div class="col-title">AARON 9 · PAINEL IA ULTRA</div>
+          <div class="subtitle">Resumo do fluxo em tempo real (n8n)</div>
+        </div>
+        <span class="badge-live" id="panel-status-text">Conectando...</span>
+      </div>
+
+      <div class="panel-root">
+        <div class="panel-status">
+          Os blocos abaixo são alimentados pela API JSON do n8n em tempo real.
+        </div>
+
+        <div class="panel-grid">
+          <!-- CARD 1: STATUS GERAL -->
+          <div class="panel-card">
+            <h3>Resumo inteligente</h3>
+            <div class="metric-row">
+              <span class="metric-label">Tendência atual</span>
+              <span id="status-tendencia" class="metric-value">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Direção prevista</span>
+              <span id="status-direcao" class="metric-value-strong">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Convicção da IA</span>
+              <span id="status-conviccao" class="metric-value">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Risco</span>
+              <span id="status-risco" class="metric-value">—</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: ESTRUTURA -->
+          <div class="panel-card">
+            <h3>Estrutura recente</h3>
+            <div class="metric-row">
+              <span class="metric-label">Estrutura atual</span>
+              <span id="estrutura-atual" class="metric-value">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Histórico recente</span>
+              <span id="estrutura-recente" class="metric-value">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Leitura rápida</span>
+              <span id="estrutura-frase" class="metric-value">Aguardando dados...</span>
+            </div>
+          </div>
+
+          <!-- CARD 3: PULLBACK -->
+          <div class="panel-card">
+            <h3>Check de Pullback / Respiro</h3>
+            <div class="metric-row">
+              <span class="metric-label">ATR do candle atual</span>
+              <span id="pullback-atr" class="metric-value">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Profundidade</span>
+              <span id="pullback-multiplo" class="metric-value">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Classificação</span>
+              <span id="pullback-tipo" class="metric-value-strong">—</span>
+            </div>
+          </div>
+
+          <!-- CARD 4: SINAL RÁPIDO -->
+          <div class="panel-card">
+            <h3>Sinal rápido do dia</h3>
+            <div class="metric-row">
+              <span class="metric-label">Conclusão</span>
+              <span id="sinal-frase" class="metric-value-danger">Aguardando dados...</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Edge</span>
+              <span id="sinal-edge" class="metric-value">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Status</span>
+              <span class="pill">
+                <span class="pill-dot" id="sinal-dot"></span>
+                <span id="sinal-status-text">Sem dados</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SCRIPT TRADINGVIEW -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  <script type="text/javascript">
+    // Gráfico TradingView
+    new TradingView.widget({
+      "container_id": "tv-container",
+      "symbol": "NASDAQ:NVDA",   // Troque aqui para AMD / TSLA / SPY etc
+      "interval": "1",           // 1 minuto
+      "timezone": "America/Denver",
+      "theme": "dark",
+      "style": "1",
+      "locale": "en",
+      "hide_side_toolbar": false,
+      "allow_symbol_change": true,
+      "autosize": true
+    });
+
+    // Atualiza os blocos do painel a partir do JSON
+    function updatePanel(panel) {
+      const status = panel.status || {};
+      const estrutura = panel.estrutura || {};
+      const pullback = panel.pullback || {};
+
+      // STATUS
+      document.getElementById("status-tendencia").textContent =
+        status.tendencia || "—";
+
+      document.getElementById("status-direcao").textContent =
+        status.direcao_prevista || "—";
+
+      document.getElementById("status-conviccao").textContent =
+        (status.confianca != null ? status.confianca + "%" : "—");
+
+      document.getElementById("status-risco").textContent =
+        status.risco || "—";
+
+      // ESTRUTURA
+      document.getElementById("estrutura-atual").textContent =
+        estrutura.atual || "—";
+
+      document.getElementById("estrutura-recente").textContent =
+        estrutura.recente || "—";
+
+      let fraseEstrutura = "Aguardando dados...";
+      if (estrutura.atual === "LH") fraseEstrutura = "Tendência de baixa em construção.";
+      if (estrutura.atual === "HH") fraseEstrutura = "Tendência de alta em construção.";
+      document.getElementById("estrutura-frase").textContent = fraseEstrutura;
+
+      // PULLBACK
+      document.getElementById("pullback-atr").textContent =
+        (pullback.atr_candle != null ? pullback.atr_candle : "—");
+
+      document.getElementById("pullback-multiplo").textContent =
+        (pullback.multiplo_atr != null ? pullback.multiplo_atr + " × ATR" : "—");
+
+      document.getElementById("pullback-tipo").textContent =
+        pullback.tipo || "—";
+
+      // SINAL RÁPIDO
+      let sinalFrase = "Aguardando dados...";
+      let edge = "Sem leitura";
+      let statusTexto = "Neutro";
+      const dot = document.getElementById("sinal-dot");
+
+      dot.classList.remove("pill-dot-danger");
+
+      if (status.direcao_prevista === "baixa") {
+        sinalFrase = "Fluxo favorece movimentos de baixa.";
+        edge = "Edge vendedor";
+        statusTexto = "Viés de venda";
+        dot.classList.add("pill-dot-danger");
+      } else if (status.direcao_prevista === "alta") {
+        sinalFrase = "Fluxo favorece movimentos de alta.";
+        edge = "Edge comprador";
+        statusTexto = "Viés de compra";
+      }
+
+      document.getElementById("sinal-frase").textContent = sinalFrase;
+      document.getElementById("sinal-edge").textContent = edge;
+      document.getElementById("sinal-status-text").textContent = statusTexto;
+    }
+
+    // Busca o painel no n8n
+    const PANEL_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron9-json";
+
+    async function fetchPanel() {
+      const statusText = document.getElementById("panel-status-text");
+      try {
+        const res = await fetch(PANEL_URL + "?t=" + Date.now());
+        if (!res.ok) throw new Error("HTTP " + res.status);
+
+        // n8n está devolvendo algo como: ={"status":{...}}
+        const raw = await res.text();
+        const cleaned = raw.trim().replace(/^=/, "");
+        const panel = JSON.parse(cleaned);
+
+        updatePanel(panel);
+        statusText.textContent = "Atualizado às " + new Date().toLocaleTimeString();
+      } catch (err) {
+        console.error("Erro ao buscar painel", err);
+        statusText.textContent = "Erro ao atualizar dados";
+      }
+    }
+
+    // Carrega agora e depois a cada 15s
+    fetchPanel();
+    setInterval(fetchPanel, 15000);
+  </script>
+</body>
+</html>
