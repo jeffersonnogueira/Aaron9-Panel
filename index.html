@@ -713,6 +713,123 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
       if (typeof v !== 'number') return '—';
       return v.toFixed(0) + '%';
     }
+    // ======= ADAPTADOR: LEGACY -> FORMATO NOVO DO PAINEL =======
+    function normalizePanel(panel, raw) {
+      if (!panel || typeof panel !== 'object') return panel;
+
+      // Se já for formato novo (meta/status/summary etc.), só devolve
+      if (panel.meta || panel.status || panel.summary) {
+        return panel;
+      }
+
+      const legacy = panel || {};
+      const rawData = raw || {};
+
+      const meta = {
+        version: legacy.panel_version || 'AARON legacy',
+        serverNow: undefined,
+      };
+
+      const status = {
+        label: legacy.status_geral || legacy.status || undefined,
+        symbol: rawData.symbol || legacy.symbol,
+        timeframe: rawData.timeframe || rawData.tf || legacy.timeframe,
+      };
+
+      const summary = {
+        stateLabel: legacy.status_geral || undefined,
+        stateTitle: legacy.status_geral || undefined,
+        bias: legacy.sentimento || undefined,
+        prob: typeof legacy.confianca === 'number' ? legacy.confianca : undefined,
+        conclusion:
+          legacy.advisor_message ||
+          (legacy.ai_advisor && legacy.ai_advisor.mensagem),
+      };
+
+      const em = legacy.estrutura_mercado || {};
+      const structure = {
+        trendLabel: em.ultima_estrutura || undefined,
+        hh: em.hh ? 'HH' : '—',
+        hl: em.hl ? 'HL' : '—',
+        lh: em.lh ? 'LH' : '—',
+        ll: em.ll ? 'LL' : '—',
+        comment: em.comentario || em.descricao,
+      };
+
+      const pullback = {
+        statusLabel: legacy.pullback_ativo ? 'Pullback ativo' : 'Sem pullback forte',
+        atr: legacy.pullback_profundidade_atr,
+        trend: em.ultima_estrutura,
+        structure: em.tag || undefined,
+        multiple: legacy.pullback_profundidade_atr,
+        comment: legacy.pullback_contexto,
+      };
+
+      const checklist = {
+        move: legacy.micro_contexto && legacy.micro_contexto.direcao,
+        cont: legacy.micro_contexto && legacy.micro_contexto.continuacao,
+        rev:  legacy.micro_contexto && legacy.micro_contexto.reversao,
+        exh:  legacy.micro_contexto && legacy.micro_contexto.exaustao,
+        div:  legacy.micro_contexto && legacy.micro_contexto.divergencia,
+        vol:  legacy.micro_contexto && legacy.micro_contexto.volume,
+        scoreLabel: legacy.checklist_score_label,
+        comment: legacy.checklist_comentario,
+      };
+
+      const flow = {
+        favorPct: legacy.fluxo_a_favor,
+        againstPct: legacy.fluxo_contra,
+      };
+
+      const forecast = {
+        short: {
+          label: legacy.prev_curto_label,
+          title: legacy.prev_curto_titulo,
+          desc:  legacy.prev_curto_texto,
+          conf:  legacy.prev_curto_conf,
+        },
+      };
+
+      const patterns = {
+        day:   legacy.padrao_dia   || {},
+        short: legacy.padrao_curto || {},
+      };
+
+      const consoleObj = {
+        text:
+          legacy.console_texto ||
+          legacy.advisor_message ||
+          (legacy.ai_advisor && legacy.ai_advisor.mensagem),
+      };
+
+      const execution = {
+        mode:
+          legacy.acao_recomendada ||
+          (legacy.ai_advisor && legacy.ai_advisor.acao),
+        label: legacy.acao_recomendada_label || legacy.acao_recomendada,
+        desc:
+          legacy.acao_recomendada_texto ||
+          legacy.advisor_message ||
+          (legacy.ai_advisor && legacy.ai_advisor.mensagem),
+      };
+
+      return {
+        timestamp: legacy.timestamp,
+        meta,
+        status,
+        summary,
+        structure,
+        radar: {}, // vamos popular depois, quando o workflow 1 estiver no formato novo
+        forecast,
+        flow,
+        checklist,
+        pullback,
+        patterns,
+        console: consoleObj,
+        conclusion: { text: summary.conclusion },
+        execution,
+      };
+    }
 
     // ======= RENDERIZAÇÃO DO PAINEL =======
     function renderPanel(panel) {
