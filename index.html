@@ -376,6 +376,29 @@
       margin-top: 4px;
     }
 
+    .chart-placeholder {
+      opacity: 0.7;
+    }
+
+    .mini-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mini-chart svg .baseline {
+      stroke: rgba(148, 163, 184, 0.45);
+      stroke-width: 1;
+      stroke-dasharray: 2 3;
+    }
+
+    .mini-chart svg .zigzag {
+      fill: none;
+      stroke: url(#gradPattern);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
     .conclusion-block {
       border-radius: 14px;
       border: 1px solid rgba(31, 41, 55, 0.95);
@@ -514,7 +537,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                     Aguardando leitura do padrão predominante do dia.
                   </div>
                   <div class="mini-chart" id="pattern-day-chart">
-                    Desenho / padrão do dia (exemplo visual).
+                    <span class="chart-placeholder">Desenho / padrão do dia (exemplo visual).</span>
                   </div>
                 </div>
               </div>
@@ -531,7 +554,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                     Padrão dos próximos candles (1–3) segundo o AARON.
                   </div>
                   <div class="mini-chart" id="pattern-short-chart">
-                    Mini-gráfico de curto prazo.
+                    <span class="chart-placeholder">Mini-gráfico de curto prazo.</span>
                   </div>
                 </div>
               </div>
@@ -693,10 +716,25 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
 
     function fmtTsUtah(ts) {
       if (ts === undefined || ts === null) return 'sem timestamp';
+
+      // Se vier como string, tentamos interpretar tanto número quanto ISO (ex: 2024-06-30T10:30:00.000Z)
       if (typeof ts === 'string') {
         const n = Number(ts);
-        if (!isNaN(n)) ts = n;
+        if (!isNaN(n)) {
+          ts = n;
+        } else {
+          const d = new Date(ts);
+          if (!isNaN(d.getTime())) {
+            return d.toLocaleString('en-US', { timeZone: 'America/Denver' });
+          }
+        }
       }
+
+      // Se vier como Date ou número (timestamp), formatamos para o fuso de Utah
+      if (ts instanceof Date) {
+        return ts.toLocaleString('en-US', { timeZone: 'America/Denver' });
+      }
+
       if (typeof ts === 'number') {
         try {
           return new Date(ts).toLocaleString('en-US', {
@@ -706,6 +744,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
           return String(ts);
         }
       }
+
       return String(ts);
     }
 
@@ -840,6 +879,45 @@ function normalizePanel(panel, raw) {
   };
 }
 
+// Desenha mini-gráficos (padrão do dia / curto prazo) com base no nome do padrão
+    function renderPatternChart(elementId, patternName) {
+      var el = document.getElementById(elementId);
+      if (!el) return;
+
+      var name = (patternName || '').toLowerCase().trim();
+      if (!name) {
+        el.innerHTML = '<span class="chart-placeholder">Aguardando padrão...</span>';
+        return;
+      }
+
+      var points;
+      if (name.includes('range') || name.includes('lateral')) {
+        // Zigzag mais horizontal (range)
+        points = '5,35 15,25 25,38 35,24 45,36 55,26 65,34 75,28';
+      } else if (name.includes('alta') || name.includes('bull') || name.includes('compra')) {
+        // Tendência de alta
+        points = '5,45 20,38 35,32 50,25 65,18 80,12';
+      } else if (name.includes('baixa') || name.includes('bear') || name.includes('venda')) {
+        // Tendência de baixa
+        points = '5,12 20,18 35,25 50,32 65,40 80,45';
+      } else {
+        // Padrão neutro / sem padrão claro
+        points = '5,30 20,28 35,32 50,29 65,31 80,30';
+      }
+
+      el.innerHTML =
+        '<svg viewBox="0 0 85 50" class="mini-svg">' +
+          '<defs>' +
+            '<linearGradient id="gradPattern" x1="0" y1="0" x2="1" y2="0">' +
+              '<stop offset="0%" stop-color="#22d3ee" />' +
+              '<stop offset="100%" stop-color="#fb923c" />' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<line class="baseline" x1="4" y1="40" x2="81" y2="40" />' +
+          '<polyline class="zigzag" points="' + points + '" />' +
+        '</svg>';
+    }
+
     // ======= RENDERIZAÇÃO DO PAINEL =======
     function renderPanel(panel) {
       if (!panel || typeof panel !== 'object') return;
@@ -904,6 +982,7 @@ function normalizePanel(panel, raw) {
         pDay.name || '—';
       document.getElementById('pattern-day-desc').textContent =
         pDay.desc || document.getElementById('pattern-day-desc').textContent;
+      renderPatternChart('pattern-day-chart', pDay.name || pDay.label);
 
       // Padrão curto prazo
       const pShort = patterns.short || {};
@@ -913,6 +992,7 @@ function normalizePanel(panel, raw) {
         pShort.name || '—';
       document.getElementById('pattern-short-desc').textContent =
         pShort.desc || document.getElementById('pattern-short-desc').textContent;
+      renderPatternChart('pattern-short-chart', pShort.name || pShort.label);
 
       // Radar do dia
       document.getElementById('radar-day-strength-pill').textContent =
@@ -1072,11 +1152,11 @@ async function loadPanelOnce() {
       : 'Painel ativo';
     document.getElementById('status-text').textContent = statusLabel;
 
-    const headerTs = panel.meta && panel.meta.serverNow
-      ? panel.meta.serverNow
-      : fmtTsUtah(panel.timestamp || Date.now());
+    const headerSource = (panel.meta && panel.meta.serverNow) || panel.timestamp || Date.now();
+    const headerTs = fmtTsUtah(headerSource);
 
-    document.getElementById('header-timestamp').textContent = headerTs;
+    document.getElementById('header-timestamp').textContent =
+      'Painel atualizado (horário Utah): ' + headerTs;
   } catch (err) {
     console.error('Erro ao carregar painel:', err);
     document.getElementById('status-text').textContent =
