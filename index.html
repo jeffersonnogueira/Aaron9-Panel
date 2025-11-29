@@ -1084,3 +1084,9 @@ async function loadPanelOnce() {
   }
 }
 
+    // Dispara a primeira carga e agenda atualizações a cada REFRESH_MS
+    loadPanelOnce();
+    setInterval(loadPanelOnce, REFRESH_MS);
+  </script>
+</body>
+</html>
