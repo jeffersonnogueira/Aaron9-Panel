@@ -1045,7 +1045,7 @@ function normalizePanel(panel, raw) {
 async function loadPanelOnce() {
   try {
     const res = await fetch(PANEL_URL + '?t=' + Date.now(), {
-      cache: 'no-cache'
+      cache: 'no-cache',
     });
 
     if (!res.ok) {
@@ -1056,16 +1056,21 @@ async function loadPanelOnce() {
 
     const data = await res.json();
 
-    // data = { panel: {...formato antigo...}, raw: {...} }
+    // n8n manda { panel: {...}, raw: {...} }
     const rawData     = data.raw   || {};
     const panelSource = data.panel || data;
 
-    // 🔄 converte painel legacy para o formato que o renderPanel espera
+    // Converte painel legacy (Aaron 8) para o formato novo que o renderPanel espera
     const panel = normalizePanel(panelSource, rawData);
 
+    // Renderiza UI com o painel normalizado
     renderPanel(panel);
 
-    document.getElementById('status-text').textContent = 'Painel ativo';
+    // Atualiza status visual/topo
+    const statusLabel = panel.status && panel.status.label
+      ? panel.status.label
+      : 'Painel ativo';
+    document.getElementById('status-text').textContent = statusLabel;
 
     const headerTs = panel.meta && panel.meta.serverNow
       ? panel.meta.serverNow
@@ -1079,11 +1084,3 @@ async function loadPanelOnce() {
   }
 }
 
-
-
-    // Primeiro load + refresh automático
-    loadPanelOnce();
-    setInterval(loadPanelOnce, REFRESH_MS);
-  </script>
-</body>
-</html>
