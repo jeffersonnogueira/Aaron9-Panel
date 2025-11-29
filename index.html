@@ -915,34 +915,44 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
       }
     });
 
-    // ======= LOOP DE ATUALIZAÇÃO (FETCH panel.json) =======
-    async function loadPanelOnce() {
-      try {
-        const res = await fetch(PANEL_URL + '?t=' + Date.now(), {
-          cache: 'no-cache'
-        });
+    // ======= LOOP DE ATUALIZAÇÃO (FETCH do n8n: { panel, raw }) =======
+async function loadPanelOnce() {
+  try {
+    const res = await fetch(PANEL_URL + '?t=' + Date.now(), {
+      cache: 'no-cache'
+    });
 
-        if (!res.ok) {
-          document.getElementById('status-text').textContent =
-            'Erro ao buscar painel (' + res.status + ')';
-          return;
-        }
-
-        const data = await res.json();
-        renderPanel(data);
-
-        // Atualiza status visual
-        document.getElementById('status-text').textContent = 'Painel ativo';
-        const headerTs = data.meta && data.meta.serverNow
-          ? data.meta.serverNow
-          : fmtTsUtah(data.timestamp || Date.now());
-        document.getElementById('header-timestamp').textContent = headerTs;
-      } catch (err) {
-        console.error('Erro ao carregar painel:', err);
-        document.getElementById('status-text').textContent =
-          'Erro de conexão com painel';
-      }
+    if (!res.ok) {
+      document.getElementById('status-text').textContent =
+        'Erro ao buscar painel (' + res.status + ')';
+      return;
     }
+
+    const data = await res.json();
+
+    // 🔴 AQUI ESTÁ A MUDANÇA IMPORTANTE:
+    // n8n manda { panel: {...}, raw: {...} }
+    // então pegamos o panel assim:
+    const panel = data.panel || data;
+
+    // seu renderPanel já espera só o painel
+    renderPanel(panel);
+
+    // Atualiza status visual (usando o panel, não o data raiz)
+    document.getElementById('status-text').textContent = 'Painel ativo';
+
+    const headerTs = panel.meta && panel.meta.serverNow
+      ? panel.meta.serverNow
+      : fmtTsUtah(panel.timestamp || Date.now());
+
+    document.getElementById('header-timestamp').textContent = headerTs;
+  } catch (err) {
+    console.error('Erro ao carregar painel:', err);
+    document.getElementById('status-text').textContent =
+      'Erro de conexão com painel';
+  }
+}
+
 
     // Primeiro load + refresh automático
     loadPanelOnce();
