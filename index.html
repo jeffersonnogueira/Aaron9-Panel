@@ -1047,15 +1047,15 @@ async function loadPanelOnce() {
 
     const data = await res.json();
 
-    // 🔴 AQUI ESTÁ A MUDANÇA IMPORTANTE:
-    // n8n manda { panel: {...}, raw: {...} }
-    // então pegamos o panel assim:
-    const panel = data.panel || data;
+    // data = { panel: {...formato antigo...}, raw: {...} }
+    const rawData     = data.raw   || {};
+    const panelSource = data.panel || data;
 
-    // seu renderPanel já espera só o painel
+    // 🔄 converte painel legacy para o formato que o renderPanel espera
+    const panel = normalizePanel(panelSource, rawData);
+
     renderPanel(panel);
 
-    // Atualiza status visual (usando o panel, não o data raiz)
     document.getElementById('status-text').textContent = 'Painel ativo';
 
     const headerTs = panel.meta && panel.meta.serverNow
@@ -1069,6 +1069,7 @@ async function loadPanelOnce() {
       'Erro de conexão com painel';
   }
 }
+
 
 
     // Primeiro load + refresh automático
