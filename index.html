@@ -2,26 +2,21 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>AARON 9 - Painel Institucional em Tempo Real</title>
+  <title>AARON 9 - Painel em Tempo Real</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
       --bg: #020617;
-      --bg-elevated: #020617;
       --card: #020617;
       --card-border: #1f293b;
       --accent: #22d3ee;
-      --accent-soft: rgba(34, 211, 238, 0.16);
-      --accent-strong: #06b6d4;
+      --accent-soft: rgba(34, 211, 238, 0.12);
       --danger: #f97373;
       --success: #4ade80;
-      --warn: #fbbf24;
       --text-soft: #9ca3af;
-      --text-strong: #e5e7eb;
-      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+      --text-main: #e5e7eb;
+      --shadow-strong: 0 24px 60px rgba(15, 23, 42, 0.95);
       --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
     }
 
     * {
@@ -31,695 +26,691 @@
     body {
       margin: 0;
       padding: 0;
-      background: radial-gradient(circle at top, #020617 0%, #000 55%);
-      color: var(--text-strong);
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+      color: var(--text-main);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: stretch;
+      justify-content: center;
     }
 
-    #app-shell {
+    .app-shell {
       flex: 1;
-      max-width: 1600px;
-      margin: 20px;
+      max-width: 1680px;
+      margin: 18px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
-    /* ====== TOPO (HEADER INSTITUCIONAL) ====== */
-
+    /* TOP BAR */
     .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 18px;
+      padding: 10px 18px;
       border-radius: var(--radius-lg);
-      background: linear-gradient(120deg, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
-      border: 1px solid rgba(148,163,184,0.35);
-      box-shadow: var(--shadow-soft);
+      border: 1px solid #1f2937;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.7));
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.85);
     }
 
     .brand-block {
       display: flex;
-      align-items: center;
-      gap: 14px;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .brand-logo {
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, #22d3ee, #0f172a 70%);
-      box-shadow:
-        0 0 18px rgba(34,211,238,0.8),
-        0 0 36px rgba(34,211,238,0.45),
-        0 0 60px rgba(59,130,246,0.45);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .brand-logo::after {
-      content: "9";
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 20px;
-      color: #ecfeff;
-      text-shadow: 0 0 12px rgba(15, 23, 42, 0.95);
-    }
-
-    .brand-text-main {
-      font-size: 14px;
-      letter-spacing: 0.14em;
+    .brand-title {
+      font-size: 18px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--text-soft);
+      color: #9ca3af;
     }
 
-    .brand-text-title {
-      font-size: 20px;
+    .brand-main {
+      font-size: 22px;
       font-weight: 700;
-      display: flex;
-      align-items: baseline;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .status-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(34, 211, 238, 0.07);
+      border: 1px solid rgba(34, 211, 238, 0.4);
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .brand-pill {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      padding: 4px 8px;
+    .status-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.5);
-      color: var(--accent);
-      background: radial-gradient(circle at top, rgba(34,211,238,0.15), rgba(15,23,42,0.9));
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.8);
     }
 
-    .top-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: flex-end;
-      font-size: 11px;
-    }
-
-    .chip {
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.32);
-      background: rgba(15,23,42,0.85);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .timestamp {
+      font-size: 12px;
       color: var(--text-soft);
     }
 
-    .chip-label {
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 9px;
-      color: #64748b;
-    }
-
-    .chip-value {
-      font-size: 11px;
-      color: var(--text-strong);
-    }
-
-    .chip-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--success);
-      box-shadow: 0 0 10px rgba(74,222,128,0.9);
-    }
-
-    .chip-dot.warn {
-      background: var(--warn);
-      box-shadow: 0 0 10px rgba(251,191,36,0.75);
-    }
-
-    .chip-dot.danger {
-      background: var(--danger);
-      box-shadow: 0 0 10px rgba(248,113,113,0.75);
-    }
-
-    /* ====== GRID PRINCIPAL ====== */
-
-    .grid-main {
+    /* LAYOUT 2 COLUNAS */
+    .layout {
+      flex: 1;
       display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
-      gap: 16px;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
+      gap: 12px;
       align-items: stretch;
     }
 
-    @media (max-width: 1100px) {
-      .grid-main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
     .card {
-      background: radial-gradient(circle at top left, rgba(15,23,42,1), rgba(2,6,23,1));
       border-radius: var(--radius-lg);
       border: 1px solid var(--card-border);
-      box-shadow: var(--shadow-soft);
-      padding: 14px 16px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.85), #020617 55%, #020617 100%);
+      box-shadow: var(--shadow-strong);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(34, 211, 238, 0.12), transparent 55%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      position: relative;
-      overflow: hidden;
+      height: 100%;
     }
 
     .card-header {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
       gap: 8px;
     }
 
     .card-title {
-      font-size: 13px;
+      font-size: 14px;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: #64748b;
+      letter-spacing: 0.13em;
+      color: #9ca3af;
     }
 
-    .card-subtitle {
+    .badge {
+      border-radius: 999px;
+      padding: 3px 8px;
       font-size: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+    }
+
+    /* ESQUERDA: TRADINGVIEW */
+    .chart-wrapper {
+      flex: 1;
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      background: radial-gradient(circle at bottom, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.3));
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #tradingview_container {
+      flex: 1;
+      min-height: 360px;
+    }
+
+    .chart-placeholder-text {
+      font-size: 13px;
+      color: var(--text-soft);
+      text-align: center;
+      padding: 8px;
+    }
+
+    /* DIREITA: PAINEL COMPLETO AARON 9 */
+    #panel-root {
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .panel-section {
+      border-radius: 14px;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      background: rgba(15, 23, 42, 0.92);
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+
+    .panel-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .panel-section-title {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
       color: var(--text-soft);
     }
 
-    .card-badge {
-      font-size: 10px;
-      padding: 3px 7px;
+    .pill {
       border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.35);
-      color: var(--accent);
-      background: rgba(15,23,42,0.8);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
+      padding: 2px 8px;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.9);
+      white-space: nowrap;
     }
 
-    .card-body {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      font-size: 12px;
+    .pill-green {
+      border-color: rgba(74, 222, 128, 0.8);
+      color: var(--success);
+    }
+
+    .pill-red {
+      border-color: rgba(248, 113, 113, 0.8);
+      color: var(--danger);
     }
 
     .row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px 16px;
-    }
-
-    .row-between {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
       align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .label {
+      justify-content: space-between;
+      gap: 8px;
       font-size: 11px;
-      color: var(--text-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      margin-bottom: 2px;
     }
 
-    .value-strong {
-      font-size: 14px;
+    .label-soft {
+      color: var(--text-soft);
+      font-size: 11px;
+    }
+
+    .value-main {
+      font-size: 13px;
       font-weight: 600;
     }
 
-    .value-soft {
-      font-size: 12px;
-      color: var(--text-soft);
-    }
-
-    .pill-soft {
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.35);
+    .value-sub {
       font-size: 11px;
       color: var(--text-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
-    .pill-soft span.dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(148,163,184,0.8);
-    }
-
-    /* ====== GAUGE / TERMÔMETROS ====== */
-
-    .gauge-line {
+    .meter {
       position: relative;
       width: 100%;
-      height: 8px;
+      height: 7px;
       border-radius: 999px;
-      background: radial-gradient(circle at 0% 50%, rgba(34,211,238,0.05), rgba(15,23,42,1));
+      background: rgba(15, 23, 42, 0.95);
       overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      margin-top: 4px;
     }
 
-    .gauge-fill {
+    .meter-fill {
       position: absolute;
       inset: 0;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #22c55e, #22d3ee, #0ea5e9, #f97316, #ef4444);
-      transition: width 0.45s ease-out;
+      transform-origin: left center;
+      transform: scaleX(0.5);
+      background: linear-gradient(90deg, #22d3ee, #4ade80);
     }
 
-    .gauge-scale {
-      display: flex;
-      justify-content: space-between;
+    .meter-fill-red {
+      background: linear-gradient(90deg, #f97373, #fb923c);
+    }
+
+    textarea.console-text {
+      width: 100%;
+      min-height: 210px;
+      border-radius: 10px;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.9));
+      color: var(--text-main);
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      resize: none;
+      padding: 8px 9px;
+      line-height: 1.4;
+    }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+      gap: 8px;
+    }
+
+    .small-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 4px;
       margin-top: 4px;
-      font-size: 10px;
-      color: #6b7280;
     }
 
-    /* ====== BLOCO PADRÕES (Padrão do dia / momento) ====== */
+    .small-cell {
+      border-radius: 999px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 3px 6px;
+      font-size: 10px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.95);
+    }
 
-    .patterns-grid {
+    .checklist-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    @media (max-width: 800px) {
-      .patterns-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .pattern-card {
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(148,163,184,0.4);
-      padding: 10px 12px;
-      background:
-        radial-gradient(circle at top left, rgba(34,211,238,0.06), transparent 55%),
-        linear-gradient(135deg, rgba(15,23,42,0.95), rgba(15,23,42,1));
-      position: relative;
-      overflow: hidden;
-    }
-
-    .pattern-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: #9ca3af;
-    }
-
-    .pattern-name {
+      gap: 4px;
       margin-top: 4px;
-      font-size: 14px;
-      font-weight: 600;
+    }
+
+    .check-item {
+      font-size: 11px;
+      border-radius: 8px;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      padding: 4px 6px;
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .pattern-box {
+      border-radius: 10px;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      padding: 6px 8px;
+      font-size: 11px;
+      margin-top: 4px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95));
+    }
+
+    .mini-chart {
+      height: 60px;
+      border-radius: 8px;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.95));
       display: flex;
       align-items: center;
-      gap: 6px;
-    }
-
-    .pattern-tag {
+      justify-content: center;
       font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      padding: 3px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.45);
-      color: var(--accent-strong);
-      background: rgba(15,23,42,0.9);
+      color: var(--text-soft);
+      margin-top: 4px;
     }
 
-    .pattern-notes {
-      margin-top: 4px;
+    .chart-placeholder {
+      opacity: 0.7;
+    }
+
+    .mini-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mini-chart svg .baseline {
+      stroke: rgba(148, 163, 184, 0.45);
+      stroke-width: 1;
+      stroke-dasharray: 2 3;
+    }
+
+    .mini-chart svg .zigzag {
+      fill: none;
+      stroke: url(#gradPattern);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .conclusion-block {
+      border-radius: 14px;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95));
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .conclusion-title {
       font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
       color: var(--text-soft);
     }
 
-    .pattern-arrow {
-      position: absolute;
-      right: -18px;
-      top: 50%;
-      width: 90px;
-      height: 90px;
-      opacity: 0.13;
-      transform: translateY(-50%) rotate(-18deg);
-      border-radius: 24px;
-      border: 2px solid var(--accent);
-      border-left-color: transparent;
-      border-bottom-color: transparent;
-    }
-
-    .pattern-arrow.down {
-      transform: translateY(-50%) rotate(162deg);
-      border-color: var(--danger);
-      border-left-color: transparent;
-      border-bottom-color: transparent;
-    }
-
-    /* ====== TABELINHAS / LISTS ====== */
-
-    .kv-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px 12px;
-      font-size: 11px;
-    }
-
-    @media (max-width: 800px) {
-      .kv-list {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .kv-item {
+    .panel-footer {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--text-soft);
       display: flex;
       justify-content: space-between;
-      gap: 6px;
+      gap: 8px;
+      opacity: 0.85;
     }
 
-    .kv-key {
-      color: var(--text-soft);
-    }
-
-    .kv-value {
-      font-weight: 500;
-    }
-
-    /* ====== ESTADO DE ERRO / CARREGANDO ====== */
-
-    #status-banner {
-      font-size: 11px;
-      color: var(--text-soft);
-      text-align: right;
-    }
-
-    #status-banner span.error {
-      color: var(--danger);
-    }
-
-    #status-banner span.ok {
-      color: var(--success);
-    }
-
-    .muted {
-      color: var(--text-soft);
-      font-size: 11px;
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
   </style>
 </head>
-
 <body>
-  <div id="app-shell">
-    <!-- ====== HEADER INSTITUCIONAL AARON 9 ====== -->
+  <div class="app-shell">
+    <!-- TOPO -->
     <header class="top-bar">
       <div class="brand-block">
-        <div class="brand-logo"></div>
-        <div>
-          <div class="brand-text-main">AARON 9 · AI TRADING PILOT</div>
-          <div class="brand-text-title">
-            Painel Institucional
-            <span class="brand-pill">Price Action · Fluxo · AI</span>
-          </div>
-        </div>
+        <div class="brand-title">THE SIXSEATS INVESTMENTS</div>
+        <div class="brand-main">AARON 9 – AI ULTRA</div>
       </div>
-
-      <div class="top-meta">
-        <div class="chip">
-          <span class="chip-dot" id="chip-status-dot"></span>
-          <div>
-            <div class="chip-label">Ambiente</div>
-            <div class="chip-value" id="chip-status-env">—</div>
-          </div>
+      <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end;">
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          <span id="status-text">Erro ao buscar painel (404)</span>
         </div>
-
-        <div class="chip">
-          <div>
-            <div class="chip-label">Ativo · Tempo Gráfico</div>
-            <div class="chip-value">
-              <span id="chip-asset-symbol">—</span>
-              ·
-              <span id="chip-asset-timeframe">—</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="chip">
-          <div>
-            <div class="chip-label">Última Atualização</div>
-            <div class="chip-value" id="chip-updated-at">—</div>
-          </div>
-        </div>
+        <span class="timestamp" id="header-timestamp">Sem dados ainda</span>
       </div>
     </header>
 
-    <div id="status-banner" class="muted">
-      <span id="status-message" class="">Aguardando painel...</span>
-    </div>
-
-    <!-- ====== GRID PRINCIPAL (ESQUERDA: DIREÇÃO/AI; DIREITA: RISCO/STATUS/PADRÕES) ====== -->
-    <main class="grid-main">
-      <!-- COLUNA ESQUERDA -->
-      <section class="card" id="card-direction-forecast">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Direção & Forecast AI</div>
-            <div class="card-subtitle">Janela institucional · 7:30–9:00 MT · Próximos candles</div>
+    <!-- LAYOUT 2 COLUNAS -->
+    <main class="layout">
+      <!-- ESQUERDA: TRADINGVIEW -->
+      <section class="card">
+        <div class="card-inner">
+          <div class="card-header">
+            <div class="card-title">JANELA DO GRÁFICO</div>
+            <span class="badge">TradingView aqui depois</span>
           </div>
-          <span class="card-badge" id="badge-mode">MODO —</span>
-        </div>
-
-        <div class="card-body">
-          <div class="row-between">
-            <div>
-              <div class="label">Viés principal</div>
-              <div class="value-strong" id="direction-bias">—</div>
-              <div class="value-soft" id="direction-context">—</div>
-            </div>
-            <div>
-              <div class="label">Confiança AI</div>
-              <div class="value-strong" id="direction-confidence">—</div>
-              <div class="value-soft" id="direction-window">—</div>
-            </div>
-          </div>
-
-          <!-- ====== GAUGE DIRECIONAL (TERMÔMETRO A FAVOR / CONTRA) ====== -->
-          <div>
-            <div class="row-between">
-              <div class="label">Fluxo & Confirmação</div>
-              <div class="pill-soft">
-                <span class="dot"></span>
-                <span id="flowsync-label">FlowSync —</span>
-              </div>
-            </div>
-            <div class="gauge-line">
-              <div class="gauge-fill" id="gauge-direction"></div>
-            </div>
-            <div class="gauge-scale">
-              <span>A favor</span>
-              <span>Neutro</span>
-              <span>Contra</span>
-            </div>
-          </div>
-
-          <!-- FORECAST -->
-          <div class="row-between">
-            <div>
-              <div class="label">Próximo movimento</div>
-              <div class="value-strong" id="forecast-next-move">—</div>
-              <div class="value-soft" id="forecast-notes">—</div>
-            </div>
-            <div>
-              <div class="label">Alvo & Probabilidade</div>
-              <div class="value-strong" id="forecast-target">—</div>
-              <div class="value-soft" id="forecast-probability">—</div>
+          <div class="chart-wrapper">
+            <div id="tradingview_container"></div>
+            <div class="chart-placeholder-text">
+              Se nada aparecer, verifique se o Brave / ad-block não está bloqueando o script do TradingView.
             </div>
           </div>
         </div>
       </section>
 
-      <!-- COLUNA DIREITA -->
-      <section style="display: flex; flex-direction: column; gap: 16px;">
-        <!-- BLOCO STATUS & PREÇO -->
-        <div class="card" id="card-asset-status">
+      <!-- DIREITA: PAINEL COMPLETO -->
+      <section class="card">
+        <div class="card-inner" id="panel-root">
           <div class="card-header">
-            <div>
-              <div class="card-title">Status do Ativo</div>
-              <div class="card-subtitle">Preço, variação e sessão atual</div>
-            </div>
+            <div class="card-title">PAINEL AARON 9</div>
+            <span class="badge" id="symbol-badge">Sem ativo</span>
           </div>
-          <div class="card-body">
-            <div class="row-between">
-              <div>
-                <div class="label">Ativo</div>
-                <div class="value-strong" id="asset-symbol-main">—</div>
-                <div class="value-soft" id="asset-session">—</div>
+
+          <!-- CONSOLE INTELIGENTE – RESUMO COMPLETO -->
+          <div class="panel-section">
+            <div class="panel-section-header">
+              <div class="panel-section-title">CONSOLE INTELIGENTE – RESUMO COMPLETO</div>
+              <span class="pill" id="state-pill">Estado: aguardando dados</span>
+            </div>
+            <div class="row">
+              <span class="label-soft">Estado atual:</span>
+              <span class="value-main" id="state-title">—</span>
+            </div>
+            <div class="row">
+              <span class="label-soft">Tendência / Vies:</span>
+              <span id="bias-text" class="pill">—</span>
+            </div>
+            <div class="row">
+              <span class="label-soft">Probabilidade do cenário:</span>
+              <span id="scenario-prob" class="pill pill-green">—</span>
+            </div>
+            <div class="meter">
+              <div class="meter-fill" id="scenario-meter"></div>
+            </div>
+            <textarea id="console-text" class="console-text" readonly>
+Aguardando primeiro alerta do TradingView para montar o resumo completo do dia...
+            </textarea>
+          </div>
+
+          <!-- LAYOUT INTERNO 2 COLUNAS (ESQUERDA E DIREITA) -->
+          <div class="two-cols">
+            <!-- COLUNA ESQUERDA INTERNA -->
+            <div>
+              <!-- MARKET STRUCTURE / HH HL -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">ESTRUTURA RECENTE</div>
+                  <span class="pill" id="structure-trend-pill">—</span>
+                </div>
+                <div class="small-grid-4">
+                  <div class="small-cell">HH: <span id="hh-val">—</span></div>
+                  <div class="small-cell">HL: <span id="hl-val">—</span></div>
+                  <div class="small-cell">LH: <span id="lh-val">—</span></div>
+                  <div class="small-cell">LL: <span id="ll-val">—</span></div>
+                </div>
+                <div class="value-sub" id="structure-comment" style="margin-top:4px;">
+                  AARON lê o zigzag / estrutura para entender se é continuação ou reversão.
+                </div>
               </div>
-              <div style="text-align: right;">
-                <div class="label">Último preço</div>
-                <div class="value-strong" id="asset-last-price">—</div>
-                <div class="value-soft">
-                  <span id="asset-change">—</span>
-                  ·
-                  <span id="asset-range">H: — · L: —</span>
+
+              <!-- PADRÃO PROVÁVEL – INTRADAY (PADRÃO DO DIA) -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">PADRÃO PROVÁVEL (INTRADAY)</div>
+                  <span class="pill" id="pattern-day-label">—</span>
+                </div>
+                <div class="pattern-box">
+                  <div class="value-main" id="pattern-day-name">—</div>
+                  <div class="value-sub" id="pattern-day-desc">
+                    Aguardando leitura do padrão predominante do dia.
+                  </div>
+                  <div class="mini-chart" id="pattern-day-chart">
+                    <span class="chart-placeholder">Desenho / padrão do dia (exemplo visual).</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PADRÃO PROVÁVEL – CURTO PRAZO (PADRÃO DO MOMENTO 1–3 CANDLES) -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">PADRÃO PROVÁVEL (CURTO PRAZO)</div>
+                  <span class="pill" id="pattern-short-label">—</span>
+                </div>
+                <div class="pattern-box">
+                  <div class="value-main" id="pattern-short-name">—</div>
+                  <div class="value-sub" id="pattern-short-desc">
+                    Padrão dos próximos candles (1–3) segundo o AARON.
+                  </div>
+                  <div class="mini-chart" id="pattern-short-chart">
+                    <span class="chart-placeholder">Mini-gráfico de curto prazo.</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="kv-list">
-              <div class="kv-item">
-                <span class="kv-key">Volume</span>
-                <span class="kv-value" id="asset-volume">—</span>
-              </div>
-              <div class="kv-item">
-                <span class="kv-key">Volatilidade (ATR)</span>
-                <span class="kv-value" id="asset-atr">—</span>
-              </div>
-              <div class="kv-item">
-                <span class="kv-key">Janela institucional</span>
-                <span class="kv-value" id="asset-window">7:30–9:00 MT</span>
-              </div>
-              <div class="kv-item">
-                <span class="kv-key">Fonte</span>
-                <span class="kv-value" id="asset-source">TradingView · AARON 9</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- BLOCO RISCO & EXECUÇÃO -->
-        <div class="card" id="card-risk">
-          <div class="card-header">
+            <!-- COLUNA DIREITA INTERNA -->
             <div>
-              <div class="card-title">Risco & Execução</div>
-              <div class="card-subtitle">Perfil, tamanho de posição e modo de saída</div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="row-between">
-              <div>
-                <div class="label">Perfil de risco</div>
-                <div class="value-strong" id="risk-profile">—</div>
-                <div class="value-soft" id="risk-notes">—</div>
-              </div>
-              <div style="text-align: right;">
-                <div class="label">Modo de saída</div>
-                <div class="value-strong" id="risk-exit-mode">—</div>
-                <div class="value-soft" id="risk-rr">R:R —</div>
-              </div>
-            </div>
-
-            <div class="kv-list">
-              <div class="kv-item">
-                <span class="kv-key">Tamanho sugerido</span>
-                <span class="kv-value" id="risk-position-size">—</span>
-              </div>
-              <div class="kv-item">
-                <span class="kv-key">Capital em risco</span>
-                <span class="kv-value" id="risk-capital">—</span>
-              </div>
-              <div class="kv-item">
-                <span class="kv-key">Stop técnico</span>
-                <span class="kv-value" id="risk-stop">—</span>
-              </div>
-              <div class="kv-item">
-                <span class="kv-key">Tipo de ordem</span>
-                <span class="kv-value" id="risk-order-type">—</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- BLOCO PADRÕES DO DIA & MOMENTO -->
-        <div class="card" id="card-patterns">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Padrões de Price Action</div>
-              <div class="card-subtitle">Padrão institucional do dia & padrão do momento</div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="patterns-grid">
-              <!-- Padrão do dia -->
-              <div class="pattern-card" id="pattern-day-card">
-                <div class="pattern-label">// Padrão institucional do dia</div>
-                <div class="pattern-name">
-                  <span id="pattern-day-name">—</span>
-                  <span class="pattern-tag" id="pattern-day-tag">—</span>
+              <!-- RADAR VISUAL DE DIREÇÃO (DIA) -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">RADAR VISUAL – DIREÇÃO DO DIA</div>
+                  <span class="pill" id="radar-day-strength-pill">—</span>
                 </div>
-                <div class="pattern-notes" id="pattern-day-notes">—</div>
-                <div class="pattern-arrow" id="pattern-day-arrow"></div>
+                <div class="value-main" id="radar-day-title">—</div>
+                <div class="value-sub" id="radar-day-desc">
+                  AARON ainda não leu a direção predominante do dia.
+                </div>
+                <div class="row" style="margin-top:4px;">
+                  <span class="label-soft">Confiança no cenário geral:</span>
+                  <span class="pill pill-green" id="radar-day-conf-pill">—</span>
+                </div>
+                <div class="meter">
+                  <div class="meter-fill" id="radar-day-meter"></div>
+                </div>
               </div>
 
-              <!-- Padrão do momento -->
-              <div class="pattern-card" id="pattern-now-card">
-                <div class="pattern-label">// Padrão do momento</div>
-                <div class="pattern-name">
-                  <span id="pattern-now-name">—</span>
-                  <span class="pattern-tag" id="pattern-now-tag">—</span>
+              <!-- DIREÇÃO PREVISTA (CURTO PRAZO – 1–3 CANDLES) -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">DIREÇÃO PREVISTA (CURTO PRAZO – 1–3 CANDLES)</div>
+                  <span class="pill" id="forecast-short-pill">—</span>
                 </div>
-                <div class="pattern-notes" id="pattern-now-notes">—</div>
-                <div class="pattern-arrow" id="pattern-now-arrow"></div>
+                <div class="value-main" id="forecast-short-title">—</div>
+                <div class="value-sub" id="forecast-short-desc">
+                  AARON monta a previsão dos próximos candles a partir do fluxo atual.
+                </div>
+                <div class="row" style="margin-top:4px;">
+                  <span class="label-soft">Confiança na direção:</span>
+                  <span class="pill pill-green" id="forecast-short-conf-pill">—</span>
+                </div>
+                <div class="meter">
+                  <div class="meter-fill" id="forecast-short-meter"></div>
+                </div>
+              </div>
+
+              <!-- COMANDO FINAL / EXECUÇÃO -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">COMANDO FINAL / EXECUÇÃO</div>
+                  <span class="pill" id="execution-mode-pill">Aguardando / observar</span>
+                </div>
+                <div class="value-main" id="execution-label">—</div>
+                <div class="value-sub" id="execution-desc">
+                  Quando todos os blocos se alinham, aqui aparece o comando final do AARON.
+                </div>
+
+                <div class="row" style="margin-top:6px;">
+                  <span class="label-soft">Fluxo a favor:</span>
+                  <span class="pill pill-green" id="flow-favor-pill">—</span>
+                </div>
+                <div class="meter">
+                  <div class="meter-fill" id="flow-favor-meter"></div>
+                </div>
+
+                <div class="row" style="margin-top:4px;">
+                  <span class="label-soft">Fluxo contra:</span>
+                  <span class="pill pill-red" id="flow-against-pill">—</span>
+                </div>
+                <div class="meter">
+                  <div class="meter-fill meter-fill-red" id="flow-against-meter"></div>
+                </div>
+              </div>
+
+              <!-- CHECKLIST DO AARON -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">CHECKLIST DO AARON</div>
+                  <span class="pill" id="checklist-score-pill">—</span>
+                </div>
+                <div class="checklist-grid" id="checklist-grid">
+                  <div class="check-item">Movimento: <span id="check-move">—</span></div>
+                  <div class="check-item">Continuação: <span id="check-cont">—</span></div>
+                  <div class="check-item">Reversão: <span id="check-rev">—</span></div>
+                  <div class="check-item">Exaustão: <span id="check-exh">—</span></div>
+                  <div class="check-item">Divergência: <span id="check-div">—</span></div>
+                  <div class="check-item">Volume: <span id="check-vol">—</span></div>
+                </div>
+                <div class="value-sub" style="margin-top:4px;" id="checklist-comment">
+                  Checklist rápido para evitar “gambling” e focar em setups com edge.
+                </div>
+              </div>
+
+              <!-- CHECK DE PULLBACK / RESPIRO -->
+              <div class="panel-section">
+                <div class="panel-section-header">
+                  <div class="panel-section-title">CHECK DE PULLBACK / RESPIRO</div>
+                  <span class="pill" id="pullback-status-pill">—</span>
+                </div>
+                <div class="row">
+                  <span class="label-soft">ATR do candle atual:</span>
+                  <span class="value-main" id="pullback-atr">—</span>
+                </div>
+                <div class="row">
+                  <span class="label-soft">Tendência:</span>
+                  <span id="pullback-trend" class="pill">—</span>
+                </div>
+                <div class="row">
+                  <span class="label-soft">Estrutura:</span>
+                  <span id="pullback-structure" class="pill">—</span>
+                </div>
+                <div class="row">
+                  <span class="label-soft">Pullback:</span>
+                  <span id="pullback-multiple" class="pill">—</span>
+                </div>
+                <div class="value-sub" id="pullback-comment" style="margin-top:4px;">
+                  Conclusão do AARON sobre se é só respiro ou risco de reversão.
+                </div>
               </div>
             </div>
+          </div>
+
+          <!-- CONCLUSÃO FINAL -->
+          <div class="conclusion-block">
+            <div class="conclusion-title">CONCLUSÃO DO AARON</div>
+            <div class="value-main" id="conclusion-text">
+              Aguardando primeiro alerta do TradingView para montar o cenário.
+            </div>
+          </div>
+
+          <!-- FOOTER -->
+          <div class="panel-footer">
+            <span id="panel-symbol-tf">Ativo / Tempo gráfico: —</span>
+            <span id="panel-timestamp">Sem timestamp</span>
           </div>
         </div>
       </section>
     </main>
   </div>
 
+  <!-- SCRIPT DO TRADINGVIEW -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
   <script>
     // ======= CONFIG PAINEL (JSON) =======
-    // Substitua pelo SEU webhook do n8n que retorna { "panel": { ... } }
     const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/18a1acd9-f615-4939-a6a2-5d45df087c49';
-    const REFRESH_MS = 60000; // 60s
+    const REFRESH_MS = 60000; // 1 minuto
 
-    function safeNum(v, dec = 2) {
-      const n = Number(v);
-      if (isNaN(n)) return v ?? '—';
-      return n.toFixed(dec);
+    function clamp01(x) {
+      if (typeof x !== 'number' || isNaN(x)) return 0;
+      return Math.min(1, Math.max(0, x));
     }
 
-    function fmtChange(v) {
-      if (v === undefined || v === null) return '—';
-      const n = Number(v);
-      if (isNaN(n)) return v;
-      const sign = n > 0 ? '+' : '';
-      return sign + n.toFixed(2) + '%';
+    function setMeter(el, pct) {
+      if (!el) return;
+      const v = clamp01(pct);
+      el.style.transform = 'scaleX(' + v + ')';
     }
 
-    function fmtMoney(v, dec = 2) {
-      const n = Number(v);
-      if (isNaN(n)) return v ?? '—';
-      return '$' + n.toFixed(dec);
-    }
+    function fmtTsUtah(ts) {
+      if (ts === undefined || ts === null) return 'sem timestamp';
 
-    function fmtVolume(v) {
-      const n = Number(v);
-      if (isNaN(n)) return v ?? '—';
-      if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
-      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-      if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
-      return String(n);
-    }
+      if (typeof ts === 'string') {
+        const n = Number(ts);
+        if (!isNaN(n)) {
+          ts = n;
+        } else {
+          const d = new Date(ts);
+          if (!isNaN(d.getTime())) {
+            return d.toLocaleString('en-US', { timeZone: 'America/Denver' });
+          }
+        }
+      }
 
-    function fmtTimestamp(ts) {
-      if (ts === undefined || ts === null) return '—';
-      if (typeof ts === 'string' && !isNaN(Number(ts))) ts = Number(ts);
+      if (ts instanceof Date) {
+        return ts.toLocaleString('en-US', { timeZone: 'America/Denver' });
+      }
+
       if (typeof ts === 'number') {
         try {
           return new Date(ts).toLocaleString('en-US', {
@@ -729,174 +720,453 @@
           return String(ts);
         }
       }
+
       return String(ts);
     }
 
-    function setText(id, value) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = value ?? '—';
+    function pctText(v) {
+      if (typeof v !== 'number') return '—';
+      return v.toFixed(0) + '%';
     }
 
-    function setGaugePercent(id, percent) {
-      const el = document.getElementById(id);
+    // ======= ADAPTADOR: LEGACY (AARON 8) -> FORMATO NOVO =======
+    function normalizePanel(panel, raw) {
+      if (!panel || typeof panel !== 'object') return panel;
+
+      if (panel.meta || panel.status || panel.summary) {
+        return panel;
+      }
+
+      const legacy     = panel || {};
+      const rawData    = raw || {};
+      const statusG    = legacy.status_geral      || {};
+      const em         = legacy.estrutura_mercado || {};
+      const micro      = legacy.microcontexto     || {};
+      const sinais     = legacy.sinais            || {};
+      const advisor    = legacy.ai_advisor        || {};
+      const forecastL  = legacy.ai_forecast       || {};
+      const consensus  = legacy.ai_consensus      || {};
+      const mkt        = rawData.market_state     || {};
+
+      const meta = {
+        version: legacy.panel_version || 'Aaron 8 Ultra',
+        serverNow: undefined,
+      };
+
+      const status = {
+        label: statusG.tendencia || mkt.trend || 'Painel ativo',
+        symbol: rawData.symbol || legacy.symbol,
+        timeframe: rawData.timeframe || rawData.tf || legacy.timeframe,
+      };
+
+      const summary = {
+        stateLabel: statusG.tendencia || consensus.consenso_geral,
+        stateTitle: statusG.tendencia || 'Estado do dia',
+        bias: statusG.sentimento,
+        volatility: statusG.volatilidade,
+        prob: typeof statusG.confianca === 'number' ? statusG.confianca : undefined,
+        conclusion: advisor.motivo || rawData.advisor_message || legacy.painel_terminal,
+      };
+
+      const structure = {
+        trendLabel: em.ultima_estrutura,
+        hh: em.hh ? 'HH' : '—',
+        hl: em.hl ? 'HL' : '—',
+        lh: em.lh ? 'LH' : '—',
+        ll: em.ll ? 'LL' : '—',
+        comment: legacy.micro_bos || undefined,
+      };
+
+      const pullback = {
+        statusLabel: legacy.pullback_ativo ? 'Pullback ativo' : 'Sem pullback forte',
+        atr: legacy.pullback_profundidade_atr,
+        trend: em.ultima_estrutura,
+        structure: (legacy.suporte_critico || legacy.resistencia_critica)
+          ? 'Região crítica de S/R'
+          : undefined,
+        multiple: legacy.pullback_profundidade_atr,
+        comment: [
+          legacy.tocou_suporte ? 'Tocou suporte' : null,
+          legacy.tocou_resistencia ? 'Tocou resistência' : null,
+        ].filter(Boolean).join(' · ') || undefined,
+      };
+
+      const flow = {
+        favorPct: typeof micro.pressao_compradora === 'number'
+          ? micro.pressao_compradora
+          : undefined,
+        againstPct: typeof micro.pressao_vendedora === 'number'
+          ? micro.pressao_vendedora
+          : undefined,
+      };
+
+      const checklist = {
+        move: micro.direcao,
+        cont: sinais.continuacao,
+        rev:  sinais.reversao,
+        exh:  sinais.exaustao,
+        div:  sinais.divergencia,
+        vol:  sinais.volume_anormal,
+        scoreLabel: consensus.consenso_geral,
+        comment: legacy.painel_terminal ? 'Ver resumo do console.' : undefined,
+      };
+
+      const forecast = {
+        short: {
+          label: forecastL.direcao_prevista,
+          title: 'FORECAST (3 candles)',
+          desc: undefined,
+          conf: forecastL.probabilidade,
+          target: forecastL.preco_alvo,
+          eta: forecastL.tempo_estimado,
+        },
+      };
+
+      const consoleObj = {
+        text: legacy.painel_terminal || rawData.advisor_message || advisor.motivo,
+      };
+
+      const execution = {
+        mode: advisor.acao_recomendada,
+        label: advisor.acao_recomendada,
+        desc: advisor.motivo || rawData.advisor_message,
+      };
+
+      return {
+        timestamp: legacy.timestamp,
+        meta,
+        status,
+        summary,
+        structure,
+        radar: {},
+        forecast,
+        flow,
+        checklist,
+        pullback,
+        // --------- PADRÕES DE PRICE ACTION (AARON 9 / n8n PREENCHER) ---------
+        // panel.patterns.day.name   -> PADRÃO DO DIA (ex: 'Rompimento de máxima', 'Rompimento de mínima',
+        //                                     'Rejeição de resistência', 'Rejeição de suporte', etc.)
+        // panel.patterns.short.name -> PADRÃO DO MOMENTO / CURTO PRAZO (1–3 candles) (ex: 'Pullback na tendência',
+        //                                     'Rompimento falhado', 'Spike de exaustão', etc.)
+        patterns: legacy.patterns || {},,
+        console: consoleObj,
+        conclusion: { text: summary.conclusion },
+        execution,
+      };
+    }
+
+    // ======= MINI-GRÁFICOS (ZIGZAG) =======
+    function renderPatternChart(elementId, patternName) {
+      var el = document.getElementById(elementId);
       if (!el) return;
-      const n = Number(percent);
-      if (isNaN(n)) {
-        el.style.width = '0%';
-        return;
-      }
-      const clamped = Math.min(100, Math.max(0, n));
-      el.style.width = clamped + '%';
-    }
 
-    function setPattern(direction, arrowId) {
-      const arrow = document.getElementById(arrowId);
-      if (!arrow) return;
-      arrow.classList.remove('down');
-      const dir = (direction || '').toString().toLowerCase();
-      if (dir.includes('down') || dir.includes('sell') || dir.includes('bear') || dir.includes('queda')) {
-        arrow.classList.add('down');
-      }
-    }
+      var name = (patternName || '').toLowerCase().trim();
 
-    function setConnectionStatus(ok, msg) {
-      const statusSpan = document.getElementById('status-message');
-      const dot = document.getElementById('chip-status-dot');
-      if (!statusSpan || !dot) return;
-
-      statusSpan.textContent = msg;
-      statusSpan.classList.remove('ok', 'error');
-
-      dot.classList.remove('warn', 'danger');
-
-      if (ok) {
-        statusSpan.classList.add('ok');
+      var points;
+      if (!name) {
+        // Sem nome -> neutro, mas ainda desenha
+        points = '5,30 20,28 35,32 50,29 65,31 80,30';
+      } else if (name.includes('range') || name.includes('lateral')) {
+        // Range / lateral
+        points = '5,35 15,25 25,38 35,24 45,36 55,26 65,34 75,28';
+      } else if (name.includes('alta') || name.includes('bull') || name.includes('compra')) {
+        // Tendência de alta
+        points = '5,45 20,38 35,32 50,25 65,18 80,12';
+      } else if (name.includes('baixa') || name.includes('bear') || name.includes('venda')) {
+        // Tendência de baixa
+        points = '5,12 20,18 35,25 50,32 65,40 80,45';
       } else {
-        statusSpan.classList.add('error');
-        dot.classList.add('danger');
+        // Neutro
+        points = '5,30 20,28 35,32 50,29 65,31 80,30';
+      }
+
+      el.innerHTML =
+        '<svg viewBox="0 0 85 50" class="mini-svg">' +
+          '<defs>' +
+            '<linearGradient id="gradPattern" x1="0" y1="0" x2="1" y2="0">' +
+              '<stop offset="0%" stop-color="#22d3ee" />' +
+              '<stop offset="100%" stop-color="#fb923c" />' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<line class="baseline" x1="4" y1="40" x2="81" y2="40" />' +
+          '<polyline class="zigzag" points="' + points + '" />' +
+        '</svg>';
+    }
+
+    // ======= RENDERIZAÇÃO DO PAINEL =======
+    function renderPanel(panel) {
+      if (!panel || typeof panel !== 'object') return;
+
+      const meta       = panel.meta       || {};
+      const status     = panel.status     || {};
+      const summary    = panel.summary    || {};
+      const structure  = panel.structure  || {};
+      const radar      = panel.radar      || {};
+      const forecast   = panel.forecast   || {};
+      const flow       = panel.flow       || {};
+      const checklist  = panel.checklist  || {};
+      const pullback   = panel.pullback   || {};
+      const patterns   = panel.patterns   || {};
+      const consoleObj = panel.console    || {};
+      const execution  = panel.execution  || {};
+
+      // topo
+      document.getElementById('status-text').textContent =
+        status.label || 'Painel ativo';
+
+      document.getElementById('header-timestamp').textContent =
+        meta.serverNow || 'Atualizado';
+
+      const symbolStr = (status.symbol || '—') + ' · ' + (status.timeframe || '—');
+      document.getElementById('symbol-badge').textContent = symbolStr;
+      document.getElementById('panel-symbol-tf').textContent =
+        'Ativo / Tempo gráfico: ' + symbolStr;
+
+      document.getElementById('panel-timestamp').textContent =
+        'Painel: ' + fmtTsUtah(panel.timestamp);
+
+      // Console / resumo
+      document.getElementById('state-pill').textContent =
+        summary.stateLabel || 'Estado do dia';
+      document.getElementById('state-title').textContent =
+        summary.stateTitle || '—';
+      document.getElementById('bias-text').textContent =
+        summary.bias || '—';
+      document.getElementById('scenario-prob').textContent =
+        pctText(summary.prob);
+      setMeter(document.getElementById('scenario-meter'),
+        typeof summary.prob === 'number' ? summary.prob / 100 : 0);
+      document.getElementById('console-text').value =
+        consoleObj.text || 'Sem resumo detalhado ainda.';
+
+      // Estrutura recente (HH HL LH LL)
+      document.getElementById('structure-trend-pill').textContent =
+        structure.trendLabel || '—';
+      document.getElementById('hh-val').textContent = structure.hh ?? '—';
+      document.getElementById('hl-val').textContent = structure.hl ?? '—';
+      document.getElementById('lh-val').textContent = structure.lh ?? '—';
+      document.getElementById('ll-val').textContent = structure.ll ?? '—';
+      document.getElementById('structure-comment').textContent =
+        structure.comment || document.getElementById('structure-comment').textContent;
+
+      // ------------------------------------------------------------------
+      // ====== PADRÕES DE PRICE ACTION – PADRÃO DO DIA (INTRADAY) ======
+      // Aqui o AARON 9 / n8n deve mandar no JSON algo como:
+      //   panel.patterns.day = {
+      //     label: 'Padrão do dia',
+      //     name:  'Rompimento de resistência',   // ou 'Rompimento de máxima',
+      //                                          //    'Rompimento de mínima',
+      //                                          //    'Rejeição de resistência',
+      //                                          //    'Rejeição de suporte',
+      //     desc:  'Descrição do padrão do dia'
+      //   }
+      // Esse bloco desenha o padrão do DIA + mini zigzag no quadrado "Padrão provável (Intraday)".
+      // ------------------------------------------------------------------
+      const fShort = forecast.short || {};
+
+      // Padrão intraday / padrão do dia
+      const pDay = patterns.day || {};
+      document.getElementById('pattern-day-label').textContent =
+        pDay.label || '—';
+      document.getElementById('pattern-day-name').textContent =
+        pDay.name || '—';
+      document.getElementById('pattern-day-desc').textContent =
+        pDay.desc || document.getElementById('pattern-day-desc').textContent;
+      renderPatternChart(
+        'pattern-day-chart',
+        pDay.name || pDay.label || summary.stateLabel || radar.title
+      );
+
+      // ------------------------------------------------------------------
+      // ====== PADRÕES DE PRICE ACTION – PADRÃO DO MOMENTO (1–3 CANDLES) ======
+      // Aqui o AARON 9 / n8n deve mandar no JSON:
+      //   panel.patterns.short = {
+      //     label: 'Padrão do momento',
+      //     name:  'Pullback na tendência',      // ou 'Rompimento falhado',
+      //                                         //    'Spike de exaustão',
+      //                                         //    'Rompimento de mínima',
+      //     desc:  'Descrição do padrão de curto prazo (1–3 candles)'
+      //   }
+      // Esse bloco controla o quadrado "Padrão provável (Curto Prazo)".
+      // ------------------------------------------------------------------
+      const pShort = patterns.short || {};
+      document.getElementById('pattern-short-label').textContent =
+        pShort.label || '—';
+      document.getElementById('pattern-short-name').textContent =
+        pShort.name || '—';
+      document.getElementById('pattern-short-desc').textContent =
+        pShort.desc || document.getElementById('pattern-short-desc').textContent;
+      renderPatternChart(
+        'pattern-short-chart',
+        pShort.name || pShort.label || fShort.label || summary.stateLabel
+      );
+
+      // Radar do dia
+      document.getElementById('radar-day-strength-pill').textContent =
+        radar.strength || '—';
+      document.getElementById('radar-day-title').textContent =
+        radar.title || '—';
+      document.getElementById('radar-day-desc').textContent =
+        radar.desc || document.getElementById('radar-day-desc').textContent;
+      document.getElementById('radar-day-conf-pill').textContent =
+        pctText(radar.conf);
+      setMeter(document.getElementById('radar-day-meter'),
+        typeof radar.conf === 'number' ? radar.conf / 100 : 0);
+
+      // Forecast curto prazo
+      document.getElementById('forecast-short-pill').textContent =
+        fShort.label || '—';
+      document.getElementById('forecast-short-title').textContent =
+        fShort.title || '—';
+      document.getElementById('forecast-short-desc').textContent =
+        fShort.desc || document.getElementById('forecast-short-desc').textContent;
+      document.getElementById('forecast-short-conf-pill').textContent =
+        pctText(fShort.conf);
+      setMeter(document.getElementById('forecast-short-meter'),
+        typeof fShort.conf === 'number' ? fShort.conf / 100 : 0);
+
+      // Flow / comando final
+      document.getElementById('execution-mode-pill').textContent =
+        execution.mode || 'Aguardando / observar';
+      document.getElementById('execution-label').textContent =
+        execution.label || '—';
+      document.getElementById('execution-desc').textContent =
+        execution.desc || document.getElementById('execution-desc').textContent;
+
+      document.getElementById('flow-favor-pill').textContent =
+        pctText(flow.favorPct);
+      setMeter(document.getElementById('flow-favor-meter'),
+        typeof flow.favorPct === 'number' ? flow.favorPct / 100 : 0);
+      document.getElementById('flow-against-pill').textContent =
+        pctText(flow.againstPct);
+      setMeter(document.getElementById('flow-against-meter'),
+        typeof flow.againstPct === 'number' ? flow.againstPct / 100 : 0);
+
+      // Checklist do AARON
+      document.getElementById('check-move').textContent =
+        checklist.move ?? '—';
+      document.getElementById('check-cont').textContent =
+        checklist.cont ?? '—';
+      document.getElementById('check-rev').textContent =
+        checklist.rev ?? '—';
+      document.getElementById('check-exh').textContent =
+        checklist.exh ?? '—';
+      document.getElementById('check-div').textContent =
+        checklist.div ?? '—';
+      document.getElementById('check-vol').textContent =
+        checklist.vol ?? '—';
+
+      document.getElementById('checklist-score-pill').textContent =
+        checklist.scoreLabel || 'Score: —';
+
+      document.getElementById('checklist-comment').textContent =
+        checklist.comment || document.getElementById('checklist-comment').textContent;
+
+      // Pullback / Respiro
+      document.getElementById('pullback-status-pill').textContent =
+        pullback.statusLabel || '—';
+
+      document.getElementById('pullback-atr').textContent =
+        (typeof pullback.atr === 'number')
+          ? pullback.atr.toFixed(2)
+          : (pullback.atr ?? '—');
+
+      document.getElementById('pullback-trend').textContent =
+        pullback.trend || '—';
+
+      document.getElementById('pullback-structure').textContent =
+        pullback.structure || '—';
+
+      document.getElementById('pullback-multiple').textContent =
+        pullback.multipleLabel || (typeof pullback.multiple === 'number'
+          ? pullback.multiple.toFixed(2) + ' × ATR'
+          : (pullback.multiple ?? '—'));
+
+      document.getElementById('pullback-comment').textContent =
+        pullback.comment || document.getElementById('pullback-comment').textContent;
+
+      // Conclusão final
+      document.getElementById('conclusion-text').textContent =
+        (panel.conclusion && panel.conclusion.text) ||
+        summary.conclusion ||
+        document.getElementById('conclusion-text').textContent;
+
+      // Atualiza TradingView
+      if (window.updateTradingView) {
+        updateTradingView(status.symbol, status.timeframe);
       }
     }
 
-    function applyPanel(raw) {
-      const panel = raw && raw.panel ? raw.panel : raw || {};
+    // ======= TRADINGVIEW WIDGET =======
+    function updateTradingView(symbol, interval) {
+      var container = document.getElementById('tradingview_container');
+      if (!container || typeof TradingView === 'undefined') return;
 
-      const status = panel.status || {};
-      const meta = panel.meta || {};
-      const asset = panel.asset || {};
-      const risk = panel.risk || {};
-      const forecast = panel.forecast || {};
-      const flow = panel.flow || panel.flowsync || {};
-      const patterns = panel.patterns || {};
+      container.innerHTML = '';
 
-      // Header chips
-      setText('chip-status-env', status.env || status.environment || 'Live');
-      setText('chip-asset-symbol', asset.symbol || asset.ticker || '—');
-      setText('chip-asset-timeframe', asset.timeframe || asset.tf || '—');
-      setText('chip-updated-at', meta.updated_at_human || fmtTimestamp(meta.timestamp || panel.timestamp));
-
-      // Modo / badge
-      setText('badge-mode', (status.mode_label || status.mode || 'MODO —').toString().toUpperCase());
-
-      // Direção / forecast
-      setText('direction-bias', forecast.bias || forecast.direction || '—');
-      setText('direction-context', forecast.context || forecast.comment || '—');
-
-      const conf = forecast.confidence != null ? forecast.confidence : forecast.conf_pct;
-      setText('direction-confidence', conf != null ? safeNum(conf, 0) + '%' : '—');
-
-      setText('direction-window', forecast.window || 'Próximos 1–3 candles');
-      setText('flowsync-label', flow.label || ('FlowSync ' + (flow.score != null ? safeNum(flow.score, 0) + '%' : '—')));
-      setGaugePercent('gauge-direction', flow.score != null ? flow.score : flow.percent);
-
-      setText('forecast-next-move', forecast.next_move || forecast.move || '—');
-      setText('forecast-notes', forecast.notes || forecast.description || '—');
-
-      const targetPrice = forecast.target_price != null ? fmtMoney(forecast.target_price) : (forecast.target || '—');
-      const prob = forecast.probability != null ? safeNum(forecast.probability, 0) + '%' : (forecast.prob || '—');
-      setText('forecast-target', targetPrice);
-      setText('forecast-probability', prob);
-
-      // Ativo / preço
-      const symbol = asset.symbol || asset.ticker || '—';
-      setText('asset-symbol-main', symbol);
-      setText('asset-session', asset.session || asset.market_session || '—');
-
-      const last = asset.last != null ? fmtMoney(asset.last) : (asset.last_price != null ? fmtMoney(asset.last_price) : '—');
-      setText('asset-last-price', last);
-
-      const chg = asset.change_pct != null ? fmtChange(asset.change_pct) : (asset.change != null ? fmtChange(asset.change) : '—');
-      setText('asset-change', chg);
-
-      const hi = asset.high != null ? fmtMoney(asset.high) : '—';
-      const lo = asset.low != null ? fmtMoney(asset.low) : '—';
-      setText('asset-range', `H: ${hi} · L: ${lo}`);
-
-      setText('asset-volume', fmtVolume(asset.volume));
-      setText('asset-atr', asset.atr != null ? safeNum(asset.atr, 2) : '—');
-      setText('asset-window', asset.window || '7:30–9:00 MT');
-      setText('asset-source', asset.source || 'TradingView · AARON 9');
-
-      // Risco
-      setText('risk-profile', risk.profile || risk.mode || '—');
-      setText('risk-notes', risk.notes || risk.comment || '—');
-      setText('risk-exit-mode', risk.exit_mode || risk.exit || '—');
-
-      const rr = risk.rr || risk.risk_reward || null;
-      setText('risk-rr', rr ? ('R:R ' + rr) : 'R:R —');
-
-      const pos = risk.size_shares != null ? risk.size_shares + ' shares' :
-                  risk.size != null ? risk.size : '—';
-      setText('risk-position-size', pos);
-
-      const cap = risk.capital_risked != null ? fmtMoney(risk.capital_risked) : (risk.capital || '—');
-      setText('risk-capital', cap);
-
-      setText('risk-stop', risk.stop || risk.stop_desc || '—');
-      setText('risk-order-type', risk.order_type || risk.entry_type || '—');
-
-      // Padrões
-      const day = patterns.day || patterns.pattern_day || {};
-      const now = patterns.moment || patterns.now || patterns.current || {};
-
-      setText('pattern-day-name', day.name || '—');
-      setText('pattern-day-tag', day.tag || day.category || 'Institucional');
-      setText('pattern-day-notes', day.notes || day.description || '—');
-      setPattern(day.direction || day.bias, 'pattern-day-arrow');
-
-      setText('pattern-now-name', now.name || '—');
-      setText('pattern-now-tag', now.tag || now.category || 'Intraday');
-      setText('pattern-now-notes', now.notes || now.description || '—');
-      setPattern(now.direction || now.bias, 'pattern-now-arrow');
+      new TradingView.widget({
+        autosize: true,
+        symbol: symbol || 'NASDAQ:NVDA',
+        interval: (interval && String(interval)) || '1',
+        timezone: 'America/New_York',
+        theme: 'dark',
+        style: '1',
+        locale: 'en',
+        toolbar_bg: '#000000',
+        hide_top_toolbar: false,
+        hide_legend: false,
+        allow_symbol_change: true,
+        container_id: 'tradingview_container'
+      });
     }
 
-    async function loadPanel() {
+    window.addEventListener('load', function () {
+      if (typeof TradingView !== 'undefined') {
+        updateTradingView();
+      }
+    });
+
+    // ======= LOOP DE ATUALIZAÇÃO (FETCH do n8n: { panel, raw }) =======
+    async function loadPanelOnce() {
       try {
-        const res = await fetch(PANEL_URL, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          },
-          cache: 'no-store'
+        const res = await fetch(PANEL_URL + '?t=' + Date.now(), {
+          cache: 'no-cache',
         });
 
         if (!res.ok) {
-          setConnectionStatus(false, 'Erro ao buscar painel (' + res.status + '). Tentando novamente…');
+          document.getElementById('status-text').textContent =
+            'Erro ao buscar painel (' + res.status + ')';
           return;
         }
 
         const data = await res.json();
-        applyPanel(data);
-        setConnectionStatus(true, 'Conectado · painel atualizado');
+
+        const rawData     = data.raw   || {};
+        const panelSource = data.panel || data;
+
+        const panel = normalizePanel(panelSource, rawData);
+
+        renderPanel(panel);
+
+        const statusLabel = panel.status && panel.status.label
+          ? panel.status.label
+          : 'Painel ativo';
+        document.getElementById('status-text').textContent = statusLabel;
+
+        const headerSource = (panel.meta && panel.meta.serverNow) || panel.timestamp || Date.now();
+        const headerTs = fmtTsUtah(headerSource);
+
+        document.getElementById('header-timestamp').textContent =
+          'Painel atualizado (horário Utah): ' + headerTs;
       } catch (err) {
-        console.error('Erro ao buscar painel:', err);
-        setConnectionStatus(false, 'Conexão perdida · tentando novamente em alguns segundos…');
+        console.error('Erro ao carregar painel:', err);
+        document.getElementById('status-text').textContent =
+          'Erro de conexão com painel';
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      loadPanel();
-      setInterval(loadPanel, REFRESH_MS);
-    });
+    loadPanelOnce();
+    setInterval(loadPanelOnce, REFRESH_MS);
   </script>
 </body>
 </html>
