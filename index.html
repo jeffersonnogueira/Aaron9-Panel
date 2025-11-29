@@ -302,27 +302,6 @@
       gap: 8px;
     }
 
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: rgba(15, 23, 42, 0.95);
-      color: var(--text-main);
-      margin-right: 4px;
-      margin-bottom: 4px;
-    }
-
-    .tag-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--accent);
-    }
-
     .small-grid-4 {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -525,7 +504,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                 </div>
               </div>
 
-              <!-- PADRÕES PROVÁVEIS – INTRADAY -->
+              <!-- PADRÃO PROVÁVEL – INTRADAY -->
               <div class="panel-section">
                 <div class="panel-section-header">
                   <div class="panel-section-title">PADRÃO PROVÁVEL (INTRADAY)</div>
@@ -542,7 +521,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                 </div>
               </div>
 
-              <!-- PADRÕES PROVÁVEIS – CURTO PRAZO -->
+              <!-- PADRÃO PROVÁVEL – CURTO PRAZO -->
               <div class="panel-section">
                 <div class="panel-section-header">
                   <div class="panel-section-title">PADRÃO PROVÁVEL (CURTO PRAZO)</div>
@@ -699,9 +678,8 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
 
   <script>
     // ======= CONFIG PAINEL (JSON) =======
-    // Busca sempre "panel.json" na raiz do projeto Vercel.
     const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/18a1acd9-f615-4939-a6a2-5d45df087c49';
-    const REFRESH_MS = 60000; // 60.000 ms = 1 minuto
+    const REFRESH_MS = 60000; // 1 minuto
 
     function clamp01(x) {
       if (typeof x !== 'number' || isNaN(x)) return 0;
@@ -717,7 +695,6 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
     function fmtTsUtah(ts) {
       if (ts === undefined || ts === null) return 'sem timestamp';
 
-      // Se vier como string, tentamos interpretar tanto número quanto ISO (ex: 2024-06-30T10:30:00.000Z)
       if (typeof ts === 'string') {
         const n = Number(ts);
         if (!isNaN(n)) {
@@ -730,7 +707,6 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
         }
       }
 
-      // Se vier como Date ou número (timestamp), formatamos para o fuso de Utah
       if (ts instanceof Date) {
         return ts.toLocaleString('en-US', { timeZone: 'America/Denver' });
       }
@@ -752,147 +728,141 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
       if (typeof v !== 'number') return '—';
       return v.toFixed(0) + '%';
     }
-    // ======= ADAPTADOR: LEGACY (AARON 8) -> FORMATO NOVO DO PAINEL =======
-function normalizePanel(panel, raw) {
-  if (!panel || typeof panel !== 'object') return panel;
 
-  // Se já vier no formato novo (com meta / status / summary), só devolve
-  if (panel.meta || panel.status || panel.summary) {
-    return panel;
-  }
+    // ======= ADAPTADOR: LEGACY (AARON 8) -> FORMATO NOVO =======
+    function normalizePanel(panel, raw) {
+      if (!panel || typeof panel !== 'object') return panel;
 
-  const legacy     = panel || {};
-  const rawData    = raw || {};
-  const statusG    = legacy.status_geral      || {};
-  const em         = legacy.estrutura_mercado || {};
-  const micro      = legacy.microcontexto     || {};
-  const sinais     = legacy.sinais            || {};
-  const advisor    = legacy.ai_advisor        || {};
-  const forecastL  = legacy.ai_forecast       || {};
-  const consensus  = legacy.ai_consensus      || {};
-  const sentiAI    = legacy.ai_sentimento     || {};
-  const indicators = rawData.indicators       || {};
-  const mkt        = rawData.market_state     || {};
+      if (panel.meta || panel.status || panel.summary) {
+        return panel;
+      }
 
-  const meta = {
-    version: legacy.panel_version || 'Aaron 8 Ultra',
-    serverNow: undefined,
-  };
+      const legacy     = panel || {};
+      const rawData    = raw || {};
+      const statusG    = legacy.status_geral      || {};
+      const em         = legacy.estrutura_mercado || {};
+      const micro      = legacy.microcontexto     || {};
+      const sinais     = legacy.sinais            || {};
+      const advisor    = legacy.ai_advisor        || {};
+      const forecastL  = legacy.ai_forecast       || {};
+      const consensus  = legacy.ai_consensus      || {};
+      const mkt        = rawData.market_state     || {};
 
-  const status = {
-    label: statusG.tendencia || mkt.trend || 'Painel ativo',
-    symbol: rawData.symbol || legacy.symbol,
-    timeframe: rawData.timeframe || rawData.tf || legacy.timeframe,
-  };
+      const meta = {
+        version: legacy.panel_version || 'Aaron 8 Ultra',
+        serverNow: undefined,
+      };
 
-  const summary = {
-    stateLabel: statusG.tendencia || consensus.consenso_geral,
-    stateTitle: statusG.tendencia || 'Estado do dia',
-    bias: statusG.sentimento,
-    volatility: statusG.volatilidade,
-    prob: typeof statusG.confianca === 'number' ? statusG.confianca : undefined,
-    conclusion:
-      advisor.motivo ||
-      rawData.advisor_message ||
-      legacy.painel_terminal,
-  };
+      const status = {
+        label: statusG.tendencia || mkt.trend || 'Painel ativo',
+        symbol: rawData.symbol || legacy.symbol,
+        timeframe: rawData.timeframe || rawData.tf || legacy.timeframe,
+      };
 
-  const structure = {
-    trendLabel: em.ultima_estrutura,
-    hh: em.hh ? 'HH' : '—',
-    hl: em.hl ? 'HL' : '—',
-    lh: em.lh ? 'LH' : '—',
-    ll: em.ll ? 'LL' : '—',
-    comment: legacy.micro_bos || undefined,
-  };
+      const summary = {
+        stateLabel: statusG.tendencia || consensus.consenso_geral,
+        stateTitle: statusG.tendencia || 'Estado do dia',
+        bias: statusG.sentimento,
+        volatility: statusG.volatilidade,
+        prob: typeof statusG.confianca === 'number' ? statusG.confianca : undefined,
+        conclusion: advisor.motivo || rawData.advisor_message || legacy.painel_terminal,
+      };
 
-  const pullback = {
-    statusLabel: legacy.pullback_ativo ? 'Pullback ativo' : 'Sem pullback forte',
-    atr: legacy.pullback_profundidade_atr,
-    trend: em.ultima_estrutura,
-    structure: (legacy.suporte_critico || legacy.resistencia_critica)
-      ? 'Região crítica de S/R'
-      : undefined,
-    multiple: legacy.pullback_profundidade_atr,
-    comment: [
-      legacy.tocou_suporte ? 'Tocou suporte' : null,
-      legacy.tocou_resistencia ? 'Tocou resistência' : null,
-    ].filter(Boolean).join(' · ') || undefined,
-  };
+      const structure = {
+        trendLabel: em.ultima_estrutura,
+        hh: em.hh ? 'HH' : '—',
+        hl: em.hl ? 'HL' : '—',
+        lh: em.lh ? 'LH' : '—',
+        ll: em.ll ? 'LL' : '—',
+        comment: legacy.micro_bos || undefined,
+      };
 
-  const flow = {
-    favorPct: typeof micro.pressao_compradora === 'number'
-      ? micro.pressao_compradora
-      : undefined,
-    againstPct: typeof micro.pressao_vendedora === 'number'
-      ? micro.pressao_vendedora
-      : undefined,
-  };
+      const pullback = {
+        statusLabel: legacy.pullback_ativo ? 'Pullback ativo' : 'Sem pullback forte',
+        atr: legacy.pullback_profundidade_atr,
+        trend: em.ultima_estrutura,
+        structure: (legacy.suporte_critico || legacy.resistencia_critica)
+          ? 'Região crítica de S/R'
+          : undefined,
+        multiple: legacy.pullback_profundidade_atr,
+        comment: [
+          legacy.tocou_suporte ? 'Tocou suporte' : null,
+          legacy.tocou_resistencia ? 'Tocou resistência' : null,
+        ].filter(Boolean).join(' · ') || undefined,
+      };
 
-  const checklist = {
-    move: micro.direcao,
-    cont: sinais.continuacao,
-    rev:  sinais.reversao,
-    exh:  sinais.exaustao,
-    div:  sinais.divergencia,
-    vol:  sinais.volume_anormal,
-    scoreLabel: consensus.consenso_geral,
-    comment: legacy.painel_terminal ? 'Ver resumo do console.' : undefined,
-  };
+      const flow = {
+        favorPct: typeof micro.pressao_compradora === 'number'
+          ? micro.pressao_compradora
+          : undefined,
+        againstPct: typeof micro.pressao_vendedora === 'number'
+          ? micro.pressao_vendedora
+          : undefined,
+      };
 
-  const forecast = {
-    short: {
-      label: forecastL.direcao_prevista,
-      title: 'FORECAST (3 candles)',
-      desc: undefined,
-      conf: forecastL.probabilidade,
-      target: forecastL.preco_alvo,
-      eta: forecastL.tempo_estimado,
-    },
-  };
+      const checklist = {
+        move: micro.direcao,
+        cont: sinais.continuacao,
+        rev:  sinais.reversao,
+        exh:  sinais.exaustao,
+        div:  sinais.divergencia,
+        vol:  sinais.volume_anormal,
+        scoreLabel: consensus.consenso_geral,
+        comment: legacy.painel_terminal ? 'Ver resumo do console.' : undefined,
+      };
 
-  const consoleObj = {
-    text: legacy.painel_terminal || rawData.advisor_message || advisor.motivo,
-  };
+      const forecast = {
+        short: {
+          label: forecastL.direcao_prevista,
+          title: 'FORECAST (3 candles)',
+          desc: undefined,
+          conf: forecastL.probabilidade,
+          target: forecastL.preco_alvo,
+          eta: forecastL.tempo_estimado,
+        },
+      };
 
-  const execution = {
-    mode: advisor.acao_recomendada,
-    label: advisor.acao_recomendada,
-    desc: advisor.motivo || rawData.advisor_message,
-  };
+      const consoleObj = {
+        text: legacy.painel_terminal || rawData.advisor_message || advisor.motivo,
+      };
 
-  return {
-    timestamp: legacy.timestamp,
-    meta,
-    status,
-    summary,
-    structure,
-    radar: {},
-    forecast,
-    flow,
-    checklist,
-    pullback,
-    patterns: {},
-    console: consoleObj,
-    conclusion: { text: summary.conclusion },
-    execution,
-  };
-}
+      const execution = {
+        mode: advisor.acao_recomendada,
+        label: advisor.acao_recomendada,
+        desc: advisor.motivo || rawData.advisor_message,
+      };
 
-// Desenha mini-gráficos (padrão do dia / curto prazo) com base no nome do padrão
+      return {
+        timestamp: legacy.timestamp,
+        meta,
+        status,
+        summary,
+        structure,
+        radar: {},
+        forecast,
+        flow,
+        checklist,
+        pullback,
+        patterns: {},
+        console: consoleObj,
+        conclusion: { text: summary.conclusion },
+        execution,
+      };
+    }
+
+    // ======= MINI-GRÁFICOS (ZIGZAG) =======
     function renderPatternChart(elementId, patternName) {
       var el = document.getElementById(elementId);
       if (!el) return;
 
       var name = (patternName || '').toLowerCase().trim();
-      if (!name) {
-        el.innerHTML = '<span class="chart-placeholder">Aguardando padrão...</span>';
-        return;
-      }
 
       var points;
-      if (name.includes('range') || name.includes('lateral')) {
-        // Zigzag mais horizontal (range)
+      if (!name) {
+        // Sem nome -> neutro, mas ainda desenha
+        points = '5,30 20,28 35,32 50,29 65,31 80,30';
+      } else if (name.includes('range') || name.includes('lateral')) {
+        // Range / lateral
         points = '5,35 15,25 25,38 35,24 45,36 55,26 65,34 75,28';
       } else if (name.includes('alta') || name.includes('bull') || name.includes('compra')) {
         // Tendência de alta
@@ -901,7 +871,7 @@ function normalizePanel(panel, raw) {
         // Tendência de baixa
         points = '5,12 20,18 35,25 50,32 65,40 80,45';
       } else {
-        // Padrão neutro / sem padrão claro
+        // Neutro
         points = '5,30 20,28 35,32 50,29 65,31 80,30';
       }
 
@@ -974,6 +944,9 @@ function normalizePanel(panel, raw) {
       document.getElementById('structure-comment').textContent =
         structure.comment || document.getElementById('structure-comment').textContent;
 
+      // Forecast curto prazo (usado como fallback para desenho)
+      const fShort = forecast.short || {};
+
       // Padrão intraday
       const pDay = patterns.day || {};
       document.getElementById('pattern-day-label').textContent =
@@ -982,7 +955,10 @@ function normalizePanel(panel, raw) {
         pDay.name || '—';
       document.getElementById('pattern-day-desc').textContent =
         pDay.desc || document.getElementById('pattern-day-desc').textContent;
-      renderPatternChart('pattern-day-chart', pDay.name || pDay.label);
+      renderPatternChart(
+        'pattern-day-chart',
+        pDay.name || pDay.label || summary.stateLabel || radar.title
+      );
 
       // Padrão curto prazo
       const pShort = patterns.short || {};
@@ -992,7 +968,10 @@ function normalizePanel(panel, raw) {
         pShort.name || '—';
       document.getElementById('pattern-short-desc').textContent =
         pShort.desc || document.getElementById('pattern-short-desc').textContent;
-      renderPatternChart('pattern-short-chart', pShort.name || pShort.label);
+      renderPatternChart(
+        'pattern-short-chart',
+        pShort.name || pShort.label || fShort.label || summary.stateLabel
+      );
 
       // Radar do dia
       document.getElementById('radar-day-strength-pill').textContent =
@@ -1007,7 +986,6 @@ function normalizePanel(panel, raw) {
         typeof radar.conf === 'number' ? radar.conf / 100 : 0);
 
       // Forecast curto prazo
-      const fShort = forecast.short || {};
       document.getElementById('forecast-short-pill').textContent =
         fShort.label || '—';
       document.getElementById('forecast-short-title').textContent =
@@ -1085,18 +1063,17 @@ function normalizePanel(panel, raw) {
         summary.conclusion ||
         document.getElementById('conclusion-text').textContent;
 
-      // Atualiza TradingView (se símbolo/timeframe vierem do painel)
+      // Atualiza TradingView
       if (window.updateTradingView) {
         updateTradingView(status.symbol, status.timeframe);
       }
-    } // fim de renderPanel
+    }
 
     // ======= TRADINGVIEW WIDGET =======
     function updateTradingView(symbol, interval) {
       var container = document.getElementById('tradingview_container');
       if (!container || typeof TradingView === 'undefined') return;
 
-      // Limpa o container antes de recriar o widget
       container.innerHTML = '';
 
       new TradingView.widget({
@@ -1122,49 +1099,44 @@ function normalizePanel(panel, raw) {
     });
 
     // ======= LOOP DE ATUALIZAÇÃO (FETCH do n8n: { panel, raw }) =======
-async function loadPanelOnce() {
-  try {
-    const res = await fetch(PANEL_URL + '?t=' + Date.now(), {
-      cache: 'no-cache',
-    });
+    async function loadPanelOnce() {
+      try {
+        const res = await fetch(PANEL_URL + '?t=' + Date.now(), {
+          cache: 'no-cache',
+        });
 
-    if (!res.ok) {
-      document.getElementById('status-text').textContent =
-        'Erro ao buscar painel (' + res.status + ')';
-      return;
+        if (!res.ok) {
+          document.getElementById('status-text').textContent =
+            'Erro ao buscar painel (' + res.status + ')';
+          return;
+        }
+
+        const data = await res.json();
+
+        const rawData     = data.raw   || {};
+        const panelSource = data.panel || data;
+
+        const panel = normalizePanel(panelSource, rawData);
+
+        renderPanel(panel);
+
+        const statusLabel = panel.status && panel.status.label
+          ? panel.status.label
+          : 'Painel ativo';
+        document.getElementById('status-text').textContent = statusLabel;
+
+        const headerSource = (panel.meta && panel.meta.serverNow) || panel.timestamp || Date.now();
+        const headerTs = fmtTsUtah(headerSource);
+
+        document.getElementById('header-timestamp').textContent =
+          'Painel atualizado (horário Utah): ' + headerTs;
+      } catch (err) {
+        console.error('Erro ao carregar painel:', err);
+        document.getElementById('status-text').textContent =
+          'Erro de conexão com painel';
+      }
     }
 
-    const data = await res.json();
-
-    // n8n manda { panel: {...}, raw: {...} }
-    const rawData     = data.raw   || {};
-    const panelSource = data.panel || data;
-
-    // Converte painel legacy (Aaron 8) para o formato novo que o renderPanel espera
-    const panel = normalizePanel(panelSource, rawData);
-
-    // Renderiza UI com o painel normalizado
-    renderPanel(panel);
-
-    // Atualiza status visual/topo
-    const statusLabel = panel.status && panel.status.label
-      ? panel.status.label
-      : 'Painel ativo';
-    document.getElementById('status-text').textContent = statusLabel;
-
-    const headerSource = (panel.meta && panel.meta.serverNow) || panel.timestamp || Date.now();
-    const headerTs = fmtTsUtah(headerSource);
-
-    document.getElementById('header-timestamp').textContent =
-      'Painel atualizado (horário Utah): ' + headerTs;
-  } catch (err) {
-    console.error('Erro ao carregar painel:', err);
-    document.getElementById('status-text').textContent =
-      'Erro de conexão com painel';
-  }
-}
-
-    // Dispara a primeira carga e agenda atualizações a cada REFRESH_MS
     loadPanelOnce();
     setInterval(loadPanelOnce, REFRESH_MS);
   </script>
