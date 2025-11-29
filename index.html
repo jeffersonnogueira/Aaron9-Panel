@@ -234,7 +234,51 @@
       border-color: rgba(248, 113, 113, 0.8);
       color: var(--danger);
     }
+/* Linha com ícone de direção + textos */
+.direction-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
 
+/* Círculo da flecha */
+.arrow-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.7);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Estados visuais (up / down / lateral) */
+.arrow-badge.arrow-up {
+  border-color: rgba(74, 222, 128, 0.9);
+  box-shadow: 0 0 22px rgba(74, 222, 128, 0.8);
+  color: #4ade80;
+}
+
+.arrow-badge.arrow-down {
+  border-color: rgba(248, 113, 113, 0.9);
+  box-shadow: 0 0 22px rgba(248, 113, 113, 0.8);
+  color: #f97373;
+}
+
+.arrow-badge.arrow-side {
+  border-color: rgba(148, 163, 184, 0.9);
+  box-shadow: 0 0 18px rgba(148, 163, 184, 0.8);
+  color: #e5e7eb;
+}
+
+/* Símbolo padrão; o JS troca a direção via classes */
+.arrow-badge::before {
+  content: "↑";
+}
     .row {
       display: flex;
       align-items: center;
