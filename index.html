@@ -578,7 +578,59 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                   <div class="meter-fill" id="forecast-short-meter"></div>
                 </div>
               </div>
+<!-- === PADRÕES DE PRICE ACTION (DIA / MOMENTO) ======================= -->
+<section class="card pattern-section">
+  <div class="pattern-header">
+    <div>
+      <h2 class="card-title">Padrões de Price Action</h2>
+      <p class="card-subtitle">Padrão do dia (janela completa) e padrão do momento (curto prazo)</p>
+    </div>
+    <div class="pattern-legend">
+      <span class="dot bull"></span> Alta
+      <span class="dot bear"></span> Baixa
+      <span class="dot neutral"></span> Neutro
+    </div>
+  </div>
 
+  <div class="pattern-grid">
+    <!-- Padrão do dia -->
+    <article class="pattern-card" id="pattern-day-card">
+      <header class="pattern-card-header">
+        <span class="pattern-label">Padrão do dia</span>
+        <span class="pattern-confidence" id="pattern-day-confidence">—</span>
+      </header>
+      <div class="pattern-meta">
+        <div class="pattern-names">
+          <h3 class="pattern-name" id="pattern-day-name">Sem padrão claro</h3>
+          <p class="pattern-type" id="pattern-day-type">—</p>
+        </div>
+        <span class="pattern-tag neutral" id="pattern-day-bias">NEUTRO</span>
+      </div>
+      <div class="pattern-svg" id="pattern-day-svg">
+        <!-- SVG gerado via JS entra aqui -->
+      </div>
+    </article>
+
+    <!-- Padrão do momento -->
+    <article class="pattern-card" id="pattern-now-card">
+      <header class="pattern-card-header">
+        <span class="pattern-label">Padrão do momento</span>
+        <span class="pattern-confidence" id="pattern-now-confidence">—</span>
+      </header>
+      <div class="pattern-meta">
+        <div class="pattern-names">
+          <h3 class="pattern-name" id="pattern-now-name">Sem padrão claro</h3>
+          <p class="pattern-type" id="pattern-now-type">—</p>
+        </div>
+        <span class="pattern-tag neutral" id="pattern-now-bias">NEUTRO</span>
+      </div>
+      <div class="pattern-svg" id="pattern-now-svg">
+        <!-- SVG gerado via JS entra aqui -->
+      </div>
+    </article>
+  </div>
+</section>
+<!-- ================================================================== -->
               <!-- COMANDO FINAL / EXECUÇÃO -->
               <div class="panel-section">
                 <div class="panel-section-header">
