@@ -504,7 +504,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                 </div>
               </div>
 
-              <!-- PADRÃO PROVÁVEL – INTRADAY -->
+              <!-- PADRÃO PROVÁVEL – INTRADAY (PADRÃO DO DIA) -->
               <div class="panel-section">
                 <div class="panel-section-header">
                   <div class="panel-section-title">PADRÃO PROVÁVEL (INTRADAY)</div>
@@ -521,7 +521,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                 </div>
               </div>
 
-              <!-- PADRÃO PROVÁVEL – CURTO PRAZO -->
+              <!-- PADRÃO PROVÁVEL – CURTO PRAZO (PADRÃO DO MOMENTO 1–3 CANDLES) -->
               <div class="panel-section">
                 <div class="panel-section-header">
                   <div class="panel-section-title">PADRÃO PROVÁVEL (CURTO PRAZO)</div>
@@ -578,224 +578,7 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
                   <div class="meter-fill" id="forecast-short-meter"></div>
                 </div>
               </div>
-              /* ===== PADRÕES DE PRICE ACTION ===================================== */
-.pattern-section {
-  grid-column: 1 / -1;
-  margin-top: 16px;
-}
 
-.pattern-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.pattern-header .card-title {
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.pattern-header .card-subtitle {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--text-soft, #9ca3af);
-}
-
-.pattern-legend {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--text-soft, #9ca3af);
-  background: rgba(15, 23, 42, 0.9);
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-}
-
-.pattern-legend .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  display: inline-block;
-}
-
-.pattern-legend .dot.bull {
-  background: var(--success, #4ade80);
-}
-
-.pattern-legend .dot.bear {
-  background: var(--danger, #f97373);
-}
-
-.pattern-legend .dot.neutral {
-  background: var(--accent, #22d3ee);
-}
-
-.pattern-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-@media (max-width: 1024px) {
-  .pattern-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-.pattern-card {
-  background: radial-gradient(circle at top left,
-    rgba(34, 211, 238, 0.16),
-    rgba(15, 23, 42, 0.95));
-  border-radius: 16px;
-  border: 1px solid var(--card-border, #1f2937);
-  padding: 14px 16px 16px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
-}
-
-.pattern-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 6px;
-}
-
-.pattern-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--text-soft, #9ca3af);
-}
-
-.pattern-confidence {
-  font-size: 11px;
-  color: var(--text-soft, #9ca3af);
-}
-
-.pattern-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.pattern-names {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.pattern-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.pattern-type {
-  font-size: 11px;
-  color: var(--text-soft, #9ca3af);
-}
-
-.pattern-tag {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 4px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  background: rgba(15, 23, 42, 0.9);
-}
-
-.pattern-tag.bull {
-  color: var(--success, #4ade80);
-  border-color: rgba(74, 222, 128, 0.65);
-}
-
-.pattern-tag.bear {
-  color: var(--danger, #f97373);
-  border-color: rgba(248, 113, 113, 0.65);
-}
-
-.pattern-tag.neutral {
-  color: var(--accent, #22d3ee);
-  border-color: rgba(56, 189, 248, 0.75);
-}
-
-.pattern-svg {
-  background: radial-gradient(circle at bottom,
-    rgba(15, 23, 42, 1),
-    #020617);
-  border-radius: 12px;
-  border: 1px solid rgba(51, 65, 85, 0.9);
-  padding: 8px 10px;
-}
-
-.pattern-svg svg {
-  width: 100%;
-  height: auto;
-  display: block;
-  overflow: visible;
-}
-
-/* =================================================================== */
-<!-- === PADRÕES DE PRICE ACTION (DIA / MOMENTO) ======================= -->
-<section class="card pattern-section">
-  <div class="pattern-header">
-    <div>
-      <h2 class="card-title">Padrões de Price Action</h2>
-      <p class="card-subtitle">Padrão do dia (janela completa) e padrão do momento (curto prazo)</p>
-    </div>
-    <div class="pattern-legend">
-      <span class="dot bull"></span> Alta
-      <span class="dot bear"></span> Baixa
-      <span class="dot neutral"></span> Neutro
-    </div>
-  </div>
-
-  <div class="pattern-grid">
-    <!-- Padrão do dia -->
-    <article class="pattern-card" id="pattern-day-card">
-      <header class="pattern-card-header">
-        <span class="pattern-label">Padrão do dia</span>
-        <span class="pattern-confidence" id="pattern-day-confidence">—</span>
-      </header>
-      <div class="pattern-meta">
-        <div class="pattern-names">
-          <h3 class="pattern-name" id="pattern-day-name">Sem padrão claro</h3>
-          <p class="pattern-type" id="pattern-day-type">—</p>
-        </div>
-        <span class="pattern-tag neutral" id="pattern-day-bias">NEUTRO</span>
-      </div>
-      <div class="pattern-svg" id="pattern-day-svg">
-        <!-- SVG gerado via JS entra aqui -->
-      </div>
-    </article>
-
-    <!-- Padrão do momento -->
-    <article class="pattern-card" id="pattern-now-card">
-      <header class="pattern-card-header">
-        <span class="pattern-label">Padrão do momento</span>
-        <span class="pattern-confidence" id="pattern-now-confidence">—</span>
-      </header>
-      <div class="pattern-meta">
-        <div class="pattern-names">
-          <h3 class="pattern-name" id="pattern-now-name">Sem padrão claro</h3>
-          <p class="pattern-type" id="pattern-now-type">—</p>
-        </div>
-        <span class="pattern-tag neutral" id="pattern-now-bias">NEUTRO</span>
-      </div>
-      <div class="pattern-svg" id="pattern-now-svg">
-        <!-- SVG gerado via JS entra aqui -->
-      </div>
-    </article>
-  </div>
-</section>
-<!-- ================================================================== -->
               <!-- COMANDO FINAL / EXECUÇÃO -->
               <div class="panel-section">
                 <div class="panel-section-header">
@@ -1060,6 +843,11 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
         flow,
         checklist,
         pullback,
+        // --------- PADRÕES DE PRICE ACTION (AARON 9 / n8n PREENCHER) ---------
+        // panel.patterns.day.name   -> PADRÃO DO DIA (ex: 'Rompimento de máxima', 'Rompimento de mínima',
+        //                                     'Rejeição de resistência', 'Rejeição de suporte', etc.)
+        // panel.patterns.short.name -> PADRÃO DO MOMENTO / CURTO PRAZO (1–3 candles) (ex: 'Pullback na tendência',
+        //                                     'Rompimento falhado', 'Spike de exaustão', etc.)
         patterns: {},
         console: consoleObj,
         conclusion: { text: summary.conclusion },
@@ -1161,10 +949,22 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
       document.getElementById('structure-comment').textContent =
         structure.comment || document.getElementById('structure-comment').textContent;
 
-      // Forecast curto prazo (usado como fallback para desenho)
+      // ------------------------------------------------------------------
+      // ====== PADRÕES DE PRICE ACTION – PADRÃO DO DIA (INTRADAY) ======
+      // Aqui o AARON 9 / n8n deve mandar no JSON algo como:
+      //   panel.patterns.day = {
+      //     label: 'Padrão do dia',
+      //     name:  'Rompimento de resistência',   // ou 'Rompimento de máxima',
+      //                                          //    'Rompimento de mínima',
+      //                                          //    'Rejeição de resistência',
+      //                                          //    'Rejeição de suporte',
+      //     desc:  'Descrição do padrão do dia'
+      //   }
+      // Esse bloco desenha o padrão do DIA + mini zigzag no quadrado "Padrão provável (Intraday)".
+      // ------------------------------------------------------------------
       const fShort = forecast.short || {};
 
-      // Padrão intraday
+      // Padrão intraday / padrão do dia
       const pDay = patterns.day || {};
       document.getElementById('pattern-day-label').textContent =
         pDay.label || '—';
@@ -1177,7 +977,18 @@ Aguardando primeiro alerta do TradingView para montar o resumo completo do dia..
         pDay.name || pDay.label || summary.stateLabel || radar.title
       );
 
-      // Padrão curto prazo
+      // ------------------------------------------------------------------
+      // ====== PADRÕES DE PRICE ACTION – PADRÃO DO MOMENTO (1–3 CANDLES) ======
+      // Aqui o AARON 9 / n8n deve mandar no JSON:
+      //   panel.patterns.short = {
+      //     label: 'Padrão do momento',
+      //     name:  'Pullback na tendência',      // ou 'Rompimento falhado',
+      //                                         //    'Spike de exaustão',
+      //                                         //    'Rompimento de mínima',
+      //     desc:  'Descrição do padrão de curto prazo (1–3 candles)'
+      //   }
+      // Esse bloco controla o quadrado "Padrão provável (Curto Prazo)".
+      // ------------------------------------------------------------------
       const pShort = patterns.short || {};
       document.getElementById('pattern-short-label').textContent =
         pShort.label || '—';
