@@ -960,23 +960,60 @@
 
   <!-- PATTERN RADAR + CHECK PULLBACK -->
   <section class="decision-card">
-    <div class="decision-title">Pattern radar · estrutura</div>
+  <div class="decision-title">Pattern radar · estrutura</div>
 
-    <div class="pattern-layout" style="margin-top:6px;">
-      <!-- Intraday -->
-      <div class="pattern-box">
-        <div class="decision-title" style="margin-bottom:4px;">Intraday</div>
-        <div class="pattern-name">Retângulo / Range lateral</div>
-        <div>Preço oscilando entre suporte e resistência claros. Mercado em modo range.</div>
+  <div class="pattern-layout" style="margin-top:6px;">
+
+    <!-- PADRÃO DO DIA -->
+    <div class="pattern-box">
+      <div class="decision-title" style="margin-bottom:4px;">Padrão do dia</div>
+
+      <div class="pattern-canvas">
+        <!-- Desenho simbólico do padrão do dia (ex.: canal de baixa) -->
+        <svg class="pattern-svg" viewBox="0 0 100 36">
+          <polyline
+            points="0,10 20,16 40,20 60,24 80,28 100,32"
+            fill="none"
+            stroke="rgba(248,113,113,0.9)"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </div>
 
-      <!-- Curto prazo -->
-      <div class="pattern-box">
-        <div class="decision-title" style="margin-bottom:4px;">Curto prazo</div>
-        <div class="pattern-name">Canal de baixa suave</div>
-        <div>Sequência de topos e fundos descendentes com volatilidade moderada.</div>
+      <div class="pattern-name">Canal de baixa moderada</div>
+      <div>
+        Preço respeitando topos e fundos descendentes durante o dia. Favorece operações a favor da tendência de baixa.
       </div>
     </div>
+
+    <!-- PADRÃO DO MOMENTO (últimos 50 candles) -->
+    <div class="pattern-box">
+      <div class="decision-title" style="margin-bottom:4px;">Padrão do momento · últimos 50 candles</div>
+
+      <div class="pattern-canvas">
+        <!-- Desenho simbólico do padrão do momento (ex.: range / zigue-zague) -->
+        <svg class="pattern-svg" viewBox="0 0 100 36">
+          <polyline
+            points="0,26 15,10 30,24 45,12 60,22 75,8 90,20 100,14"
+            fill="none"
+            stroke="rgba(56,189,248,0.9)"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+
+      <div class="pattern-name">Range / consolidação ativa</div>
+      <div>
+        Mercado alternando entre suporte e resistência nos últimos candles. Melhor aguardar rompimento ou pullback bem claro.
+      </div>
+    </div>
+
+  </div>
+
 
     <!-- Check de pullback / respiro -->
     <div class="pullback-highlight">
