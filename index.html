@@ -609,6 +609,116 @@
     margin-top: 16px;
   }
 }
+/* ====== HERO STATUS (MODO CEGO) ====== */
+
+.status-hero {
+  background: radial-gradient(circle at top left, rgba(34,197,94,0.18), rgba(15,23,42,1));
+  border-radius: 20px;
+  border: 1px solid rgba(34,197,94,0.7);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+}
+
+.status-hero-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(148,163,184,0.9);
+}
+
+.status-hero-main {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #e5e7eb;
+}
+
+.status-hero-sub {
+  font-size: 0.8rem;
+  color: var(--text-soft, #9ca3af);
+}
+
+/* bolha da direita (GO FULL / WAIT etc.) */
+.status-hero-badge {
+  min-width: 88px;
+  text-align: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* cores por estado */
+.status-buy {
+  background: radial-gradient(circle at top left, rgba(34,197,94,0.22), #020617);
+  border-color: rgba(34,197,94,0.8);
+}
+
+.status-sell {
+  background: radial-gradient(circle at top left, rgba(248,113,113,0.22), #020617);
+  border-color: rgba(248,113,113,0.9);
+}
+
+.status-wait {
+  background: radial-gradient(circle at top left, rgba(234,179,8,0.22), #020617);
+  border-color: rgba(234,179,8,0.9);
+}
+
+.status-no-trade {
+  background: radial-gradient(circle at top left, rgba(148,163,184,0.22), #020617);
+  border-color: rgba(148,163,184,0.9);
+}
+
+/* cores da badge */
+.status-hero-badge.buy { background: rgba(34,197,94,0.18); color:#bbf7d0; }
+.status-hero-badge.sell { background: rgba(248,113,113,0.18); color:#fecaca; }
+.status-hero-badge.wait { background: rgba(234,179,8,0.18); color:#facc15; }
+.status-hero-badge.no-trade { background: rgba(148,163,184,0.18); color:#e5e7eb; }
+
+/* piscando leve para EXECUTAR AGORA */
+.blink-hero {
+  animation: heroPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes heroPulse {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(248,113,113,0.7); }
+  50%  { transform: scale(1.01); box-shadow: 0 0 0 12px rgba(248,113,113,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(248,113,113,0); }
+}
+
+/* ====== PATTERN DRAWINGS (PADRÃO DO DIA / MOMENTO) ====== */
+
+.pattern-canvas {
+  background: rgba(15,23,42,0.9);
+  border-radius: 10px;
+  padding: 4px 6px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(148,163,184,0.35);
+}
+
+.pattern-svg {
+  width: 100%;
+  height: 34px;
+}
+
+.prob-phrase {
+  font-size: 0.76rem;
+  margin-top: 4px;
+  color: var(--text-soft, #9ca3af);
+}
+
+.prob-phrase.favor {
+  color: #bbf7d0;
+}
+
+.prob-phrase.contra {
+  color: #fecaca;
+}
 
   </style>
 </head>
