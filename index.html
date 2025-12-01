@@ -1677,6 +1677,75 @@
       else side.textContent = '—';
     }
   }
+  // Atualiza os chips HH/HL/LH/LL a partir do JSON
+  function updateStructureUI(struct) {
+    const map = [
+      { key: 'hh', status: els.structureHHStatus, dot: els.structureHHDot },
+      { key: 'hl', status: els.structureHLStatus, dot: els.structureHLDot },
+      { key: 'lh', status: els.structureLHStatus, dot: els.structureLHDot },
+      { key: 'll', status: els.structureLLStatus, dot: els.structureLLDot },
+    ];
+
+    map.forEach(({ key, status, dot }) => {
+      if (!status || !dot) return;
+
+      let rawVal =
+        struct &&
+        (struct[key] ??
+          struct[key.toUpperCase()] ??
+          struct['recent_' + key] ??
+          struct['last_' + key]);
+
+      let label = 'off';
+      let active = false;
+
+      if (typeof rawVal === 'string') {
+        const v = rawVal.toLowerCase();
+        if (
+          v.includes('ativo') ||
+          v.includes('on') ||
+          v.includes('true') ||
+          v.includes('active')
+        ) {
+          active = true;
+        }
+        if (v) label = rawVal;
+      } else if (typeof rawVal === 'boolean') {
+        active = rawVal;
+        label = rawVal ? 'ativo' : 'off';
+      }
+
+      status.textContent = label;
+      if (active) dot.classList.add('on');
+      else dot.classList.remove('on');
+    });
+  }
+
+  // Atualiza o desenho do ZigZag, se o JSON mandar pontos
+  function updateStructureZigzag(panel) {
+    const poly = document.getElementById('structure-zigzag-poly');
+    if (!poly || !panel) return;
+
+    const pts =
+      panel.structure_points ||
+      panel.zigzag_points ||
+      panel.market_structure_points;
+
+    if (!Array.isArray(pts) || pts.length === 0) return;
+
+    const n = pts.length;
+    const step = n > 1 ? 100 / (n - 1) : 100;
+
+    const svgPoints = pts.map((v, i) => {
+      // esperamos valores normalizados 0–1; se vier outra coisa, ainda funciona
+      const yNorm = Math.max(0, Math.min(1, Number(v)));
+      const x = (step * i).toFixed(2);
+      const y = (30 - yNorm * 20).toFixed(2); // faixa 10–30 no SVG
+      return `${x},${y}`;
+    });
+
+    poly.setAttribute('points', svgPoints.join(' '));
+  }
 
   // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
   async function loadPanel(showSpinner) {
