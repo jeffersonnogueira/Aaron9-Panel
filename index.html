@@ -1561,8 +1561,7 @@ if (atrEls.calcBtn) {
         const res = await fetch(PANEL_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const panel = await res.json();
-         // ⬇️ NOVA LINHA, LOGO DEPOIS DO await res.json()
-    prefillAtrFromPanel(panel);
+         
         // Preenche ATR e preço de entrada automaticamente, se vierem no JSON
         prefillAtrFromPanel(panel);
 
