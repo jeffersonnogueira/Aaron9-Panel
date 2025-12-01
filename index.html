@@ -1911,9 +1911,10 @@
     }
   }
 
-  if (els.btnRefresh) {
+   if (els.btnRefresh) {
     els.btnRefresh.addEventListener('click', function () {
-      loadPanel(true);
+      loadPanel(true);       // atualiza n8n / painel
+      refreshTradingView();  // força reload do gráfico
     });
   }
 
