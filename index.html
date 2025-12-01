@@ -1295,387 +1295,419 @@
   </div>
 
   <script>
-    // ======= CONFIG PAINEL (JSON) =======
-    // Troque o URL se você alterar o webhook no n8n.
-    const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/18a1acd9-f615-4939-a6a2-5d45df087c49';
-    const REFRESH_MS = 60000; // 1 minuto
+  // ======= CONFIG PAINEL (JSON) =======
+  const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/18a1acd9-f615-4939-a6a2-5d45df087c49';
+  const REFRESH_MS = 60000; // 1 minuto
 
-    const els = {
-  errorBanner: document.getElementById('error-banner'),
-  btnRefresh: document.getElementById('btn-refresh'),
-  state: document.getElementById('state-pill'),
-  symbol: document.getElementById('symbol-label'),
-  timeframe: document.getElementById('timeframe-label'),
-  session: document.getElementById('session-label'),
-  lastUpdate: document.getElementById('last-update-label'),
-  flow: document.getElementById('flow-label'),
-  trendDayPill: document.getElementById('trend-day-pill'),
-  trendNowPill: document.getElementById('trend-now-pill'),
-  dirDayArrow: document.getElementById('direction-day-arrow'),
-  dirNowArrow: document.getElementById('direction-now-arrow'),
-  patternDayLabel: document.getElementById('pattern-day-label'),
-  patternDayDetail: document.getElementById('pattern-day-detail'),
-  patternNowLabel: document.getElementById('pattern-now-label'),
-  patternNowDetail: document.getElementById('pattern-now-detail'),
-  summary: document.getElementById('summary-text'),
-  riskPill: document.getElementById('risk-pill'),
-  riskText: document.getElementById('risk-text'),
-  contextText: document.getElementById('context-text'),
-  executionText: document.getElementById('execution-text'),
+  const els = {
+    errorBanner: document.getElementById('error-banner'),
+    btnRefresh: document.getElementById('btn-refresh'),
+    state: document.getElementById('state-pill'),
+    symbol: document.getElementById('symbol-label'),
+    timeframe: document.getElementById('timeframe-label'),
+    session: document.getElementById('session-label'),
+    lastUpdate: document.getElementById('last-update-label'),
+    flow: document.getElementById('flow-label'),
+    trendDayPill: document.getElementById('trend-day-pill'),
+    trendNowPill: document.getElementById('trend-now-pill'),
+    dirDayArrow: document.getElementById('direction-day-arrow'),
+    dirNowArrow: document.getElementById('direction-now-arrow'),
+    patternDayLabel: document.getElementById('pattern-day-label'),
+    patternDayDetail: document.getElementById('pattern-day-detail'),
+    patternNowLabel: document.getElementById('pattern-now-label'),
+    patternNowDetail: document.getElementById('pattern-now-detail'),
+    summary: document.getElementById('summary-text'),
+    riskPill: document.getElementById('risk-pill'),
+    riskText: document.getElementById('risk-text'),
+    contextText: document.getElementById('context-text'),
+    executionText: document.getElementById('execution-text'),
 
-  // HERO / MODO CEGO
-  heroBlock: document.getElementById('hero-block'),
-  heroMain: document.getElementById('hero-main'),
-  heroSub: document.getElementById('hero-sub'),
-  heroBadge: document.getElementById('hero-badge'),
-  heroModePill: document.getElementById('hero-mode-pill'),
-  heroSideLabel: document.getElementById('hero-side-label'),
-  heroSummary: document.getElementById('hero-summary-text'),
-};
-// ====== GERENCIADOR DE RISCO · ATR (FRONTEND) ======
-const atrEls = {
-  panel: document.getElementById('atr-risk-panel'),
-  toggleBtn: document.getElementById('atr-risk-toggle'),
-  body: document.getElementById('atr-risk-body'),
-  length: document.getElementById('atr-length-input'),
-  smoothing: document.getElementById('atr-smoothing-input'),
-  mult: document.getElementById('atr-multiplier-input'),
-  atrValue: document.getElementById('atr-value-input'),
-  capital: document.getElementById('atr-capital-input'),
-  entry: document.getElementById('atr-entry-input'),
-  riskPercent: document.getElementById('atr-riskpct-input'),
-  side: document.getElementById('atr-side-input'),
-  outDistance: document.getElementById('atr-stop-distance'),
-  outShares: document.getElementById('atr-shares'),
-  outRisk: document.getElementById('atr-risk-money'),
-  outReward2R: document.getElementById('atr-reward-2r'),
-  outReward3R: document.getElementById('atr-reward-3r'),
-  calcBtn: document.getElementById('atr-calc-btn'),
-};
+    // HERO / MODO CEGO
+    heroBlock: document.getElementById('hero-block'),
+    heroMain: document.getElementById('hero-main'),
+    heroSub: document.getElementById('hero-sub'),
+    heroBadge: document.getElementById('hero-badge'),
+    heroModePill: document.getElementById('hero-mode-pill'),
+    heroSideLabel: document.getElementById('hero-side-label'),
+    heroSummary: document.getElementById('hero-summary-text'),
+  };
 
-// abre / fecha o card
-if (atrEls.toggleBtn && atrEls.body) {
-  atrEls.toggleBtn.addEventListener('click', () => {
-    const hidden = atrEls.body.style.display === 'none' || atrEls.body.style.display === '';
-    atrEls.body.style.display = hidden ? 'grid' : 'none';
-    atrEls.toggleBtn.textContent = hidden ? 'Fechar' : 'Abrir';
-  });
-}
+  // ====== GERENCIADOR DE RISCO · ATR (FRONTEND) ======
+  const atrEls = {
+    panel: document.getElementById('atr-risk-panel'),
+    toggleBtn: document.getElementById('atr-risk-toggle'),
+    body: document.getElementById('atr-risk-body'),
+    length: document.getElementById('atr-length-input'),
+    smoothing: document.getElementById('atr-smoothing-input'),
+    mult: document.getElementById('atr-multiplier-input'),
+    atrValue: document.getElementById('atr-value-input'),
+    capital: document.getElementById('atr-capital-input'),
+    entry: document.getElementById('atr-entry-input'),
+    riskPercent: document.getElementById('atr-riskpct-input'),
+    side: document.getElementById('atr-side-input'),
+    outDistance: document.getElementById('atr-stop-distance'),
+    outShares: document.getElementById('atr-shares'),
+    outRisk: document.getElementById('atr-risk-money'),
+    outReward2R: document.getElementById('atr-reward-2r'),
+    outReward3R: document.getElementById('atr-reward-3r'),
+    calcBtn: document.getElementById('atr-calc-btn'),
+  };
 
-// cálculo do risco baseado no ATR digitado
-function updateAtrRisk() {
-  if (!atrEls.atrValue || !atrEls.capital || !atrEls.entry) return;
+  // abre / fecha o card
+  if (atrEls.toggleBtn && atrEls.body) {
+    atrEls.toggleBtn.addEventListener('click', () => {
+      const hidden = atrEls.body.style.display === 'none' || atrEls.body.style.display === '';
+      atrEls.body.style.display = hidden ? 'grid' : 'none';
+      atrEls.toggleBtn.textContent = hidden ? 'Fechar' : 'Abrir';
+    });
+  }
 
-  const atr = parseFloat(atrEls.atrValue.value || '0');   // ATR que você vê no indicador
-  const mult = parseFloat(atrEls.mult.value || '1');      // mesmo multiplier do script
-  const capital = parseFloat(atrEls.capital.value || '0'); 
-  const entry = parseFloat(atrEls.entry.value || '0');
-  const riskPct = parseFloat(atrEls.riskPercent.value || '1');
+  // cálculo do risco baseado no ATR digitado
+  function updateAtrRisk() {
+    if (!atrEls.atrValue || !atrEls.capital || !atrEls.entry) return;
 
-  if (!atr || !capital || !entry) return;
+    const atr = parseFloat(atrEls.atrValue.value || '0');
+    const mult = parseFloat(atrEls.mult.value || '1');
+    const capital = parseFloat(atrEls.capital.value || '0');
+    const entry = parseFloat(atrEls.entry.value || '0');
+    const riskPct = parseFloat(atrEls.riskPercent.value || '1');
 
-  const stopDist = atr * mult;             // distância do stop em dólares por ação
-  const riskPerShare = stopDist;
+    if (!atr || !capital || !entry) return;
 
-  const sharesByCapital = capital / entry;                         // limite pelo capital
-  const sharesByRisk = (capital * (riskPct / 100)) / riskPerShare; // limite pelo risco %
-  const shares = Math.min(sharesByCapital, sharesByRisk);          // usa o menor (mais seguro)
+    const stopDist = atr * mult;
+    const riskPerShare = stopDist;
 
-  const riskMoney = shares * riskPerShare;
-  const reward2R = riskMoney * 2;
-  const reward3R = riskMoney * 3;
+    const sharesByCapital = capital / entry;
+    const sharesByRisk = (capital * (riskPct / 100)) / riskPerShare;
+    const shares = Math.min(sharesByCapital, sharesByRisk);
 
-  if (atrEls.outDistance) atrEls.outDistance.textContent = stopDist.toFixed(2);
-  if (atrEls.outShares) atrEls.outShares.textContent = shares.toFixed(0);
-  if (atrEls.outRisk) atrEls.outRisk.textContent = '$ ' + riskMoney.toFixed(2);
-  if (atrEls.outReward2R) atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
-  if (atrEls.outReward3R) atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
-}
+    const riskMoney = shares * riskPerShare;
+    const reward2R = riskMoney * 2;
+    const reward3R = riskMoney * 3;
 
-if (atrEls.calcBtn) {
-  atrEls.calcBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    updateAtrRisk();
-  });
-}
-    // ====== Preenche ATR e Preço de Entrada a partir do painel JSON ======
-    function prefillAtrFromPanel(panel) {
-      if (!panel || !atrEls) return;
+    if (atrEls.outDistance) atrEls.outDistance.textContent = stopDist.toFixed(2);
+    if (atrEls.outShares) atrEls.outShares.textContent = shares.toFixed(0);
+    if (atrEls.outRisk) atrEls.outRisk.textContent = '$ ' + riskMoney.toFixed(2);
+    if (atrEls.outReward2R) atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
+    if (atrEls.outReward3R) atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
+  }
 
-      // BLOCO DE ATR (espera panel.atr ou panel.atr_info)
-      const atrBlock = panel.atr || panel.atr_info;
-      if (atrBlock) {
-        if (atrBlock.value != null && atrEls.atrValue) {
-          atrEls.atrValue.value = Number(atrBlock.value).toFixed(2);
-        }
-        if (atrBlock.length != null && atrEls.length) {
-          atrEls.length.value = atrBlock.length;
-        }
-        if (atrBlock.smoothing && atrEls.smoothing) {
-          atrEls.smoothing.value = atrBlock.smoothing; // ex: "RMA"
-        }
-        if (atrBlock.multiplier != null && atrEls.mult) {
-          atrEls.mult.value = atrBlock.multiplier;
-        }
-      }
+  if (atrEls.calcBtn) {
+    atrEls.calcBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateAtrRisk();
+    });
+  }
 
-      // PREÇO DE ENTRADA (várias opções de nome pra ficar flexível)
-      let entry =
-        panel.entry_price ||
-        panel.reference_price ||
-        panel.price_now ||
-        panel.last_price;
+  // Preenche ATR + preço de entrada a partir do JSON (panel + raw)
+  function prefillAtrFromPanel(panel, raw) {
+    if (!panel || !atrEls) return;
 
-      if (entry != null && atrEls.entry) {
-        atrEls.entry.value = Number(entry).toFixed(2);
-      }
+    const atrBlock = panel.atr || panel.atr_info;
+    const indicators = raw && raw.indicators ? raw.indicators : {};
+
+    // ATR
+    if (atrBlock && atrBlock.value != null && atrEls.atrValue) {
+      atrEls.atrValue.value = Number(atrBlock.value).toFixed(2);
+    } else if (typeof indicators.atr === 'number' && atrEls.atrValue) {
+      atrEls.atrValue.value = indicators.atr.toFixed(2);
     }
 
-
-    function safeText(el, value, fallback = '—') {
-      if (!el) return;
-      el.textContent =
-        value === undefined || value === null || value === '' ? fallback : String(value);
+    if (atrBlock && atrBlock.length != null && atrEls.length) {
+      atrEls.length.value = atrBlock.length;
+    }
+    if (atrBlock && atrBlock.smoothing && atrEls.smoothing) {
+      atrEls.smoothing.value = atrBlock.smoothing;
+    }
+    if (atrBlock && atrBlock.multiplier != null && atrEls.mult) {
+      atrEls.mult.value = atrBlock.multiplier;
     }
 
-    function setArrow(el, dir) {
-      if (!el) return;
-      el.classList.remove('arrow-up', 'arrow-down');
-      let symbol = '↕';
-      if (dir === 'up' || dir === 'UP' || dir === 'alta') {
-        el.classList.add('arrow-up');
-        symbol = '↑';
-      } else if (dir === 'down' || dir === 'DOWN' || dir === 'baixa') {
-        el.classList.add('arrow-down');
-        symbol = '↓';
-      }
-      el.textContent = symbol;
-    }
+    // PREÇO DE ENTRADA
+    let entry =
+      panel.entry_price ||
+      panel.reference_price ||
+      panel.price_now ||
+      panel.last_price ||
+      (raw && raw.candle && raw.candle.close);
 
-    function setPillTrend(el, dir, label) {
-      if (!el) return;
-      el.classList.remove('pill-green', 'pill-red');
-      let txt = label || 'Neutro';
-      if (dir === 'up' || dir === 'UP' || dir === 'alta') {
-        el.classList.add('pill-green');
-        if (!label) txt = 'Fluxo de alta';
-      } else if (dir === 'down' || dir === 'DOWN' || dir === 'baixa') {
-        el.classList.add('pill-red');
-        if (!label) txt = 'Fluxo de baixa';
-      }
+    if (entry != null && atrEls.entry) {
+      atrEls.entry.value = Number(entry).toFixed(2);
+    }
+  }
+
+  function safeText(el, value, fallback = '—') {
+    if (!el) return;
+    el.textContent =
+      value === undefined || value === null || value === '' ? fallback : String(value);
+  }
+
+  function setArrow(el, dir) {
+    if (!el) return;
+    el.classList.remove('arrow-up', 'arrow-down');
+    let symbol = '↕';
+    if (dir === 'up' || dir === 'UP' || dir === 'alta' || dir === 'ALTA') {
+      el.classList.add('arrow-up');
+      symbol = '↑';
+    } else if (dir === 'down' || dir === 'DOWN' || dir === 'baixa' || dir === 'BAIXA') {
+      el.classList.add('arrow-down');
+      symbol = '↓';
+    }
+    el.textContent = symbol;
+  }
+
+  function setPillTrend(el, dir, label) {
+    if (!el) return;
+    el.classList.remove('pill-green', 'pill-red');
+    let txt = label || 'Neutro';
+
+    if (!dir) {
       el.textContent = txt;
+      return;
     }
 
-       function setRiskPill(level) {
-      if (!els.riskPill) return;
-      const el = els.riskPill;
-      el.classList.remove('pill-green', 'pill-red');
-      let txt = 'Neutro';
+    const d = String(dir).toLowerCase();
 
-      if (!level) {
-        el.textContent = txt;
-        return;
-      }
+    if (d.includes('alta') || d === 'up') {
+      el.classList.add('pill-green');
+      if (!label) txt = 'Fluxo de alta';
+    } else if (d.includes('baixa') || d === 'down') {
+      el.classList.add('pill-red');
+      if (!label) txt = 'Fluxo de baixa';
+    }
 
-      const l = String(level).toLowerCase();
+    el.textContent = txt;
+  }
 
-      if (l.includes('alto') || l.includes('high')) {
-        el.classList.add('pill-red');
-        txt = 'Risco Alto';
-      } else if (l.includes('baixo') || l.includes('low')) {
-        el.classList.add('pill-green');
-        txt = 'Risco Baixo';
+  function setRiskPill(level) {
+    if (!els.riskPill) return;
+    const el = els.riskPill;
+    el.classList.remove('pill-green', 'pill-red');
+    let txt = 'Neutro';
+
+    if (!level) {
+      el.textContent = txt;
+      return;
+    }
+
+    const l = String(level).toLowerCase();
+
+    if (l.includes('alto') || l.includes('high')) {
+      el.classList.add('pill-red');
+      txt = 'Risco Alto';
+    } else if (l.includes('baixo') || l.includes('low')) {
+      el.classList.add('pill-green');
+      txt = 'Risco Baixo';
+    } else {
+      txt = level;
+    }
+
+    el.textContent = txt;
+  }
+
+  function applyHeroDecision(executionText, summaryText) {
+    if (!els.heroBlock) return;
+
+    const block = els.heroBlock;
+    const badge = els.heroBadge;
+    const pill = els.heroModePill;
+    const main = els.heroMain;
+    const sub = els.heroSub;
+    const side = els.heroSideLabel;
+    const heroSummary = els.heroSummary;
+
+    const baseText = executionText || 'AGUARDAR / OBSERVAR';
+    const t = baseText.toLowerCase();
+
+    let mode = 'wait';
+    if (t.includes('compra') || t.includes('buy')) mode = 'buy';
+    else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
+
+    block.classList.remove('status-buy', 'status-sell', 'status-wait');
+    if (mode === 'buy') block.classList.add('status-buy');
+    else if (mode === 'sell') block.classList.add('status-sell');
+    else block.classList.add('status-wait');
+
+    if (badge) {
+      badge.textContent = mode === 'wait' ? 'WAIT' : 'GO FULL';
+    }
+
+    if (pill) {
+      pill.classList.remove('go-full', 'wait', 'no-trade', 'scalp');
+      if (mode === 'wait') {
+        pill.classList.add('wait');
+        pill.textContent = 'WAIT';
       } else {
-        txt = level;
+        pill.classList.add('go-full');
+        pill.textContent = 'GO FULL';
       }
-
-      el.textContent = txt;
     }
-    function applyHeroDecision(executionText, summaryText) {
-      if (!els.heroBlock) return;
 
-      const block = els.heroBlock;
-      const badge = els.heroBadge;
-      const pill = els.heroModePill;
-      const main = els.heroMain;
-      const sub = els.heroSub;
-      const side = els.heroSideLabel;
-      const heroSummary = els.heroSummary;
+    if (main) main.textContent = baseText.toUpperCase();
 
-      const baseText = executionText || 'AGUARDAR / OBSERVAR';
-      const t = baseText.toLowerCase();
+    const fallbackSummary =
+      'Aguardando leitura completa do painel para decidir.';
+    const finalSummary = summaryText || fallbackSummary;
 
-      // Detecta tipo: COMPRA / VENDA / WAIT
-      let mode = 'wait';
-      if (t.includes('compra') || t.includes('buy')) mode = 'buy';
-      else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
+    if (sub) sub.textContent = finalSummary;
+    if (heroSummary) heroSummary.textContent = finalSummary;
 
-      // Cor do bloco grande
-      block.classList.remove('status-buy', 'status-sell', 'status-wait');
-      if (mode === 'buy') block.classList.add('status-buy');
-      else if (mode === 'sell') block.classList.add('status-sell');
-      else block.classList.add('status-wait');
+    if (side) {
+      if (mode === 'buy') side.textContent = 'COMPRA';
+      else if (mode === 'sell') side.textContent = 'VENDA';
+      else side.textContent = '—';
+    }
+  }
 
-      // Badge do lado direito (GO FULL / WAIT)
-      if (badge) {
-        badge.textContent = mode === 'wait' ? 'WAIT' : 'GO FULL';
-      }
+  // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
+  async function loadPanel(showSpinner) {
+    if (!PANEL_URL) return;
+    try {
+      if (els.errorBanner) els.errorBanner.style.display = 'none';
+      if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
 
-      // Pílula pequena (card Resumo institucional)
-      if (pill) {
-        pill.classList.remove('go-full', 'wait', 'no-trade', 'scalp');
-        if (mode === 'wait') {
-          pill.classList.add('wait');
-          pill.textContent = 'WAIT';
+      const res = await fetch(PANEL_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      const data = await res.json();
+      const panel = data.panel || data;   // <- AQUI: pega o objeto "panel"
+      const raw = data.raw || {};         // <- AQUI: infos brutas (symbol, candle, atr...)
+
+      // Preenche ATR + preço de entrada
+      prefillAtrFromPanel(panel, raw);
+
+      const statusGeral = panel.status_geral || {};
+      const aiAdvisor = panel.ai_advisor || {};
+      const patterns = panel.patterns || {};
+      const patternDay = patterns.day || {};
+      const patternShort = patterns.short || {};
+      const meta = panel.meta || {};
+
+      // Cabeçalho
+      safeText(els.symbol, panel.symbol || raw.symbol || '—');
+      safeText(els.timeframe, panel.timeframe || raw.timeframe || panel.timeframe_label || '—');
+      safeText(els.session, panel.session || raw.session || panel.session_label || '—');
+
+      const micro = panel.microcontexto || {};
+      const flowLabel = panel.flow_label || panel.flow || micro.direcao;
+      safeText(els.flow, flowLabel || 'Neutro');
+
+      const stateText =
+        (panel.status && (panel.status.label || panel.status.state)) ||
+        statusGeral.tendencia ||
+        'ONLINE';
+      safeText(els.state, stateText);
+
+      const ts = meta.panel_ts || meta.timestamp || panel.timestamp || raw.time;
+      if (els.lastUpdate) {
+        if (!ts) {
+          els.lastUpdate.textContent = 'sem timestamp';
         } else {
-          pill.classList.add('go-full');
-          pill.textContent = 'GO FULL';
-        }
-      }
-
-      // Texto grande EXECUTAR XXX
-      if (main) main.textContent = baseText.toUpperCase();
-
-      const fallbackSummary =
-        'Aguardando leitura completa do painel para decidir.';
-      const finalSummary = summaryText || fallbackSummary;
-
-      if (sub) sub.textContent = finalSummary;
-      if (heroSummary) heroSummary.textContent = finalSummary;
-
-      // Label COMPRA / VENDA / —
-      if (side) {
-        if (mode === 'buy') side.textContent = 'COMPRA';
-        else if (mode === 'sell') side.textContent = 'VENDA';
-        else side.textContent = '—';
-      }
-    }
-
-
-    async function loadPanel(showSpinner) {
-      if (!PANEL_URL) return;
-      try {
-        if (els.errorBanner) els.errorBanner.style.display = 'none';
-        if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
-
-        const res = await fetch(PANEL_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const panel = await res.json();
-         
-        // Preenche ATR e preço de entrada automaticamente, se vierem no JSON
-        prefillAtrFromPanel(panel);
-
-        const {
-          symbol,
-          timeframe,
-          session,
-          flow_label,
-          status,
-          meta,
-          pattern_day,
-          pattern_day_detail,
-          pattern_now,
-          pattern_now_detail,
-          direction_day,
-          direction_now,
-          summary,
-          risk_level,
-          risk_comment,
-          context_comment,
-          execution_plan,
-        } = panel || {};
-
-        safeText(els.symbol, symbol);
-        safeText(els.timeframe, timeframe || panel?.timeframe_label);
-        safeText(els.session, session || panel?.session_label);
-        safeText(els.flow, flow_label || panel?.flow || 'Neutro');
-
-        const stateText = status?.label || status?.state || 'ONLINE';
-        safeText(els.state, stateText);
-
-        const ts = meta?.panel_ts || meta?.timestamp || panel?.timestamp;
-        if (els.lastUpdate) {
-          if (!ts) {
-            els.lastUpdate.textContent = 'sem timestamp';
-          } else {
-            try {
-              const d =
-                typeof ts === 'number'
-                  ? new Date(ts)
-                  : new Date(String(ts));
-              els.lastUpdate.textContent = d.toLocaleString('pt-BR', {
-                timeZone: 'America/Denver',
-              });
-            } catch (e) {
-              els.lastUpdate.textContent = String(ts);
-            }
+          try {
+            const d =
+              typeof ts === 'number'
+                ? new Date(ts)
+                : new Date(String(ts));
+            els.lastUpdate.textContent = d.toLocaleString('pt-BR', {
+              timeZone: 'America/Denver',
+            });
+          } catch (e) {
+            els.lastUpdate.textContent = String(ts);
           }
         }
-
-        // Padrões / Direções
-        safeText(els.patternDayLabel, pattern_day || panel?.pattern_of_day || '-');
-        safeText(
-          els.patternDayDetail,
-          pattern_day_detail || panel?.pattern_of_day_detail || '—'
-        );
-        safeText(els.patternNowLabel, pattern_now || panel?.pattern_of_moment || '-');
-        safeText(
-          els.patternNowDetail,
-          pattern_now_detail || panel?.pattern_of_moment_detail || '—'
-        );
-
-        setArrow(els.dirDayArrow, direction_day || panel?.direction_of_day);
-        setArrow(els.dirNowArrow, direction_now || panel?.direction_of_moment);
-
-        setPillTrend(
-          els.trendDayPill,
-          direction_day || panel?.direction_of_day,
-          panel?.trend_day_label
-        );
-        setPillTrend(
-          els.trendNowPill,
-          direction_now || panel?.direction_of_moment,
-          panel?.trend_now_label
-        );
-
-               // monta os textos finais a partir do próprio painel
-        const finalSummary     = summary        || '—';
-        const finalRiskLevel   = risk_level     || '—';
-        const finalRiskComment = risk_comment   || '—';
-        const finalContext     = context_comment || '—';
-        const finalExecution   = execution_plan || '—';
-
-        // preenche os campos normais do painel
-        safeText(els.summary, finalSummary);
-        setRiskPill(finalRiskLevel);
-        safeText(els.riskText, finalRiskComment);
-        safeText(els.contextText, finalContext);
-        safeText(els.executionText, finalExecution);
-
-        // liga o MODO CEGO (HERO) usando o mesmo texto de execução + resumo
-        applyHeroDecision(finalExecution, finalSummary);
-
-
-      } catch (err) {
-        console.error('Erro ao carregar painel', err);
-        if (els.errorBanner) {
-          els.errorBanner.style.display = 'block';
-          els.errorBanner.innerHTML =
-            '<strong>Erro ao carregar painel.</strong> Verifique o webhook "aaron9-json" no n8n e tente novamente.';
-        }
-      } finally {
-        if (els.btnRefresh) els.btnRefresh.disabled = false;
       }
-    }
 
-    if (els.btnRefresh) {
-      els.btnRefresh.addEventListener('click', function () {
-        loadPanel(true);
-      });
-    }
+      // Padrões / Direções
+      const patternDayName =
+        panel.pattern_day ||
+        panel.pattern_of_day ||
+        patternDay.name;
+      const patternDayDesc =
+        panel.pattern_day_detail ||
+        panel.pattern_of_day_detail ||
+        patternDay.desc;
 
-    loadPanel(false);
-    setInterval(loadPanel, REFRESH_MS);
-  </script>
+      const patternNowName =
+        panel.pattern_now ||
+        panel.pattern_of_moment ||
+        patternShort.name;
+      const patternNowDesc =
+        panel.pattern_now_detail ||
+        panel.pattern_of_moment_detail ||
+        patternShort.desc;
+
+      safeText(els.patternDayLabel, patternDayName || '-');
+      safeText(els.patternDayDetail, patternDayDesc || '—');
+      safeText(els.patternNowLabel, patternNowName || '-');
+      safeText(els.patternNowDetail, patternNowDesc || '—');
+
+      setArrow(els.dirDayArrow, panel.direction_day || panel.direction_of_day || micro.direcao);
+      setArrow(els.dirNowArrow, panel.direction_now || panel.direction_of_moment || micro.direcao);
+
+      setPillTrend(
+        els.trendDayPill,
+        panel.direction_day || panel.direction_of_day || micro.direcao,
+        panel.trend_day_label
+      );
+      setPillTrend(
+        els.trendNowPill,
+        panel.direction_now || panel.direction_of_moment || micro.direcao,
+        panel.trend_now_label
+      );
+
+      // Textos principais
+      const finalSummary =
+        panel.summary ||
+        panel.painel_terminal ||
+        '—';
+
+      const riskLevel =
+        panel.risk_level ||
+        aiAdvisor.risco;
+
+      const riskComment =
+        panel.risk_comment ||
+        aiAdvisor.motivo ||
+        '—';
+
+      const contextComment =
+        panel.context_comment ||
+        panel.painel_terminal ||
+        '—';
+
+      const executionPlan =
+        panel.execution_plan ||
+        '—';
+
+      safeText(els.summary, finalSummary);
+      setRiskPill(riskLevel);
+      safeText(els.riskText, riskComment);
+      safeText(els.contextText, contextComment);
+      safeText(els.executionText, executionPlan);
+
+      // MODO CEGO usa os mesmos textos
+      applyHeroDecision(executionPlan, finalSummary);
+
+    } catch (err) {
+      console.error('Erro ao carregar painel', err);
+      if (els.errorBanner) {
+        els.errorBanner.style.display = 'block';
+        els.errorBanner.innerHTML =
+          '<strong>Erro ao carregar painel.</strong> Verifique o webhook "aaron9-json" no n8n e tente novamente.';
+      }
+    } finally {
+      if (els.btnRefresh) els.btnRefresh.disabled = false;
+    }
+  }
+
+  if (els.btnRefresh) {
+    els.btnRefresh.addEventListener('click', function () {
+      loadPanel(true);
+    });
+  }
+
+  loadPanel(false);
+  setInterval(loadPanel, REFRESH_MS);
+</script>
 </body>
 </html>
