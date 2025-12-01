@@ -731,6 +731,79 @@
 .prob-phrase.contra {
   color: #fecaca;
 }
+    /* ====== ESTRUTURA RECENTE — HH / HL / LH / LL ====== */
+
+.structure-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.structure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.structure-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: rgba(15, 23, 42, 0.95);
+  font-size: 0.78rem;
+}
+
+.structure-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-soft);
+}
+
+.structure-status {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.structure-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #4b5563;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 1);
+  margin-left: 6px;
+}
+
+.structure-dot.on {
+  background: #fb7185;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.85);
+}
+
+/* ZigZag / Market Structure */
+
+.structure-zigzag-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+}
+
+.structure-zigzag-box {
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.96);
+  padding: 4px 6px;
+}
+
+.structure-zigzag-svg {
+  width: 100%;
+  height: 40px;
+}
+
 /* ====== GERENCIADOR DE RISCO · ATR ====== */
 
 .risk-card {
