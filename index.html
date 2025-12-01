@@ -25,17 +25,25 @@
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      background: radial-gradient(circle at top, #020617 0, #020617 45%, #000 100%);
-      color: var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-    }
+  margin: 0;
+  padding: 0;
+  background: #020617;
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* wrapper principal da página */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;  /* fica encostado à esquerda */
+}
+
+.app-inner {
+  width: 100%;
+  max-width: 1680px;
+  margin: 16px 24px 32px;       /* margem só pra não grudar na borda */
+}
 
     .page {
       flex: 1;
