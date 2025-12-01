@@ -1459,6 +1459,65 @@ if (atrEls.calcBtn) {
 
       el.textContent = txt;
     }
+    function applyHeroDecision(executionText, summaryText) {
+      if (!els.heroBlock) return;
+
+      const block = els.heroBlock;
+      const badge = els.heroBadge;
+      const pill = els.heroModePill;
+      const main = els.heroMain;
+      const sub = els.heroSub;
+      const side = els.heroSideLabel;
+      const heroSummary = els.heroSummary;
+
+      const baseText = executionText || 'AGUARDAR / OBSERVAR';
+      const t = baseText.toLowerCase();
+
+      // Detecta tipo: COMPRA / VENDA / WAIT
+      let mode = 'wait';
+      if (t.includes('compra') || t.includes('buy')) mode = 'buy';
+      else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
+
+      // Cor do bloco grande
+      block.classList.remove('status-buy', 'status-sell', 'status-wait');
+      if (mode === 'buy') block.classList.add('status-buy');
+      else if (mode === 'sell') block.classList.add('status-sell');
+      else block.classList.add('status-wait');
+
+      // Badge do lado direito (GO FULL / WAIT)
+      if (badge) {
+        badge.textContent = mode === 'wait' ? 'WAIT' : 'GO FULL';
+      }
+
+      // Pílula pequena (card Resumo institucional)
+      if (pill) {
+        pill.classList.remove('go-full', 'wait', 'no-trade', 'scalp');
+        if (mode === 'wait') {
+          pill.classList.add('wait');
+          pill.textContent = 'WAIT';
+        } else {
+          pill.classList.add('go-full');
+          pill.textContent = 'GO FULL';
+        }
+      }
+
+      // Texto grande EXECUTAR XXX
+      if (main) main.textContent = baseText.toUpperCase();
+
+      const fallbackSummary =
+        'Aguardando leitura completa do painel para decidir.';
+      const finalSummary = summaryText || fallbackSummary;
+
+      if (sub) sub.textContent = finalSummary;
+      if (heroSummary) heroSummary.textContent = finalSummary;
+
+      // Label COMPRA / VENDA / —
+      if (side) {
+        if (mode === 'buy') side.textContent = 'COMPRA';
+        else if (mode === 'sell') side.textContent = 'VENDA';
+        else side.textContent = '—';
+      }
+    }
 
 
     async function loadPanel(showSpinner) {
