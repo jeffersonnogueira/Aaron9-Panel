@@ -1842,6 +1842,16 @@
         panel.direction_now || panel.direction_of_moment || micro.direcao,
         panel.trend_now_label
       );
+      // Estrutura recente: HH / HL / LH / LL
+      const structureRecent =
+        panel.structure_recent ||
+        panel.recent_structure ||
+        panel.market_structure ||
+        (panel.structure && panel.structure.recent) ||
+        null;
+
+      updateStructureUI(structureRecent);
+      updateStructureZigzag(panel);
 
       // Textos principais
       const finalSummary =
