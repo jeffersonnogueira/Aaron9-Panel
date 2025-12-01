@@ -1324,11 +1324,23 @@
           panel?.trend_now_label
         );
 
-        safeText(els.summary, summary || panel?.summary || '—');
-        setRiskPill(risk_level || panel?.risk_level);
-        safeText(els.riskText, risk_comment || panel?.risk_comment || '—');
-        safeText(els.contextText, context_comment || panel?.context_comment || '—');
-        safeText(els.executionText, execution_plan || panel?.execution_plan || '—');
+       // monta os textos finais (com fallback no panel2)
+const finalSummary      = summary       || panel2.summary       || '-';
+const finalRiskLevel    = risk_level    || panel2.risk_level    || '-';
+const finalRiskComment  = risk_comment  || panel2.risk_comment  || '-';
+const finalContext      = context_comment || panel2.context_comment || '-';
+const finalExecution    = execution_plan  || panel2.execution_plan  || '-';
+
+// preenche os campos normais do painel (como já era antes)
+safeText(els.summary, finalSummary);
+setRiskPill(finalRiskLevel);
+safeText(els.riskText, finalRiskComment);
+safeText(els.contextText, finalContext);
+safeText(els.executionText, finalExecution);
+
+// 🔗 aqui ligamos o MODO CEGO (HERO) usando o mesmo texto de execução + resumo
+applyHeroDecision(finalExecution, finalSummary);
+
       } catch (err) {
         console.error('Erro ao carregar painel', err);
         if (els.errorBanner) {
