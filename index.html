@@ -1089,6 +1089,76 @@
             </div>
           </div>
         </div>
+                  <!-- ===== NOVO: Estrutura recente + Market Structure ===== -->
+          <div class="panel-section">
+            <div class="panel-section-header">
+              <div class="panel-section-title">Estrutura recente</div>
+            </div>
+
+            <div class="structure-wrapper">
+              <!-- Chips HH / HL / LH / LL -->
+              <div class="structure-grid">
+                <div class="structure-chip" id="structure-hh">
+                  <span class="structure-label">HH</span>
+                  <span>
+                    <span class="structure-status" id="structure-hh-status">off</span>
+                    <span class="structure-dot" id="structure-hh-dot"></span>
+                  </span>
+                </div>
+
+                <div class="structure-chip" id="structure-hl">
+                  <span class="structure-label">HL</span>
+                  <span>
+                    <span class="structure-status" id="structure-hl-status">off</span>
+                    <span class="structure-dot" id="structure-hl-dot"></span>
+                  </span>
+                </div>
+
+                <div class="structure-chip" id="structure-lh">
+                  <span class="structure-label">LH</span>
+                  <span>
+                    <span class="structure-status" id="structure-lh-status">ativo</span>
+                    <span class="structure-dot on" id="structure-lh-dot"></span>
+                  </span>
+                </div>
+
+                <div class="structure-chip" id="structure-ll">
+                  <span class="structure-label">LL</span>
+                  <span>
+                    <span class="structure-status" id="structure-ll-status">ativo</span>
+                    <span class="structure-dot on" id="structure-ll-dot"></span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- ZigZag / Market Structure -->
+              <div class="structure-zigzag">
+                <div class="structure-zigzag-title">
+                  Market structure · últimos candles
+                </div>
+                <div class="structure-zigzag-box">
+                  <svg
+                    id="structure-zigzag-svg"
+                    class="structure-zigzag-svg"
+                    viewBox="0 0 100 40"
+                    preserveAspectRatio="none"
+                  >
+                    <polyline
+                      id="structure-zigzag-poly"
+                      points="0,30 15,12 30,26 45,10 60,24 75,8 90,22 100,14"
+                      fill="none"
+                      stroke="rgba(248,113,113,0.9)"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ===== /Estrutura recente ===== -->
+
       </section>
 
       <!-- ====== COLUNA DIREITA: RESUMO + RISCO ====== -->
