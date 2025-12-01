@@ -1401,525 +1401,504 @@
   </div>     <!-- /.app-shell -->
 
   <script>
-  // ======= CONFIG PAINEL (JSON) =======
-  const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/18a1acd9-f615-4939-a6a2-5d45df087c49';
-  const REFRESH_MS = 60000; // 1 minuto
+// ======= CONFIG PAINEL (JSON) =======
+const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/18a1acd9-f615-4939-a6a2-5d45df087c49';
+const REFRESH_MS = 60000; // 1 minuto
 
-  const els = {
-    errorBanner: document.getElementById('error-banner'),
-    btnRefresh: document.getElementById('btn-refresh'),
-    state: document.getElementById('state-pill'),
-    symbol: document.getElementById('symbol-label'),
-    timeframe: document.getElementById('timeframe-label'),
-    session: document.getElementById('session-label'),
-    lastUpdate: document.getElementById('last-update-label'),
-    flow: document.getElementById('flow-label'),
-    trendDayPill: document.getElementById('trend-day-pill'),
-    trendNowPill: document.getElementById('trend-now-pill'),
-    dirDayArrow: document.getElementById('direction-day-arrow'),
-    dirNowArrow: document.getElementById('direction-now-arrow'),
-    patternDayLabel: document.getElementById('pattern-day-label'),
-    patternDayDetail: document.getElementById('pattern-day-detail'),
-    patternNowLabel: document.getElementById('pattern-now-label'),
-    patternNowDetail: document.getElementById('pattern-now-detail'),
-    summary: document.getElementById('summary-text'),
-    riskPill: document.getElementById('risk-pill'),
-    riskText: document.getElementById('risk-text'),
-    contextText: document.getElementById('context-text'),
-    executionText: document.getElementById('execution-text'),
+const els = {
+  errorBanner: document.getElementById('error-banner'),
+  btnRefresh: document.getElementById('btn-refresh'),
+  state: document.getElementById('state-pill'),
+  symbol: document.getElementById('symbol-label'),
+  timeframe: document.getElementById('timeframe-label'),
+  session: document.getElementById('session-label'),
+  lastUpdate: document.getElementById('last-update-label'),
+  flow: document.getElementById('flow-label'),
+  trendDayPill: document.getElementById('trend-day-pill'),
+  trendNowPill: document.getElementById('trend-now-pill'),
+  dirDayArrow: document.getElementById('direction-day-arrow'),
+  dirNowArrow: document.getElementById('direction-now-arrow'),
+  patternDayLabel: document.getElementById('pattern-day-label'),
+  patternDayDetail: document.getElementById('pattern-day-detail'),
+  patternNowLabel: document.getElementById('pattern-now-label'),
+  patternNowDetail: document.getElementById('pattern-now-detail'),
+  summary: document.getElementById('summary-text'),
+  riskPill: document.getElementById('risk-pill'),
+  riskText: document.getElementById('risk-text'),
+  contextText: document.getElementById('context-text'),
+  executionText: document.getElementById('execution-text'),
 
-    // HERO / MODO CEGO
-    heroBlock: document.getElementById('hero-block'),
-    heroMain: document.getElementById('hero-main'),
-    heroSub: document.getElementById('hero-sub'),
-    heroBadge: document.getElementById('hero-badge'),
-    heroModePill: document.getElementById('hero-mode-pill'),
-    heroSideLabel: document.getElementById('hero-side-label'),
-    heroSummary: document.getElementById('hero-summary-text'),
-        // Estrutura recente (HH / HL / LH / LL)
-    structureHHStatus: document.getElementById('structure-hh-status'),
-    structureHLStatus: document.getElementById('structure-hl-status'),
-    structureLHStatus: document.getElementById('structure-lh-status'),
-    structureLLStatus: document.getElementById('structure-ll-status'),
-    structureHHDot: document.getElementById('structure-hh-dot'),
-    structureHLDot: document.getElementById('structure-hl-dot'),
-    structureLHDot: document.getElementById('structure-lh-dot'),
-    structureLLDot: document.getElementById('structure-ll-dot'),
+  // HERO / MODO CEGO
+  heroBlock: document.getElementById('hero-block'),
+  heroMain: document.getElementById('hero-main'),
+  heroSub: document.getElementById('hero-sub'),
+  heroBadge: document.getElementById('hero-badge'),
+  heroModePill: document.getElementById('hero-mode-pill'),
+  heroSideLabel: document.getElementById('hero-side-label'),
+  heroSummary: document.getElementById('hero-summary-text'),
 
-  };
+  // Estrutura recente (HH / HL / LH / LL)
+  structureHHStatus: document.getElementById('structure-hh-status'),
+  structureHLStatus: document.getElementById('structure-hl-status'),
+  structureLHStatus: document.getElementById('structure-lh-status'),
+  structureLLStatus: document.getElementById('structure-ll-status'),
+  structureHHDot: document.getElementById('structure-hh-dot'),
+  structureHLDot: document.getElementById('structure-hl-dot'),
+  structureLHDot: document.getElementById('structure-lh-dot'),
+  structureLLDot: document.getElementById('structure-ll-dot'),
+};
 
-  // ====== GERENCIADOR DE RISCO · ATR (FRONTEND) ======
-  const atrEls = {
-    panel: document.getElementById('atr-risk-panel'),
-    toggleBtn: document.getElementById('atr-risk-toggle'),
-    body: document.getElementById('atr-risk-body'),
-    length: document.getElementById('atr-length-input'),
-    smoothing: document.getElementById('atr-smoothing-input'),
-    mult: document.getElementById('atr-multiplier-input'),
-    atrValue: document.getElementById('atr-value-input'),
-    capital: document.getElementById('atr-capital-input'),
-    entry: document.getElementById('atr-entry-input'),
-    riskPercent: document.getElementById('atr-riskpct-input'),
-    side: document.getElementById('atr-side-input'),
-    outDistance: document.getElementById('atr-stop-distance'),
-    outShares: document.getElementById('atr-shares'),
-    outRisk: document.getElementById('atr-risk-money'),
-    outReward2R: document.getElementById('atr-reward-2r'),
-    outReward3R: document.getElementById('atr-reward-3r'),
-    calcBtn: document.getElementById('atr-calc-btn'),
-  };
+// ====== GERENCIADOR DE RISCO · ATR (FRONTEND) ======
+const atrEls = {
+  panel: document.getElementById('atr-risk-panel'),
+  toggleBtn: document.getElementById('atr-risk-toggle'),
+  body: document.getElementById('atr-risk-body'),
+  length: document.getElementById('atr-length-input'),
+  smoothing: document.getElementById('atr-smoothing-input'),
+  mult: document.getElementById('atr-multiplier-input'),
+  atrValue: document.getElementById('atr-value-input'),
+  capital: document.getElementById('atr-capital-input'),
+  entry: document.getElementById('atr-entry-input'),
+  riskPercent: document.getElementById('atr-riskpct-input'),
+  side: document.getElementById('atr-side-input'),
+  outDistance: document.getElementById('atr-stop-distance'),
+  outShares: document.getElementById('atr-shares'),
+  outRisk: document.getElementById('atr-risk-money'),
+  outReward2R: document.getElementById('atr-reward-2r'),
+  outReward3R: document.getElementById('atr-reward-3r'),
+  calcBtn: document.getElementById('atr-calc-btn'),
+};
 
-  // abre / fecha o card
-  if (atrEls.toggleBtn && atrEls.body) {
-    atrEls.toggleBtn.addEventListener('click', () => {
-      const hidden = atrEls.body.style.display === 'none' || atrEls.body.style.display === '';
-      atrEls.body.style.display = hidden ? 'grid' : 'none';
-      atrEls.toggleBtn.textContent = hidden ? 'Fechar' : 'Abrir';
-    });
+// abre / fecha o card
+if (atrEls.toggleBtn && atrEls.body) {
+  atrEls.toggleBtn.addEventListener('click', () => {
+    const hidden = atrEls.body.style.display === 'none' || atrEls.body.style.display === '';
+    atrEls.body.style.display = hidden ? 'grid' : 'none';
+    atrEls.toggleBtn.textContent = hidden ? 'Fechar' : 'Abrir';
+  });
+}
+
+// cálculo do risco baseado no ATR digitado
+function updateAtrRisk() {
+  if (!atrEls.atrValue || !atrEls.capital || !atrEls.entry) return;
+
+  const atr = parseFloat(atrEls.atrValue.value || '0');
+  const mult = parseFloat(atrEls.mult.value || '1');
+  const capital = parseFloat(atrEls.capital.value || '0');
+  const entry = parseFloat(atrEls.entry.value || '0');
+  const riskPct = parseFloat(atrEls.riskPercent.value || '1');
+
+  if (!atr || !capital || !entry) return;
+
+  const stopDist = atr * mult;
+  const riskPerShare = stopDist;
+
+  const sharesByCapital = capital / entry;
+  const sharesByRisk = (capital * (riskPct / 100)) / riskPerShare;
+  const shares = Math.min(sharesByCapital, sharesByRisk);
+
+  const riskMoney = shares * riskPerShare;
+  const reward2R = riskMoney * 2;
+  const reward3R = riskMoney * 3;
+
+  if (atrEls.outDistance) atrEls.outDistance.textContent = stopDist.toFixed(2);
+  if (atrEls.outShares) atrEls.outShares.textContent = shares.toFixed(0);
+  if (atrEls.outRisk) atrEls.outRisk.textContent = '$ ' + riskMoney.toFixed(2);
+  if (atrEls.outReward2R) atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
+  if (atrEls.outReward3R) atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
+}
+
+if (atrEls.calcBtn) {
+  atrEls.calcBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    updateAtrRisk();
+  });
+}
+
+// Preenche ATR + preço de entrada a partir do JSON (panel + raw)
+function prefillAtrFromPanel(panel, raw) {
+  if (!panel || !atrEls) return;
+
+  const atrBlock = panel.atr || panel.atr_info;
+  const indicators = raw && raw.indicators ? raw.indicators : {};
+
+  // ATR
+  if (atrBlock && atrBlock.value != null && atrEls.atrValue) {
+    atrEls.atrValue.value = Number(atrBlock.value).toFixed(2);
+  } else if (typeof indicators.atr === 'number' && atrEls.atrValue) {
+    atrEls.atrValue.value = indicators.atr.toFixed(2);
   }
 
-  // cálculo do risco baseado no ATR digitado
-  function updateAtrRisk() {
-    if (!atrEls.atrValue || !atrEls.capital || !atrEls.entry) return;
-
-    const atr = parseFloat(atrEls.atrValue.value || '0');
-    const mult = parseFloat(atrEls.mult.value || '1');
-    const capital = parseFloat(atrEls.capital.value || '0');
-    const entry = parseFloat(atrEls.entry.value || '0');
-    const riskPct = parseFloat(atrEls.riskPercent.value || '1');
-
-    if (!atr || !capital || !entry) return;
-
-    const stopDist = atr * mult;
-    const riskPerShare = stopDist;
-
-    const sharesByCapital = capital / entry;
-    const sharesByRisk = (capital * (riskPct / 100)) / riskPerShare;
-    const shares = Math.min(sharesByCapital, sharesByRisk);
-
-    const riskMoney = shares * riskPerShare;
-    const reward2R = riskMoney * 2;
-    const reward3R = riskMoney * 3;
-
-    if (atrEls.outDistance) atrEls.outDistance.textContent = stopDist.toFixed(2);
-    if (atrEls.outShares) atrEls.outShares.textContent = shares.toFixed(0);
-    if (atrEls.outRisk) atrEls.outRisk.textContent = '$ ' + riskMoney.toFixed(2);
-    if (atrEls.outReward2R) atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
-    if (atrEls.outReward3R) atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
+  if (atrBlock && atrBlock.length != null && atrEls.length) {
+    atrEls.length.value = atrBlock.length;
+  }
+  if (atrBlock && atrBlock.smoothing && atrEls.smoothing) {
+    atrEls.smoothing.value = atrBlock.smoothing;
+  }
+  if (atrBlock && atrBlock.multiplier != null && atrEls.mult) {
+    atrEls.mult.value = atrBlock.multiplier;
   }
 
-  if (atrEls.calcBtn) {
-    atrEls.calcBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      updateAtrRisk();
-    });
+  // PREÇO DE ENTRADA
+  let entry =
+    panel.entry_price ||
+    panel.reference_price ||
+    panel.price_now ||
+    panel.last_price ||
+    (raw && raw.candle && raw.candle.close);
+
+  if (entry != null && atrEls.entry) {
+    atrEls.entry.value = Number(entry).toFixed(2);
   }
+}
 
-  // Preenche ATR + preço de entrada a partir do JSON (panel + raw)
-  function prefillAtrFromPanel(panel, raw) {
-    if (!panel || !atrEls) return;
+function safeText(el, value, fallback = '—') {
+  if (!el) return;
+  el.textContent =
+    value === undefined || value === null || value === '' ? fallback : String(value);
+}
 
-    const atrBlock = panel.atr || panel.atr_info;
-    const indicators = raw && raw.indicators ? raw.indicators : {};
-
-    // ATR
-    if (atrBlock && atrBlock.value != null && atrEls.atrValue) {
-      atrEls.atrValue.value = Number(atrBlock.value).toFixed(2);
-    } else if (typeof indicators.atr === 'number' && atrEls.atrValue) {
-      atrEls.atrValue.value = indicators.atr.toFixed(2);
-    }
-
-    if (atrBlock && atrBlock.length != null && atrEls.length) {
-      atrEls.length.value = atrBlock.length;
-    }
-    if (atrBlock && atrBlock.smoothing && atrEls.smoothing) {
-      atrEls.smoothing.value = atrBlock.smoothing;
-    }
-    if (atrBlock && atrBlock.multiplier != null && atrEls.mult) {
-      atrEls.mult.value = atrBlock.multiplier;
-    }
-
-    // PREÇO DE ENTRADA
-    let entry =
-      panel.entry_price ||
-      panel.reference_price ||
-      panel.price_now ||
-      panel.last_price ||
-      (raw && raw.candle && raw.candle.close);
-
-    if (entry != null && atrEls.entry) {
-      atrEls.entry.value = Number(entry).toFixed(2);
-    }
+function setArrow(el, dir) {
+  if (!el) return;
+  el.classList.remove('arrow-up', 'arrow-down');
+  let symbol = '↕';
+  if (dir === 'up' || dir === 'UP' || dir === 'alta' || dir === 'ALTA') {
+    el.classList.add('arrow-up');
+    symbol = '↑';
+  } else if (dir === 'down' || dir === 'DOWN' || dir === 'baixa' || dir === 'BAIXA') {
+    el.classList.add('arrow-down');
+    symbol = '↓';
   }
+  el.textContent = symbol;
+}
 
-  function safeText(el, value, fallback = '—') {
-    if (!el) return;
-    el.textContent =
-      value === undefined || value === null || value === '' ? fallback : String(value);
-  }
+function setPillTrend(el, dir, label) {
+  if (!el) return;
+  el.classList.remove('pill-green', 'pill-red');
+  let txt = label || 'Neutro';
 
-  function setArrow(el, dir) {
-    if (!el) return;
-    el.classList.remove('arrow-up', 'arrow-down');
-    let symbol = '↕';
-    if (dir === 'up' || dir === 'UP' || dir === 'alta' || dir === 'ALTA') {
-      el.classList.add('arrow-up');
-      symbol = '↑';
-    } else if (dir === 'down' || dir === 'DOWN' || dir === 'baixa' || dir === 'BAIXA') {
-      el.classList.add('arrow-down');
-      symbol = '↓';
-    }
-    el.textContent = symbol;
-  }
-
-  function setPillTrend(el, dir, label) {
-    if (!el) return;
-    el.classList.remove('pill-green', 'pill-red');
-    let txt = label || 'Neutro';
-
-    if (!dir) {
-      el.textContent = txt;
-      return;
-    }
-
-    const d = String(dir).toLowerCase();
-
-    if (d.includes('alta') || d === 'up') {
-      el.classList.add('pill-green');
-      if (!label) txt = 'Fluxo de alta';
-    } else if (d.includes('baixa') || d === 'down') {
-      el.classList.add('pill-red');
-      if (!label) txt = 'Fluxo de baixa';
-    }
-
+  if (!dir) {
     el.textContent = txt;
+    return;
   }
 
-  function setRiskPill(level) {
-    if (!els.riskPill) return;
-    const el = els.riskPill;
-    el.classList.remove('pill-green', 'pill-red');
-    let txt = 'Neutro';
+  const d = String(dir).toLowerCase();
 
-    if (!level) {
-      el.textContent = txt;
-      return;
-    }
+  if (d.includes('alta') || d === 'up') {
+    el.classList.add('pill-green');
+    if (!label) txt = 'Fluxo de alta';
+  } else if (d.includes('baixa') || d === 'down') {
+    el.classList.add('pill-red');
+    if (!label) txt = 'Fluxo de baixa';
+  }
 
-    const l = String(level).toLowerCase();
+  el.textContent = txt;
+}
 
-    if (l.includes('alto') || l.includes('high')) {
-      el.classList.add('pill-red');
-      txt = 'Risco Alto';
-    } else if (l.includes('baixo') || l.includes('low')) {
-      el.classList.add('pill-green');
-      txt = 'Risco Baixo';
+function setRiskPill(level) {
+  if (!els.riskPill) return;
+  const el = els.riskPill;
+  el.classList.remove('pill-green', 'pill-red');
+  let txt = 'Neutro';
+
+  if (!level) {
+    el.textContent = txt;
+    return;
+  }
+
+  const l = String(level).toLowerCase();
+
+  if (l.includes('alto') || l.includes('high')) {
+    el.classList.add('pill-red');
+    txt = 'Risco Alto';
+  } else if (l.includes('baixo') || l.includes('low')) {
+    el.classList.add('pill-green');
+    txt = 'Risco Baixo';
+  } else {
+    txt = level;
+  }
+
+  el.textContent = txt;
+}
+
+function applyHeroDecision(executionText, summaryText) {
+  if (!els.heroBlock) return;
+
+  const block = els.heroBlock;
+  const badge = els.heroBadge;
+  const pill = els.heroModePill;
+  const main = els.heroMain;
+  const sub = els.heroSub;
+  const side = els.heroSideLabel;
+  const heroSummary = els.heroSummary;
+
+  const baseText = executionText || 'AGUARDAR / OBSERVAR';
+  const t = baseText.toLowerCase();
+
+  let mode = 'wait';
+  if (t.includes('compra') || t.includes('buy')) mode = 'buy';
+  else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
+
+  block.classList.remove('status-buy', 'status-sell', 'status-wait');
+  if (mode === 'buy') block.classList.add('status-buy');
+  else if (mode === 'sell') block.classList.add('status-sell');
+  else block.classList.add('status-wait');
+
+  if (badge) {
+    badge.textContent = mode === 'wait' ? 'WAIT' : 'GO FULL';
+  }
+
+  if (pill) {
+    pill.classList.remove('go-full', 'wait', 'no-trade', 'scalp');
+    if (mode === 'wait') {
+      pill.classList.add('wait');
+      pill.textContent = 'WAIT';
     } else {
-      txt = level;
+      pill.classList.add('go-full');
+      pill.textContent = 'GO FULL';
     }
-
-    el.textContent = txt;
   }
 
-  function applyHeroDecision(executionText, summaryText) {
-    if (!els.heroBlock) return;
+  if (main) main.textContent = baseText.toUpperCase();
 
-    const block = els.heroBlock;
-    const badge = els.heroBadge;
-    const pill = els.heroModePill;
-    const main = els.heroMain;
-    const sub = els.heroSub;
-    const side = els.heroSideLabel;
-    const heroSummary = els.heroSummary;
+  const fallbackSummary =
+    'Aguardando leitura completa do painel para decidir.';
+  const finalSummary = summaryText || fallbackSummary;
 
-    const baseText = executionText || 'AGUARDAR / OBSERVAR';
-    const t = baseText.toLowerCase();
+  if (sub) sub.textContent = finalSummary;
+  if (heroSummary) heroSummary.textContent = finalSummary;
 
-    let mode = 'wait';
-    if (t.includes('compra') || t.includes('buy')) mode = 'buy';
-    else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
+  if (side) {
+    if (mode === 'buy') side.textContent = 'COMPRA';
+    else if (mode === 'sell') side.textContent = 'VENDA';
+    else side.textContent = '—';
+  }
+}
 
-    block.classList.remove('status-buy', 'status-sell', 'status-wait');
-    if (mode === 'buy') block.classList.add('status-buy');
-    else if (mode === 'sell') block.classList.add('status-sell');
-    else block.classList.add('status-wait');
+// Atualiza os chips HH/HL/LH/LL a partir do JSON
+function updateStructureUI(struct) {
+  const map = [
+    { key: 'hh', status: els.structureHHStatus, dot: els.structureHHDot },
+    { key: 'hl', status: els.structureHLStatus, dot: els.structureHLDot },
+    { key: 'lh', status: els.structureLHStatus, dot: els.structureLHDot },
+    { key: 'll', status: els.structureLLStatus, dot: els.structureLLDot },
+  ];
 
-    if (badge) {
-      badge.textContent = mode === 'wait' ? 'WAIT' : 'GO FULL';
+  map.forEach(({ key, status, dot }) => {
+    if (!status || !dot) return;
+
+    let rawVal =
+      struct &&
+      (struct[key] ??
+        struct[key.toUpperCase()] ??
+        struct['recent_' + key] ??
+        struct['last_' + key]);
+
+    let label = 'off';
+    let active = false;
+
+    if (typeof rawVal === 'string') {
+      const v = rawVal.toLowerCase();
+      if (
+        v.includes('ativo') ||
+        v.includes('on') ||
+        v.includes('true') ||
+        v.includes('active')
+      ) {
+        active = true;
+      }
+      if (v) label = rawVal;
+    } else if (typeof rawVal === 'boolean') {
+      active = rawVal;
+      label = rawVal ? 'ativo' : 'off';
     }
 
-    if (pill) {
-      pill.classList.remove('go-full', 'wait', 'no-trade', 'scalp');
-      if (mode === 'wait') {
-        pill.classList.add('wait');
-        pill.textContent = 'WAIT';
+    status.textContent = label;
+    if (active) dot.classList.add('on');
+    else dot.classList.remove('on');
+  });
+}
+
+// Atualiza o desenho do ZigZag, se o JSON mandar pontos
+function updateStructureZigzag(panel) {
+  const poly = document.getElementById('structure-zigzag-poly');
+  if (!poly || !panel) return;
+
+  const pts =
+    panel.structure_points ||
+    panel.zigzag_points ||
+    panel.market_structure_points;
+
+  if (!Array.isArray(pts) || pts.length === 0) return;
+
+  const n = pts.length;
+  const step = n > 1 ? 100 / (n - 1) : 100;
+
+  const svgPoints = pts.map((v, i) => {
+    const yNorm = Math.max(0, Math.min(1, Number(v))); // 0–1
+    const x = (step * i).toFixed(2);
+    const y = (30 - yNorm * 20).toFixed(2); // faixa 10–30 no SVG
+    return `${x},${y}`;
+  });
+
+  poly.setAttribute('points', svgPoints.join(' '));
+}
+
+// ====== LOAD PANEL (agora usando data.panel + data.raw) ======
+async function loadPanel(showSpinner) {
+  if (!PANEL_URL) return;
+  try {
+    if (els.errorBanner) els.errorBanner.style.display = 'none';
+    if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
+
+    const res = await fetch(PANEL_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    const data = await res.json();
+    const panel = data.panel || data;
+    const raw = data.raw || {};
+
+    // Preenche ATR + preço de entrada
+    prefillAtrFromPanel(panel, raw);
+
+    const statusGeral = panel.status_geral || {};
+    const aiAdvisor = panel.ai_advisor || {};
+    const patterns = panel.patterns || {};
+    const patternDay = patterns.day || {};
+    const patternShort = patterns.short || {};
+    const meta = panel.meta || {};
+
+    // Cabeçalho
+    safeText(els.symbol, panel.symbol || raw.symbol || '—');
+    safeText(els.timeframe, panel.timeframe || raw.timeframe || panel.timeframe_label || '—');
+    safeText(els.session, panel.session || raw.session || panel.session_label || '—');
+
+    const micro = panel.microcontexto || {};
+    const flowLabel = panel.flow_label || panel.flow || micro.direcao;
+    safeText(els.flow, flowLabel || 'Neutro');
+
+    const stateText =
+      (panel.status && (panel.status.label || panel.status.state)) ||
+      statusGeral.tendencia ||
+      'ONLINE';
+    safeText(els.state, stateText);
+
+    const ts = meta.panel_ts || meta.timestamp || panel.timestamp || raw.time;
+    if (els.lastUpdate) {
+      if (!ts) {
+        els.lastUpdate.textContent = 'sem timestamp';
       } else {
-        pill.classList.add('go-full');
-        pill.textContent = 'GO FULL';
-      }
-    }
-
-    if (main) main.textContent = baseText.toUpperCase();
-
-    const fallbackSummary =
-      'Aguardando leitura completa do painel para decidir.';
-    const finalSummary = summaryText || fallbackSummary;
-
-    if (sub) sub.textContent = finalSummary;
-    if (heroSummary) heroSummary.textContent = finalSummary;
-
-    if (side) {
-      if (mode === 'buy') side.textContent = 'COMPRA';
-      else if (mode === 'sell') side.textContent = 'VENDA';
-      else side.textContent = '—';
-    }
-  }
-  // Atualiza os chips HH/HL/LH/LL a partir do JSON
-  function updateStructureUI(struct) {
-    const map = [
-      { key: 'hh', status: els.structureHHStatus, dot: els.structureHHDot },
-      { key: 'hl', status: els.structureHLStatus, dot: els.structureHLDot },
-      { key: 'lh', status: els.structureLHStatus, dot: els.structureLHDot },
-      { key: 'll', status: els.structureLLStatus, dot: els.structureLLDot },
-    ];
-
-    map.forEach(({ key, status, dot }) => {
-      if (!status || !dot) return;
-
-      let rawVal =
-        struct &&
-        (struct[key] ??
-          struct[key.toUpperCase()] ??
-          struct['recent_' + key] ??
-          struct['last_' + key]);
-
-      let label = 'off';
-      let active = false;
-
-      if (typeof rawVal === 'string') {
-        const v = rawVal.toLowerCase();
-        if (
-          v.includes('ativo') ||
-          v.includes('on') ||
-          v.includes('true') ||
-          v.includes('active')
-        ) {
-          active = true;
-        }
-        if (v) label = rawVal;
-      } else if (typeof rawVal === 'boolean') {
-        active = rawVal;
-        label = rawVal ? 'ativo' : 'off';
-      }
-
-      status.textContent = label;
-      if (active) dot.classList.add('on');
-      else dot.classList.remove('on');
-    });
-  }
-
-  // Atualiza o desenho do ZigZag, se o JSON mandar pontos
-  function updateStructureZigzag(panel) {
-    const poly = document.getElementById('structure-zigzag-poly');
-    if (!poly || !panel) return;
-
-    const pts =
-      panel.structure_points ||
-      panel.zigzag_points ||
-      panel.market_structure_points;
-
-    if (!Array.isArray(pts) || pts.length === 0) return;
-
-    const n = pts.length;
-    const step = n > 1 ? 100 / (n - 1) : 100;
-
-    const svgPoints = pts.map((v, i) => {
-      // esperamos valores normalizados 0–1; se vier outra coisa, ainda funciona
-      const yNorm = Math.max(0, Math.min(1, Number(v)));
-      const x = (step * i).toFixed(2);
-      const y = (30 - yNorm * 20).toFixed(2); // faixa 10–30 no SVG
-      return `${x},${y}`;
-    });
-
-    poly.setAttribute('points', svgPoints.join(' '));
-  }
-  // Força o reload do TradingView para evitar travar / cache
-  function refreshTradingView() {
-    const iframe = document.getElementById('tv-iframe');
-    if (!iframe) return;
-
-    // baseSrc fica guardado sem o timestamp
-    const current = iframe.getAttribute('data-base-src') || iframe.getAttribute('src') || '';
-    const base = current.split('&t=')[0]; // limpa timestamp antigo, se tiver
-    const newSrc = base + '&t=' + Date.now(); // adiciona timestamp pra quebrar cache
-
-    iframe.setAttribute('data-base-src', base);
-    iframe.src = newSrc;
-  }
-
-  // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
-  async function loadPanel(showSpinner) {
-    if (!PANEL_URL) return;
-    try {
-      if (els.errorBanner) els.errorBanner.style.display = 'none';
-      if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
-
-      const res = await fetch(PANEL_URL, { cache: 'no-store' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-
-      const data = await res.json();
-      const panel = data.panel || data;   // <- AQUI: pega o objeto "panel"
-      const raw = data.raw || {};         // <- AQUI: infos brutas (symbol, candle, atr...)
-
-      // Preenche ATR + preço de entrada
-      prefillAtrFromPanel(panel, raw);
-
-      const statusGeral = panel.status_geral || {};
-      const aiAdvisor = panel.ai_advisor || {};
-      const patterns = panel.patterns || {};
-      const patternDay = patterns.day || {};
-      const patternShort = patterns.short || {};
-      const meta = panel.meta || {};
-
-      // Cabeçalho
-      safeText(els.symbol, panel.symbol || raw.symbol || '—');
-      safeText(els.timeframe, panel.timeframe || raw.timeframe || panel.timeframe_label || '—');
-      safeText(els.session, panel.session || raw.session || panel.session_label || '—');
-
-      const micro = panel.microcontexto || {};
-      const flowLabel = panel.flow_label || panel.flow || micro.direcao;
-      safeText(els.flow, flowLabel || 'Neutro');
-
-      const stateText =
-        (panel.status && (panel.status.label || panel.status.state)) ||
-        statusGeral.tendencia ||
-        'ONLINE';
-      safeText(els.state, stateText);
-
-      const ts = meta.panel_ts || meta.timestamp || panel.timestamp || raw.time;
-      if (els.lastUpdate) {
-        if (!ts) {
-          els.lastUpdate.textContent = 'sem timestamp';
-        } else {
-          try {
-            const d =
-              typeof ts === 'number'
-                ? new Date(ts)
-                : new Date(String(ts));
-            els.lastUpdate.textContent = d.toLocaleString('pt-BR', {
-              timeZone: 'America/Denver',
-            });
-          } catch (e) {
-            els.lastUpdate.textContent = String(ts);
-          }
+        try {
+          const d =
+            typeof ts === 'number'
+              ? new Date(ts)
+              : new Date(String(ts));
+          els.lastUpdate.textContent = d.toLocaleString('pt-BR', {
+            timeZone: 'America/Denver',
+          });
+        } catch (e) {
+          els.lastUpdate.textContent = String(ts);
         }
       }
-
-      // Padrões / Direções
-      const patternDayName =
-        panel.pattern_day ||
-        panel.pattern_of_day ||
-        patternDay.name;
-      const patternDayDesc =
-        panel.pattern_day_detail ||
-        panel.pattern_of_day_detail ||
-        patternDay.desc;
-
-      const patternNowName =
-        panel.pattern_now ||
-        panel.pattern_of_moment ||
-        patternShort.name;
-      const patternNowDesc =
-        panel.pattern_now_detail ||
-        panel.pattern_of_moment_detail ||
-        patternShort.desc;
-
-      safeText(els.patternDayLabel, patternDayName || '-');
-      safeText(els.patternDayDetail, patternDayDesc || '—');
-      safeText(els.patternNowLabel, patternNowName || '-');
-      safeText(els.patternNowDetail, patternNowDesc || '—');
-
-      setArrow(els.dirDayArrow, panel.direction_day || panel.direction_of_day || micro.direcao);
-      setArrow(els.dirNowArrow, panel.direction_now || panel.direction_of_moment || micro.direcao);
-
-      setPillTrend(
-        els.trendDayPill,
-        panel.direction_day || panel.direction_of_day || micro.direcao,
-        panel.trend_day_label
-      );
-      setPillTrend(
-        els.trendNowPill,
-        panel.direction_now || panel.direction_of_moment || micro.direcao,
-        panel.trend_now_label
-      );
-      // Estrutura recente: HH / HL / LH / LL
-      const structureRecent =
-        panel.structure_recent ||
-        panel.recent_structure ||
-        panel.market_structure ||
-        (panel.structure && panel.structure.recent) ||
-        null;
-
-      updateStructureUI(structureRecent);
-      updateStructureZigzag(panel);
-
-      // Textos principais
-      const finalSummary =
-        panel.summary ||
-        panel.painel_terminal ||
-        '—';
-
-      const riskLevel =
-        panel.risk_level ||
-        aiAdvisor.risco;
-
-      const riskComment =
-        panel.risk_comment ||
-        aiAdvisor.motivo ||
-        '—';
-
-      const contextComment =
-        panel.context_comment ||
-        panel.painel_terminal ||
-        '—';
-
-      const executionPlan =
-        panel.execution_plan ||
-        '—';
-
-      safeText(els.summary, finalSummary);
-      setRiskPill(riskLevel);
-      safeText(els.riskText, riskComment);
-      safeText(els.contextText, contextComment);
-      safeText(els.executionText, executionPlan);
-
-      // MODO CEGO usa os mesmos textos
-      applyHeroDecision(executionPlan, finalSummary);
-
-    } catch (err) {
-      console.error('Erro ao carregar painel', err);
-      if (els.errorBanner) {
-        els.errorBanner.style.display = 'block';
-        els.errorBanner.innerHTML =
-          '<strong>Erro ao carregar painel.</strong> Verifique o webhook "aaron9-json" no n8n e tente novamente.';
-      }
-    } finally {
-      if (els.btnRefresh) els.btnRefresh.disabled = false;
     }
+
+    // Padrões / Direções
+    const patternDayName =
+      panel.pattern_day ||
+      panel.pattern_of_day ||
+      patternDay.name;
+    const patternDayDesc =
+      panel.pattern_day_detail ||
+      panel.pattern_of_day_detail ||
+      patternDay.desc;
+
+    const patternNowName =
+      panel.pattern_now ||
+      panel.pattern_of_moment ||
+      patternShort.name;
+    const patternNowDesc =
+      panel.pattern_now_detail ||
+      panel.pattern_of_moment_detail ||
+      patternShort.desc;
+
+    safeText(els.patternDayLabel, patternDayName || '-');
+    safeText(els.patternDayDetail, patternDayDesc || '—');
+    safeText(els.patternNowLabel, patternNowName || '-');
+    safeText(els.patternNowDetail, patternNowDesc || '—');
+
+    setArrow(els.dirDayArrow, panel.direction_day || panel.direction_of_day || micro.direcao);
+    setArrow(els.dirNowArrow, panel.direction_now || panel.direction_of_moment || micro.direcao);
+
+    setPillTrend(
+      els.trendDayPill,
+      panel.direction_day || panel.direction_of_day || micro.direcao,
+      panel.trend_day_label
+    );
+    setPillTrend(
+      els.trendNowPill,
+      panel.direction_now || panel.direction_of_moment || micro.direcao,
+      panel.trend_now_label
+    );
+
+    // Estrutura recente: HH / HL / LH / LL
+    const structureRecent =
+      panel.structure_recent ||
+      panel.recent_structure ||
+      panel.market_structure ||
+      (panel.structure && panel.structure.recent) ||
+      null;
+
+    updateStructureUI(structureRecent);
+    updateStructureZigzag(panel);
+
+    // Textos principais
+    const finalSummary =
+      panel.summary ||
+      panel.painel_terminal ||
+      '—';
+
+    const riskLevel =
+      panel.risk_level ||
+      aiAdvisor.risco;
+
+    const riskComment =
+      panel.risk_comment ||
+      aiAdvisor.motivo ||
+      '—';
+
+    const contextComment =
+      panel.context_comment ||
+      panel.painel_terminal ||
+      '—';
+
+    const executionPlan =
+      panel.execution_plan ||
+      '—';
+
+    safeText(els.summary, finalSummary);
+    setRiskPill(riskLevel);
+    safeText(els.riskText, riskComment);
+    safeText(els.contextText, contextComment);
+    safeText(els.executionText, executionPlan);
+
+    // MODO CEGO usa os mesmos textos
+    applyHeroDecision(executionPlan, finalSummary);
+
+  } catch (err) {
+    console.error('Erro ao carregar painel', err);
+    if (els.errorBanner) {
+      els.errorBanner.style.display = 'block';
+      els.errorBanner.innerHTML =
+        '<strong>Erro ao carregar painel.</strong> Verifique o webhook "aaron9-json" no n8n e tente novamente.';
+    }
+  } finally {
+    if (els.btnRefresh) els.btnRefresh.disabled = false;
   }
+}
 
-   if (els.btnRefresh) {
-    els.btnRefresh.addEventListener('click', function () {
-      loadPanel(true);       // atualiza n8n / painel
-      refreshTradingView();  // força reload do gráfico
-    });
-  }
-
-    loadPanel(false);
-  refreshTradingView(); // primeira carga “limpa”
-
-  setInterval(() => {
-      // Cria o gráfico do TradingView (NVDA, 1m)
+// ====== INICIALIZAÇÃO ======
+function initAaron9() {
+  // cria o gráfico do TradingView UMA VEZ
   if (window.TradingView) {
     new TradingView.widget({
       width: '100%',
@@ -1937,10 +1916,26 @@
     });
   }
 
+  // botão ATUALIZAR
+  if (els.btnRefresh) {
+    els.btnRefresh.addEventListener('click', function () {
+      loadPanel(true);
+    });
+  }
+
+  // primeira carga + auto refresh
   loadPanel(false);
-  setInterval(loadPanel, REFRESH_MS);
-})();
+  setInterval(() => loadPanel(false), REFRESH_MS);
+}
+
+// garante que roda depois que o DOM existe
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAaron9);
+} else {
+  initAaron9();
+}
 </script>
+
 
 
 </script>
