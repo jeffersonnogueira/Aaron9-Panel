@@ -1820,6 +1820,34 @@
         panel.direction_now || panel.direction_of_moment || micro.direcao,
         panel.trend_now_label
       );
+      safeText(
+  els.dirDayLabel,
+  panel.direction_day_label ||
+    panel.direcao_geral_do_dia ||
+    patternDayName
+);
+
+safeText(
+  els.dirDayDetail,
+  panel.direction_day_detail ||
+    panel.direcao_geral_do_dia_detail ||
+    'Leitura geral baseada em tendência / volatilidade.'
+);
+
+safeText(
+  els.dirNowLabel,
+  panel.direction_now_label ||
+    panel.direcao_prevista_label ||
+    patternNowName
+);
+
+safeText(
+  els.dirNowDetail,
+  panel.direction_now_detail ||
+    panel.direcao_prevista_detail ||
+    'Projeção de curto prazo (1–3 candles).'
+);
+
       // Estrutura recente: HH / HL / LH / LL
       const structureRecent =
         panel.structure_recent ||
