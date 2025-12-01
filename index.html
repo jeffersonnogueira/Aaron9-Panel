@@ -1398,6 +1398,38 @@ if (atrEls.calcBtn) {
     updateAtrRisk();
   });
 }
+    // ====== Preenche ATR e Preço de Entrada a partir do painel JSON ======
+    function prefillAtrFromPanel(panel) {
+      if (!panel || !atrEls) return;
+
+      // BLOCO DE ATR (espera panel.atr ou panel.atr_info)
+      const atrBlock = panel.atr || panel.atr_info;
+      if (atrBlock) {
+        if (atrBlock.value != null && atrEls.atrValue) {
+          atrEls.atrValue.value = Number(atrBlock.value).toFixed(2);
+        }
+        if (atrBlock.length != null && atrEls.length) {
+          atrEls.length.value = atrBlock.length;
+        }
+        if (atrBlock.smoothing && atrEls.smoothing) {
+          atrEls.smoothing.value = atrBlock.smoothing; // ex: "RMA"
+        }
+        if (atrBlock.multiplier != null && atrEls.mult) {
+          atrEls.mult.value = atrBlock.multiplier;
+        }
+      }
+
+      // PREÇO DE ENTRADA (várias opções de nome pra ficar flexível)
+      let entry =
+        panel.entry_price ||
+        panel.reference_price ||
+        panel.price_now ||
+        panel.last_price;
+
+      if (entry != null && atrEls.entry) {
+        atrEls.entry.value = Number(entry).toFixed(2);
+      }
+    }
 
 
     function safeText(el, value, fallback = '—') {
