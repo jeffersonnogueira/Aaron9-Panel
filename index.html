@@ -1846,15 +1846,56 @@ async function loadPanel(showSpinner) {
       panel.direction_day || panel.direction_of_day || micro.direcao,
       panel.trend_day_label
     );
-    setPillTrend(
+        setPillTrend(
       els.trendNowPill,
       panel.direction_now || panel.direction_of_moment || micro.direcao,
       panel.trend_now_label
     );
-        const dayProb = panel.direction_day_prob;
-    const dayDetail = panel.direction_day_detail;
-    const nowProb = panel.direction_now_prob;
-    const nowDetail = panel.direction_now_detail;
+
+    // =======================================================
+    // TEXTO DINÂMICO: DIREÇÃO DO DIA / 1–3 CANDLES
+    // =======================================================
+
+    let dayProb   = panel.direction_day_prob;
+    let dayDetail = panel.direction_day_detail;
+    let nowProb   = panel.direction_now_prob;
+    let nowDetail = panel.direction_now_detail;
+
+    // Se o backend ainda não preencheu esses campos,
+    // usamos prob_favor / prob_contra como base
+    if ((!dayProb && !dayDetail) || (!nowProb && !nowDetail)) {
+      const forecast = panel.ai_forecast || {};
+      const probFavor  = Number(panel.prob_favor  ?? forecast.prob_continuacao ?? NaN);
+      const probContra = Number(panel.prob_contra ?? forecast.prob_contra      ?? NaN);
+
+      if (!Number.isNaN(probFavor) && !Number.isNaN(probContra)) {
+        // --- DIA ---
+        if (!dayProb && !dayDetail) {
+          if (probFavor >= probContra) {
+            dayProb = probFavor;
+            dayDetail =
+              `Continuação a favor: ${probFavor}% · Contra: ${probContra}%.`;
+          } else {
+            dayProb = probContra;
+            dayDetail =
+              `Maior chance de contra-movimento: ${probContra}% · Continuação: ${probFavor}%.`;
+          }
+        }
+
+        // --- MOMENTO (1–3 candles) ---
+        if (!nowProb && !nowDetail) {
+          if (probFavor >= probContra) {
+            nowProb = probFavor;
+            nowDetail =
+              `Curto prazo favorece continuação (${probFavor}% vs ${probContra}% de contra).`;
+          } else {
+            nowProb = probContra;
+            nowDetail =
+              `Curto prazo favorece contra-movimento (${probContra}% vs ${probFavor}% de continuação).`;
+          }
+        }
+      }
+    }
 
     if (els.directionDayText && (dayProb || dayDetail)) {
       els.directionDayText.textContent =
@@ -1865,6 +1906,8 @@ async function loadPanel(showSpinner) {
       els.directionNowText.textContent =
         (nowProb ? nowProb + '% · ' : '') + (nowDetail || '');
     }
+
+    // Estrutura recente: HH / HL / LH / LL
 
 
     // Estrutura recente: HH / HL / LH / LL
