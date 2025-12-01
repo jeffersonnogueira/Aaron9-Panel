@@ -1746,6 +1746,19 @@
 
     poly.setAttribute('points', svgPoints.join(' '));
   }
+  // Força o reload do TradingView para evitar travar / cache
+  function refreshTradingView() {
+    const iframe = document.getElementById('tv-iframe');
+    if (!iframe) return;
+
+    // baseSrc fica guardado sem o timestamp
+    const current = iframe.getAttribute('data-base-src') || iframe.getAttribute('src') || '';
+    const base = current.split('&t=')[0]; // limpa timestamp antigo, se tiver
+    const newSrc = base + '&t=' + Date.now(); // adiciona timestamp pra quebrar cache
+
+    iframe.setAttribute('data-base-src', base);
+    iframe.src = newSrc;
+  }
 
   // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
   async function loadPanel(showSpinner) {
