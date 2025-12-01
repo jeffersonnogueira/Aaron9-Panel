@@ -1918,8 +1918,14 @@
     });
   }
 
-  loadPanel(false);
-  setInterval(loadPanel, REFRESH_MS);
+    loadPanel(false);
+  refreshTradingView(); // primeira carga “limpa”
+
+  setInterval(() => {
+    loadPanel(false);      // puxa último JSON do n8n
+    refreshTradingView();  // recarrega o iframe do TV
+  }, REFRESH_MS);
+
 </script>
 </body>
 </html>
