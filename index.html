@@ -1277,8 +1277,12 @@
   <div class="pattern-layout" style="margin-top:6px;">
 
     <!-- PADRÃO DO DIA -->
-    <div class="pattern-box">
-      <div class="decision-title" style="margin-bottom:4px;">Padrão do dia</div>
+         <!-- PADRÃO DO DIA – nome + descrição dinâmicos -->
+      <div id="pattern-day-label" class="pattern-name">Canal de baixa moderada</div>
+      <div id="pattern-day-detail">
+        Preço respeitando topos e fundos descendentes durante o dia. Favorece operações a favor da tendência de baixa.
+      </div>
+
 
       <div class="pattern-canvas">
         <!-- Desenho simbólico do padrão do dia (ex.: canal de baixa) -->
@@ -1301,8 +1305,12 @@
     </div>
 
     <!-- PADRÃO DO MOMENTO (últimos 50 candles) -->
-    <div class="pattern-box">
-      <div class="decision-title" style="margin-bottom:4px;">Padrão do momento · últimos 50 candles</div>
+          <!-- PADRÃO DO MOMENTO – nome + descrição dinâmicos -->
+      <div id="pattern-now-label" class="pattern-name">Range / consolidação ativa</div>
+      <div id="pattern-now-detail">
+        Mercado alternando entre suporte e resistência nos últimos candles. Melhor aguardar rompimento ou pullback bem claro.
+      </div>
+
 
       <div class="pattern-canvas">
         <!-- Desenho simbólico do padrão do momento (ex.: range / zigue-zague) -->
