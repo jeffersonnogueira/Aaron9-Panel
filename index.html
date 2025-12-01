@@ -1092,28 +1092,38 @@
     const REFRESH_MS = 60000; // 1 minuto
 
     const els = {
-      errorBanner: document.getElementById('error-banner'),
-      btnRefresh: document.getElementById('btn-refresh'),
-      state: document.getElementById('state-pill'),
-      symbol: document.getElementById('symbol-label'),
-      timeframe: document.getElementById('timeframe-label'),
-      session: document.getElementById('session-label'),
-      lastUpdate: document.getElementById('last-update-label'),
-      flow: document.getElementById('flow-label'),
-      trendDayPill: document.getElementById('trend-day-pill'),
-      trendNowPill: document.getElementById('trend-now-pill'),
-      dirDayArrow: document.getElementById('direction-day-arrow'),
-      dirNowArrow: document.getElementById('direction-now-arrow'),
-      patternDayLabel: document.getElementById('pattern-day-label'),
-      patternDayDetail: document.getElementById('pattern-day-detail'),
-      patternNowLabel: document.getElementById('pattern-now-label'),
-      patternNowDetail: document.getElementById('pattern-now-detail'),
-      summary: document.getElementById('summary-text'),
-      riskPill: document.getElementById('risk-pill'),
-      riskText: document.getElementById('risk-text'),
-      contextText: document.getElementById('context-text'),
-      executionText: document.getElementById('execution-text'),
-    };
+  errorBanner: document.getElementById('error-banner'),
+  btnRefresh: document.getElementById('btn-refresh'),
+  state: document.getElementById('state-pill'),
+  symbol: document.getElementById('symbol-label'),
+  timeframe: document.getElementById('timeframe-label'),
+  session: document.getElementById('session-label'),
+  lastUpdate: document.getElementById('last-update-label'),
+  flow: document.getElementById('flow-label'),
+  trendDayPill: document.getElementById('trend-day-pill'),
+  trendNowPill: document.getElementById('trend-now-pill'),
+  dirDayArrow: document.getElementById('direction-day-arrow'),
+  dirNowArrow: document.getElementById('direction-now-arrow'),
+  patternDayLabel: document.getElementById('pattern-day-label'),
+  patternDayDetail: document.getElementById('pattern-day-detail'),
+  patternNowLabel: document.getElementById('pattern-now-label'),
+  patternNowDetail: document.getElementById('pattern-now-detail'),
+  summary: document.getElementById('summary-text'),
+  riskPill: document.getElementById('risk-pill'),
+  riskText: document.getElementById('risk-text'),
+  contextText: document.getElementById('context-text'),
+  executionText: document.getElementById('execution-text'),
+
+  // HERO / MODO CEGO
+  heroBlock: document.getElementById('hero-block'),
+  heroMain: document.getElementById('hero-main'),
+  heroSub: document.getElementById('hero-sub'),
+  heroBadge: document.getElementById('hero-badge'),
+  heroModePill: document.getElementById('hero-mode-pill'),
+  heroSideLabel: document.getElementById('hero-side-label'),
+  heroSummary: document.getElementById('hero-summary-text'),
+};
+
 
     function safeText(el, value, fallback = '—') {
       if (!el) return;
