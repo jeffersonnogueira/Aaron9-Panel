@@ -1175,16 +1175,21 @@
 <div class="decision-column">
 
   <!-- RADAR VISUAL DE DIREÇÃO -->
+   <!-- RADAR VISUAL DE DIREÇÃO -->
   <section class="decision-card">
     <div class="decision-title">Direção geral do dia</div>
     <div class="radar-header">
-      <div class="radar-circle">
+      <div id="direction-day-arrow" class="radar-circle">
         <!-- seta pra baixo ou pra cima -->
         ↓
       </div>
       <div>
-        <div class="decision-label-strong">Baixa forte</div>
-        <div class="radar-percent">70% · baseada em tendência, volatilidade e memória A8/A9.</div>
+        <!-- label forte da direção do dia -->
+        <div id="trend-day-pill" class="decision-label-strong">Baixa forte</div>
+        <!-- texto de % + descrição -->
+        <div id="direction-day-text" class="radar-percent">
+          70% · baseada em tendência, volatilidade e memória A8/A9.
+        </div>
       </div>
     </div>
 
@@ -1192,15 +1197,18 @@
 
     <div class="decision-title">Direção prevista · 1–3 candles</div>
     <div class="radar-header">
-      <div class="radar-circle buy">
+      <div id="direction-now-arrow" class="radar-circle buy">
         ↑
       </div>
       <div>
-        <div class="decision-label-strong">Baixa</div>
-        <div class="radar-percent">65% · fluxo geral puxa movimentos de baixa. Contexto favorece vendas.</div>
+        <div id="trend-now-pill" class="decision-label-strong">Baixa</div>
+        <div id="direction-now-text" class="radar-percent">
+          65% · fluxo geral puxa movimentos de baixa. Contexto favorece vendas.
+        </div>
       </div>
     </div>
   </section>
+
 <!-- HERO STATUS – MODO CEGO -->
 <section id="hero-block" class="status-hero status-sell blink-hero">
   <div>
