@@ -882,6 +882,93 @@
     <!-- ====== LAYOUT PRINCIPAL ====== -->
     <main class="layout">
       <!-- ====== COLUNA ESQUERDA: TV + PADRÕES ====== -->
+      <!-- ====== GERENCIADOR DE RISCO · ATR ====== -->
+<section class="risk-card" id="atr-risk-panel">
+  <div class="risk-header">
+    <div>
+      <div class="risk-title">Gerenciador de risco · ATR</div>
+      <div class="risk-subtitle">
+        Ajuste os parâmetros do ATR e calcule risco / reward da operação.
+      </div>
+    </div>
+    <button type="button" class="risk-toggle" id="atr-risk-toggle">Abrir</button>
+  </div>
+
+  <div class="risk-body" id="atr-risk-body" style="display:none;">
+    <div class="risk-group">
+      <div class="risk-label">Length</div>
+      <input id="atr-length-input" type="number" value="14" min="1" />
+    </div>
+
+    <div class="risk-group">
+      <div class="risk-label">Smoothing</div>
+      <select id="atr-smoothing-input">
+        <option value="RMA" selected>RMA</option>
+        <option value="SMA">SMA</option>
+        <option value="EMA">EMA</option>
+        <option value="WMA">WMA</option>
+      </select>
+    </div>
+
+    <div class="risk-group">
+      <div class="risk-label">Multiplier</div>
+      <input id="atr-multiplier-input" type="number" step="0.1" value="2.3" />
+    </div>
+
+    <div class="risk-group">
+      <div class="risk-label">ATR atual</div>
+      <input id="atr-value-input" type="number" step="0.01" placeholder="ex: 1.25" />
+    </div>
+
+    <div class="risk-group">
+      <div class="risk-label">Capital da posição ($)</div>
+      <input id="atr-capital-input" type="number" step="100" placeholder="ex: 100000" />
+    </div>
+
+    <div class="risk-group">
+      <div class="risk-label">Preço de entrada</div>
+      <input id="atr-entry-input" type="number" step="0.01" placeholder="ex: 177" />
+    </div>
+
+    <div class="risk-group">
+      <div class="risk-label">Risco por trade (%)</div>
+      <input id="atr-riskpct-input" type="number" step="0.1" value="1" />
+    </div>
+
+    <div class="risk-group">
+      <div class="risk-label">Lado</div>
+      <select id="atr-side-input">
+        <option value="buy">Compra</option>
+        <option value="sell">Venda</option>
+      </select>
+    </div>
+
+    <div class="risk-actions">
+      <button id="atr-calc-btn" type="button">Calcular risco</button>
+    </div>
+
+    <div class="risk-results">
+      <div>
+        <div class="risk-result-label">Distância do stop (ATR × mult)</div>
+        <div class="risk-result-value" id="atr-stop-distance">—</div>
+      </div>
+      <div>
+        <div class="risk-result-label">Qtd. sugerida de ações</div>
+        <div class="risk-result-value" id="atr-shares">—</div>
+      </div>
+      <div>
+        <div class="risk-result-label">Risco aproximado</div>
+        <div class="risk-result-value" id="atr-risk-money">—</div>
+      </div>
+      <div>
+        <div class="risk-result-label">Alvo 2R · 3R (aprox.)</div>
+        <div class="risk-result-value" id="atr-reward-2r">—</div>
+        <div class="risk-result-value small" id="atr-reward-3r">—</div>
+      </div>
+    </div>
+  </div>
+</section>
+
       <section class="column">
         <div class="card">
           <div class="card-header">
