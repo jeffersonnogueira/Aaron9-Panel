@@ -1851,6 +1851,21 @@ async function loadPanel(showSpinner) {
       panel.direction_now || panel.direction_of_moment || micro.direcao,
       panel.trend_now_label
     );
+        const dayProb = panel.direction_day_prob;
+    const dayDetail = panel.direction_day_detail;
+    const nowProb = panel.direction_now_prob;
+    const nowDetail = panel.direction_now_detail;
+
+    if (els.directionDayText && (dayProb || dayDetail)) {
+      els.directionDayText.textContent =
+        (dayProb ? dayProb + '% · ' : '') + (dayDetail || '');
+    }
+
+    if (els.directionNowText && (nowProb || nowDetail)) {
+      els.directionNowText.textContent =
+        (nowProb ? nowProb + '% · ' : '') + (nowDetail || '');
+    }
+
 
     // Estrutura recente: HH / HL / LH / LL
     const structureRecent =
