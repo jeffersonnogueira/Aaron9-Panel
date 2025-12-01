@@ -1603,22 +1603,23 @@ if (atrEls.calcBtn) {
           panel?.trend_now_label
         );
 
-       // monta os textos finais (com fallback no panel2)
-const finalSummary      = summary       || panel2.summary       || '-';
-const finalRiskLevel    = risk_level    || panel2.risk_level    || '-';
-const finalRiskComment  = risk_comment  || panel2.risk_comment  || '-';
-const finalContext      = context_comment || panel2.context_comment || '-';
-const finalExecution    = execution_plan  || panel2.execution_plan  || '-';
+               // monta os textos finais a partir do próprio painel
+        const finalSummary     = summary        || '—';
+        const finalRiskLevel   = risk_level     || '—';
+        const finalRiskComment = risk_comment   || '—';
+        const finalContext     = context_comment || '—';
+        const finalExecution   = execution_plan || '—';
 
-// preenche os campos normais do painel (como já era antes)
-safeText(els.summary, finalSummary);
-setRiskPill(finalRiskLevel);
-safeText(els.riskText, finalRiskComment);
-safeText(els.contextText, finalContext);
-safeText(els.executionText, finalExecution);
+        // preenche os campos normais do painel
+        safeText(els.summary, finalSummary);
+        setRiskPill(finalRiskLevel);
+        safeText(els.riskText, finalRiskComment);
+        safeText(els.contextText, finalContext);
+        safeText(els.executionText, finalExecution);
 
-// 🔗 aqui ligamos o MODO CEGO (HERO) usando o mesmo texto de execução + resumo
-applyHeroDecision(finalExecution, finalSummary);
+        // liga o MODO CEGO (HERO) usando o mesmo texto de execução + resumo
+        applyHeroDecision(finalExecution, finalSummary);
+
 
       } catch (err) {
         console.error('Erro ao carregar painel', err);
