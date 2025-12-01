@@ -1332,6 +1332,72 @@
   heroSideLabel: document.getElementById('hero-side-label'),
   heroSummary: document.getElementById('hero-summary-text'),
 };
+// ====== GERENCIADOR DE RISCO · ATR (FRONTEND) ======
+const atrEls = {
+  panel: document.getElementById('atr-risk-panel'),
+  toggleBtn: document.getElementById('atr-risk-toggle'),
+  body: document.getElementById('atr-risk-body'),
+  length: document.getElementById('atr-length-input'),
+  smoothing: document.getElementById('atr-smoothing-input'),
+  mult: document.getElementById('atr-multiplier-input'),
+  atrValue: document.getElementById('atr-value-input'),
+  capital: document.getElementById('atr-capital-input'),
+  entry: document.getElementById('atr-entry-input'),
+  riskPercent: document.getElementById('atr-riskpct-input'),
+  side: document.getElementById('atr-side-input'),
+  outDistance: document.getElementById('atr-stop-distance'),
+  outShares: document.getElementById('atr-shares'),
+  outRisk: document.getElementById('atr-risk-money'),
+  outReward2R: document.getElementById('atr-reward-2r'),
+  outReward3R: document.getElementById('atr-reward-3r'),
+  calcBtn: document.getElementById('atr-calc-btn'),
+};
+
+// abre / fecha o card
+if (atrEls.toggleBtn && atrEls.body) {
+  atrEls.toggleBtn.addEventListener('click', () => {
+    const hidden = atrEls.body.style.display === 'none' || atrEls.body.style.display === '';
+    atrEls.body.style.display = hidden ? 'grid' : 'none';
+    atrEls.toggleBtn.textContent = hidden ? 'Fechar' : 'Abrir';
+  });
+}
+
+// cálculo do risco baseado no ATR digitado
+function updateAtrRisk() {
+  if (!atrEls.atrValue || !atrEls.capital || !atrEls.entry) return;
+
+  const atr = parseFloat(atrEls.atrValue.value || '0');   // ATR que você vê no indicador
+  const mult = parseFloat(atrEls.mult.value || '1');      // mesmo multiplier do script
+  const capital = parseFloat(atrEls.capital.value || '0'); 
+  const entry = parseFloat(atrEls.entry.value || '0');
+  const riskPct = parseFloat(atrEls.riskPercent.value || '1');
+
+  if (!atr || !capital || !entry) return;
+
+  const stopDist = atr * mult;             // distância do stop em dólares por ação
+  const riskPerShare = stopDist;
+
+  const sharesByCapital = capital / entry;                         // limite pelo capital
+  const sharesByRisk = (capital * (riskPct / 100)) / riskPerShare; // limite pelo risco %
+  const shares = Math.min(sharesByCapital, sharesByRisk);          // usa o menor (mais seguro)
+
+  const riskMoney = shares * riskPerShare;
+  const reward2R = riskMoney * 2;
+  const reward3R = riskMoney * 3;
+
+  if (atrEls.outDistance) atrEls.outDistance.textContent = stopDist.toFixed(2);
+  if (atrEls.outShares) atrEls.outShares.textContent = shares.toFixed(0);
+  if (atrEls.outRisk) atrEls.outRisk.textContent = '$ ' + riskMoney.toFixed(2);
+  if (atrEls.outReward2R) atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
+  if (atrEls.outReward3R) atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
+}
+
+if (atrEls.calcBtn) {
+  atrEls.calcBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    updateAtrRisk();
+  });
+}
 
 
     function safeText(el, value, fallback = '—') {
