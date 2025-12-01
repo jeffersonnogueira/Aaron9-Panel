@@ -1168,6 +1168,66 @@
         el.textContent = txt;
         return;
       }
+      function applyHeroDecision(executionText, summaryText) {
+  if (!els.heroBlock) return;
+
+  const block = els.heroBlock;
+  const badge = els.heroBadge;
+  const pill = els.heroModePill;
+  const main = els.heroMain;
+  const sub = els.heroSub;
+  const side = els.heroSideLabel;
+  const heroSummary = els.heroSummary;
+
+  const baseText = executionText || 'AGUARDAR / OBSERVAR';
+  const t = baseText.toLowerCase();
+
+  // Detecta tipo: COMPRA / VENDA / WAIT
+  let mode = 'wait';
+  if (t.includes('compra') || t.includes('buy')) mode = 'buy';
+  else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
+
+  // Cor do bloco grande
+  block.classList.remove('status-buy', 'status-sell', 'status-wait');
+  if (mode === 'buy') block.classList.add('status-buy');
+  else if (mode === 'sell') block.classList.add('status-sell');
+  else block.classList.add('status-wait');
+
+  // Badge do lado direito (GO FULL / WAIT)
+  if (badge) {
+    badge.textContent = mode === 'wait' ? 'WAIT' : 'GO FULL';
+  }
+
+  // Pílula pequena dentro do card (GO FULL / WAIT / NO TRADE)
+  if (pill) {
+    pill.classList.remove('go-full', 'wait', 'no-trade', 'scalp');
+    if (mode === 'wait') {
+      pill.classList.add('wait');
+      pill.textContent = 'WAIT';
+    } else {
+      pill.classList.add('go-full');
+      pill.textContent = 'GO FULL';
+    }
+  }
+
+  // Texto grande "EXECUTAR VENDA / COMPRA / AGUARDAR..."
+  if (main) main.textContent = baseText.toUpperCase();
+
+  // Textos de explicação
+  const fallbackSummary =
+    'Aguardando leitura completa do painel para decidir.';
+
+  if (sub) sub.textContent = summaryText || fallbackSummary;
+  if (heroSummary) heroSummary.textContent = summaryText || fallbackSummary;
+
+  // Label COMPRA / VENDA / —
+  if (side) {
+    if (mode === 'buy') side.textContent = 'COMPRA';
+    else if (mode === 'sell') side.textContent = 'VENDA';
+    else side.textContent = '—';
+  }
+}
+
       const l = String(level).toLowerCase();
       if (l.includes('alto') || l.includes('high')) {
         el.classList.add('pill-red');
