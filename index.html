@@ -964,40 +964,53 @@
   <div class="page">
     <!-- ====== TOPO ====== -->
     <header class="top-bar">
-      <div class="top-left">
-        <div class="brand-title">
-          <span>AARON 9</span>&nbsp;INSTITUTIONAL PANEL
-        </div>
-        <div class="status-dot-live">LIVE FEED</div>
-        <div class="pill-small">
-          Símbolo <strong id="symbol-label">—</strong>
-        </div>
-        <div class="pill-small">
-          Timeframe <strong id="timeframe-label">—</strong>
-        </div>
-        <div class="pill-small">
-          Sessão <strong id="session-label">—</strong>
-        </div>
-      </div>
+  <div class="top-left">
+    <div class="brand-title">
+      <span>AARON 9</span>&nbsp;INSTITUTIONAL PANEL
+    </div>
 
-        <div class="top-right">
-    <div class="pill-state" id="state-pill">AGUARDANDO</div>
+    <div class="status-dot-live" data-i18n="top.live_feed">
+      LIVE FEED
+    </div>
+
+    <div class="pill-small">
+      <span data-i18n="top.symbol">Símbolo</span>
+      <strong id="symbol-label">—</strong>
+    </div>
+
+    <div class="pill-small">
+      <span data-i18n="top.timeframe">Timeframe</span>
+      <strong id="timeframe-label">—</strong>
+    </div>
+
+    <div class="pill-small">
+      <span data-i18n="top.session">Sessão</span>
+      <strong id="session-label">—</strong>
+    </div>
+  </div>
+
+  <div class="top-right">
+    <!-- TOGGLE PT / EN -->
+    <div id="lang-toggle" class="lang-toggle">
+      <button type="button" class="lang-btn active" data-lang="pt">PT</button>
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
+    </div>
+
+    <div class="pill-state" id="state-pill">
+      AGUARDANDO
+    </div>
 
     <div class="pill-soft">
-      <span id="i18n-last-update-label">Última atualização:</span>
+      <span data-i18n="top.last_update">Última atualização:</span>
       <strong id="last-update-label">—</strong>
     </div>
 
-    <!-- 🔵 TOGGLE DE IDIOMA -->
-    <div id="lang-toggle" class="lang-toggle">
-      <button class="lang-btn active" data-lang="pt">PT</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-    </div>
-
-    <button class="btn-refresh" id="btn-refresh">ATUALIZAR</button>
+    <button class="btn-refresh" id="btn-refresh" data-i18n="top.refresh">
+      ATUALIZAR
+    </button>
   </div>
+</header>
 
-    </header>
 
     <div id="error-banner" class="error-banner">
       <strong>Erro ao carregar painel.</strong> Verifique o n8n / webhook e tente novamente.
