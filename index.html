@@ -2144,7 +2144,7 @@ const I18N = {
     'radar.day_title': 'Direção geral do dia',
     'radar.now_title': 'Direção prevista · 1–3 candles',
 
-    // OUTROS (se quiser ir usando depois)
+    // OUTROS
     'comment.title': 'Comentário do Painel',
     'panel.risk_title': 'Risco',
     'panel.context_title': 'Contexto',
@@ -2209,7 +2209,8 @@ function applyLang(lang) {
   // botão refresh
   const btnRefresh = document.getElementById('btn-refresh');
   if (btnRefresh) {
-    btnRefresh.textContent = dict['top.refresh'] || (lang === 'en' ? 'REFRESH' : 'ATUALIZAR');
+    btnRefresh.textContent =
+      dict['top.refresh'] || (lang === 'en' ? 'REFRESH' : 'ATUALIZAR');
   }
 
   // texto de "Abrir / Fechar" do card ATR, se já estiver aberto
@@ -2249,18 +2250,13 @@ if (langToggleEl) {
 // idioma inicial = PT
 applyLang('pt');
 
-  });
-}
-
-// idioma inicial = PT
-applyLang('pt');
-
 // garante que roda depois que o DOM existe
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initAaron9);
 } else {
   initAaron9();
 }
+
 </script>
 </body>
 </html>
