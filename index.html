@@ -2080,16 +2080,18 @@ function applyLang(lang) {
   const lastUpdateLabelEl = document.getElementById('i18n-last-update-label');
   if (lastUpdateLabelEl) lastUpdateLabelEl.textContent = dict['i18n-last-update-label'];
 
-  // pill de estado quando está no modo “aguardando”
+  // pill de estado – sempre força o texto-base para o idioma
   const statePill = document.getElementById('state-pill');
-  if (statePill && (statePill.textContent === 'AGUARDANDO' || statePill.textContent === 'WAITING')) {
+  if (statePill) {
+    // se for pt, mantemos "AGUARDANDO"; se for en, "WAITING"
     statePill.textContent = dict['state-pill-wait'];
   }
 
-  // botão ATUALIZAR
+  // botão ATUALIZAR / REFRESH
   const btnRefresh = document.getElementById('btn-refresh');
   if (btnRefresh) btnRefresh.textContent = dict['btn-refresh-text'];
 }
+
 
 // liga o toggle
 const langToggleEl = document.getElementById('lang-toggle');
