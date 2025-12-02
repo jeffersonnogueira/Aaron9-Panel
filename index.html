@@ -1052,13 +1052,22 @@
 <section class="risk-card" id="atr-risk-panel">
   <div class="risk-header">
     <div>
-      <div class="risk-title">Gerenciador de risco · ATR</div>
-      <div class="risk-subtitle">
-        Ajuste os parâmetros do ATR e calcule risco / reward da operação.
-      </div>
-    </div>
-    <button type="button" class="risk-toggle" id="atr-risk-toggle">Abrir</button>
-  </div>
+      <div class="risk-title" data-i18n="risk.title">
+  Gerenciador de risco · ATR
+</div>
+<div class="risk-subtitle" data-i18n="risk.subtitle">
+  Ajuste os parâmetros do ATR e calcule risco / reward da operação.
+</div>
+...
+<button
+  type="button"
+  class="risk-toggle"
+  id="atr-risk-toggle"
+  data-i18n="risk.toggle_open"
+>
+  Abrir
+</button>
+
 
   <div class="risk-body" id="atr-risk-body" style="display:none;">
     <div class="risk-group">
