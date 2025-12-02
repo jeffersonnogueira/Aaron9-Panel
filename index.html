@@ -2057,6 +2057,61 @@ function initAaron9() {
 }
 
 
+// ================ TOGGLE DE IDIOMA PT / EN ==================
+
+const i18nMap = {
+  pt: {
+    'i18n-last-update-label': 'Última atualização:',
+    'state-pill-wait': 'AGUARDANDO',
+    'btn-refresh-text': 'ATUALIZAR',
+  },
+  en: {
+    'i18n-last-update-label': 'Last update:',
+    'state-pill-wait': 'WAITING',
+    'btn-refresh-text': 'REFRESH',
+  },
+};
+
+function applyLang(lang) {
+  const dict = i18nMap[lang];
+  if (!dict) return;
+
+  // label "Última atualização"
+  const lastUpdateLabelEl = document.getElementById('i18n-last-update-label');
+  if (lastUpdateLabelEl) lastUpdateLabelEl.textContent = dict['i18n-last-update-label'];
+
+  // pill de estado quando está no modo “aguardando”
+  const statePill = document.getElementById('state-pill');
+  if (statePill && (statePill.textContent === 'AGUARDANDO' || statePill.textContent === 'WAITING')) {
+    statePill.textContent = dict['state-pill-wait'];
+  }
+
+  // botão ATUALIZAR
+  const btnRefresh = document.getElementById('btn-refresh');
+  if (btnRefresh) btnRefresh.textContent = dict['btn-refresh-text'];
+}
+
+// liga o toggle
+const langToggleEl = document.getElementById('lang-toggle');
+if (langToggleEl) {
+  langToggleEl.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.lang-btn');
+    if (!btn) return;
+
+    const lang = btn.getAttribute('data-lang');
+    if (!lang) return;
+
+    // ativa visual
+    langToggleEl.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // aplica idioma
+    applyLang(lang);
+  });
+}
+
+// idioma inicial = PT
+applyLang('pt');
 
 // garante que roda depois que o DOM existe
 if (document.readyState === 'loading') {
@@ -2064,10 +2119,6 @@ if (document.readyState === 'loading') {
 } else {
   initAaron9();
 }
-</script>
-
-
-
 </script>
 </body>
 </html>
