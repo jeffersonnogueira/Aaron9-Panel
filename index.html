@@ -2115,41 +2115,119 @@ function initAaron9() {
 
 // ================ TOGGLE DE IDIOMA PT / EN ==================
 
-const i18nMap = {
+const I18N = {
   pt: {
-    'i18n-last-update-label': 'Última atualização:',
-    'state-pill-wait': 'AGUARDANDO',
-    'btn-refresh-text': 'ATUALIZAR',
+    // TOPO
+    'top.live_feed': 'FEED AO VIVO',
+    'top.symbol': 'Símbolo',
+    'top.timeframe': 'Timeframe',
+    'top.session': 'Sessão',
+    'top.last_update': 'Última atualização:',
+    'top.refresh': 'ATUALIZAR',
+
+    // RISCO · ATR
+    'risk.title': 'Gerenciador de risco · ATR',
+    'risk.subtitle': 'Ajuste os parâmetros do ATR e calcule risco / reward da operação.',
+    'risk.toggle_open': 'Abrir',
+    'risk.toggle_close': 'Fechar',
+
+    // CARD TRADINGVIEW
+    'card.tv_title': 'Painel de Preço em Tempo Real',
+    'card.tv_sub': 'TradingView + Estrutura do Dia',
+
+    // RESUMO INSTITUCIONAL
+    'summary.title': 'Resumo institucional',
+    'summary.subtitle': 'Leitura consolidada do AARON 9',
+    'summary.risk_mgmt': 'Gestão de risco',
+
+    // RADAR
+    'radar.day_title': 'Direção geral do dia',
+    'radar.now_title': 'Direção prevista · 1–3 candles',
+
+    // OUTROS (se quiser ir usando depois)
+    'comment.title': 'Comentário do Painel',
+    'panel.risk_title': 'Risco',
+    'panel.context_title': 'Contexto',
+    'panel.execution_title': 'Execução',
   },
+
   en: {
-    'i18n-last-update-label': 'Last update:',
-    'state-pill-wait': 'WAITING',
-    'btn-refresh-text': 'REFRESH',
+    // TOP
+    'top.live_feed': 'LIVE FEED',
+    'top.symbol': 'Symbol',
+    'top.timeframe': 'Timeframe',
+    'top.session': 'Session',
+    'top.last_update': 'Last update:',
+    'top.refresh': 'REFRESH',
+
+    // RISK · ATR
+    'risk.title': 'Risk manager · ATR',
+    'risk.subtitle': 'Adjust ATR parameters and calculate trade risk / reward.',
+    'risk.toggle_open': 'Open',
+    'risk.toggle_close': 'Close',
+
+    // TRADINGVIEW CARD
+    'card.tv_title': 'Real-Time Price Panel',
+    'card.tv_sub': 'TradingView + Daily Structure',
+
+    // SUMMARY
+    'summary.title': 'Institutional summary',
+    'summary.subtitle': 'Consolidated reading from AARON 9',
+    'summary.risk_mgmt': 'Risk management',
+
+    // RADAR
+    'radar.day_title': 'Overall direction of the day',
+    'radar.now_title': 'Expected direction · 1–3 candles',
+
+    // OTHERS
+    'comment.title': 'Panel commentary',
+    'panel.risk_title': 'Risk',
+    'panel.context_title': 'Context',
+    'panel.execution_title': 'Execution',
   },
 };
 
+let currentLang = 'pt';
+
 function applyLang(lang) {
-  const dict = i18nMap[lang];
-  if (!dict) return;
+  const dict = I18N[lang] || I18N.pt;
+  currentLang = lang;
 
-  // label "Última atualização"
-  const lastUpdateLabelEl = document.getElementById('i18n-last-update-label');
-  if (lastUpdateLabelEl) lastUpdateLabelEl.textContent = dict['i18n-last-update-label'];
+  // troca TODO elemento com data-i18n
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const key = el.getAttribute('data-i18n');
+    const txt = dict[key];
+    if (txt) el.textContent = txt;
+  });
 
-  // pill de estado – sempre força o texto-base para o idioma
+  // pill de estado (AGUARDANDO / WAITING)
   const statePill = document.getElementById('state-pill');
   if (statePill) {
-    // se for pt, mantemos "AGUARDANDO"; se for en, "WAITING"
-    statePill.textContent = dict['state-pill-wait'];
+    statePill.textContent = lang === 'en' ? 'WAITING' : 'AGUARDANDO';
   }
 
-  // botão ATUALIZAR / REFRESH
+  // botão refresh
   const btnRefresh = document.getElementById('btn-refresh');
-  if (btnRefresh) btnRefresh.textContent = dict['btn-refresh-text'];
+  if (btnRefresh) {
+    btnRefresh.textContent = dict['top.refresh'] || (lang === 'en' ? 'REFRESH' : 'ATUALIZAR');
+  }
+
+  // texto de "Abrir / Fechar" do card ATR, se já estiver aberto
+  const atrToggle = document.getElementById('atr-risk-toggle');
+  const atrBody = document.getElementById('atr-risk-body');
+  if (atrToggle && atrBody) {
+    const isOpen = atrBody.style.display && atrBody.style.display !== 'none';
+    if (isOpen) {
+      atrToggle.textContent =
+        dict['risk.toggle_close'] || (lang === 'en' ? 'Close' : 'Fechar');
+    } else {
+      atrToggle.textContent =
+        dict['risk.toggle_open'] || (lang === 'en' ? 'Open' : 'Abrir');
+    }
+  }
 }
 
-
-// liga o toggle
+// liga o toggle dos botões PT / EN
 const langToggleEl = document.getElementById('lang-toggle');
 if (langToggleEl) {
   langToggleEl.addEventListener('click', (ev) => {
@@ -2159,12 +2237,18 @@ if (langToggleEl) {
     const lang = btn.getAttribute('data-lang');
     if (!lang) return;
 
-    // ativa visual
-    langToggleEl.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    langToggleEl.querySelectorAll('.lang-btn').forEach((b) =>
+      b.classList.remove('active')
+    );
     btn.classList.add('active');
 
-    // aplica idioma
     applyLang(lang);
+  });
+}
+
+// idioma inicial = PT
+applyLang('pt');
+
   });
 }
 
