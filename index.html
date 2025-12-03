@@ -2083,6 +2083,99 @@ async function loadPanel(showSpinner) {
     updateStructureUI(structureRecent);
     updateStructureZigzag(panel);
 
+    function updatePullbackBrain(data) {
+  lastPullbackBrain = data || null;
+
+  if (!els.pullbackStatus) return;
+
+  // se não veio nada do backend, mostra estado neutro
+  if (!data || Object.keys(data).length === 0) {
+    els.pullbackStatus.textContent =
+      currentLang === 'en' ? 'Waiting for pullback...' : 'Aguardando pullback...';
+
+    if (els.pullbackDepth) els.pullbackDepth.textContent = '—';
+    if (els.pullbackQuality) els.pullbackQuality.textContent = '—';
+
+    if (els.pullbackHeadline) {
+      els.pullbackHeadline.textContent =
+        currentLang === 'en'
+          ? 'No clear pullback yet.'
+          : 'Ainda não há um pullback claro.';
+    }
+
+    if (els.pullbackText) {
+      els.pullbackText.textContent =
+        currentLang === 'en'
+          ? 'The market has not offered a clean pullback in the main direction yet. Let price breathe and wait for structure.'
+          : 'O mercado ainda não ofereceu um pullback limpo na direção principal. Deixe o preço respirar e espere estrutura.';
+    }
+
+    if (els.pullbackHighlightBox) {
+      els.pullbackHighlightBox.style.background = 'rgba(15,23,42,0.7)';
+      els.pullbackHighlightBox.style.borderColor = 'rgba(148,163,184,0.4)';
+    }
+    return;
+  }
+
+  // ===== campos numéricos / status =====
+  const depthAtr =
+    data.depth_atr ?? data.atr_depth ?? null;
+  const quality =
+    data.quality ?? data.grade ?? null;
+  const status =
+    data.status ?? null;
+  const tone = (data.tone || '').toLowerCase();
+
+  els.pullbackStatus.textContent =
+    status ||
+    (currentLang === 'en' ? 'Pullback detected' : 'Pullback detectado');
+
+  if (els.pullbackDepth) {
+    els.pullbackDepth.textContent =
+      depthAtr != null ? depthAtr.toFixed(2) + ' ATR' : '—';
+  }
+
+  if (els.pullbackQuality) {
+    els.pullbackQuality.textContent = quality || '—';
+  }
+
+  // ===== textos em PT / EN vindos do backend =====
+  const headline =
+    (currentLang === 'en'
+      ? (data.headline_en || data.headline)
+      : (data.headline_pt || data.headline)) ||
+    (currentLang === 'en'
+      ? 'Healthy pullback inside the main trend.'
+      : 'Pullback saudável dentro da tendência principal.');
+
+  const body =
+    (currentLang === 'en'
+      ? (data.text_en || data.text)
+      : (data.text_pt || data.text)) ||
+    (currentLang === 'en'
+      ? 'AARON 9 sees this pullback as aligned with the main direction. Focus on trades with the trend and avoid fighting the move.'
+      : 'O AARON 9 vê este pullback como alinhado com a direção principal. Foque em operações a favor e evite brigar com o movimento.');
+
+  if (els.pullbackHeadline) els.pullbackHeadline.textContent = headline;
+  if (els.pullbackText) els.pullbackText.textContent = body;
+
+  // ===== cor do bloco (verde / amarelo / vermelho) =====
+  if (els.pullbackHighlightBox) {
+    if (tone === 'red' || tone === 'danger') {
+      els.pullbackHighlightBox.style.background = 'rgba(248,113,113,0.06)';
+      els.pullbackHighlightBox.style.borderColor = 'rgba(248,113,113,0.6)';
+    } else if (tone === 'yellow' || tone === 'neutral') {
+      els.pullbackHighlightBox.style.background = 'rgba(234,179,8,0.06)';
+      els.pullbackHighlightBox.style.borderColor = 'rgba(234,179,8,0.6)';
+    } else {
+      // default = saudável / ok
+      els.pullbackHighlightBox.style.background = 'rgba(34,197,94,0.08)';
+      els.pullbackHighlightBox.style.borderColor = 'rgba(34,197,94,0.4)';
+    }
+  }
+}
+
+
     // Textos principais
     const finalSummary =
       panel.summary ||
