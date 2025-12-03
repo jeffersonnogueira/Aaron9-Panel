@@ -2538,6 +2538,11 @@ function updateSizingBrain(data) {
     return n.toFixed(1) + '%'; // mande os valores em % já (0.8 = 0.8%)
   }
 
+    if (typeof updateSizingPhrase === 'function') {
+    updateSizingPhrase();
+  }
+
+
   // ====== SIZING BRAIN – frases baseadas em capital / risco / stop ======
 function updateSizingPhrase() {
   const capEl = els.sizingCapitalInput;
