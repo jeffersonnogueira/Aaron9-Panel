@@ -1618,6 +1618,9 @@ const els = {
   pullbackHighlightBox: document.getElementById('pullback-highlight-box'),
 
 };
+    // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
+let lastPullbackBrain = null;
+
 
 // ====== GERENCIADOR DE RISCO · ATR (FRONTEND) ======
 const atrEls = {
