@@ -2523,24 +2523,7 @@ function updatePullbackBrain(data) {
   setMeter(score, tone);
 }
 
-    // ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
-function updateSizingBrain(data) {
-  lastSizingBrain = data || null;
-
-  if (!els.sizingTarget) return;
-
-  function fmtPct(v) {
-    const n = Number(v);
-    if (!Number.isFinite(n)) return null;
-    return n.toFixed(1) + '%'; // mande os valores em % já (0.8 = 0.8%)
-  }
-
-    if (typeof updateSizingPhrase === 'function') {
-    updateSizingPhrase();
-  }
-
-
-  // ====== SIZING BRAIN – frases baseadas em capital / risco / stop ======
+   // ====== SIZING BRAIN – frases baseadas em capital / risco / stop ======
 function updateSizingPhrase() {
   const capEl = els.sizingCapitalInput;
   const riskEl = els.sizingRiskInput;
@@ -2554,7 +2537,6 @@ function updateSizingPhrase() {
   const riskPct = Number((riskEl.value || '').replace(',', '.'));
   const stopUsd = Number((stopEl.value || '').replace(',', '.'));
 
-  // texto base dependendo do idioma
   const baseAsk =
     currentLang === 'en'
       ? 'Type capital, risk % and stop distance to see the suggested position size.'
@@ -2621,7 +2603,7 @@ function updateSizingPhrase() {
   }
 }
 
-// liga os eventos de input
+// eventos dos inputs
 ['input', 'change'].forEach(function (evt) {
   if (els.sizingCapitalInput)
     els.sizingCapitalInput.addEventListener(evt, updateSizingPhrase);
@@ -2631,6 +2613,21 @@ function updateSizingPhrase() {
     els.sizingStopInput.addEventListener(evt, updateSizingPhrase);
 });
 
+
+// ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
+function updateSizingBrain(data) {
+  lastSizingBrain = data || null;
+
+  if (!els.sizingTarget) return;
+
+  function fmtPct(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    return n.toFixed(1) + '%';
+  }
+
+  // sempre que chegar dado novo, recalcula a frase do sizing também
+  updateSizingPhrase();
 
   function setProfileTag(profile) {
     const tag = els.sizingProfileTag;
@@ -2764,7 +2761,6 @@ function updateSizingPhrase() {
   const tradesCount = data.trades_count ?? data.recommended_trades_count;
   const score = data.score ?? data.risk_usage_score ?? 40;
 
-  // alvo
   let targetText = '';
   const tMinFmt = fmtPct(tMin);
   const tMaxFmt = fmtPct(tMax);
@@ -2792,7 +2788,6 @@ function updateSizingPhrase() {
   setStyleTag(style, styleLabelPt, styleLabelEn);
   setMeter(score);
 
-  // comentário humano
   const comment =
     currentLang === 'en'
       ? (data.comment_en || data.comment || '')
