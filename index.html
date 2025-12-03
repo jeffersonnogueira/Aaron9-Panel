@@ -1590,7 +1590,6 @@ const els = {
   directionDayText: document.getElementById('direction-day-text'),
   directionNowText: document.getElementById('direction-now-text'),
 
-
   // HERO / MODO CEGO
   heroBlock: document.getElementById('hero-block'),
   heroMain: document.getElementById('hero-main'),
@@ -1609,18 +1608,18 @@ const els = {
   structureHLDot: document.getElementById('structure-hl-dot'),
   structureLHDot: document.getElementById('structure-lh-dot'),
   structureLLDot: document.getElementById('structure-ll-dot'),
-    // Pullback Brain
+
+  // Pullback Brain
   pullbackStatus: document.getElementById('pullback-status'),
   pullbackDepth: document.getElementById('pullback-depth'),
   pullbackQuality: document.getElementById('pullback-quality'),
   pullbackHeadline: document.getElementById('pullback-headline'),
   pullbackText: document.getElementById('pullback-text'),
   pullbackHighlightBox: document.getElementById('pullback-highlight-box'),
-
 };
-    // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
-let lastPullbackBrain = null;
 
+// dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
+let lastPullbackBrain = null;
 
 // ====== GERENCIADOR DE RISCO · ATR (FRONTEND) ======
 const atrEls = {
@@ -1646,13 +1645,11 @@ const atrEls = {
 // abre / fecha o card
 if (atrEls.toggleBtn && atrEls.body) {
   atrEls.toggleBtn.addEventListener('click', () => {
-    const hidden = atrEls.body.style.display === 'none' || atrEls.body.style.display === '';
+    const hidden =
+      atrEls.body.style.display === 'none' || atrEls.body.style.display === '';
     atrEls.body.style.display = hidden ? 'grid' : 'none';
     atrEls.toggleBtn.textContent = hidden ? 'Fechar' : 'Abrir';
   });
-  // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
-
-
 }
 
 // cálculo do risco baseado no ATR digitado
@@ -1681,8 +1678,10 @@ function updateAtrRisk() {
   if (atrEls.outDistance) atrEls.outDistance.textContent = stopDist.toFixed(2);
   if (atrEls.outShares) atrEls.outShares.textContent = shares.toFixed(0);
   if (atrEls.outRisk) atrEls.outRisk.textContent = '$ ' + riskMoney.toFixed(2);
-  if (atrEls.outReward2R) atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
-  if (atrEls.outReward3R) atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
+  if (atrEls.outReward2R)
+    atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
+  if (atrEls.outReward3R)
+    atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
 }
 
 if (atrEls.calcBtn) {
@@ -1732,7 +1731,9 @@ function prefillAtrFromPanel(panel, raw) {
 function safeText(el, value, fallback = '—') {
   if (!el) return;
   el.textContent =
-    value === undefined || value === null || value === '' ? fallback : String(value);
+    value === undefined || value === null || value === ''
+      ? fallback
+      : String(value);
 }
 
 function setArrow(el, dir) {
@@ -1920,6 +1921,8 @@ function updateStructureZigzag(panel) {
 
   poly.setAttribute('points', svgPoints.join(' '));
 }
+
+// ====== PULLBACK BRAIN – FUNÇÃO GLOBAL ======
 function updatePullbackBrain(data) {
   lastPullbackBrain = data || null;
 
@@ -1955,12 +1958,9 @@ function updatePullbackBrain(data) {
   }
 
   // ===== campos numéricos / status =====
-  const depthAtr =
-    data.depth_atr ?? data.atr_depth ?? null;
-  const quality =
-    data.quality ?? data.grade ?? null;
-  const status =
-    data.status ?? null;
+  const depthAtr = data.depth_atr ?? data.atr_depth ?? null;
+  const quality = data.quality ?? data.grade ?? null;
+  const status = data.status ?? null;
   const tone = (data.tone || '').toLowerCase();
 
   els.pullbackStatus.textContent =
@@ -2035,7 +2035,8 @@ async function loadPanel(showSpinner) {
     const patternDay = patterns.day || {};
     const patternShort = patterns.short || {};
     const meta = panel.meta || {};
-        // "cérebro" de pullback vindo do n8n
+
+    // "cérebro" de pullback vindo do n8n
     const pullbackBrain =
       panel.pullback_brain ||
       panel.pullbackBrain ||
@@ -2043,11 +2044,19 @@ async function loadPanel(showSpinner) {
       {};
     updatePullbackBrain(pullbackBrain);
 
-
     // Cabeçalho
     safeText(els.symbol, panel.symbol || raw.symbol || '—');
-    safeText(els.timeframe, panel.timeframe || raw.timeframe || panel.timeframe_label || '—');
-    safeText(els.session, panel.session || raw.session || panel.session_label || '—');
+    safeText(
+      els.timeframe,
+      panel.timeframe ||
+        raw.timeframe ||
+        panel.timeframe_label ||
+        '—'
+    );
+    safeText(
+      els.session,
+      panel.session || raw.session || panel.session_label || '—'
+    );
 
     const micro = panel.microcontexto || {};
     const flowLabel = panel.flow_label || panel.flow || micro.direcao;
@@ -2102,17 +2111,29 @@ async function loadPanel(showSpinner) {
     safeText(els.patternNowLabel, patternNowName || '-');
     safeText(els.patternNowDetail, patternNowDesc || '—');
 
-    setArrow(els.dirDayArrow, panel.direction_day || panel.direction_of_day || micro.direcao);
-    setArrow(els.dirNowArrow, panel.direction_now || panel.direction_of_moment || micro.direcao);
+    setArrow(
+      els.dirDayArrow,
+      panel.direction_day ||
+        panel.direction_of_day ||
+        micro.direcao
+    );
+    setArrow(
+      els.dirNowArrow,
+      panel.direction_now ||
+        panel.direction_of_moment ||
+        micro.direcao
+    );
 
     setPillTrend(
       els.trendDayPill,
       panel.direction_day || panel.direction_of_day || micro.direcao,
       panel.trend_day_label
     );
-        setPillTrend(
+    setPillTrend(
       els.trendNowPill,
-      panel.direction_now || panel.direction_of_moment || micro.direcao,
+      panel.direction_now ||
+        panel.direction_of_moment ||
+        micro.direcao,
       panel.trend_now_label
     );
 
@@ -2125,8 +2146,7 @@ async function loadPanel(showSpinner) {
     let nowProb   = panel.direction_now_prob;
     let nowDetail = panel.direction_now_detail;
 
-    // Se o backend ainda não preencheu esses campos,
-    // usamos prob_favor / prob_contra como base
+    // fallback usando prob_favor / prob_contra
     if ((!dayProb && !dayDetail) || (!nowProb && !nowDetail)) {
       const forecast = panel.ai_forecast || {};
       const probFavor  = Number(panel.prob_favor  ?? forecast.prob_continuacao ?? NaN);
@@ -2172,9 +2192,6 @@ async function loadPanel(showSpinner) {
     }
 
     // Estrutura recente: HH / HL / LH / LL
-
-
-    // Estrutura recente: HH / HL / LH / LL
     const structureRecent =
       panel.structure_recent ||
       panel.recent_structure ||
@@ -2184,99 +2201,6 @@ async function loadPanel(showSpinner) {
 
     updateStructureUI(structureRecent);
     updateStructureZigzag(panel);
-
-    function updatePullbackBrain(data) {
-  lastPullbackBrain = data || null;
-
-  if (!els.pullbackStatus) return;
-
-  // se não veio nada do backend, mostra estado neutro
-  if (!data || Object.keys(data).length === 0) {
-    els.pullbackStatus.textContent =
-      currentLang === 'en' ? 'Waiting for pullback...' : 'Aguardando pullback...';
-
-    if (els.pullbackDepth) els.pullbackDepth.textContent = '—';
-    if (els.pullbackQuality) els.pullbackQuality.textContent = '—';
-
-    if (els.pullbackHeadline) {
-      els.pullbackHeadline.textContent =
-        currentLang === 'en'
-          ? 'No clear pullback yet.'
-          : 'Ainda não há um pullback claro.';
-    }
-
-    if (els.pullbackText) {
-      els.pullbackText.textContent =
-        currentLang === 'en'
-          ? 'The market has not offered a clean pullback in the main direction yet. Let price breathe and wait for structure.'
-          : 'O mercado ainda não ofereceu um pullback limpo na direção principal. Deixe o preço respirar e espere estrutura.';
-    }
-
-    if (els.pullbackHighlightBox) {
-      els.pullbackHighlightBox.style.background = 'rgba(15,23,42,0.7)';
-      els.pullbackHighlightBox.style.borderColor = 'rgba(148,163,184,0.4)';
-    }
-    return;
-  }
-
-  // ===== campos numéricos / status =====
-  const depthAtr =
-    data.depth_atr ?? data.atr_depth ?? null;
-  const quality =
-    data.quality ?? data.grade ?? null;
-  const status =
-    data.status ?? null;
-  const tone = (data.tone || '').toLowerCase();
-
-  els.pullbackStatus.textContent =
-    status ||
-    (currentLang === 'en' ? 'Pullback detected' : 'Pullback detectado');
-
-  if (els.pullbackDepth) {
-    els.pullbackDepth.textContent =
-      depthAtr != null ? depthAtr.toFixed(2) + ' ATR' : '—';
-  }
-
-  if (els.pullbackQuality) {
-    els.pullbackQuality.textContent = quality || '—';
-  }
-
-  // ===== textos em PT / EN vindos do backend =====
-  const headline =
-    (currentLang === 'en'
-      ? (data.headline_en || data.headline)
-      : (data.headline_pt || data.headline)) ||
-    (currentLang === 'en'
-      ? 'Healthy pullback inside the main trend.'
-      : 'Pullback saudável dentro da tendência principal.');
-
-  const body =
-    (currentLang === 'en'
-      ? (data.text_en || data.text)
-      : (data.text_pt || data.text)) ||
-    (currentLang === 'en'
-      ? 'AARON 9 sees this pullback as aligned with the main direction. Focus on trades with the trend and avoid fighting the move.'
-      : 'O AARON 9 vê este pullback como alinhado com a direção principal. Foque em operações a favor e evite brigar com o movimento.');
-
-  if (els.pullbackHeadline) els.pullbackHeadline.textContent = headline;
-  if (els.pullbackText) els.pullbackText.textContent = body;
-
-  // ===== cor do bloco (verde / amarelo / vermelho) =====
-  if (els.pullbackHighlightBox) {
-    if (tone === 'red' || tone === 'danger') {
-      els.pullbackHighlightBox.style.background = 'rgba(248,113,113,0.06)';
-      els.pullbackHighlightBox.style.borderColor = 'rgba(248,113,113,0.6)';
-    } else if (tone === 'yellow' || tone === 'neutral') {
-      els.pullbackHighlightBox.style.background = 'rgba(234,179,8,0.06)';
-      els.pullbackHighlightBox.style.borderColor = 'rgba(234,179,8,0.6)';
-    } else {
-      // default = saudável / ok
-      els.pullbackHighlightBox.style.background = 'rgba(34,197,94,0.08)';
-      els.pullbackHighlightBox.style.borderColor = 'rgba(34,197,94,0.4)';
-    }
-  }
-}
-
 
     // Textos principais
     const finalSummary =
@@ -2332,19 +2256,18 @@ function initAaron9() {
 
       // padrão inicial (pode ser NVDA na NASDAQ)
       symbol: 'NASDAQ:NVDA',
-      interval: '1',               // começa em 1m, mas você pode mudar
-      timezone: 'America/Denver',  // horário de Utah (MT)
+      interval: '1',               // começa em 1m
+      timezone: 'America/Denver',  // horário de Utah
       theme: 'dark',
       style: '1',
       autosize: true,
       locale: 'en',
 
       withdateranges: false,
-      hide_top_toolbar: false,     // mostra barra com busca/timeframe
+      hide_top_toolbar: false,
       hide_side_toolbar: false,
-      allow_symbol_change: true,   // <-- importante: libera trocar de ativo
+      allow_symbol_change: true,
 
-      // NÃO vamos bloquear busca / intervalos
       disabled_features: [],
       enabled_features: [],
     });
@@ -2357,11 +2280,10 @@ function initAaron9() {
     });
   }
 
-  // primeira carga + auto refresh do painel (não mexe no gráfico)
+  // primeira carga + auto refresh do painel
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
 }
-
 
 // ================ TOGGLE DE IDIOMA PT / EN ==================
 
@@ -2399,6 +2321,11 @@ const I18N = {
     'panel.risk_title': 'Risco',
     'panel.context_title': 'Contexto',
     'panel.execution_title': 'Execução',
+
+    // PULLBACK
+    'pullback.title': 'Pullback Brain · Zona de respiro',
+    'pullback.depth': 'Profundidade',
+    'pullback.quality': 'Qualidade',
   },
 
   en: {
@@ -2434,6 +2361,11 @@ const I18N = {
     'panel.risk_title': 'Risk',
     'panel.context_title': 'Context',
     'panel.execution_title': 'Execution',
+
+    // PULLBACK
+    'pullback.title': 'Pullback Brain · Pullback zone',
+    'pullback.depth': 'Depth',
+    'pullback.quality': 'Quality',
   },
 };
 
@@ -2442,13 +2374,6 @@ let currentLang = 'pt';
 function applyLang(lang) {
   const dict = I18N[lang] || I18N.pt;
   currentLang = lang;
-    'pullback.title': 'Pullback Brain · Zona de respiro',
-    'pullback.depth': 'Profundidade',
-    'pullback.quality': 'Qualidade',
-          'pullback.title': 'Pullback Brain · Pullback zone',
-    'pullback.depth': 'Depth',
-    'pullback.quality': 'Quality',
-
 
   // troca TODO elemento com data-i18n
   document.querySelectorAll('[data-i18n]').forEach((el) => {
@@ -2483,6 +2408,11 @@ function applyLang(lang) {
         dict['risk.toggle_open'] || (lang === 'en' ? 'Open' : 'Abrir');
     }
   }
+
+  // re-renderiza o Pullback Brain no idioma atual
+  if (typeof updatePullbackBrain === 'function') {
+    updatePullbackBrain(lastPullbackBrain);
+  }
 }
 
 // liga o toggle dos botões PT / EN
@@ -2502,11 +2432,6 @@ if (langToggleEl) {
 
     applyLang(lang);
   });
-    // re-renderiza o Pullback Brain no idioma atual
-  if (typeof updatePullbackBrain === 'function') {
-    updatePullbackBrain(lastPullbackBrain);
-  }
-
 }
 
 // idioma inicial = PT
@@ -2518,7 +2443,7 @@ if (document.readyState === 'loading') {
 } else {
   initAaron9();
 }
-
 </script>
+
 </body>
 </html>
