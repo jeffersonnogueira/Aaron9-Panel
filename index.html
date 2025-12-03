@@ -2078,7 +2078,61 @@ function updatePullbackBrain(data) {
 
   if (!els.pullbackStatus) return;
 
-  // se não veio nada do backend, mostra estado neutro
+  // helpers para classe do termômetro
+  function setMeter(score, tone) {
+    const fill = els.pullbackMeterFill;
+    const label = els.pullbackMeterLabel;
+    if (!fill || !label) return;
+
+    let v = Number(score);
+    if (!Number.isFinite(v)) v = 40; // fallback
+    v = Math.max(0, Math.min(100, v));
+
+    fill.style.width = v.toFixed(0) + '%';
+
+    fill.classList.remove('neutral', 'danger');
+    if (tone === 'red' || tone === 'danger') {
+      fill.classList.add('danger');
+    } else if (tone === 'yellow' || tone === 'neutral') {
+      fill.classList.add('neutral');
+    }
+
+    label.textContent =
+      (currentLang === 'en' ? 'Confidence ' : 'Confiança ') +
+      v.toFixed(0) +
+      '%';
+  }
+
+  function setSideTag(side) {
+    const tag = els.pullbackSideTag;
+    if (!tag) return;
+
+    const s = (side || '').toString().toLowerCase();
+    tag.classList.remove('side-buy', 'side-sell', 'side-neutral');
+
+    if (s === 'buy' || s === 'compra') {
+      tag.classList.add('side-buy');
+      tag.textContent = currentLang === 'en' ? 'BUY PULLBACK' : 'COMPRA';
+    } else if (s === 'sell' || s === 'venda') {
+      tag.classList.add('side-sell');
+      tag.textContent = currentLang === 'en' ? 'SELL PULLBACK' : 'VENDA';
+    } else {
+      tag.classList.add('side-neutral');
+      tag.textContent = currentLang === 'en' ? 'NEUTRAL' : 'NEUTRO';
+    }
+  }
+
+  function setStageTag(stageTitle) {
+    const tag = els.pullbackStageTag;
+    if (!tag) return;
+
+    const txt =
+      stageTitle ||
+      (currentLang === 'en' ? 'Waiting' : 'Aguardando');
+    tag.textContent = txt;
+  }
+
+  // ===== CASO SEM DADOS (estado neutro) =====
   if (!data || Object.keys(data).length === 0) {
     els.pullbackStatus.textContent =
       currentLang === 'en' ? 'Waiting for pullback...' : 'Aguardando pullback...';
@@ -2104,18 +2158,30 @@ function updatePullbackBrain(data) {
       els.pullbackHighlightBox.style.background = 'rgba(15,23,42,0.7)';
       els.pullbackHighlightBox.style.borderColor = 'rgba(148,163,184,0.4)';
     }
+
+    setSideTag(null);
+    setStageTag(null);
+    setMeter(40, 'neutral');
     return;
   }
 
   // ===== campos numéricos / status =====
   const depthAtr = data.depth_atr ?? data.atr_depth ?? null;
   const quality = data.quality ?? data.grade ?? null;
-  const status = data.status ?? null;
   const tone = (data.tone || '').toLowerCase();
+  const side = data.side || data.direction || null;
+  const score = data.score ?? data.confidence ?? 40;
 
-  els.pullbackStatus.textContent =
-    status ||
-    (currentLang === 'en' ? 'Pullback detected' : 'Pullback detectado');
+  // título principal (usa state_title_pt/en se tiver)
+  const statusTitle =
+    (currentLang === 'en'
+      ? (data.state_title_en || data.status_en || data.state_title || data.status)
+      : (data.state_title_pt || data.status_pt || data.state_title || data.status)) ||
+    (currentLang === 'en'
+      ? 'Pullback detected'
+      : 'Pullback detectado');
+
+  els.pullbackStatus.textContent = statusTitle;
 
   if (els.pullbackDepth) {
     els.pullbackDepth.textContent =
@@ -2125,6 +2191,15 @@ function updatePullbackBrain(data) {
   if (els.pullbackQuality) {
     els.pullbackQuality.textContent = quality || '—';
   }
+
+  setSideTag(side);
+
+  // estágio (1..7 – aquelas frases que fizemos: tendência, pullback fraco, reversão, etc.)
+  const stageTitle =
+    (currentLang === 'en'
+      ? (data.stage_title_en || data.stage_title)
+      : (data.stage_title_pt || data.stage_title)) || null;
+  setStageTag(stageTitle);
 
   // ===== textos em PT / EN vindos do backend =====
   const headline =
@@ -2160,7 +2235,11 @@ function updatePullbackBrain(data) {
       els.pullbackHighlightBox.style.borderColor = 'rgba(34,197,94,0.4)';
     }
   }
+
+  // termômetro de confiança / “risco de reversão”
+  setMeter(score, tone);
 }
+
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
 async function loadPanel(showSpinner) {
