@@ -1941,6 +1941,14 @@ async function loadPanel(showSpinner) {
     const patternDay = patterns.day || {};
     const patternShort = patterns.short || {};
     const meta = panel.meta || {};
+        // "cérebro" de pullback vindo do n8n
+    const pullbackBrain =
+      panel.pullback_brain ||
+      panel.pullbackBrain ||
+      panel.pullback ||
+      {};
+    updatePullbackBrain(pullbackBrain);
+
 
     // Cabeçalho
     safeText(els.symbol, panel.symbol || raw.symbol || '—');
