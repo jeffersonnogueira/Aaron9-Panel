@@ -3050,10 +3050,14 @@ function applyLang(lang) {
   }
 
   // re-renderiza o Pullback Brain no idioma atual
-  if (typeof updatePullbackBrain === 'function') {
+    if (typeof updatePullbackBrain === 'function') {
     updatePullbackBrain(lastPullbackBrain);
   }
+  if (typeof updateSizingBrain === 'function') {
+    updateSizingBrain(lastSizingBrain);
+  }
 }
+
 
 // liga o toggle dos botões PT / EN
 const langToggleEl = document.getElementById('lang-toggle');
