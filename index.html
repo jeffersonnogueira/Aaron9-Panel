@@ -1502,28 +1502,22 @@
       </div>
     </div>
   </section>
-  <!-- PULLBACK BRAIN · CÉREBRO ESPECIAL DE PULLBACK -->
+    <!-- PULLBACK BRAIN · CÉREBRO ESPECIAL DE PULLBACK -->
   <section class="decision-card" id="pullback-brain-card">
     <div class="decision-title" data-i18n="pullback.title">
       Pullback Brain · Zona de respiro
     </div>
 
-    <div style="display:flex; justify-content:space-between; gap:8px; margin-bottom:8px;">
-      <div>
-        <div style="
-          font-size:0.72rem;
-          text-transform:uppercase;
-          letter-spacing:0.14em;
-          color:var(--text-soft);
-        ">
-          Status
-        </div>
-        <div id="pullback-status" class="decision-label-strong">
+    <!-- HEADER: status + tags -->
+    <div class="pullback-header-row">
+      <div class="pullback-status-block">
+        <div class="pullback-status-label">Status</div>
+        <div id="pullback-status" class="pullback-status-main">
           Aguardando pullback...
         </div>
       </div>
 
-      <div style="text-align:right; font-size:0.76rem;">
+      <div class="pullback-meta-block">
         <div>
           <span data-i18n="pullback.depth">Profundidade</span>:
           <strong id="pullback-depth">—</strong>
@@ -1532,20 +1526,47 @@
           <span data-i18n="pullback.quality">Qualidade</span>:
           <strong id="pullback-quality">—</strong>
         </div>
+
+        <div class="pullback-tag-row">
+          <span id="pullback-side-tag" class="pullback-tag side-neutral">
+            NEUTRO
+          </span>
+          <span id="pullback-stage-tag" class="pullback-tag stage">
+            Aguardando
+          </span>
+        </div>
       </div>
     </div>
 
+    <!-- TERMÔMETRO / CONFIANÇA DO PULLBACK -->
+    <div class="pullback-meter">
+      <div class="pullback-meter-label">
+        <span>Somente respiro</span>
+        <span id="pullback-meter-label">Confiança 40%</span>
+        <span>Reversão forte</span>
+      </div>
+      <div class="pullback-meter-bar">
+        <div
+          id="pullback-meter-fill"
+          class="pullback-meter-fill neutral"
+          style="width:40%;"
+        ></div>
+      </div>
+    </div>
+
+    <!-- TEXTO "HUMANO" DO CÉREBRO DE PULLBACK -->
     <div class="pullback-highlight" id="pullback-highlight-box">
       <div id="pullback-headline" style="font-weight:600; margin-bottom:4px;">
         Pullback ainda saudável dentro da tendência.
       </div>
       <div id="pullback-text" style="font-size:0.8rem;">
-        Aqui o AARON 9 conversa com você como um humano, explicando se vale a pena
-        entrar na continuação, esperar mais um candle ou abortar a ideia.  
-        Este texto vem do "cérebro de pullback" no n8n, em português ou inglês.
+        Ainda não há um pullback claro.  
+        O mercado ainda não ofereceu um pullback limpo na direção principal.
+        Deixe o preço respirar e espere estrutura.
       </div>
     </div>
   </section>
+
 
   <!-- CHECKLIST DE PADRÕES -->
   <section class="decision-card">
