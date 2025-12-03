@@ -1647,6 +1647,9 @@ if (atrEls.toggleBtn && atrEls.body) {
     atrEls.body.style.display = hidden ? 'grid' : 'none';
     atrEls.toggleBtn.textContent = hidden ? 'Fechar' : 'Abrir';
   });
+  // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
+let lastPullbackBrain = null;
+
 }
 
 // cálculo do risco baseado no ATR digitado
