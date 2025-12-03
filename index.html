@@ -2408,6 +2408,11 @@ if (langToggleEl) {
 
     applyLang(lang);
   });
+    // re-renderiza o Pullback Brain no idioma atual
+  if (typeof updatePullbackBrain === 'function') {
+    updatePullbackBrain(lastPullbackBrain);
+  }
+
 }
 
 // idioma inicial = PT
