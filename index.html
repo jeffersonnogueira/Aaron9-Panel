@@ -2624,19 +2624,7 @@ function updatePullbackBrain(data) {
   
 
 
-// ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
-function updateSizingBrain(data) {
-  lastSizingBrain = data || null;
-
-  if (!els.sizingTarget) return;
-
-  function fmtPct(v) {
-    const n = Number(v);
-    if (!Number.isFinite(n)) return null;
-    return n.toFixed(1) + '%';
-  }
-
-  // ====== SIZING BRAIN – frases baseadas em Capital EM USO + Alavancagem ======
+// ====== SIZING BRAIN – frases baseadas em Capital EM USO + Alavancagem ======
 function updateSizingPhrase() {
   const accEl = els.sizingAccountRealInput;
   const useEl = els.sizingUseInput;
@@ -2659,14 +2647,14 @@ function updateSizingPhrase() {
   }
 
   const capitalReal = numFromInput(accEl);
-  const capitalUso = numFromInput(useEl);
-  const leverage = numFromInput(levEl);
-  const riskPct = numFromInput(riskEl);
-  const stopUsd = numFromInput(stopEl);
-  const fixedQty = Math.floor(numFromInput(fixedEl));
+  const capitalUso  = numFromInput(useEl);
+  const leverage    = numFromInput(levEl);
+  const riskPct     = numFromInput(riskEl);
+  const stopUsd     = numFromInput(stopEl);
+  const fixedQty    = Math.floor(numFromInput(fixedEl));
 
   // === LÓGICA TIPO AARON PINE ===
-  // 1) Se Capital EM USO > 0 → base de cálculo = EM USO
+  // 1) Se Capital EM USO > 0 → base = EM USO
   // 2) Senão, se Capital REAL > 0 e alavancagem > 0 → base = REAL × alavancagem
   // 3) Senão, se Capital REAL > 0 → base = REAL
   let baseCapital = 0;
@@ -2690,7 +2678,7 @@ function updateSizingPhrase() {
     return;
   }
 
-  const riskMoney = baseCapital * (riskPct / 100);
+  const riskMoney  = baseCapital * (riskPct / 100);
   const sharesRisk = Math.floor(riskMoney / stopUsd);
 
   if (!Number.isFinite(sharesRisk) || sharesRisk <= 0) {
@@ -2731,9 +2719,10 @@ function updateSizingPhrase() {
       '.';
   }
 
-  // Detalhe: shares sugeridas + comparação com Qtd fixa (se tiver)
+  // Detalhe – comparação com Qtd fixa (se existir)
   if (fixedQty > 0) {
     const aboveSafe = fixedQty > sharesRisk;
+
     if (currentLang === 'en') {
       detailEl.textContent =
         'With a stop at ' +
@@ -2776,7 +2765,7 @@ function updateSizingPhrase() {
   }
 }
 
-// Eventos para recalcular quando você digita
+// Eventos para recalcular quando digitar
 ['input', 'change'].forEach(function (evt) {
   if (els.sizingAccountRealInput)
     els.sizingAccountRealInput.addEventListener(evt, updateSizingPhrase);
@@ -2793,7 +2782,19 @@ function updateSizingPhrase() {
 });
 
 
-  // sempre que chegar dado novo, recalcula a frase do sizing também
+// ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
+function updateSizingBrain(data) {
+  lastSizingBrain = data || null;
+
+  if (!els.sizingTarget) return;
+
+  function fmtPct(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    return n.toFixed(1) + '%';
+  }
+
+  // sempre que chegar dado novo (ou trocar idioma), recalcula frase
   updateSizingPhrase();
 
   function setProfileTag(profile) {
@@ -2817,7 +2818,8 @@ function updateSizingPhrase() {
         currentLang === 'en' ? 'Aggressive' : 'Agressivo';
     } else {
       tag.classList.add('profile-normal');
-      tag.textContent = currentLang === 'en' ? 'Normal' : 'Normal';
+      tag.textContent =
+        currentLang === 'en' ? 'Normal' : 'Normal';
     }
   }
 
@@ -2913,28 +2915,28 @@ function updateSizingPhrase() {
   }
 
   // ===== com dados do backend (sizing_brain) =====
-  const profile = data.profile;
-  const style = data.style_today;
+  const profile      = data.profile;
+  const style        = data.style_today;
   const styleLabelPt = data.style_label_pt;
   const styleLabelEn = data.style_label_en;
 
-  const tMin = data.target_min_pct ?? data.recommended_target_min_pct;
-  const tMax = data.target_max_pct ?? data.recommended_target_max_pct;
-  const tSingle = data.target_pct ?? data.recommended_target_pct;
+  const tMin    = data.target_min_pct   ?? data.recommended_target_min_pct;
+  const tMax    = data.target_max_pct   ?? data.recommended_target_max_pct;
+  const tSingle = data.target_pct       ?? data.recommended_target_pct;
 
-  const maxDD = data.max_dd_pct ?? data.recommended_max_dd_pct;
-  const riskPerTrade =
-    data.risk_per_trade_pct ?? data.recommended_risk_per_trade_pct;
-  const tradesCount = data.trades_count ?? data.recommended_trades_count;
-  const score = data.score ?? data.risk_usage_score ?? 40;
+  const maxDD        = data.max_dd_pct         ?? data.recommended_max_dd_pct;
+  const riskPerTrade = data.risk_per_trade_pct ?? data.recommended_risk_per_trade_pct;
+  const tradesCount  = data.trades_count       ?? data.recommended_trades_count;
+  const score        = data.score              ?? data.risk_usage_score ?? 40;
 
+  // alvo
   let targetText = '';
-  const tMinFmt = fmtPct(tMin);
-  const tMaxFmt = fmtPct(tMax);
+  const tMinFmt    = fmtPct(tMin);
+  const tMaxFmt    = fmtPct(tMax);
   const tSingleFmt = fmtPct(tSingle);
 
   if (tMinFmt && tMaxFmt) targetText = `${tMinFmt}–${tMaxFmt}`;
-  else if (tSingleFmt) targetText = tSingleFmt;
+  else if (tSingleFmt)    targetText = tSingleFmt;
 
   if (!targetText) {
     targetText = currentLang === 'en' ? 'Auto' : 'Automático';
@@ -2971,6 +2973,7 @@ function updateSizingPhrase() {
     }
   }
 }
+
 
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
