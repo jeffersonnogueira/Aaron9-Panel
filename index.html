@@ -1239,6 +1239,68 @@
   border: 1px dashed rgba(148,163,184,0.6);
 }
 
+    /* --- SIZING BRAIN · inputs de capital/risco/stop + frases --- */
+
+.sizing-inputs {
+  margin-top: 6px;
+  margin-bottom: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.sizing-input {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.75rem;
+}
+
+.sizing-input label {
+  color: var(--text-soft);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.sizing-input input {
+  border-radius: 999px;
+  border: 1px solid rgba(31,41,55,0.9);
+  background: #020617;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  color: var(--text-main);
+}
+
+.sizing-input input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+.sizing-phrase {
+  margin-top: 2px;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.sizing-phrase-main {
+  color: var(--text-main);
+}
+
+.sizing-phrase-detail {
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+
+/* responsivo */
+@media (max-width: 900px) {
+  .sizing-inputs {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 
   </style>
