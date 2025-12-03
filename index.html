@@ -2453,6 +2453,196 @@ function updatePullbackBrain(data) {
   setMeter(score, tone);
 }
 
+    // ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
+function updateSizingBrain(data) {
+  lastSizingBrain = data || null;
+
+  if (!els.sizingTarget) return;
+
+  function fmtPct(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    return n.toFixed(1) + '%'; // mande os valores em % já (0.8 = 0.8%)
+  }
+
+  function setProfileTag(profile) {
+    const tag = els.sizingProfileTag;
+    if (!tag) return;
+
+    const p = (profile || '').toString().toLowerCase();
+    tag.classList.remove(
+      'profile-conservative',
+      'profile-normal',
+      'profile-aggressive'
+    );
+
+    if (p.includes('conserv')) {
+      tag.classList.add('profile-conservative');
+      tag.textContent =
+        currentLang === 'en' ? 'Conservative' : 'Conservador';
+    } else if (p.includes('agress') || p.includes('aggress')) {
+      tag.classList.add('profile-aggressive');
+      tag.textContent =
+        currentLang === 'en' ? 'Aggressive' : 'Agressivo';
+    } else {
+      tag.classList.add('profile-normal');
+      tag.textContent = currentLang === 'en' ? 'Normal' : 'Normal';
+    }
+  }
+
+  function setStyleTag(style, labelPt, labelEn) {
+    const tag = els.sizingStyleTag;
+    if (!tag) return;
+
+    const s = (style || '').toString().toLowerCase();
+    tag.classList.remove(
+      'style-daytrade',
+      'style-swing',
+      'style-momentum',
+      'style-noedge'
+    );
+
+    let txt =
+      currentLang === 'en'
+        ? (labelEn || '')
+        : (labelPt || '');
+
+    if (!txt) {
+      if (s.includes('day')) {
+        txt =
+          currentLang === 'en'
+            ? 'Trend day trade'
+            : 'Day trade tendencial';
+      } else if (s.includes('swing')) {
+        txt =
+          currentLang === 'en'
+            ? 'Swing trade'
+            : 'Swing trade';
+      } else if (s.includes('momentum') || s.includes('scalp')) {
+        txt =
+          currentLang === 'en'
+            ? 'Momentum / scalp'
+            : 'Momentum / scalp';
+      } else {
+        txt =
+          currentLang === 'en'
+            ? 'No clear edge'
+            : 'Sem edge claro';
+      }
+    }
+
+    if (s.includes('day')) {
+      tag.classList.add('style-daytrade');
+    } else if (s.includes('swing')) {
+      tag.classList.add('style-swing');
+    } else if (s.includes('momentum') || s.includes('scalp')) {
+      tag.classList.add('style-momentum');
+    } else {
+      tag.classList.add('style-noedge');
+    }
+
+    tag.textContent = txt;
+  }
+
+  function setMeter(score) {
+    const fill = els.sizingMeterFill;
+    const label = els.sizingMeterLabel;
+    if (!fill || !label) return;
+
+    let v = Number(score);
+    if (!Number.isFinite(v)) v = 40;
+    v = Math.max(0, Math.min(100, v));
+
+    fill.style.width = v.toFixed(0) + '%';
+    label.textContent =
+      (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
+      v.toFixed(0) +
+      '%';
+  }
+
+  // ===== estado neutro (sem dados do backend) =====
+  if (!data || Object.keys(data).length === 0) {
+    if (els.sizingTarget) els.sizingTarget.textContent = '0.8–1.2%';
+    if (els.sizingMaxDD) els.sizingMaxDD.textContent = '0.8%';
+    if (els.sizingRiskTrade) els.sizingRiskTrade.textContent = '0.25%';
+    if (els.sizingTradesCount) els.sizingTradesCount.textContent = '3';
+
+    setProfileTag('normal');
+    setStyleTag('day_trade', null, null);
+    setMeter(40);
+
+    if (els.sizingComment) {
+      els.sizingComment.textContent =
+        currentLang === 'en'
+          ? 'Today you can think in terms of a realistic 0.8–1.2% if you focus on 2–3 A+ trades and respect your max daily loss.'
+          : 'Hoje você pode pensar em algo em torno de 0.8–1.2% se focar em 2–3 trades A+ e respeitar sua perda máxima do dia.';
+    }
+
+    return;
+  }
+
+  // ===== com dados do backend (sizing_brain) =====
+  const profile = data.profile;
+  const style = data.style_today;
+  const styleLabelPt = data.style_label_pt;
+  const styleLabelEn = data.style_label_en;
+
+  const tMin = data.target_min_pct ?? data.recommended_target_min_pct;
+  const tMax = data.target_max_pct ?? data.recommended_target_max_pct;
+  const tSingle = data.target_pct ?? data.recommended_target_pct;
+
+  const maxDD = data.max_dd_pct ?? data.recommended_max_dd_pct;
+  const riskPerTrade =
+    data.risk_per_trade_pct ?? data.recommended_risk_per_trade_pct;
+  const tradesCount = data.trades_count ?? data.recommended_trades_count;
+  const score = data.score ?? data.risk_usage_score ?? 40;
+
+  // alvo
+  let targetText = '';
+  const tMinFmt = fmtPct(tMin);
+  const tMaxFmt = fmtPct(tMax);
+  const tSingleFmt = fmtPct(tSingle);
+
+  if (tMinFmt && tMaxFmt) targetText = `${tMinFmt}–${tMaxFmt}`;
+  else if (tSingleFmt) targetText = tSingleFmt;
+
+  if (!targetText) {
+    targetText = currentLang === 'en' ? 'Auto' : 'Automático';
+  }
+
+  if (els.sizingTarget) els.sizingTarget.textContent = targetText;
+  if (els.sizingMaxDD && fmtPct(maxDD)) {
+    els.sizingMaxDD.textContent = fmtPct(maxDD);
+  }
+  if (els.sizingRiskTrade && fmtPct(riskPerTrade)) {
+    els.sizingRiskTrade.textContent = fmtPct(riskPerTrade);
+  }
+  if (els.sizingTradesCount && tradesCount != null) {
+    els.sizingTradesCount.textContent = String(tradesCount);
+  }
+
+  setProfileTag(profile);
+  setStyleTag(style, styleLabelPt, styleLabelEn);
+  setMeter(score);
+
+  // comentário humano
+  const comment =
+    currentLang === 'en'
+      ? (data.comment_en || data.comment || '')
+      : (data.comment_pt || data.comment || '');
+
+  if (els.sizingComment) {
+    if (comment) {
+      els.sizingComment.textContent = comment;
+    } else {
+      els.sizingComment.textContent =
+        currentLang === 'en'
+          ? 'Sizing Brain suggests focusing on A+ setups only, with a realistic target for the day and a strict daily loss limit.'
+          : 'O Sizing Brain sugere focar apenas em setups A+, com alvo realista para o dia e limite de perda diária bem definido.';
+    }
+  }
+}
+
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
 async function loadPanel(showSpinner) {
