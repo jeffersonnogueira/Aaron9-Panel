@@ -2676,6 +2676,14 @@ async function loadPanel(showSpinner) {
       {};
     updatePullbackBrain(pullbackBrain);
 
+        const sizingBrain =
+      panel.sizing_brain ||
+      panel.sizingBrain ||
+      panel.capital_brain ||
+      {};
+    updateSizingBrain(sizingBrain);
+
+
     // Cabeçalho
     safeText(els.symbol, panel.symbol || raw.symbol || '—');
     safeText(
