@@ -984,6 +984,131 @@
       background: rgba(34, 211, 238, 0.18);
       color: var(--accent);
     }
+    /* ====== PULLBACK BRAIN – UX AVANÇADO ====== */
+
+.pullback-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.pullback-status-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pullback-status-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-soft);
+}
+
+.pullback-status-main {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.pullback-meta-block {
+  text-align: right;
+  font-size: 0.76rem;
+  color: var(--text-soft);
+}
+
+.pullback-tag-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  justify-content: flex-end;
+}
+
+.pullback-tag {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(148,163,184,0.5);
+  background: rgba(15,23,42,0.9);
+  white-space: nowrap;
+}
+
+.pullback-tag.side-buy {
+  border-color: rgba(34,197,94,0.9);
+  color: #bbf7d0;
+}
+
+.pullback-tag.side-sell {
+  border-color: rgba(248,113,113,0.9);
+  color: #fecaca;
+}
+
+.pullback-tag.side-neutral {
+  border-color: rgba(148,163,184,0.8);
+  color: #e5e7eb;
+}
+
+.pullback-tag.stage {
+  border-color: rgba(56,189,248,0.9);
+  color: #bae6fd;
+}
+
+/* termômetro horizontal */
+
+.pullback-meter {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.pullback-meter-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+}
+
+.pullback-meter-bar {
+  position: relative;
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.9);
+  border: 1px solid rgba(31,41,55,0.9);
+  overflow: hidden;
+}
+
+.pullback-meter-fill {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22c55e, #facc15);
+  transition: width 0.25s ease-out;
+}
+
+.pullback-meter-fill.neutral {
+  background: linear-gradient(90deg, #eab308, #f97316);
+}
+
+.pullback-meter-fill.danger {
+  background: linear-gradient(90deg, #f97373, #fb7185);
+}
+
+/* já existia, mas este bloco usa muito: */
+.pullback-highlight {
+  font-size: 0.78rem;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
 
   </style>
 </head>
