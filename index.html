@@ -2829,11 +2829,12 @@ function updateSizingPhrase() {
 
   // Se ainda não tem dados suficientes → mensagem neutra + termômetro neutro
   if (!baseCapital || !riskPct || !stopUsd) {
-    mainEl.textContent   = baseMsg;
-    detailEl.textContent = '';
-    if (typeof setMeter === 'function') setMeter(40);
-    return;
-  }
+  mainEl.textContent   = baseMsg;
+  detailEl.textContent = '';
+  setSizingMeter(40);
+  return;
+}
+
 
   const riskMoney  = baseCapital * (riskPct / 100);
   const sharesRisk = Math.floor(riskMoney / stopUsd);
