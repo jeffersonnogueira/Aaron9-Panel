@@ -3058,21 +3058,7 @@ function updateSizingBrain(data) {
     tag.textContent = txt;
   }
 
-  function setMeter(score) {
-    const fill = els.sizingMeterFill;
-    const label = els.sizingMeterLabel;
-    if (!fill || !label) return;
-
-    let v = Number(score);
-    if (!Number.isFinite(v)) v = 40;
-    v = Math.max(0, Math.min(100, v));
-
-    fill.style.width = v.toFixed(0) + '%';
-    label.textContent =
-      (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
-      v.toFixed(0) +
-      '%';
-  }
+  
 
   // ===== estado neutro (sem dados do backend) =====
   if (!data || Object.keys(data).length === 0) {
