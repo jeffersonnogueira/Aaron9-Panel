@@ -2762,7 +2762,23 @@ function updatePullbackBrain(data) {
   setMeter(score, tone);
 }
 
-  
+ // ==== FUNÇÃO GLOBAL DO TERMÔMETRO DO SIZING BRAIN ====
+function setSizingMeter(score) {
+  const fill  = els.sizingMeterFill;
+  const label = els.sizingMeterLabel;
+  if (!fill || !label) return;
+
+  let v = Number(score);
+  if (!Number.isFinite(v)) v = 40; // fallback
+  v = Math.max(0, Math.min(100, v));
+
+  fill.style.width = v.toFixed(0) + '%';
+  label.textContent =
+    (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
+    v.toFixed(0) +
+    '%';
+}
+ 
 
 
 // ====== SIZING BRAIN – frases + termômetro baseado nos inputs ======
