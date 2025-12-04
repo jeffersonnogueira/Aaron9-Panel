@@ -2938,12 +2938,11 @@ function updateSizingPhrase() {
     }
   }
 
-  // Limita entre 5% e 100%
-  usage = Math.max(5, Math.min(100, usage));
+ // Limita entre 5% e 100%
+usage = Math.max(5, Math.min(100, usage));
 
-  if (typeof setMeter === 'function') {
-    setMeter(usage);
-  }
+setSizingMeter(usage);
+
 }
 
 
