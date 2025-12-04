@@ -2765,15 +2765,15 @@ function updatePullbackBrain(data) {
   
 
 
-// ====== SIZING BRAIN – frases baseadas em Capital EM USO + Alavancagem ======
+// ====== SIZING BRAIN – frases + termômetro baseado nos inputs ======
 function updateSizingPhrase() {
-  const accEl = els.sizingAccountRealInput;
-  const useEl = els.sizingUseInput;
-  const levEl = els.sizingLeverageInput;
-  const riskEl = els.sizingRiskInput;
-  const stopEl = els.sizingStopInput;
-  const fixedEl = els.sizingFixedQtyInput;
-  const mainEl = els.sizingPhraseMain;
+  const accEl    = els.sizingAccountRealInput;
+  const useEl    = els.sizingUseInput;
+  const levEl    = els.sizingLeverageInput;
+  const riskEl   = els.sizingRiskInput;
+  const stopEl   = els.sizingStopInput;
+  const fixedEl  = els.sizingFixedQtyInput;
+  const mainEl   = els.sizingPhraseMain;
   const detailEl = els.sizingPhraseDetail;
 
   if (!accEl || !useEl || !levEl || !riskEl || !stopEl || !mainEl || !detailEl) {
@@ -2782,24 +2782,22 @@ function updateSizingPhrase() {
 
   function numFromInput(el) {
     if (!el) return 0;
-    const raw = (el.value || '').toString().replace(',', '.');
-    const n = Number(raw);
+    const n = Number(String(el.value).replace(',', '.'));
     return Number.isFinite(n) ? n : 0;
   }
 
-  const capitalReal = numFromInput(accEl);
-  const capitalUso  = numFromInput(useEl);
-  const leverage    = numFromInput(levEl);
-  const riskPct     = numFromInput(riskEl);
-  const stopUsd     = numFromInput(stopEl);
-  const fixedQty    = Math.floor(numFromInput(fixedEl));
+  const capitalReal  = numFromInput(accEl);
+  const capitalUso   = numFromInput(useEl);
+  const leverage     = numFromInput(levEl);
+  const riskPct      = numFromInput(riskEl);
+  const stopUsd      = numFromInput(stopEl);
+  const fixedQty     = fixedEl ? numFromInput(fixedEl) : 0;
 
-  // === LÓGICA TIPO AARON PINE ===
-  // 1) Se Capital EM USO > 0 → base = EM USO
-  // 2) Senão, se Capital REAL > 0 e alavancagem > 0 → base = REAL × alavancagem
-  // 3) Senão, se Capital REAL > 0 → base = REAL
+  // Base de cálculo:
+  // 1) Se Capital EM USO > 0 → usa esse
+  // 2) Senão, se Capital REAL e alavancagem > 0 → real × alavancagem
+  // 3) Senão, usa só o capital real
   let baseCapital = 0;
-
   if (capitalUso > 0) {
     baseCapital = capitalUso;
   } else if (capitalReal > 0 && leverage > 0) {
@@ -2811,11 +2809,13 @@ function updateSizingPhrase() {
   const baseMsg =
     currentLang === 'en'
       ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
-      : 'Digite capital real, capital em uso, risco % e stop para ver o tamanho sugerido da posição.';
+      : 'Digite capital real, capital em uso, risco % e distância do stop para ver o tamanho sugerido da posição.';
 
+  // Se ainda não tem dados suficientes → mensagem neutra + termômetro neutro
   if (!baseCapital || !riskPct || !stopUsd) {
-    mainEl.textContent = baseMsg;
+    mainEl.textContent   = baseMsg;
     detailEl.textContent = '';
+    if (typeof setMeter === 'function') setMeter(40);
     return;
   }
 
@@ -2828,6 +2828,7 @@ function updateSizingPhrase() {
         ? 'Check the values. The risk in dollars must be greater than the stop distance.'
         : 'Verifique os valores. O risco em dólares precisa ser maior que a distância do stop.';
     detailEl.textContent = '';
+    if (typeof setMeter === 'function') setMeter(40);
     return;
   }
 
@@ -2839,7 +2840,7 @@ function updateSizingPhrase() {
     });
   }
 
-  // Mensagem principal
+  // Mensagem principal (PT/EN)
   if (currentLang === 'en') {
     mainEl.textContent =
       'Base capital: ' +
@@ -2904,7 +2905,30 @@ function updateSizingPhrase() {
         ' shares. Você pode arredondar para baixo se quiser ser mais conservador.';
     }
   }
+
+  // 🔥 NOVO: Atualiza o TERMÔMETRO com base no risco
+  // - Se tiver qtd fixa, usamos a relação fixed / seguro
+  // - Se não tiver, usamos o risco % da conta como guia
+  let usage = 40; // neutro
+
+  if (sharesRisk > 0) {
+    if (fixedQty > 0) {
+      const ratio = fixedQty / sharesRisk; // 1 = tamanho seguro, 2 = 2x o seguro
+      usage = 40 + (ratio - 1) * 60;       // 1x → ~40–50, 2x → ~100
+    } else {
+      // 0.5% → ~25, 1% → ~50, 2% → ~100
+      usage = riskPct * 50;
+    }
+  }
+
+  // Limita entre 5% e 100%
+  usage = Math.max(5, Math.min(100, usage));
+
+  if (typeof setMeter === 'function') {
+    setMeter(usage);
+  }
 }
+
 
 // Eventos para recalcular quando digitar
 ['input', 'change'].forEach(function (evt) {
