@@ -1300,6 +1300,144 @@
   }
 }
 
+/* === SIZING BRAIN – GERENCIADOR DE RISCO === */
+.sizing-brain-card {
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.4));
+  box-shadow: 0 0 40px rgba(15, 23, 42, 0.8);
+}
+
+.sizing-brain-card .card-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sizing-brain-card .card-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+.sb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 16px;
+  margin-top: 12px;
+}
+
+.sb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sb-field label {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
+
+.sb-field input {
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  padding: 6px 8px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.sb-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.3);
+}
+
+.sb-hint {
+  font-size: 0.7rem;
+  color: var(--text-soft);
+}
+
+.sb-divider {
+  margin: 14px 0;
+  border: none;
+  border-top: 1px dashed rgba(148, 163, 184, 0.4);
+}
+
+.sb-side-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+}
+
+.sb-side-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.sb-side-toggle input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+.sb-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.sb-result-block h3 {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+}
+
+.sb-result-main {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 2px 0;
+}
+
+.sb-result-sub {
+  font-size: 0.8rem;
+  margin: 2px 0;
+  color: var(--text-soft);
+}
+
+.sb-actions {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.primary-btn {
+  border-radius: 999px;
+  padding: 6px 14px;
+  border: 1px solid var(--accent);
+  background: radial-gradient(circle at top, var(--accent-soft), transparent);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  filter: brightness(1.1);
+}
+
+.sb-status {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
 
 
 
