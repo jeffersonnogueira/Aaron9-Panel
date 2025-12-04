@@ -2845,7 +2845,7 @@ function updateSizingPhrase() {
         ? 'Check the values. The risk in dollars must be greater than the stop distance.'
         : 'Verifique os valores. O risco em dólares precisa ser maior que a distância do stop.';
     detailEl.textContent = '';
-    if (typeof setMeter === 'function') setMeter(40);
+    if (typeof setMeter === 'function')setSizingMeter(40);
     return;
   }
 
@@ -3069,7 +3069,7 @@ function updateSizingBrain(data) {
 
     setProfileTag('normal');
     setStyleTag('day_trade', null, null);
-    setMeter(40);
+    setSizingMeter(40);
 
     if (els.sizingComment) {
       els.sizingComment.textContent =
