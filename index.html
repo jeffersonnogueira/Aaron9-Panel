@@ -2330,7 +2330,7 @@ function updateAtrRisk() {
 
   const atr = parseFloat(atrEls.atrValue.value || '0');
   const mult = parseFloat(atrEls.mult.value || '1');
-  const capital = parseFloat(atrEls.capital.value || '0');
+  const capital = parseFloat(atrEls.capital.value || '0'); // Capital da posição ($)
   const entry = parseFloat(atrEls.entry.value || '0');
   const riskPct = parseFloat(atrEls.riskPercent.value || '1');
 
@@ -2347,6 +2347,7 @@ function updateAtrRisk() {
   const reward2R = riskMoney * 2;
   const reward3R = riskMoney * 3;
 
+  // ===== Saída normal do card ATR =====
   if (atrEls.outDistance) atrEls.outDistance.textContent = stopDist.toFixed(2);
   if (atrEls.outShares) atrEls.outShares.textContent = shares.toFixed(0);
   if (atrEls.outRisk) atrEls.outRisk.textContent = '$ ' + riskMoney.toFixed(2);
@@ -2354,7 +2355,41 @@ function updateAtrRisk() {
     atrEls.outReward2R.textContent = '$ ' + reward2R.toFixed(2);
   if (atrEls.outReward3R)
     atrEls.outReward3R.textContent = '$ ' + reward3R.toFixed(2);
+
+  // ===== Integração com o Sizing Brain (bloco de baixo) =====
+  // Tudo que você calcular aqui em cima alimenta o termômetro + frases lá embaixo.
+  if (typeof els === 'object' && els) {
+    // Capital EM USO neste trade (usa exatamente o "Capital da posição ($)" do ATR)
+    if (els.sizingUseInput && !Number.isNaN(capital)) {
+      els.sizingUseInput.value = capital ? capital.toFixed(0) : '';
+    }
+
+    // Distância do stop (USD por ação)
+    if (els.sizingStopInput && !Number.isNaN(stopDist)) {
+      els.sizingStopInput.value = stopDist ? stopDist.toFixed(2) : '';
+    }
+
+    // Risco por trade (%) – o mesmo % que você usou no card ATR
+    if (els.sizingRiskInput && !Number.isNaN(riskPct)) {
+      els.sizingRiskInput.value = riskPct ? riskPct.toFixed(2) : '';
+    }
+
+    // Qtd fixa (ações) – preenche com o tamanho sugerido pelo ATR
+    if (
+      els.sizingFixedQtyInput &&
+      Number.isFinite(shares) &&
+      shares > 0
+    ) {
+      els.sizingFixedQtyInput.value = Math.floor(shares).toString();
+    }
+  }
+
+  // Atualiza o termômetro e as frases “Hoje você pode…”
+  if (typeof updateSizingPhrase === 'function') {
+    updateSizingPhrase();
+  }
 }
+
 
 if (atrEls.calcBtn) {
   atrEls.calcBtn.addEventListener('click', (e) => {
