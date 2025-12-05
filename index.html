@@ -2390,6 +2390,31 @@ const els = {
 
 };
 
+   // ====== SIZING BRAIN – CAMPOS DO CARD COMPLETO ======
+const sbEls = {
+  card: document.getElementById('sizing-brain-card'),
+  accountBalance: document.getElementById('sb-account-balance'),
+  leverage: document.getElementById('sb-leverage'),
+  tradeCapital: document.getElementById('sb-trade-capital'),
+  riskPercentInput: document.querySelector('input#sb-risk-percent'),
+  entryPrice: document.getElementById('sb-entry-price'),
+  atrValue: document.getElementById('sb-atr-value'),
+  atrMultStop: document.getElementById('sb-atr-mult-stop'),
+  atrMultTake: document.getElementById('sb-atr-mult-take'),
+  sideRadios: document.querySelectorAll('input[name="sb-side"]'),
+
+  outStopDistance: document.getElementById('sb-stop-distance'),
+  outStopPrice: document.getElementById('sb-stop-price'),
+  outTakePrice: document.getElementById('sb-take-price'),
+  outPositionSize: document.getElementById('sb-position-size'),
+  outRiskDollar: document.getElementById('sb-risk-dollar'),
+  outRiskPercent: document.querySelector('p#sb-risk-percent'),
+
+  calcBtn: document.getElementById('sb-calcular'),
+  status: document.getElementById('sb-status'),
+};
+ 
+
 // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
 let lastPullbackBrain = null;
 let lastSizingBrain = null;
