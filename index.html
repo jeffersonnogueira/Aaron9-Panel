@@ -37,14 +37,16 @@
 .app-shell {
   min-height: 100vh;
   display: flex;
-  justify-content: flex-start;  /* fica encostado à esquerda */
+  justify-content: center;      /* CENTRALIZA o painel */
+  background: #020617;          /* fundo escuro em toda a tela */
 }
 
 .app-inner {
   width: 100%;
-  max-width: 100%;              /* tira o limite de 1680px */
-  margin: 16px 24px 32px 24px;  /* margens finas só pra não colar na borda */
+  max-width: 1680px;            /* limite “seguro” pro painel */
+  margin: 16px 24px 32px 24px;  /* respiro nas bordas */
 }
+
 
 
  .page {
