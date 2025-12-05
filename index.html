@@ -2865,148 +2865,216 @@ function updatePullbackBrain(data) {
   
 
 
-// ====== SIZING BRAIN – frases baseadas em Capital EM USO + Alavancagem ======
+// ====== SIZING BRAIN – FRASES + TERMÔMETRO + STOP/TP ======
 function updateSizingPhrase() {
-  const accEl = els.sizingAccountRealInput;
-  const useEl = els.sizingUseInput;
-  const levEl = els.sizingLeverageInput;
-  const riskEl = els.sizingRiskInput;
-  const stopEl = els.sizingStopInput;
-  const fixedEl = els.sizingFixedQtyInput;
-  const mainEl = els.sizingPhraseMain;
+  const mainEl   = els.sizingPhraseMain;
   const detailEl = els.sizingPhraseDetail;
+  if (!mainEl || !detailEl) return;
 
-  if (!accEl || !useEl || !levEl || !riskEl || !stopEl || !mainEl || !detailEl) {
-    return;
-  }
-
-  function numFromInput(el) {
-    if (!el) return 0;
-    const raw = (el.value || '').toString().replace(',', '.');
-    const n = Number(raw);
+  function num(v) {
+    const n = Number(v);
     return Number.isFinite(n) ? n : 0;
   }
 
-  const capitalReal = numFromInput(accEl);
-  const capitalUso  = numFromInput(useEl);
-  const leverage    = numFromInput(levEl);
-  const riskPct     = numFromInput(riskEl);
-  const stopUsd     = numFromInput(stopEl);
-  const fixedQty    = Math.floor(numFromInput(fixedEl));
+  const acctReal   = num(els.sizingAccountRealInput && els.sizingAccountRealInput.value);
+  const capitalUse = num(els.sizingUseInput && els.sizingUseInput.value);
+  const leverage   = num(els.sizingLeverageInput && els.sizingLeverageInput.value) || 1;
+  const riskPct    = num(els.sizingRiskInput && els.sizingRiskInput.value);
+  const stopUsd    = num(els.sizingStopInput && els.sizingStopInput.value);
+  const fixedQty   = num(els.sizingFixedQtyInput && els.sizingFixedQtyInput.value);
 
-  // === LÓGICA TIPO AARON PINE ===
-  // 1) Se Capital EM USO > 0 → base = EM USO
-  // 2) Senão, se Capital REAL > 0 e alavancagem > 0 → base = REAL × alavancagem
-  // 3) Senão, se Capital REAL > 0 → base = REAL
-  let baseCapital = 0;
+  const entryInput = document.getElementById('sizing-entry-input');
+  const sideInput  = document.getElementById('sizing-side-input');
+  const entryPrice = entryInput ? num(entryInput.value) : 0;
+  const sideRaw    = sideInput ? (sideInput.value || '') : '';
+  const side       = sideRaw.toString().toLowerCase();
 
-  if (capitalUso > 0) {
-    baseCapital = capitalUso;
-  } else if (capitalReal > 0 && leverage > 0) {
-    baseCapital = capitalReal * leverage;
-  } else if (capitalReal > 0) {
-    baseCapital = capitalReal;
-  }
+  // capital base: se tiver "capital em uso", usa ele; senão usa conta real * alavancagem
+  const baseCapital = capitalUse > 0 ? capitalUse : acctReal * leverage;
 
-  const baseMsg =
-    currentLang === 'en'
-      ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
-      : 'Digite capital real, capital em uso, risco % e stop para ver o tamanho sugerido da posição.';
+  // dinheiro em risco por trade
+  const riskMoney = baseCapital > 0 && riskPct > 0
+    ? baseCapital * (riskPct / 100)
+    : 0;
 
-  if (!baseCapital || !riskPct || !stopUsd) {
-    mainEl.textContent = baseMsg;
-    detailEl.textContent = '';
-    return;
-  }
+  // quantidade sugerida de shares (se tiver stop)
+  const sharesRisk =
+    stopUsd > 0 && riskMoney > 0 ? Math.floor(riskMoney / stopUsd) : 0;
 
-  const riskMoney  = baseCapital * (riskPct / 100);
-  const sharesRisk = Math.floor(riskMoney / stopUsd);
+  const fmt0 = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 0,
+  });
+  const fmt2 = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
-  if (!Number.isFinite(sharesRisk) || sharesRisk <= 0) {
-    mainEl.textContent =
-      currentLang === 'en'
-        ? 'Check the values. The risk in dollars must be greater than the stop distance.'
-        : 'Verifique os valores. O risco em dólares precisa ser maior que a distância do stop.';
-    detailEl.textContent = '';
-    return;
-  }
-
-  function fmtUSD(v) {
-    return v.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    });
-  }
-
-  // Mensagem principal
-  if (currentLang === 'en') {
-    mainEl.textContent =
-      'Base capital: ' +
-      fmtUSD(baseCapital) +
-      '. With ' +
-      riskPct.toFixed(2) +
-      '% risk per trade, max risk is about ' +
-      fmtUSD(riskMoney) +
-      ' per trade.';
-  } else {
-    mainEl.textContent =
-      'Base de cálculo: ' +
-      fmtUSD(baseCapital) +
-      '. Com risco de ' +
-      riskPct.toFixed(2) +
-      '% por trade, o risco máximo por trade é de aproximadamente ' +
-      fmtUSD(riskMoney) +
-      '.';
-  }
-
-  // Detalhe – comparação com Qtd fixa (se existir)
-  if (fixedQty > 0) {
-    const aboveSafe = fixedQty > sharesRisk;
-
+  // 1) Frase principal (resumo)
+  if (!acctReal && !capitalUse && !riskPct && !stopUsd && !fixedQty) {
     if (currentLang === 'en') {
+      mainEl.textContent =
+        'Type your capital, leverage and risk so the Sizing Brain can speak.';
       detailEl.textContent =
-        'With a stop at ' +
-        stopUsd.toFixed(2) +
-        ' USD per share, the risk-based safe size is around ' +
-        sharesRisk +
-        ' shares. Your fixed size is ' +
-        fixedQty +
-        ' shares, which is ' +
-        (aboveSafe ? 'ABOVE' : 'within') +
-        ' the safe size.';
+        'Start by filling at least your real account capital and % risk per trade.';
     } else {
+      mainEl.textContent =
+        'Digite seu capital, alavancagem e risco para o Sizing Brain trabalhar.';
       detailEl.textContent =
-        'Com o stop a ' +
-        stopUsd.toFixed(2) +
-        ' USD por share, o tamanho seguro pelo risco fica em torno de ' +
-        sharesRisk +
-        ' shares. Sua quantidade fixa é ' +
-        fixedQty +
-        ' shares, o que está ' +
-        (aboveSafe ? 'ACIMA' : 'dentro') +
-        ' do tamanho considerado seguro.';
+        'Comece preenchendo pelo menos o capital REAL da conta e o % de risco por trade.';
+    }
+    setSizingMeter(40);
+    return;
+  }
+
+  const capTxtEn = baseCapital
+    ? `Using about ${fmt0(baseCapital)} USD of capital`
+    : 'Capital not defined yet';
+
+  const capTxtPt = baseCapital
+    ? `Usando cerca de ${fmt0(baseCapital)} USD de capital`
+    : 'Capital ainda não definido.';
+
+  const riskTxtEn =
+    riskMoney > 0
+      ? `risking ~${fmt2(riskMoney)} USD (${riskPct.toFixed(2)}% per trade)`
+      : 'risk still not defined';
+
+  const riskTxtPt =
+    riskMoney > 0
+      ? `arriscando ~${fmt2(riskMoney)} USD (${riskPct.toFixed(
+          2
+        )}% por trade)`
+      : 'risco ainda não definido.';
+
+  if (sharesRisk > 0) {
+    if (currentLang === 'en') {
+      mainEl.textContent =
+        `${capTxtEn}, ${riskTxtEn}, suggested size around ${fmt0(
+          sharesRisk
+        )} shares.`;
+    } else {
+      mainEl.textContent =
+        `${capTxtPt}, ${riskTxtPt}, tamanho sugerido de cerca de ${fmt0(
+          sharesRisk
+        )} shares.`;
     }
   } else {
     if (currentLang === 'en') {
+      mainEl.textContent =
+        `${capTxtEn}. Set the stop distance to see a suggested position size.`;
+    } else {
+      mainEl.textContent =
+        `${capTxtPt}. Defina a distância do stop para ver o tamanho sugerido da posição.`;
+    }
+  }
+
+  // 2) Detalhe: comparação com quantidade fixa, se existir
+  if (fixedQty > 0 && sharesRisk > 0) {
+    const aboveSafe = fixedQty > sharesRisk;
+    if (currentLang === 'en') {
       detailEl.textContent =
-        'With a stop at ' +
-        stopUsd.toFixed(2) +
-        ' USD per share, the suggested position size is around ' +
+        'You set a fixed size of ' +
+        fixedQty +
+        ' shares. Based on your risk and stop, the safe size would be around ' +
+        sharesRisk +
+        ' shares. ' +
+        (aboveSafe
+          ? 'You are ABOVE the safe size — consider reducing if the day is dangerous.'
+          : 'You are inside or below the safe size — risk is more controlled.');
+    } else {
+      detailEl.textContent =
+        'Você definiu uma quantidade fixa de ' +
+        fixedQty +
+        ' shares. Com o risco e stop atuais, o tamanho seguro seria por volta de ' +
+        sharesRisk +
+        ' shares. ' +
+        (aboveSafe
+          ? 'Você está ACIMA do tamanho considerado seguro — pense em reduzir se o dia estiver perigoso.'
+          : 'Você está dentro ou abaixo do tamanho considerado seguro — risco mais controlado.');
+    }
+  } else if (sharesRisk > 0) {
+    if (currentLang === 'en') {
+      detailEl.textContent =
+        'With this stop distance, the suggested size is around ' +
         sharesRisk +
         ' shares. You can round down if you want to be more conservative.';
     } else {
       detailEl.textContent =
-        'Com o stop a ' +
-        stopUsd.toFixed(2) +
-        ' USD por share, o tamanho de posição sugerido é de cerca de ' +
+        'Com essa distância de stop, o tamanho de posição sugerido é de cerca de ' +
         sharesRisk +
         ' shares. Você pode arredondar para baixo se quiser ser mais conservador.';
     }
+  } else {
+    if (currentLang === 'en') {
+      detailEl.textContent =
+        'Fill capital, % risk and stop distance to see a suggested position size.';
+    } else {
+      detailEl.textContent =
+        'Preencha capital, % de risco e distância do stop para ver um tamanho de posição sugerido.';
+    }
   }
+
+  // 3) STOP / TAKE PROFIT sugeridos (2R) se tiver entrada + lado + stop
+  const stLine   = document.getElementById('sb-stop-target-line');
+  const stDetail = document.getElementById('sb-stop-target-detail');
+
+  let stopPrice = null;
+  let targetPrice = null;
+
+  if (entryPrice > 0 && stopUsd > 0 && side) {
+    const isBuy =
+      side.includes('c') ||
+      side.includes('buy') ||
+      side.includes('long');
+
+    if (isBuy) {
+      stopPrice   = entryPrice - stopUsd;
+      targetPrice = entryPrice + 2 * stopUsd;
+    } else {
+      stopPrice   = entryPrice + stopUsd;
+      targetPrice = entryPrice - 2 * stopUsd;
+    }
+  }
+
+  if (stopPrice !== null && targetPrice !== null) {
+    if (stLine) {
+      stLine.textContent =
+        (currentLang === 'en' ? 'Stop / Take Profit: ' : 'Stop / Take Profit: ') +
+        stopPrice.toFixed(2) +
+        ' → ' +
+        targetPrice.toFixed(2);
+    }
+    if (stDetail) {
+      stDetail.textContent =
+        currentLang === 'en'
+          ? 'Based on the current stop distance, this gives you a 2R target. Adjust if you want more aggressive or more conservative trades.'
+          : 'Com essa distância de stop, isso coloca um alvo em 2R. Ajuste se quiser operar mais agressivo ou mais conservador.';
+    }
+  } else {
+    if (stLine) stLine.textContent = '—';
+    if (stDetail) {
+      stDetail.textContent =
+        currentLang === 'en'
+          ? 'Fill entry price, side and stop distance to see suggested STOP / Take Profit.'
+          : 'Preencha preço de entrada, lado e distância do stop para ver STOP / Take Profit sugeridos.';
+    }
+  }
+
+  // 4) Termômetro – quanto risco você está usando
+  let usage = 40;
+  if (sharesRisk > 0) {
+    if (fixedQty > 0) {
+      const ratio = fixedQty / sharesRisk; // 1 = ok, 2 = 2x
+      usage = 40 + (ratio - 1) * 60;       // 1x → ~40–50, 2x → ~100
+    } else {
+      usage = riskPct * 50;                // 0.5%→25, 1%→50, 2%→100
+    }
+  }
+  usage = Math.max(5, Math.min(100, usage));
+  setSizingMeter(usage);
 }
 
-// Eventos para recalcular quando digitar
+// Eventos para recalcular quando digitar / mudar
 ['input', 'change'].forEach(function (evt) {
   if (els.sizingAccountRealInput)
     els.sizingAccountRealInput.addEventListener(evt, updateSizingPhrase);
@@ -3020,10 +3088,15 @@ function updateSizingPhrase() {
     els.sizingStopInput.addEventListener(evt, updateSizingPhrase);
   if (els.sizingFixedQtyInput)
     els.sizingFixedQtyInput.addEventListener(evt, updateSizingPhrase);
+
+  const entryInput = document.getElementById('sizing-entry-input');
+  const sideInput  = document.getElementById('sizing-side-input');
+  if (entryInput) entryInput.addEventListener(evt, updateSizingPhrase);
+  if (sideInput)  sideInput.addEventListener(evt, updateSizingPhrase);
 });
 
 
-// ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
+// ====== SIZING BRAIN – FUNÇÃO GLOBAL (dados que vêm do painel / n8n) ======
 function updateSizingBrain(data) {
   lastSizingBrain = data || null;
 
@@ -3035,7 +3108,7 @@ function updateSizingBrain(data) {
     return n.toFixed(1) + '%';
   }
 
-  // sempre que chegar dado novo (ou trocar idioma), recalcula frase
+  // Sempre que chegar dado novo, recalcula as frases com os inputs atuais
   updateSizingPhrase();
 
   function setProfileTag(profile) {
@@ -3105,34 +3178,37 @@ function updateSizingBrain(data) {
       }
     }
 
-    if (s.includes('day')) {
-      tag.classList.add('style-daytrade');
-    } else if (s.includes('swing')) {
-      tag.classList.add('style-swing');
-    } else if (s.includes('momentum') || s.includes('scalp')) {
-      tag.classList.add('style-momentum');
-    } else {
-      tag.classList.add('style-noedge');
-    }
-
     tag.textContent = txt;
   }
 
-  function setMeter(score) {
-    const fill = els.sizingMeterFill;
-    const label = els.sizingMeterLabel;
-    if (!fill || !label) return;
+  // Preenche números do cabeçalho do Sizing Brain se vierem do painel
+  const target  = data.target   ?? data.meta_target   ?? null;
+  const maxDD   = data.max_dd   ?? data.max_drawdown ?? null;
+  const riskDay = data.risk_day ?? data.risk_today   ?? null;
+  const tradesA = data.trades_a ?? data.trades_a_plus ?? null;
 
-    let v = Number(score);
-    if (!Number.isFinite(v)) v = 40;
-    v = Math.max(0, Math.min(100, v));
-
-    fill.style.width = v.toFixed(0) + '%';
-    label.textContent =
-      (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
-      v.toFixed(0) +
-      '%';
+  if (els.sizingTarget && target != null) {
+    els.sizingTarget.textContent = target;
   }
+  if (els.sizingMaxDD && maxDD != null) {
+    els.sizingMaxDD.textContent = fmtPct(maxDD) || String(maxDD);
+  }
+  if (els.sizingRiskTrade && riskDay != null) {
+    els.sizingRiskTrade.textContent = fmtPct(riskDay) || String(riskDay);
+  }
+  if (els.sizingTradesCount && tradesA != null) {
+    els.sizingTradesCount.textContent = tradesA;
+  }
+
+  setProfileTag(data.profile || data.perfil);
+  setStyleTag(data.style || data.estilo, data.style_label_pt, data.style_label_en);
+
+  // Se o backend mandar um "score" pro termômetro, usa aqui também:
+  if (typeof data.usage_score === 'number') {
+    setSizingMeter(data.usage_score);
+  }
+}
+
 
   // ===== estado neutro (sem dados do backend) =====
   if (!data || Object.keys(data).length === 0) {
