@@ -3081,6 +3081,11 @@ function updateSizingPhrase() {
     els.sizingStopInput.addEventListener(evt, updateSizingPhrase);
   if (els.sizingFixedQtyInput)
     els.sizingFixedQtyInput.addEventListener(evt, updateSizingPhrase);
+
+  const entryInput = document.getElementById('sizing-entry-input');
+  const sideInput  = document.getElementById('sizing-side-input');
+  if (entryInput) entryInput.addEventListener(evt, updateSizingPhrase);
+  if (sideInput)  sideInput.addEventListener(evt, updateSizingPhrase);
 });
 
 
