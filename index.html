@@ -3021,7 +3021,7 @@ function updateSizingBrain(data) {
     return n.toFixed(1) + '%';
   }
 
-  // sempre que chegar dado novo (ou trocar idioma), recalcula frase
+  // Sempre que chegar dado novo, recalcula as frases com os inputs atuais
   updateSizingPhrase();
 
   function setProfileTag(profile) {
@@ -3104,23 +3104,7 @@ function updateSizingBrain(data) {
     tag.textContent = txt;
   }
 
-  function setMeter(score) {
-    const fill = els.sizingMeterFill;
-    const label = els.sizingMeterLabel;
-    if (!fill || !label) return;
-
-    let v = Number(score);
-    if (!Number.isFinite(v)) v = 40;
-    v = Math.max(0, Math.min(100, v));
-
-    fill.style.width = v.toFixed(0) + '%';
-    label.textContent =
-      (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
-      v.toFixed(0) +
-      '%';
-  }
-
-  // ===== estado neutro (sem dados do backend) =====
+  // ===== estado neutro =====
   if (!data || Object.keys(data).length === 0) {
     if (els.sizingTarget) els.sizingTarget.textContent = '0.8–1.2%';
     if (els.sizingMaxDD) els.sizingMaxDD.textContent = '0.8%';
@@ -3129,7 +3113,7 @@ function updateSizingBrain(data) {
 
     setProfileTag('normal');
     setStyleTag('day_trade', null, null);
-    setMeter(40);
+    setSizingMeter(40);
 
     if (els.sizingComment) {
       els.sizingComment.textContent =
@@ -3141,7 +3125,7 @@ function updateSizingBrain(data) {
     return;
   }
 
-  // ===== com dados do backend (sizing_brain) =====
+  // ===== com dados do backend =====
   const profile      = data.profile;
   const style        = data.style_today;
   const styleLabelPt = data.style_label_pt;
@@ -3156,7 +3140,6 @@ function updateSizingBrain(data) {
   const tradesCount  = data.trades_count       ?? data.recommended_trades_count;
   const score        = data.score              ?? data.risk_usage_score ?? 40;
 
-  // alvo
   let targetText = '';
   const tMinFmt    = fmtPct(tMin);
   const tMaxFmt    = fmtPct(tMax);
@@ -3182,7 +3165,7 @@ function updateSizingBrain(data) {
 
   setProfileTag(profile);
   setStyleTag(style, styleLabelPt, styleLabelEn);
-  setMeter(score);
+  setSizingMeter(score);
 
   const comment =
     currentLang === 'en'
