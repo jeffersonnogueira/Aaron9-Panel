@@ -2309,6 +2309,23 @@ const els = {
   sizingPhraseDetail: document.getElementById('sizing-phrase-detail'),
 
 };
+    // Termômetro global do Sizing Brain
+function setSizingMeter(score) {
+  const fill  = els.sizingMeterFill;
+  const label = els.sizingMeterLabel;
+  if (!fill || !label) return;
+
+  let v = Number(score);
+  if (!Number.isFinite(v)) v = 40;
+  v = Math.max(0, Math.min(100, v));
+
+  fill.style.width = v.toFixed(0) + '%';
+  label.textContent =
+    (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
+    v.toFixed(0) +
+    '%';
+}
+
 
 // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
 let lastPullbackBrain = null;
