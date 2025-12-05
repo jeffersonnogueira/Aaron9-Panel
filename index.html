@@ -2694,6 +2694,279 @@ function updateStructureZigzag(panel) {
   poly.setAttribute('points', svgPoints.join(' '));
 }
 
+// ====== SIZING BRAIN – TERMÔMETRO + FRASES + STOP/TP ======
+
+// Termômetro principal do Sizing Brain
+function setSizingMeter(score) {
+  const fill  = document.getElementById('sizing-meter-fill');
+  const label = document.getElementById('sizing-meter-label');
+  if (!fill || !label) return;
+
+  let v = Number(score);
+  if (!Number.isFinite(v)) v = 40;
+  v = Math.max(0, Math.min(100, v));
+
+  fill.style.width = v.toFixed(0) + '%';
+  label.textContent =
+    (window.currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
+    v.toFixed(0) +
+    '%';
+}
+
+// Frases + cálculo de size, risco em $, STOP/TP e termômetro
+function updateSizingPhrase() {
+  const accEl   = document.getElementById('sizing-account-real-input');
+  const useEl   = document.getElementById('sizing-use-input');
+  const levEl   = document.getElementById('sizing-leverage-input');
+  const riskEl  = document.getElementById('sizing-risk-input');
+  const stopEl  = document.getElementById('sizing-stop-input');
+  const fixedEl = document.getElementById('sizing-fixedqty-input');
+  const entryEl = document.getElementById('sizing-entry-input');
+  const sideEl  = document.getElementById('sizing-side-input');
+
+  const mainEl   = document.getElementById('sizing-phrase-main');
+  const detailEl = document.getElementById('sizing-phrase-detail');
+
+  const qtyOut   = document.getElementById('sb-qty-suggested');
+  const riskOut  = document.getElementById('sb-risk-money');
+  const stLine   = document.getElementById('sb-stop-target-line');
+  const stDetail = document.getElementById('sb-stop-target-detail');
+
+  function num(el) {
+    if (!el) return 0;
+    const n = Number(String(el.value || '').replace(',', '.'));
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  const capitalReal = num(accEl);
+  const capitalUso  = num(useEl);
+  const leverage    = num(levEl) || 1;
+  const riskPct     = num(riskEl);
+  const stopUsd     = num(stopEl);
+  const fixedQty    = num(fixedEl);
+  const entryPrice  = num(entryEl);
+  const side        = (sideEl && sideEl.value) || 'buy';
+
+  const baseMsg =
+    window.currentLang === 'en'
+      ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
+      : 'Digite capital real, capital em uso, risco % e distância do stop para ver o tamanho sugerido da posição.';
+
+  // 1) Capital base: EM USO > REAL×ALAVANCAGEM > REAL
+  let baseCapital = 0;
+  if (capitalUso > 0) {
+    baseCapital = capitalUso;
+  } else if (capitalReal > 0 && leverage > 0) {
+    baseCapital = capitalReal * leverage;
+  } else if (capitalReal > 0) {
+    baseCapital = capitalReal;
+  }
+
+  // Se não tem dados mínimos
+  if (!baseCapital || !riskPct || !stopUsd) {
+    if (mainEl) mainEl.textContent = baseMsg;
+    if (detailEl) detailEl.textContent = '';
+
+    if (qtyOut) qtyOut.textContent = '—';
+    if (riskOut) {
+      riskOut.textContent =
+        window.currentLang === 'en'
+          ? 'Approximate $ risk: —'
+          : 'Risco aproximado em $: —';
+    }
+    if (stLine) stLine.textContent = '—';
+    if (stDetail) {
+      stDetail.textContent =
+        window.currentLang === 'en'
+          ? 'Fill entry price, side and stop distance to see suggested STOP / Take Profit.'
+          : 'Preencha preço de entrada, lado e distância do stop para ver STOP / Alvo sugeridos.';
+    }
+
+    setSizingMeter(40);
+    return;
+  }
+
+  // 2) Dinheiro em risco e quantidade
+  const riskMoney = (baseCapital * riskPct) / 100;
+  const sharesRisk =
+    stopUsd > 0 ? Math.floor(riskMoney / stopUsd) : 0;
+
+  let qty = sharesRisk;
+  if (fixedQty > 0) qty = fixedQty;
+
+  const fmt0 = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 0,
+  });
+  const fmtUsd = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  });
+
+  if (qtyOut) qtyOut.textContent = qty ? fmt0.format(qty) : '—';
+  if (riskOut) {
+    riskOut.textContent =
+      (window.currentLang === 'en'
+        ? 'Approximate $ risk: '
+        : 'Risco aproximado em $: ') +
+      fmtUsd.format(riskMoney);
+  }
+
+  // 3) STOP / TP (1:2) se tiver entrada + stop
+  if (entryPrice && stopUsd && stLine && stDetail) {
+    const stopPrice =
+      side === 'sell' ? entryPrice + stopUsd : entryPrice - stopUsd;
+    const tpPrice =
+      side === 'sell' ? entryPrice - stopUsd * 2 : entryPrice + stopUsd * 2;
+
+    stLine.textContent =
+      (window.currentLang === 'en' ? 'STOP ' : 'STOP em ') +
+      stopPrice.toFixed(2) +
+      ' · TP ' +
+      tpPrice.toFixed(2);
+
+    stDetail.textContent =
+      window.currentLang === 'en'
+        ? 'Classic 1:2 R:R based on the cash risk you defined.'
+        : 'R:R clássico 1:2 baseado no risco em dinheiro que você definiu.';
+  }
+
+  // 4) Termômetro – quanto risco você está usando
+  let usage = 40;
+  if (sharesRisk > 0) {
+    if (fixedQty > 0) {
+      const ratio = fixedQty / sharesRisk; // 1 = ok, 2 = 2x
+      usage = 40 + (ratio - 1) * 60;       // 1x → ~40–50, 2x → ~100
+    } else {
+      usage = riskPct * 50;                // 0.5%→25, 1%→50, 2%→100
+    }
+  }
+  usage = Math.max(5, Math.min(100, usage));
+  setSizingMeter(usage);
+
+  // 5) Frasão principal + detalhe
+  if (mainEl && detailEl) {
+    if (window.currentLang === 'en') {
+      mainEl.textContent =
+        'Using about ' +
+        riskPct.toFixed(2) +
+        '% risk on ~' +
+        fmt0.format(baseCapital) +
+        ' of capital.';
+      detailEl.textContent =
+        'Suggested size ' +
+        fmt0.format(qty) +
+        ' shares · cash risk ≈ ' +
+        fmtUsd.format(riskMoney) +
+        '.';
+    } else {
+      mainEl.textContent =
+        'Você está usando cerca de ' +
+        riskPct.toFixed(2) +
+        '% de risco sobre ~' +
+        fmt0.format(baseCapital) +
+        ' de capital.';
+      detailEl.textContent =
+        'Tamanho sugerido ~' +
+        fmt0.format(qty) +
+        ' shares · risco em dinheiro ≈ ' +
+        fmtUsd.format(riskMoney) +
+        '.';
+    }
+  }
+}
+
+// Eventos para recalcular quando digitar / mudar
+['input', 'change'].forEach(function (evt) {
+  const ids = [
+    'sizing-account-real-input',
+    'sizing-use-input',
+    'sizing-leverage-input',
+    'sizing-risk-input',
+    'sizing-stop-input',
+    'sizing-fixedqty-input',
+    'sizing-entry-input',
+    'sizing-side-input',
+  ];
+  ids.forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(evt, updateSizingPhrase);
+  });
+});
+
+// Guarda último pacote vindo do brain (para reaplicar se trocar idioma)
+let lastSizingBrain = null;
+
+// Função chamada pelo n8n / backend
+function updateSizingBrain(data) {
+  lastSizingBrain = data || null;
+
+  if (!data || Object.keys(data).length === 0) {
+    updateSizingPhrase();
+    return;
+  }
+
+  const tgtEl   = document.getElementById('sizing-target');
+  const maxddEl = document.getElementById('sizing-max-dd');
+  const riskEl  = document.getElementById('sizing-risk-trade');
+  const tradesEl= document.getElementById('sizing-trades-count');
+  const profEl  = document.getElementById('sizing-profile-tag');
+  const styleEl = document.getElementById('sizing-style-tag');
+
+  if (tgtEl   && data.target)     tgtEl.textContent   = data.target;
+  if (maxddEl && data.max_dd)     maxddEl.textContent= data.max_dd;
+  if (riskEl  && data.risk_trade) riskEl.textContent = data.risk_trade;
+  if (tradesEl&& data.trades)     tradesEl.textContent = data.trades;
+
+  // Perfil
+  if (profEl && data.profile) {
+    const p = String(data.profile).toLowerCase();
+    profEl.classList.remove('profile-conservative','profile-normal','profile-aggressive');
+
+    if (p.includes('conserv')) {
+      profEl.classList.add('profile-conservative');
+      profEl.textContent = window.currentLang === 'en' ? 'Conservative' : 'Conservador';
+    } else if (p.includes('agress') || p.includes('aggress')) {
+      profEl.classList.add('profile-aggressive');
+      profEl.textContent = window.currentLang === 'en' ? 'Aggressive' : 'Agressivo';
+    } else {
+      profEl.classList.add('profile-normal');
+      profEl.textContent = window.currentLang === 'en' ? 'Normal' : 'Normal';
+    }
+  }
+
+  // Estilo (scalp / daytrade / swing)
+  if (styleEl && data.style) {
+    const s = String(data.style).toLowerCase();
+    styleEl.classList.remove('style-scalp','style-daytrade','style-swing');
+
+    if (s.includes('scalp')) {
+      styleEl.classList.add('style-scalp');
+      styleEl.textContent =
+        window.currentLang === 'en' ? 'Scalp mode' : 'Modo scalp';
+    } else if (s.includes('swing')) {
+      styleEl.classList.add('style-swing');
+      styleEl.textContent =
+        window.currentLang === 'en' ? 'Swing mode' : 'Swing trade';
+    } else {
+      styleEl.classList.add('style-daytrade');
+      styleEl.textContent =
+        window.currentLang === 'en' ? 'Day trade' : 'Day trade tendencial';
+    }
+  }
+
+  if (typeof data.meterScore === 'number') {
+    setSizingMeter(data.meterScore);
+  }
+
+  // Recalcula as frases com os inputs atuais
+  updateSizingPhrase();
+}
+
+// Deixa disponível no escopo global pro n8n
+window.updateSizingBrain = updateSizingBrain;
+
+    
 // ====== PULLBACK BRAIN – FUNÇÃO GLOBAL ======
 function updatePullbackBrain(data) {
   lastPullbackBrain = data || null;
