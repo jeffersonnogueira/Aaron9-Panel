@@ -3793,6 +3793,13 @@ function recalcSizingBrainLocal() {
   }
 }
    
+// conecta o botão "Recalcular Sizing" ao cálculo local
+if (sbEls.calcBtn) {
+  sbEls.calcBtn.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    recalcSizingBrainLocal();
+  });
+}
 
 
 // liga o toggle dos botões PT / EN
