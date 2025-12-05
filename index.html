@@ -3692,19 +3692,19 @@ function recalcSizingBrainLocal() {
     return Number.isFinite(v) ? v : 0;
   }
 
-  const account  = num(sbEls.accountBalance);    // Capital real da conta
-  const lev      = num(sbEls.leverage);         // Alavancagem x
-  const tradeCap = num(sbEls.tradeCapital);     // Capital em uso neste trade
-  const riskPct  = num(sbEls.riskPercentInput); // Risco máx. por trade (% conta)
-  const entry    = num(sbEls.entryPrice);       // Preço de entrada
-  const atr      = num(sbEls.atrValue);         // ATR atual ($)
-  const multStop = num(sbEls.atrMultStop) || 1; // Mult ATR STOP
-  const multTake = num(sbEls.atrMultTake) || (multStop * 2); // Mult ATR TAKE
+  const account = num(sbEls.accountBalance);    // Capital real da conta
+  const lev     = num(sbEls.leverage);         // Alavancagem x
+  const tradeCap= num(sbEls.tradeCapital);     // Capital em uso neste trade
+  const riskPct = num(sbEls.riskPercentInput); // Risco máx. por trade (% conta)
+  const entry   = num(sbEls.entryPrice);       // Preço de entrada
+  const atr     = num(sbEls.atrValue);         // ATR atual ($)
+  const multStop= num(sbEls.atrMultStop) || 1; // Mult ATR STOP
+  const multTake= num(sbEls.atrMultTake) || (multStop * 2); // Mult ATR TAKE
 
   // lado: long / short
   let side = 'long';
   if (sbEls.sideRadios && sbEls.sideRadios.length) {
-    sbEls.sideRadios.forEach((r) => {
+    sbEls.sideRadios.forEach(r => {
       if (r.checked) side = r.value;
     });
   }
@@ -3716,11 +3716,7 @@ function recalcSizingBrainLocal() {
 
   // validações básicas
   if (!account || !riskPct || !entry || !atr || !multStop) {
-    setStatus(
-      currentLang === 'en'
-        ? 'Fill in account capital, risk %, entry price, ATR and multipliers to calculate.'
-        : 'Preencha capital, risco, preço de entrada, ATR e multiplicadores para calcular.'
-    );
+    setStatus('Preencha capital, risco, preço de entrada, ATR e multiplicadores para calcular.');
     return;
   }
 
@@ -3728,7 +3724,7 @@ function recalcSizingBrainLocal() {
   const stopDist = atr * multStop;
   const takeDist = atr * multTake;
 
-  // base de capital (EM USO se tiver, senão conta × alavancagem, senão só conta)
+  // base de capital para limitar o tamanho (EM USO se tiver, senão conta × alavancagem, senão só conta)
   let baseCapital = 0;
   if (tradeCap > 0) {
     baseCapital = tradeCap;
@@ -3738,7 +3734,7 @@ function recalcSizingBrainLocal() {
     baseCapital = account;
   }
 
-  // risco máximo em dinheiro (% da conta real)
+  // risco máximo em dinheiro (por trade) baseado % da conta real
   const maxRiskMoney = account * (riskPct / 100);
 
   // tamanho de posição pelo risco e pelo capital
@@ -3747,69 +3743,45 @@ function recalcSizingBrainLocal() {
   let shares = Math.floor(Math.min(sharesByRisk, sharesByCapital));
 
   if (!Number.isFinite(shares) || shares <= 0) {
-    setStatus(
-      currentLang === 'en'
-        ? 'Check the numbers: dollar risk must be greater than stop distance.'
-        : 'Verifique os valores: o risco em dólares precisa ser maior que a distância do stop.'
-    );
+    setStatus('Verifique os valores: o risco em dólares precisa ser maior que a distância do stop.');
     return;
   }
 
   // preços de stop e take
-  const stopPrice =
-    side === 'short' ? entry + stopDist : entry - stopDist;
+  const stopPrice = side === 'short'
+    ? entry + stopDist
+    : entry - stopDist;
 
-  const takePrice =
-    side === 'short' ? entry - takeDist : entry + takeDist;
+  const takePrice = side === 'short'
+    ? entry - takeDist
+    : entry + takeDist;
 
   // risco real com a quantidade ajustada
   const realRiskMoney = shares * stopDist;
   const realRiskPct   = account ? (realRiskMoney / account) * 100 : 0;
 
-  // ==== atualiza os textos do card (parte de cima) ====
+  // ==== atualiza os textos do card ====
   if (sbEls.outStopDistance)
-    sbEls.outStopDistance.textContent =
-      (currentLang === 'en' ? 'Stop distance: ' : 'Distância do STOP: ') +
-      stopDist.toFixed(2) +
-      ' USD';
+    sbEls.outStopDistance.textContent = `Distância do STOP: ${stopDist.toFixed(2)} USD`;
 
   if (sbEls.outStopPrice)
-    sbEls.outStopPrice.textContent =
-      (currentLang === 'en' ? 'Suggested stop loss: ' : 'Stop Loss sugerido: ') +
-      stopPrice.toFixed(2);
+    sbEls.outStopPrice.textContent = `Stop Loss sugerido: ${stopPrice.toFixed(2)}`;
 
   if (sbEls.outTakePrice)
-    sbEls.outTakePrice.textContent =
-      (currentLang === 'en' ? 'Suggested take profit: ' : 'Take Profit sugerido: ') +
-      takePrice.toFixed(2);
+    sbEls.outTakePrice.textContent = `Take Profit sugerido: ${takePrice.toFixed(2)}`;
 
   if (sbEls.outPositionSize)
-    sbEls.outPositionSize.textContent =
-      (currentLang === 'en' ? 'Suggested size: ' : 'Qtd sugerida: ') +
-      shares.toFixed(0);
+    sbEls.outPositionSize.textContent = `Qtd sugerida: ${shares.toFixed(0)}`;
 
   if (sbEls.outRiskDollar)
-    sbEls.outRiskDollar.textContent =
-      (currentLang === 'en' ? 'Approx. risk: $ ' : 'Risco aprox.: $ ') +
-      realRiskMoney.toFixed(2);
+    sbEls.outRiskDollar.textContent = `Risco aprox.: $ ${realRiskMoney.toFixed(2)}`;
 
   if (sbEls.outRiskPercent)
     sbEls.outRiskPercent.textContent =
-      (currentLang === 'en'
-        ? 'Risk % trade / account: '
-        : 'Risco % trade / conta: ') +
-      realRiskPct.toFixed(2) +
-      '%';
+      `Risco % trade / conta: ${realRiskPct.toFixed(2)}%`;
 
   setStatus(
-    (currentLang === 'en' ? 'OK: ' : 'Ok: ') +
-      shares.toFixed(0) +
-      ' shares, ' +
-      (currentLang === 'en' ? 'risk ≈ ' : 'risco ≈ ') +
-      realRiskPct.toFixed(2) +
-      '% (' +
-      realRiskMoney.toFixed(2) +
-      ' USD).'
+    `Ok: ${shares.toFixed(0)} shares, risco ≈ ${realRiskPct.toFixed(2)}% (${realRiskMoney.toFixed(2)} USD).`
   );
 
   // Alimenta o bloco de baixo (Aaron Pine) com a distância do stop em USD/share
@@ -3819,160 +3791,15 @@ function recalcSizingBrainLocal() {
       updateSizingPhrase();
     }
   }
-
-  // =======================
-  // TERMÔMETRO + PERFIS OFFLINE
-  // =======================
-  if (
-    !els.sizingMeterFill ||
-    !els.sizingMeterLabel ||
-    !els.sizingTarget ||
-    !els.sizingMaxDD ||
-    !els.sizingRiskTrade ||
-    !els.sizingTradesCount ||
-    !els.sizingProfileTag ||
-    !els.sizingStyleTag ||
-    !els.sizingComment
-  ) {
-    return;
-  }
-
-  // quanta parte do buying power está sendo usada?
-  const maxBuyingPower = account * (lev > 0 ? lev : 1);
-  const capitalRatio =
-    maxBuyingPower > 0 ? baseCapital / maxBuyingPower : 0;
-
-  // score de 0–100 combinando risco% e quanto capital está em jogo
-  let score;
-  if (realRiskPct <= 0.5) {
-    score = 25 + capitalRatio * 20;
-  } else if (realRiskPct <= 1.0) {
-    score = 45 + capitalRatio * 25;
-  } else if (realRiskPct <= 1.5) {
-    score = 65 + capitalRatio * 20;
-  } else {
-    score = 80 + capitalRatio * 15;
-  }
-  if (!Number.isFinite(score)) score = 40;
-  score = Math.max(5, Math.min(95, score)); // trava dentro de 5–95
-
-  // === atualiza termômetro ===
-  els.sizingMeterFill.style.width = score.toFixed(0) + '%';
-  els.sizingMeterLabel.textContent =
-    (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
-    score.toFixed(0) +
-    '%';
-
-  // === escolhe perfil (Conservador / Normal / Agressivo) ===
-  const profEl = els.sizingProfileTag;
-  profEl.classList.remove(
-    'profile-conservative',
-    'profile-normal',
-    'profile-aggressive'
-  );
-
-  let profileKey;
-  if (score < 35) {
-    profEl.classList.add('profile-conservative');
-    profEl.textContent =
-      currentLang === 'en' ? 'Conservative' : 'Conservador';
-    profileKey = 'conservative';
-  } else if (score < 70) {
-    profEl.classList.add('profile-normal');
-    profEl.textContent =
-      currentLang === 'en' ? 'Normal' : 'Normal';
-    profileKey = 'normal';
-  } else {
-    profEl.classList.add('profile-aggressive');
-    profEl.textContent =
-      currentLang === 'en' ? 'Aggressive' : 'Agressivo';
-    profileKey = 'aggressive';
-  }
-
-  // === estilo (Swing / Day trade / Momentum–Scalp – “one time trade”) ===
-  const styleEl = els.sizingStyleTag;
-  styleEl.classList.remove(
-    'style-daytrade',
-    'style-swing',
-    'style-momentum',
-    'style-noedge'
-  );
-
-  let styleKey;
-  if (score < 35) {
-    styleEl.classList.add('style-swing');
-    styleEl.textContent =
-      currentLang === 'en' ? 'Swing trade' : 'Swing trade';
-    styleKey = 'swing_trade';
-  } else if (score < 70) {
-    styleEl.classList.add('style-daytrade');
-    styleEl.textContent =
-      currentLang === 'en'
-        ? 'Trend day trade'
-        : 'Day trade tendencial';
-    styleKey = 'day_trade';
-  } else {
-    styleEl.classList.add('style-momentum');
-    styleEl.textContent =
-      currentLang === 'en'
-        ? 'Momentum / scalp (one time)'
-        : 'Momentum / scalp (one time trade)';
-    styleKey = 'momentum_scalp';
-  }
-
-  // === alvo, risco / trade, max DD e nº de trades A+ sugeridos ===
-  function fmtPct(v) {
-    return v.toFixed(1) + '%';
-  }
-
-  const targetMinPct = realRiskPct * 0.8;
-  const targetMaxPct = realRiskPct * 1.2;
-  const maxDDPct     = realRiskPct * 3; // até 3x o risco por trade
-  const tradesAPlus  = score < 35 ? 1 : score < 70 ? 2 : 3;
-
-  els.sizingTarget.textContent =
-    fmtPct(targetMinPct) + '–' + fmtPct(targetMaxPct);
-  els.sizingRiskTrade.textContent = fmtPct(realRiskPct);
-  els.sizingMaxDD.textContent = fmtPct(maxDDPct);
-  els.sizingTradesCount.textContent = String(tradesAPlus);
-
-  // === comentário embaixo, combinando tudo ===
-  if (currentLang === 'en') {
-    els.sizingComment.textContent =
-      'With this setup, Sizing Brain sees risk usage around ' +
-      score.toFixed(0) +
-      '%. Focus on ' +
-      tradesAPlus +
-      (tradesAPlus === 1 ? ' high-quality trade ' : ' high-quality trades ') +
-      'and respect a max daily loss close to ' +
-      fmtPct(maxDDPct) +
-      '.';
-  } else {
-    els.sizingComment.textContent =
-      'Com essa configuração o Sizing Brain enxerga uso de risco em torno de ' +
-      score.toFixed(0) +
-      '%. Foque em ' +
-      tradesAPlus +
-      (tradesAPlus === 1 ? ' trade A+ ' : ' trades A+ ') +
-      'e respeite uma perda máxima diária próxima de ' +
-      fmtPct(maxDDPct) +
-      '.';
-  }
-
-  // guarda um "estado local" para o toggle PT/EN reaplicar depois
-  lastSizingBrain = {
-    score,
-    profile: profileKey,
-    style_today: styleKey,
-    target_min_pct: targetMinPct,
-    target_max_pct: targetMaxPct,
-    max_dd_pct: maxDDPct,
-    risk_per_trade_pct: realRiskPct,
-    trades_count: tradesAPlus,
-    comment_pt: els.sizingComment.textContent,
-  };
 }
-
+   
+// conecta o botão "Recalcular Sizing" ao cálculo local
+if (sbEls.calcBtn) {
+  sbEls.calcBtn.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    recalcSizingBrainLocal();
+  });
+}
 
 
 // liga o toggle dos botões PT / EN
