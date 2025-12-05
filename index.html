@@ -1705,7 +1705,7 @@
     Sizing Brain · Gestão de capital do dia
   </div>
 
-  <!-- HEADER: números principais (continuam vindos do brain) -->
+  <!-- HEADER: alvo do dia / max perda / risco / trades -->
   <div class="sizing-header-row">
     <div class="sizing-main-numbers">
       <div class="sizing-label">
@@ -1716,148 +1716,180 @@
       </div>
     </div>
 
-    <div class="sizing-secondary-numbers">
-      <div>
+    <div class="sizing-main-row-tiny">
+      <span>
         <span data-i18n="sizing.max_dd">Máx. perda</span>:
-        <strong id="sizing-max-dd">0.8%</strong>
-      </div>
-      <div>
+        <strong id="sizing-max-dd" class="sizing-maxdd-value">0.8%</strong>
+      </span>
+      <span>
         <span data-i18n="sizing.risk_trade">Risco / trade</span>:
-        <strong id="sizing-risk-trade">0.25%</strong>
-      </div>
-      <div>
+        <strong id="sizing-risk-trade" class="sizing-risktrade-value">0.25%</strong>
+      </span>
+      <span>
         <span data-i18n="sizing.trades">Trades A+</span>:
-        <strong id="sizing-trades-count">3</strong>
-      </div>
+        <strong id="sizing-trades-count" class="sizing-trades-value">3</strong>
+      </span>
     </div>
   </div>
 
-  <!-- TAGS: perfil + estilo do dia -->
-  <div class="sizing-tag-row">
-    <span id="sizing-profile-tag" class="sizing-tag profile-normal">
+  <!-- TAGS: perfil + estilo do dia (direita, igual ao mock) -->
+  <div class="sizing-tags-row">
+    <span id="sizing-profile-tag" class="sizing-pill profile-normal">
       Normal
     </span>
-    <span id="sizing-style-tag" class="sizing-tag style-daytrade">
+    <span id="sizing-style-tag" class="sizing-pill style-daytrade">
       Day trade tendencial
     </span>
   </div>
 
-  <!-- TERMÔMETRO -->
-  <div class="sizing-meter">
-    <div class="sizing-meter-label">
-      <span data-i18n="sizing.conservative">Conservador</span>
-      <span id="sizing-meter-label">Uso de risco 40%</span>
-      <span data-i18n="sizing.aggressive">Agressivo</span>
-    </div>
-    <div class="sizing-meter-bar">
+  <!-- TERMÔMETRO PRINCIPAL (move com a lógica do JS) -->
+  <div class="sizing-meter-row">
+    <div class="sizing-meter-shell">
       <div
         id="sizing-meter-fill"
         class="sizing-meter-fill"
         style="width:40%;"
       ></div>
     </div>
-  </div>
-
-  <!-- BLOCO AARON PINE: inputs -->
-  <div class="sizing-inputs">
-    <!-- Capital REAL da conta -->
-    <div class="sizing-input">
-      <label for="sizing-account-real-input">
-        Capital REAL da conta (USD)
-      </label>
-      <input
-        id="sizing-account-real-input"
-        type="number"
-        inputmode="decimal"
-        placeholder="ex: 10000"
-      />
-    </div>
-
-    <!-- Capital EM USO neste trade -->
-    <div class="sizing-input">
-      <label for="sizing-use-input">
-        Capital EM USO neste trade (USD)
-      </label>
-      <input
-        id="sizing-use-input"
-        type="number"
-        inputmode="decimal"
-        placeholder="ex: 10000"
-      />
-    </div>
-
-    <!-- Alavancagem (×) -->
-    <div class="sizing-input">
-      <label for="sizing-leverage-input">
-        Alavancagem (×)
-      </label>
-      <input
-        id="sizing-leverage-input"
-        type="number"
-        inputmode="decimal"
-        step="0.1"
-        placeholder="ex: 4"
-      />
-    </div>
-
-    <!-- Risco por trade (%) -->
-    <div class="sizing-input">
-      <label for="sizing-risk-input">
-        Risco por trade (%)
-      </label>
-      <input
-        id="sizing-risk-input"
-        type="number"
-        inputmode="decimal"
-        step="0.1"
-        placeholder="ex: 0.5"
-      />
-    </div>
-
-    <!-- Distância do stop em USD -->
-    <div class="sizing-input">
-      <label for="sizing-stop-input">
-        Distância do stop (USD por share)
-      </label>
-      <input
-        id="sizing-stop-input"
-        type="number"
-        inputmode="decimal"
-        step="0.01"
-        placeholder="ex: 1.20"
-      />
-    </div>
-
-    <!-- Qtd fixa (ações) -->
-    <div class="sizing-input">
-      <label for="sizing-fixedqty-input">
-        Qtd fixa (ações) – opcional
-      </label>
-      <input
-        id="sizing-fixedqty-input"
-        type="number"
-        inputmode="decimal"
-        placeholder="ex: 100"
-      />
+    <div class="sizing-meter-label">
+      <span data-i18n="sizing.conservative">Conservador</span>
+      <span id="sizing-meter-label">Uso de risco 40%</span>
+      <span data-i18n="sizing.aggressive">Agressivo</span>
     </div>
   </div>
 
-  <!-- Frases dinâmicas -->
-  <div class="sizing-phrase">
-    <div id="sizing-phrase-main" class="sizing-phrase-main">
-      Digite Capital REAL, EM USO, risco % e stop para ver o tamanho sugerido
-      da posição.
-    </div>
-    <div id="sizing-phrase-detail" class="sizing-phrase-detail"></div>
-  </div>
+  <!-- BLOCO DUPLO ESTILO AARON PINE (ESQ = inputs / DIR = leitura) -->
+  <div class="sb-row-2col">
+    <!-- LADO ESQUERDO: PARÂMETROS DO TRADE -->
+    <div class="sb-field">
+      <div class="sb-label">Parâmetros do trade</div>
 
-  <!-- Comentário do brain -->
-  <div class="sizing-comment" id="sizing-comment">
-    Hoje o fluxo permite buscar algo em torno de 0.8–1.2% se você focar em 2–3
-    trades A+. Acima disso já entra zona de ganância; abaixo disso ainda é um
-    dia ok se você seguiu o plano.
+      <div class="sizing-inputs">
+        <!-- Capital REAL da conta -->
+        <div class="sizing-input">
+          <label for="sizing-account-real-input">
+            Capital REAL da conta (USD)
+          </label>
+          <input
+            id="sizing-account-real-input"
+            type="number"
+            inputmode="decimal"
+            placeholder="ex: 25000"
+          />
+        </div>
+
+        <!-- Capital EM USO neste trade -->
+        <div class="sizing-input">
+          <label for="sizing-use-input">
+            Capital EM USO neste trade (USD)
+          </label>
+          <input
+            id="sizing-use-input"
+            type="number"
+            inputmode="decimal"
+            placeholder="ex: 40000"
+          />
+        </div>
+
+        <!-- Alavancagem -->
+        <div class="sizing-input">
+          <label for="sizing-leverage-input">
+            Alavancagem (×)
+          </label>
+          <input
+            id="sizing-leverage-input"
+            type="number"
+            inputmode="decimal"
+            step="0.1"
+            placeholder="ex: 4"
+          />
+        </div>
+
+        <!-- Risco por trade (%) -->
+        <div class="sizing-input">
+          <label for="sizing-risk-input">
+            Risco por trade (%)
+          </label>
+          <input
+            id="sizing-risk-input"
+            type="number"
+            inputmode="decimal"
+            step="0.1"
+            placeholder="ex: 0.5"
+          />
+        </div>
+
+        <!-- Distância do stop (USD por share) -->
+        <div class="sizing-input">
+          <label for="sizing-stop-input">
+            Distância do stop (USD por share)
+          </label>
+          <input
+            id="sizing-stop-input"
+            type="number"
+            inputmode="decimal"
+            step="0.01"
+            placeholder="ex: 1.20"
+          />
+        </div>
+
+        <!-- Qtd fixa opcional -->
+        <div class="sizing-input">
+          <label for="sizing-fixedqty-input">
+            Qtd fixa (shares) – opcional
+          </label>
+          <input
+            id="sizing-fixedqty-input"
+            type="number"
+            inputmode="decimal"
+            placeholder="ex: 100"
+          />
+        </div>
+      </div>
+
+      <div class="sb-hint">
+        Preencha capital, risco % e distância do stop.  
+        O Sizing Brain usa isso + perfil do dia para sugerir o tamanho da posição.
+      </div>
+    </div>
+
+    <!-- LADO DIREITO: LEITURA DO SIZING BRAIN + FRASE -->
+    <div class="sb-field">
+      <div class="sb-label">Leitura do Sizing Brain</div>
+
+      <div class="sizing-phrase-box">
+        <div id="sizing-phrase-main" class="sizing-phrase-main">
+          Digite Capital REAL, EM USO, risco % e stop para ver o tamanho sugerido da posição.
+        </div>
+        <div id="sizing-phrase-detail" class="sizing-phrase-detail"></div>
+      </div>
+
+      <div class="sb-actions">
+        <button
+          type="button"
+          class="primary-btn"
+          onclick="updateSizingPhrase()"
+        >
+          Calcular sizing
+        </button>
+        <span class="sb-status">
+          Atualiza automaticamente quando você alterar os números.
+        </span>
+      </div>
+
+      <div
+        id="sizing-comment"
+        class="sb-subtext"
+        style="margin-top:8px;"
+      >
+        Hoje o fluxo permite buscar algo em torno de 0.8–1.2% se você focar em
+        2–3 trades A+. Acima disso já entra zona de ganância; abaixo disso ainda
+        é um dia ok se você seguiu o plano.
+      </div>
+    </div>
   </div>
 </section>
+
 
 
 
