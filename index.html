@@ -1600,107 +1600,7 @@
   </div>
 </section>
 
-      <!-- SIZING BRAIN – GERENCIADOR DE RISCO -->
-<section class="card sizing-brain-card">
-  <div class="card-header">
-    <h2>Sizing Brain – Gerenciador de Risco</h2>
-    <p class="card-subtitle">ATR • Capital em uso • Stop • Take Profit • Qtd sugerida</p>
-  </div>
-
-  <div class="card-body">
-    <!-- Linha 1: Conta / Alavancagem -->
-    <div class="sb-grid">
-      <div class="sb-field">
-        <label for="sb-account-balance">Capital real da conta (USD)</label>
-        <input id="sb-account-balance" type="number" step="0.01" value="25000" />
-      </div>
-
-      <div class="sb-field">
-        <label for="sb-leverage">Alavancagem (buying power x)</label>
-        <input id="sb-leverage" type="number" step="0.1" value="4" />
-        <small id="sb-buying-power-info" class="sb-hint">Buying power ≈ $100.000</small>
-      </div>
-
-      <div class="sb-field">
-        <label for="sb-trade-capital">Capital em uso neste trade (USD)</label>
-        <input id="sb-trade-capital" type="number" step="0.01" value="50000" />
-        <small class="sb-hint">Pode ser menor que o buying power se quiser ser conservador.</small>
-      </div>
-
-      <div class="sb-field">
-        <label for="sb-risk-percent">Risco máx. por trade (% da conta)</label>
-        <input id="sb-risk-percent" type="number" step="0.1" value="1" />
-        <small class="sb-hint">Ex: 1% em uma conta de 25k = $250 de risco.</small>
-      </div>
-    </div>
-
-    <hr class="sb-divider" />
-
-    <!-- Linha 2: Entrada / ATR / Lado -->
-    <div class="sb-grid">
-      <div class="sb-field">
-        <label for="sb-entry-price">Preço de entrada</label>
-        <input id="sb-entry-price" type="number" step="0.01" value="100" />
-      </div>
-
-      <div class="sb-field">
-        <label for="sb-atr-value">ATR atual ($)</label>
-        <input id="sb-atr-value" type="number" step="0.01" value="1.2" />
-      </div>
-
-      <div class="sb-field">
-        <label for="sb-atr-mult-stop">Multiplicador ATR STOP</label>
-        <input id="sb-atr-mult-stop" type="number" step="0.1" value="1.5" />
-        <small class="sb-hint">Distância do stop em ATR (ex: 1.5x ATR).</small>
-      </div>
-
-      <div class="sb-field">
-        <label for="sb-atr-mult-take">Multiplicador ATR TAKE</label>
-        <input id="sb-atr-mult-take" type="number" step="0.1" value="3" />
-        <small class="sb-hint">Take profit em ATR (ex: 3x ATR).</small>
-      </div>
-
-      <div class="sb-field">
-        <label>Direção</label>
-        <div class="sb-side-toggle">
-          <label>
-            <input type="radio" name="sb-side" value="long" checked />
-            <span>Compra / CALL</span>
-          </label>
-          <label>
-            <input type="radio" name="sb-side" value="short" />
-            <span>Venda / PUT</span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <hr class="sb-divider" />
-
-    <!-- Resultados principais -->
-    <div class="sb-results-grid">
-      <div class="sb-result-block">
-        <h3>Stop & Alvo (ATR)</h3>
-        <p id="sb-stop-distance" class="sb-result-main">Distância do STOP: –</p>
-        <p id="sb-stop-price" class="sb-result-sub">Stop Loss sugerido: –</p>
-        <p id="sb-take-price" class="sb-result-sub">Take Profit sugerido: –</p>
-      </div>
-
-      <div class="sb-result-block">
-        <h3>Qtd & Risco</h3>
-        <p id="sb-position-size" class="sb-result-main">Qtd sugerida: –</p>
-        <p id="sb-risk-dollar" class="sb-result-sub">Risco aprox.: –</p>
-        <p id="sb-risk-percent" class="sb-result-sub">Risco % trade / conta: –</p>
-      </div>
-    </div>
-
-    <div class="sb-actions">
-      <button id="sb-calcular" class="primary-btn">Recalcular Sizing</button>
-      <span id="sb-status" class="sb-status">Ajuste os valores e clique em “Recalcular Sizing”.</span>
-    </div>
-  </div>
-</section>
-
+     
       
         <div class="card">
           <div class="card-header">
@@ -2862,18 +2762,34 @@ function updatePullbackBrain(data) {
   setMeter(score, tone);
 }
 
-  
+ // ==== FUNÇÃO GLOBAL DO TERMÔMETRO DO SIZING BRAIN ====
+function setSizingMeter(score) {
+  const fill  = els.sizingMeterFill;
+  const label = els.sizingMeterLabel;
+  if (!fill || !label) return;
+
+  let v = Number(score);
+  if (!Number.isFinite(v)) v = 40; // fallback
+  v = Math.max(0, Math.min(100, v));
+
+  fill.style.width = v.toFixed(0) + '%';
+  label.textContent =
+    (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
+    v.toFixed(0) +
+    '%';
+}
+ 
 
 
-// ====== SIZING BRAIN – frases baseadas em Capital EM USO + Alavancagem ======
+// ====== SIZING BRAIN – frases + termômetro baseado nos inputs ======
 function updateSizingPhrase() {
-  const accEl = els.sizingAccountRealInput;
-  const useEl = els.sizingUseInput;
-  const levEl = els.sizingLeverageInput;
-  const riskEl = els.sizingRiskInput;
-  const stopEl = els.sizingStopInput;
-  const fixedEl = els.sizingFixedQtyInput;
-  const mainEl = els.sizingPhraseMain;
+  const accEl    = els.sizingAccountRealInput;
+  const useEl    = els.sizingUseInput;
+  const levEl    = els.sizingLeverageInput;
+  const riskEl   = els.sizingRiskInput;
+  const stopEl   = els.sizingStopInput;
+  const fixedEl  = els.sizingFixedQtyInput;
+  const mainEl   = els.sizingPhraseMain;
   const detailEl = els.sizingPhraseDetail;
 
   if (!accEl || !useEl || !levEl || !riskEl || !stopEl || !mainEl || !detailEl) {
@@ -2882,24 +2798,22 @@ function updateSizingPhrase() {
 
   function numFromInput(el) {
     if (!el) return 0;
-    const raw = (el.value || '').toString().replace(',', '.');
-    const n = Number(raw);
+    const n = Number(String(el.value).replace(',', '.'));
     return Number.isFinite(n) ? n : 0;
   }
 
-  const capitalReal = numFromInput(accEl);
-  const capitalUso  = numFromInput(useEl);
-  const leverage    = numFromInput(levEl);
-  const riskPct     = numFromInput(riskEl);
-  const stopUsd     = numFromInput(stopEl);
-  const fixedQty    = Math.floor(numFromInput(fixedEl));
+  const capitalReal  = numFromInput(accEl);
+  const capitalUso   = numFromInput(useEl);
+  const leverage     = numFromInput(levEl);
+  const riskPct      = numFromInput(riskEl);
+  const stopUsd      = numFromInput(stopEl);
+  const fixedQty     = fixedEl ? numFromInput(fixedEl) : 0;
 
-  // === LÓGICA TIPO AARON PINE ===
-  // 1) Se Capital EM USO > 0 → base = EM USO
-  // 2) Senão, se Capital REAL > 0 e alavancagem > 0 → base = REAL × alavancagem
-  // 3) Senão, se Capital REAL > 0 → base = REAL
+  // Base de cálculo:
+  // 1) Se Capital EM USO > 0 → usa esse
+  // 2) Senão, se Capital REAL e alavancagem > 0 → real × alavancagem
+  // 3) Senão, usa só o capital real
   let baseCapital = 0;
-
   if (capitalUso > 0) {
     baseCapital = capitalUso;
   } else if (capitalReal > 0 && leverage > 0) {
@@ -2911,13 +2825,16 @@ function updateSizingPhrase() {
   const baseMsg =
     currentLang === 'en'
       ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
-      : 'Digite capital real, capital em uso, risco % e stop para ver o tamanho sugerido da posição.';
+      : 'Digite capital real, capital em uso, risco % e distância do stop para ver o tamanho sugerido da posição.';
 
+  // Se ainda não tem dados suficientes → mensagem neutra + termômetro neutro
   if (!baseCapital || !riskPct || !stopUsd) {
-    mainEl.textContent = baseMsg;
-    detailEl.textContent = '';
-    return;
-  }
+  mainEl.textContent   = baseMsg;
+  detailEl.textContent = '';
+  setSizingMeter(40);
+  return;
+}
+
 
   const riskMoney  = baseCapital * (riskPct / 100);
   const sharesRisk = Math.floor(riskMoney / stopUsd);
@@ -2928,6 +2845,7 @@ function updateSizingPhrase() {
         ? 'Check the values. The risk in dollars must be greater than the stop distance.'
         : 'Verifique os valores. O risco em dólares precisa ser maior que a distância do stop.';
     detailEl.textContent = '';
+    if (typeof setMeter === 'function')setSizingMeter(40);
     return;
   }
 
@@ -2939,7 +2857,7 @@ function updateSizingPhrase() {
     });
   }
 
-  // Mensagem principal
+  // Mensagem principal (PT/EN)
   if (currentLang === 'en') {
     mainEl.textContent =
       'Base capital: ' +
@@ -3004,7 +2922,29 @@ function updateSizingPhrase() {
         ' shares. Você pode arredondar para baixo se quiser ser mais conservador.';
     }
   }
+
+  // 🔥 NOVO: Atualiza o TERMÔMETRO com base no risco
+  // - Se tiver qtd fixa, usamos a relação fixed / seguro
+  // - Se não tiver, usamos o risco % da conta como guia
+  let usage = 40; // neutro
+
+  if (sharesRisk > 0) {
+    if (fixedQty > 0) {
+      const ratio = fixedQty / sharesRisk; // 1 = tamanho seguro, 2 = 2x o seguro
+      usage = 40 + (ratio - 1) * 60;       // 1x → ~40–50, 2x → ~100
+    } else {
+      // 0.5% → ~25, 1% → ~50, 2% → ~100
+      usage = riskPct * 50;
+    }
+  }
+
+ // Limita entre 5% e 100%
+usage = Math.max(5, Math.min(100, usage));
+
+setSizingMeter(usage);
+
 }
+
 
 // Eventos para recalcular quando digitar
 ['input', 'change'].forEach(function (evt) {
@@ -3118,21 +3058,7 @@ function updateSizingBrain(data) {
     tag.textContent = txt;
   }
 
-  function setMeter(score) {
-    const fill = els.sizingMeterFill;
-    const label = els.sizingMeterLabel;
-    if (!fill || !label) return;
-
-    let v = Number(score);
-    if (!Number.isFinite(v)) v = 40;
-    v = Math.max(0, Math.min(100, v));
-
-    fill.style.width = v.toFixed(0) + '%';
-    label.textContent =
-      (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
-      v.toFixed(0) +
-      '%';
-  }
+  
 
   // ===== estado neutro (sem dados do backend) =====
   if (!data || Object.keys(data).length === 0) {
@@ -3143,7 +3069,7 @@ function updateSizingBrain(data) {
 
     setProfileTag('normal');
     setStyleTag('day_trade', null, null);
-    setMeter(40);
+    setSizingMeter(40);
 
     if (els.sizingComment) {
       els.sizingComment.textContent =
