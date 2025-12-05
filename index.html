@@ -1108,7 +1108,7 @@
   background: rgba(34, 197, 94, 0.08);
   border: 1px solid rgba(34, 197, 94, 0.4);
 }
-   /* ====== SIZING BRAIN – GESTÃO DE CAPITAL DO DIA ====== */
+    /* ====== SIZING BRAIN – GESTÃO DE CAPITAL DO DIA ====== */
 
 .sizing-header-row {
   display: flex;
@@ -1125,98 +1125,99 @@
 }
 
 .sizing-label {
-  font-size: 0.7rem;
-  color: var(--text-soft);
-  letter-spacing: 0.06em;
+  font-size: 0.72rem;
   text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-soft);
 }
 
-.sizing-target-value,
-.sizing-maxdd-value,
-.sizing-risktrade-value,
-.sizing-trades-value {
-  font-size: 0.95rem;
+.sizing-target-value {
+  font-size: 1.05rem;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--accent);
 }
 
-.sizing-main-row-tiny {
-  display: flex;
-  gap: 10px;
-  margin-top: 2px;
-}
-
-.sizing-main-row-tiny span {
-  font-size: 0.75rem;
+.sizing-secondary-numbers {
+  font-size: 0.76rem;
   color: var(--text-soft);
+  text-align: right;
 }
 
-/* Perfil / estilo do dia */
-
-.sizing-tags-row {
+.sizing-tag-row {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  margin-bottom: 6px;
 }
 
-.sizing-pill {
+.sizing-tag {
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 3px 9px;
   font-size: 0.7rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border: 1px solid rgba(148,163,184,0.5);
-  color: var(--text-soft);
+  border: 1px solid rgba(148,163,184,0.6);
+  background: rgba(15,23,42,0.9);
+  white-space: nowrap;
 }
 
-.sizing-pill.profile-conservative {
-  border-color: #22c55e;
-  color: #bbf7d0;
-}
-.sizing-pill.profile-normal {
-  border-color: #38bdf8;
-  color: #e0f2fe;
-}
-.sizing-pill.profile-aggressive {
-  border-color: #fb7185;
-  color: #fecaca;
-}
-
-.sizing-pill.style-daytrade {
-  border-color: #38bdf8;
+.sizing-tag.profile-conservative {
+  border-color: rgba(56,189,248,0.9);
   color: #bae6fd;
 }
-.sizing-pill.style-swing {
-  border-color: #a855f7;
-  color: #e9d5ff;
-}
-.sizing-pill.style-momentum {
-  border-color: #f97316;
-  color: #ffedd5;
-}
-.sizing-pill.style-noedge {
-  border-color: #64748b;
-  color: #cbd5f5;
+
+.sizing-tag.profile-normal {
+  border-color: rgba(34,197,94,0.9);
+  color: #bbf7d0;
 }
 
-/* TERMÔMETRO */
+.sizing-tag.profile-aggressive {
+  border-color: rgba(234,179,8,0.9);
+  color: #fef9c3;
+}
 
-.sizing-meter-row {
-  margin-top: 8px;
+.sizing-tag.style-daytrade {
+  border-color: rgba(94,234,212,0.9);
+  color: #a5f3fc;
+}
+
+.sizing-tag.style-swing {
+  border-color: rgba(129,140,248,0.9);
+  color: #e0e7ff;
+}
+
+.sizing-tag.style-momentum {
+  border-color: rgba(251,146,60,0.9);
+  color: #fed7aa;
+}
+
+.sizing-tag.style-noedge {
+  border-color: rgba(148,163,184,0.9);
+  color: #e5e7eb;
+}
+
+.sizing-meter {
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+.sizing-meter-label {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  margin-bottom: 4px;
 }
 
-.sizing-meter-shell {
-  flex: 1;
-  height: 8px;
-  border-radius: 999px;
-  background: radial-gradient(circle at left, #0f172a, #020617);
-  border: 1px solid rgba(30,64,175,0.8);
-  overflow: hidden;
+.sizing-meter-bar {
   position: relative;
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.9);
+  border: 1px solid rgba(31,41,55,0.9);
+  overflow: hidden;
 }
 
 .sizing-meter-fill {
@@ -1224,19 +1225,25 @@
   inset: 0;
   width: 40%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #22c55e, #eab308, #f97316, #ef4444);
+  background: linear-gradient(90deg, #22c55e, #facc15);
   transition: width 0.25s ease-out;
 }
 
-.sizing-meter-label {
-  font-size: 0.7rem;
-  color: var(--text-soft);
+.sizing-comment {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--text-main);
+  background: rgba(15,23,42,0.85);
+  border-radius: 10px;
+  padding: 6px 8px;
+  border: 1px dashed rgba(148,163,184,0.6);
 }
 
-/* Inputs do Sizing Brain (parte de baixo) */
+    /* --- SIZING BRAIN · inputs de capital/risco/stop + frases --- */
 
 .sizing-inputs {
-  margin-top: 10px;
+  margin-top: 6px;
+  margin-bottom: 6px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -1267,89 +1274,91 @@
 .sizing-input input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(34,211,238,0.5);
+  box-shadow: 0 0 0 1px var(--accent-soft);
 }
 
-/* Frases / resultado estilo Aaron Pine */
-
-.sizing-phrase-box {
-  margin-top: 10px;
-  border-radius: 12px;
-  border: 1px dashed rgba(148,163,184,0.4);
-  background: radial-gradient(circle at top left, rgba(15,23,42,0.9), #020617);
-  padding: 10px 12px;
+.sizing-phrase {
+  margin-top: 2px;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  line-height: 1.35;
 }
 
 .sizing-phrase-main {
-  font-size: 0.8rem;
   color: var(--text-main);
-  margin-bottom: 4px;
 }
 
 .sizing-phrase-detail {
-  font-size: 0.75rem;
-  color: var(--text-soft);
-}
-
-/* “Bloco Aaron Pine” visual dentro do card */
-
-.sb-row-2col {
-  margin-top: 6px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.sb-field {
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(30,64,175,0.8);
-  background: radial-gradient(circle at top left, rgba(15,23,42,0.8), #020617);
-}
-
-.sb-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-soft);
-  margin-bottom: 3px;
-}
-
-.sb-value {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-main);
-}
-
-.sb-subtext {
-  font-size: 0.7rem;
   color: var(--text-soft);
   margin-top: 2px;
 }
 
-/* Campos de input dentro do bloco Aaron Pine */
+/* responsivo */
+@media (max-width: 900px) {
+  .sizing-inputs {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === SIZING BRAIN – GERENCIADOR DE RISCO === */
+.sizing-brain-card {
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.4));
+  box-shadow: 0 0 40px rgba(15, 23, 42, 0.8);
+}
+
+.sizing-brain-card .card-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sizing-brain-card .card-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+.sb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 16px;
+  margin-top: 12px;
+}
+
+.sb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sb-field label {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
 
 .sb-field input {
-  width: 100%;
-  border-radius: 999px;
-  border: 1px solid rgba(31,41,55,0.9);
   background: #020617;
-  padding: 5px 10px;
-  font-size: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  padding: 6px 8px;
   color: var(--text-main);
+  font-size: 0.9rem;
 }
 
 .sb-field input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(34,211,238,0.3);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.3);
 }
 
 .sb-hint {
   font-size: 0.7rem;
   color: var(--text-soft);
 }
-
 
 .sb-divider {
   margin: 14px 0;
@@ -1591,7 +1600,107 @@
   </div>
 </section>
 
-     
+      <!-- SIZING BRAIN – GERENCIADOR DE RISCO -->
+<section class="card sizing-brain-card">
+  <div class="card-header">
+    <h2>Sizing Brain – Gerenciador de Risco</h2>
+    <p class="card-subtitle">ATR • Capital em uso • Stop • Take Profit • Qtd sugerida</p>
+  </div>
+
+  <div class="card-body">
+    <!-- Linha 1: Conta / Alavancagem -->
+    <div class="sb-grid">
+      <div class="sb-field">
+        <label for="sb-account-balance">Capital real da conta (USD)</label>
+        <input id="sb-account-balance" type="number" step="0.01" value="25000" />
+      </div>
+
+      <div class="sb-field">
+        <label for="sb-leverage">Alavancagem (buying power x)</label>
+        <input id="sb-leverage" type="number" step="0.1" value="4" />
+        <small id="sb-buying-power-info" class="sb-hint">Buying power ≈ $100.000</small>
+      </div>
+
+      <div class="sb-field">
+        <label for="sb-trade-capital">Capital em uso neste trade (USD)</label>
+        <input id="sb-trade-capital" type="number" step="0.01" value="50000" />
+        <small class="sb-hint">Pode ser menor que o buying power se quiser ser conservador.</small>
+      </div>
+
+      <div class="sb-field">
+        <label for="sb-risk-percent">Risco máx. por trade (% da conta)</label>
+        <input id="sb-risk-percent" type="number" step="0.1" value="1" />
+        <small class="sb-hint">Ex: 1% em uma conta de 25k = $250 de risco.</small>
+      </div>
+    </div>
+
+    <hr class="sb-divider" />
+
+    <!-- Linha 2: Entrada / ATR / Lado -->
+    <div class="sb-grid">
+      <div class="sb-field">
+        <label for="sb-entry-price">Preço de entrada</label>
+        <input id="sb-entry-price" type="number" step="0.01" value="100" />
+      </div>
+
+      <div class="sb-field">
+        <label for="sb-atr-value">ATR atual ($)</label>
+        <input id="sb-atr-value" type="number" step="0.01" value="1.2" />
+      </div>
+
+      <div class="sb-field">
+        <label for="sb-atr-mult-stop">Multiplicador ATR STOP</label>
+        <input id="sb-atr-mult-stop" type="number" step="0.1" value="1.5" />
+        <small class="sb-hint">Distância do stop em ATR (ex: 1.5x ATR).</small>
+      </div>
+
+      <div class="sb-field">
+        <label for="sb-atr-mult-take">Multiplicador ATR TAKE</label>
+        <input id="sb-atr-mult-take" type="number" step="0.1" value="3" />
+        <small class="sb-hint">Take profit em ATR (ex: 3x ATR).</small>
+      </div>
+
+      <div class="sb-field">
+        <label>Direção</label>
+        <div class="sb-side-toggle">
+          <label>
+            <input type="radio" name="sb-side" value="long" checked />
+            <span>Compra / CALL</span>
+          </label>
+          <label>
+            <input type="radio" name="sb-side" value="short" />
+            <span>Venda / PUT</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <hr class="sb-divider" />
+
+    <!-- Resultados principais -->
+    <div class="sb-results-grid">
+      <div class="sb-result-block">
+        <h3>Stop & Alvo (ATR)</h3>
+        <p id="sb-stop-distance" class="sb-result-main">Distância do STOP: –</p>
+        <p id="sb-stop-price" class="sb-result-sub">Stop Loss sugerido: –</p>
+        <p id="sb-take-price" class="sb-result-sub">Take Profit sugerido: –</p>
+      </div>
+
+      <div class="sb-result-block">
+        <h3>Qtd & Risco</h3>
+        <p id="sb-position-size" class="sb-result-main">Qtd sugerida: –</p>
+        <p id="sb-risk-dollar" class="sb-result-sub">Risco aprox.: –</p>
+        <p id="sb-risk-percent" class="sb-result-sub">Risco % trade / conta: –</p>
+      </div>
+    </div>
+
+    <div class="sb-actions">
+      <button id="sb-calcular" class="primary-btn">Recalcular Sizing</button>
+      <span id="sb-status" class="sb-status">Ajuste os valores e clique em “Recalcular Sizing”.</span>
+    </div>
+  </div>
+</section>
+
       
         <div class="card">
           <div class="card-header">
@@ -1699,13 +1808,13 @@
           </div>
           <!-- ===== /Estrutura recente ===== -->
 
-     <!-- ===== SIZING BRAIN – ABAIXO DO TRADEVIEW ===== -->
+       <!-- ===== SIZING BRAIN – ABAIXO DO TRADEVIEW ===== -->
 <section class="decision-card" id="sizing-brain-card">
   <div class="decision-title" data-i18n="sizing.title">
     Sizing Brain · Gestão de capital do dia
   </div>
 
-  <!-- HEADER: alvo do dia / max perda / risco / trades -->
+  <!-- HEADER: números principais (continuam vindos do brain) -->
   <div class="sizing-header-row">
     <div class="sizing-main-numbers">
       <div class="sizing-label">
@@ -1716,182 +1825,148 @@
       </div>
     </div>
 
-    <div class="sizing-main-row-tiny">
-      <span>
+    <div class="sizing-secondary-numbers">
+      <div>
         <span data-i18n="sizing.max_dd">Máx. perda</span>:
-        <strong id="sizing-max-dd" class="sizing-maxdd-value">0.8%</strong>
-      </span>
-      <span>
+        <strong id="sizing-max-dd">0.8%</strong>
+      </div>
+      <div>
         <span data-i18n="sizing.risk_trade">Risco / trade</span>:
-        <strong id="sizing-risk-trade" class="sizing-risktrade-value">0.25%</strong>
-      </span>
-      <span>
+        <strong id="sizing-risk-trade">0.25%</strong>
+      </div>
+      <div>
         <span data-i18n="sizing.trades">Trades A+</span>:
-        <strong id="sizing-trades-count" class="sizing-trades-value">3</strong>
-      </span>
+        <strong id="sizing-trades-count">3</strong>
+      </div>
     </div>
   </div>
 
-  <!-- TAGS: perfil + estilo do dia (direita, igual ao mock) -->
-  <div class="sizing-tags-row">
-    <span id="sizing-profile-tag" class="sizing-pill profile-normal">
+  <!-- TAGS: perfil + estilo do dia -->
+  <div class="sizing-tag-row">
+    <span id="sizing-profile-tag" class="sizing-tag profile-normal">
       Normal
     </span>
-    <span id="sizing-style-tag" class="sizing-pill style-daytrade">
+    <span id="sizing-style-tag" class="sizing-tag style-daytrade">
       Day trade tendencial
     </span>
   </div>
 
-  <!-- TERMÔMETRO PRINCIPAL (move com a lógica do JS) -->
-  <div class="sizing-meter-row">
-    <div class="sizing-meter-shell">
+  <!-- TERMÔMETRO DE USO DE RISCO (continua igual) -->
+  <div class="sizing-meter">
+    <div class="sizing-meter-label">
+      <span data-i18n="sizing.conservative">Conservador</span>
+      <span id="sizing-meter-label">Uso de risco 40%</span>
+      <span data-i18n="sizing.aggressive">Agressivo</span>
+    </div>
+    <div class="sizing-meter-bar">
       <div
         id="sizing-meter-fill"
         class="sizing-meter-fill"
         style="width:40%;"
       ></div>
     </div>
-    <div class="sizing-meter-label">
-      <span data-i18n="sizing.conservative">Conservador</span>
-      <span id="sizing-meter-label">Uso de risco 40%</span>
-      <span data-i18n="sizing.aggressive">Agressivo</span>
+  </div>
+
+  <!-- 🔹 BLOCO TIPO AARON PINE -->
+  <div class="sizing-inputs">
+    <!-- Capital REAL da conta -->
+    <div class="sizing-input">
+      <label for="sizing-account-real-input">
+        Capital REAL da conta (USD)
+      </label>
+      <input
+        id="sizing-account-real-input"
+        type="number"
+        inputmode="decimal"
+        placeholder="ex: 10000"
+      />
+    </div>
+
+    <!-- Capital EM USO neste trade -->
+    <div class="sizing-input">
+      <label for="sizing-use-input">
+        Capital EM USO neste trade (USD)
+      </label>
+      <input
+        id="sizing-use-input"
+        type="number"
+        inputmode="decimal"
+        placeholder="ex: 10000"
+      />
+    </div>
+
+    <!-- Alavancagem (×) -->
+    <div class="sizing-input">
+      <label for="sizing-leverage-input">
+        Alavancagem (×)
+      </label>
+      <input
+        id="sizing-leverage-input"
+        type="number"
+        inputmode="decimal"
+        step="0.1"
+        placeholder="ex: 4"
+      />
+    </div>
+
+    <!-- Risco por trade (%) -->
+    <div class="sizing-input">
+      <label for="sizing-risk-input">
+        Risco por trade (%)
+      </label>
+      <input
+        id="sizing-risk-input"
+        type="number"
+        inputmode="decimal"
+        step="0.1"
+        placeholder="ex: 0.5"
+      />
+    </div>
+
+    <!-- Distância do stop em USD -->
+    <div class="sizing-input">
+      <label for="sizing-stop-input">
+        Distância do stop (USD por share)
+      </label>
+      <input
+        id="sizing-stop-input"
+        type="number"
+        inputmode="decimal"
+        step="0.01"
+        placeholder="ex: 1.20"
+      />
+    </div>
+
+    <!-- Qtd fixa (ações) -->
+    <div class="sizing-input">
+      <label for="sizing-fixedqty-input">
+        Qtd fixa (ações) – opcional
+      </label>
+      <input
+        id="sizing-fixedqty-input"
+        type="number"
+        inputmode="decimal"
+        placeholder="ex: 100"
+      />
     </div>
   </div>
 
-  <!-- BLOCO DUPLO ESTILO AARON PINE (ESQ = inputs / DIR = leitura) -->
-  <div class="sb-row-2col">
-    <!-- LADO ESQUERDO: PARÂMETROS DO TRADE -->
-    <div class="sb-field">
-      <div class="sb-label">Parâmetros do trade</div>
-
-      <div class="sizing-inputs">
-        <!-- Capital REAL da conta -->
-        <div class="sizing-input">
-          <label for="sizing-account-real-input">
-            Capital REAL da conta (USD)
-          </label>
-          <input
-            id="sizing-account-real-input"
-            type="number"
-            inputmode="decimal"
-            placeholder="ex: 25000"
-          />
-        </div>
-
-        <!-- Capital EM USO neste trade -->
-        <div class="sizing-input">
-          <label for="sizing-use-input">
-            Capital EM USO neste trade (USD)
-          </label>
-          <input
-            id="sizing-use-input"
-            type="number"
-            inputmode="decimal"
-            placeholder="ex: 40000"
-          />
-        </div>
-
-        <!-- Alavancagem -->
-        <div class="sizing-input">
-          <label for="sizing-leverage-input">
-            Alavancagem (×)
-          </label>
-          <input
-            id="sizing-leverage-input"
-            type="number"
-            inputmode="decimal"
-            step="0.1"
-            placeholder="ex: 4"
-          />
-        </div>
-
-        <!-- Risco por trade (%) -->
-        <div class="sizing-input">
-          <label for="sizing-risk-input">
-            Risco por trade (%)
-          </label>
-          <input
-            id="sizing-risk-input"
-            type="number"
-            inputmode="decimal"
-            step="0.1"
-            placeholder="ex: 0.5"
-          />
-        </div>
-
-        <!-- Distância do stop (USD por share) -->
-        <div class="sizing-input">
-          <label for="sizing-stop-input">
-            Distância do stop (USD por share)
-          </label>
-          <input
-            id="sizing-stop-input"
-            type="number"
-            inputmode="decimal"
-            step="0.01"
-            placeholder="ex: 1.20"
-          />
-        </div>
-
-        <!-- Qtd fixa opcional -->
-        <div class="sizing-input">
-          <label for="sizing-fixedqty-input">
-            Qtd fixa (shares) – opcional
-          </label>
-          <input
-            id="sizing-fixedqty-input"
-            type="number"
-            inputmode="decimal"
-            placeholder="ex: 100"
-          />
-        </div>
-      </div>
-
-      <div class="sb-hint">
-        Preencha capital, risco % e distância do stop.  
-        O Sizing Brain usa isso + perfil do dia para sugerir o tamanho da posição.
-      </div>
+  <!-- Frases dinâmicas (PT / EN) -->
+  <div class="sizing-phrase">
+    <div id="sizing-phrase-main" class="sizing-phrase-main">
+      Digite Capital REAL, EM USO, risco % e stop para ver o tamanho sugerido
+      da posição.
     </div>
+    <div id="sizing-phrase-detail" class="sizing-phrase-detail"></div>
+  </div>
 
-    <!-- LADO DIREITO: LEITURA DO SIZING BRAIN + FRASE -->
-    <div class="sb-field">
-      <div class="sb-label">Leitura do Sizing Brain</div>
-
-      <div class="sizing-phrase-box">
-        <div id="sizing-phrase-main" class="sizing-phrase-main">
-          Digite Capital REAL, EM USO, risco % e stop para ver o tamanho sugerido da posição.
-        </div>
-        <div id="sizing-phrase-detail" class="sizing-phrase-detail"></div>
-      </div>
-
-      <div class="sb-actions">
-        <button
-          type="button"
-          class="primary-btn"
-          onclick="updateSizingPhrase()"
-        >
-          Calcular sizing
-        </button>
-        <span class="sb-status">
-          Atualiza automaticamente quando você alterar os números.
-        </span>
-      </div>
-
-      <div
-        id="sizing-comment"
-        class="sb-subtext"
-        style="margin-top:8px;"
-      >
-        Hoje o fluxo permite buscar algo em torno de 0.8–1.2% se você focar em
-        2–3 trades A+. Acima disso já entra zona de ganância; abaixo disso ainda
-        é um dia ok se você seguiu o plano.
-      </div>
-    </div>
+  <!-- Comentário do brain continua normal -->
+  <div class="sizing-comment" id="sizing-comment">
+    Hoje o fluxo permite buscar algo em torno de 0.8–1.2% se você focar em 2–3
+    trades A+. Acima disso já entra zona de ganância; abaixo disso ainda é um
+    dia ok se você seguiu o plano.
   </div>
 </section>
-
-
-
 
 
 
@@ -2290,25 +2365,16 @@ const els = {
   pullbackMeterFill: document.getElementById('pullback-meter-fill'),
   pullbackMeterLabel: document.getElementById('pullback-meter-label'),
 
-      // Sizing Brain
-sizingTarget: document.getElementById('sizing-target'),
-sizingMaxDD: document.getElementById('sizing-max-dd'),
-sizingRiskTrade: document.getElementById('sizing-risk-trade'),
-sizingTradesCount: document.getElementById('sizing-trades-count'),
-sizingProfileTag: document.getElementById('sizing-profile-tag'),
-sizingStyleTag: document.getElementById('sizing-style-tag'),
-sizingMeterFill: document.getElementById('sizing-meter-fill'),
-sizingMeterLabel: document.getElementById('sizing-meter-label'),
-sizingAccountRealInput: document.getElementById('sizing-account-real-input'),
-sizingUseInput: document.getElementById('sizing-use-input'),
-sizingLeverageInput: document.getElementById('sizing-leverage-input'),
-sizingRiskInput: document.getElementById('sizing-risk-input'),
-sizingStopInput: document.getElementById('sizing-stop-input'),
-sizingFixedQtyInput: document.getElementById('sizing-fixed-qty-input'),
-sizingPhraseMain: document.getElementById('sizing-phrase-main'),
-sizingPhraseDetail: document.getElementById('sizing-phrase-detail'),
-sizingComment: document.getElementById('sizing-comment'),
-
+       // Sizing Brain
+  sizingTarget: document.getElementById('sizing-target'),
+  sizingMaxDD: document.getElementById('sizing-max-dd'),
+  sizingRiskTrade: document.getElementById('sizing-risk-trade'),
+  sizingTradesCount: document.getElementById('sizing-trades-count'),
+  sizingProfileTag: document.getElementById('sizing-profile-tag'),
+  sizingStyleTag: document.getElementById('sizing-style-tag'),
+  sizingMeterFill: document.getElementById('sizing-meter-fill'),
+  sizingMeterLabel: document.getElementById('sizing-meter-label'),
+  sizingComment: document.getElementById('sizing-comment'),
 
   // Sizing Brain – inputs e frases (lógica tipo Aaron Pine)
   sizingAccountRealInput: document.getElementById('sizing-account-real-input'),
@@ -2796,32 +2862,18 @@ function updatePullbackBrain(data) {
   setMeter(score, tone);
 }
 
- // ==== FUNÇÃO GLOBAL DO TERMÔMETRO DO SIZING BRAIN ====
-function setSizingMeter(score) {
-  const fill  = els.sizingMeterFill;
-  const label = els.sizingMeterLabel;
-  if (!fill || !label) return;
+  
 
-  let v = Number(score);
-  if (!Number.isFinite(v)) v = 40;        // neutro
-  v = Math.max(0, Math.min(100, v));     // limita 0–100
 
-  fill.style.width = v.toFixed(0) + '%';
-  label.textContent =
-    (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
-    v.toFixed(0) +
-    '%';
-}
-
-// ====== SIZING BRAIN – frases + termômetro baseado nos inputs ======
+// ====== SIZING BRAIN – frases baseadas em Capital EM USO + Alavancagem ======
 function updateSizingPhrase() {
-  const accEl    = els.sizingAccountRealInput;
-  const useEl    = els.sizingUseInput;
-  const levEl    = els.sizingLeverageInput;
-  const riskEl   = els.sizingRiskInput;
-  const stopEl   = els.sizingStopInput;
-  const fixedEl  = els.sizingFixedQtyInput;
-  const mainEl   = els.sizingPhraseMain;
+  const accEl = els.sizingAccountRealInput;
+  const useEl = els.sizingUseInput;
+  const levEl = els.sizingLeverageInput;
+  const riskEl = els.sizingRiskInput;
+  const stopEl = els.sizingStopInput;
+  const fixedEl = els.sizingFixedQtyInput;
+  const mainEl = els.sizingPhraseMain;
   const detailEl = els.sizingPhraseDetail;
 
   if (!accEl || !useEl || !levEl || !riskEl || !stopEl || !mainEl || !detailEl) {
@@ -2830,22 +2882,24 @@ function updateSizingPhrase() {
 
   function numFromInput(el) {
     if (!el) return 0;
-    const n = Number(String(el.value).replace(',', '.'));
+    const raw = (el.value || '').toString().replace(',', '.');
+    const n = Number(raw);
     return Number.isFinite(n) ? n : 0;
   }
 
-  const capitalReal  = numFromInput(accEl);
-  const capitalUso   = numFromInput(useEl);
-  const leverage     = numFromInput(levEl);
-  const riskPct      = numFromInput(riskEl);
-  const stopUsd      = numFromInput(stopEl);
-  const fixedQty     = fixedEl ? numFromInput(fixedEl) : 0;
+  const capitalReal = numFromInput(accEl);
+  const capitalUso  = numFromInput(useEl);
+  const leverage    = numFromInput(levEl);
+  const riskPct     = numFromInput(riskEl);
+  const stopUsd     = numFromInput(stopEl);
+  const fixedQty    = Math.floor(numFromInput(fixedEl));
 
-  // Base de cálculo:
-  // 1) Se Capital EM USO > 0 → usa esse
-  // 2) Senão, se Capital REAL e alavancagem > 0 → real × alavancagem
-  // 3) Senão, usa só o capital real
+  // === LÓGICA TIPO AARON PINE ===
+  // 1) Se Capital EM USO > 0 → base = EM USO
+  // 2) Senão, se Capital REAL > 0 e alavancagem > 0 → base = REAL × alavancagem
+  // 3) Senão, se Capital REAL > 0 → base = REAL
   let baseCapital = 0;
+
   if (capitalUso > 0) {
     baseCapital = capitalUso;
   } else if (capitalReal > 0 && leverage > 0) {
@@ -2857,13 +2911,11 @@ function updateSizingPhrase() {
   const baseMsg =
     currentLang === 'en'
       ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
-      : 'Digite capital real, capital em uso, risco % e distância do stop para ver o tamanho sugerido da posição.';
+      : 'Digite capital real, capital em uso, risco % e stop para ver o tamanho sugerido da posição.';
 
-  // Se ainda não tem dados suficientes → mensagem neutra + termômetro neutro
   if (!baseCapital || !riskPct || !stopUsd) {
-    mainEl.textContent   = baseMsg;
+    mainEl.textContent = baseMsg;
     detailEl.textContent = '';
-    setSizingMeter(40);
     return;
   }
 
@@ -2876,33 +2928,60 @@ function updateSizingPhrase() {
         ? 'Check the values. The risk in dollars must be greater than the stop distance.'
         : 'Verifique os valores. O risco em dólares precisa ser maior que a distância do stop.';
     detailEl.textContent = '';
-    setSizingMeter(40);
     return;
   }
 
-  const aboveSafe = fixedQty > 0 && fixedQty > sharesRisk;
-
-  // Frase principal
-  if (currentLang === 'en') {
-    mainEl.textContent =
-      'Suggested safe size: ~' + sharesRisk + ' shares for this stop and risk %.';
-  } else {
-    mainEl.textContent =
-      'Tamanho seguro sugerido: ~' + sharesRisk + ' shares para este stop e risco %.';
+  function fmtUSD(v) {
+    return v.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    });
   }
 
-  // Detalhe + comparação com quantidade fixa (se existir)
+  // Mensagem principal
+  if (currentLang === 'en') {
+    mainEl.textContent =
+      'Base capital: ' +
+      fmtUSD(baseCapital) +
+      '. With ' +
+      riskPct.toFixed(2) +
+      '% risk per trade, max risk is about ' +
+      fmtUSD(riskMoney) +
+      ' per trade.';
+  } else {
+    mainEl.textContent =
+      'Base de cálculo: ' +
+      fmtUSD(baseCapital) +
+      '. Com risco de ' +
+      riskPct.toFixed(2) +
+      '% por trade, o risco máximo por trade é de aproximadamente ' +
+      fmtUSD(riskMoney) +
+      '.';
+  }
+
+  // Detalhe – comparação com Qtd fixa (se existir)
   if (fixedQty > 0) {
+    const aboveSafe = fixedQty > sharesRisk;
+
     if (currentLang === 'en') {
       detailEl.textContent =
-        'Your fixed size is ' +
+        'With a stop at ' +
+        stopUsd.toFixed(2) +
+        ' USD per share, the risk-based safe size is around ' +
+        sharesRisk +
+        ' shares. Your fixed size is ' +
         fixedQty +
         ' shares, which is ' +
         (aboveSafe ? 'ABOVE' : 'within') +
-        ' the suggested safe size.';
+        ' the safe size.';
     } else {
       detailEl.textContent =
-        'Sua quantidade fixa é ' +
+        'Com o stop a ' +
+        stopUsd.toFixed(2) +
+        ' USD por share, o tamanho seguro pelo risco fica em torno de ' +
+        sharesRisk +
+        ' shares. Sua quantidade fixa é ' +
         fixedQty +
         ' shares, o que está ' +
         (aboveSafe ? 'ACIMA' : 'dentro') +
@@ -2925,23 +3004,6 @@ function updateSizingPhrase() {
         ' shares. Você pode arredondar para baixo se quiser ser mais conservador.';
     }
   }
-
-  // 🔥 Termômetro: baseado no risco real
-  let usage = 40; // neutro
-
-  if (sharesRisk > 0) {
-    if (fixedQty > 0) {
-      const ratio = fixedQty / sharesRisk; // 1 = tamanho seguro, 2 = 2x o seguro
-      usage = 40 + (ratio - 1) * 60;       // 1x → ~40–50, 2x → ~100
-    } else {
-      // 0.5% → ~25, 1% → ~50, 2% → ~100
-      usage = riskPct * 50;
-    }
-  }
-
-  // Limita entre 5% e 100%
-  usage = Math.max(5, Math.min(100, usage));
-  setSizingMeter(usage);
 }
 
 // Eventos para recalcular quando digitar
@@ -2960,7 +3022,8 @@ function updateSizingPhrase() {
     els.sizingFixedQtyInput.addEventListener(evt, updateSizingPhrase);
 });
 
-// ====== SIZING BRAIN – FUNÇÃO GLOBAL (JSON do brain + default) ======
+
+// ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
 function updateSizingBrain(data) {
   lastSizingBrain = data || null;
 
@@ -2972,31 +3035,123 @@ function updateSizingBrain(data) {
     return n.toFixed(1) + '%';
   }
 
-  // Sempre que chegar dado novo, recalcula frase com os inputs atuais
+  // sempre que chegar dado novo (ou trocar idioma), recalcula frase
   updateSizingPhrase();
 
-  // Sem dados do backend → defaults bonitos
+  function setProfileTag(profile) {
+    const tag = els.sizingProfileTag;
+    if (!tag) return;
+
+    const p = (profile || '').toString().toLowerCase();
+    tag.classList.remove(
+      'profile-conservative',
+      'profile-normal',
+      'profile-aggressive'
+    );
+
+    if (p.includes('conserv')) {
+      tag.classList.add('profile-conservative');
+      tag.textContent =
+        currentLang === 'en' ? 'Conservative' : 'Conservador';
+    } else if (p.includes('agress') || p.includes('aggress')) {
+      tag.classList.add('profile-aggressive');
+      tag.textContent =
+        currentLang === 'en' ? 'Aggressive' : 'Agressivo';
+    } else {
+      tag.classList.add('profile-normal');
+      tag.textContent =
+        currentLang === 'en' ? 'Normal' : 'Normal';
+    }
+  }
+
+  function setStyleTag(style, labelPt, labelEn) {
+    const tag = els.sizingStyleTag;
+    if (!tag) return;
+
+    const s = (style || '').toString().toLowerCase();
+    tag.classList.remove(
+      'style-daytrade',
+      'style-swing',
+      'style-momentum',
+      'style-noedge'
+    );
+
+    let txt =
+      currentLang === 'en'
+        ? (labelEn || '')
+        : (labelPt || '');
+
+    if (!txt) {
+      if (s.includes('day')) {
+        txt =
+          currentLang === 'en'
+            ? 'Trend day trade'
+            : 'Day trade tendencial';
+      } else if (s.includes('swing')) {
+        txt =
+          currentLang === 'en'
+            ? 'Swing trade'
+            : 'Swing trade';
+      } else if (s.includes('momentum') || s.includes('scalp')) {
+        txt =
+          currentLang === 'en'
+            ? 'Momentum / scalp'
+            : 'Momentum / scalp';
+      } else {
+        txt =
+          currentLang === 'en'
+            ? 'No clear edge'
+            : 'Sem edge claro';
+      }
+    }
+
+    if (s.includes('day')) {
+      tag.classList.add('style-daytrade');
+    } else if (s.includes('swing')) {
+      tag.classList.add('style-swing');
+    } else if (s.includes('momentum') || s.includes('scalp')) {
+      tag.classList.add('style-momentum');
+    } else {
+      tag.classList.add('style-noedge');
+    }
+
+    tag.textContent = txt;
+  }
+
+  function setMeter(score) {
+    const fill = els.sizingMeterFill;
+    const label = els.sizingMeterLabel;
+    if (!fill || !label) return;
+
+    let v = Number(score);
+    if (!Number.isFinite(v)) v = 40;
+    v = Math.max(0, Math.min(100, v));
+
+    fill.style.width = v.toFixed(0) + '%';
+    label.textContent =
+      (currentLang === 'en' ? 'Risk usage ' : 'Uso de risco ') +
+      v.toFixed(0) +
+      '%';
+  }
+
+  // ===== estado neutro (sem dados do backend) =====
   if (!data || Object.keys(data).length === 0) {
-    if (els.sizingTarget)      els.sizingTarget.textContent      = '0.8–1.2%';
-    if (els.sizingMaxDD)       els.sizingMaxDD.textContent       = '0.8%';
-    if (els.sizingRiskTrade)   els.sizingRiskTrade.textContent   = '0.25%';
+    if (els.sizingTarget) els.sizingTarget.textContent = '0.8–1.2%';
+    if (els.sizingMaxDD) els.sizingMaxDD.textContent = '0.8%';
+    if (els.sizingRiskTrade) els.sizingRiskTrade.textContent = '0.25%';
     if (els.sizingTradesCount) els.sizingTradesCount.textContent = '3';
 
-    if (els.sizingProfileTag) {
-      els.sizingProfileTag.className = 'sizing-tag profile-normal';
-      els.sizingProfileTag.textContent =
-        currentLang === 'en' ? 'Normal profile' : 'Perfil normal';
-    }
+    setProfileTag('normal');
+    setStyleTag('day_trade', null, null);
+    setMeter(40);
 
-    if (els.sizingStyleTag) {
-      els.sizingStyleTag.className = 'sizing-tag style-daytrade';
-      els.sizingStyleTag.textContent =
+    if (els.sizingComment) {
+      els.sizingComment.textContent =
         currentLang === 'en'
-          ? 'Day trade · Direction of the day'
-          : 'Day trade · Direção do dia';
+          ? 'Today you can think in terms of a realistic 0.8–1.2% if you focus on 2–3 A+ trades and respect your max daily loss.'
+          : 'Hoje você pode pensar em algo em torno de 0.8–1.2% se focar em 2–3 trades A+ e respeitar sua perda máxima do dia.';
     }
 
-    setSizingMeter(40);
     return;
   }
 
@@ -3015,6 +3170,7 @@ function updateSizingBrain(data) {
   const tradesCount  = data.trades_count       ?? data.recommended_trades_count;
   const score        = data.score              ?? data.risk_usage_score ?? 40;
 
+  // alvo
   let targetText = '';
   const tMinFmt    = fmtPct(tMin);
   const tMaxFmt    = fmtPct(tMax);
@@ -3038,12 +3194,9 @@ function updateSizingBrain(data) {
     els.sizingTradesCount.textContent = String(tradesCount);
   }
 
-  // Usa as mesmas funções de tag que você já tem
   setProfileTag(profile);
   setStyleTag(style, styleLabelPt, styleLabelEn);
-
-  // 🔥 AQUI estava o bug: antes chamava setMeter(), agora chamamos o termômetro certo:
-  setSizingMeter(score);
+  setMeter(score);
 
   const comment =
     currentLang === 'en'
@@ -3061,7 +3214,6 @@ function updateSizingBrain(data) {
     }
   }
 }
-
 
 
 
