@@ -3681,6 +3681,118 @@ function applyLang(lang) {
   }
 }
 
+ // ====== SIZING BRAIN – CÁLCULO LOCAL DO GERENCIADOR DE RISCO ======
+function recalcSizingBrainLocal() {
+  if (!sbEls.card) return;
+
+  function num(el) {
+    if (!el) return 0;
+    const raw = (el.value || '').toString().replace(',', '.');
+    const v = Number(raw);
+    return Number.isFinite(v) ? v : 0;
+  }
+
+  const account = num(sbEls.accountBalance);    // Capital real da conta
+  const lev     = num(sbEls.leverage);         // Alavancagem x
+  const tradeCap= num(sbEls.tradeCapital);     // Capital em uso neste trade
+  const riskPct = num(sbEls.riskPercentInput); // Risco máx. por trade (% conta)
+  const entry   = num(sbEls.entryPrice);       // Preço de entrada
+  const atr     = num(sbEls.atrValue);         // ATR atual ($)
+  const multStop= num(sbEls.atrMultStop) || 1; // Mult ATR STOP
+  const multTake= num(sbEls.atrMultTake) || (multStop * 2); // Mult ATR TAKE
+
+  // lado: long / short
+  let side = 'long';
+  if (sbEls.sideRadios && sbEls.sideRadios.length) {
+    sbEls.sideRadios.forEach(r => {
+      if (r.checked) side = r.value;
+    });
+  }
+
+  const statusEl = sbEls.status;
+  function setStatus(msg) {
+    if (statusEl) statusEl.textContent = msg;
+  }
+
+  // validações básicas
+  if (!account || !riskPct || !entry || !atr || !multStop) {
+    setStatus('Preencha capital, risco, preço de entrada, ATR e multiplicadores para calcular.');
+    return;
+  }
+
+  // distância do stop e do alvo em dólares por share
+  const stopDist = atr * multStop;
+  const takeDist = atr * multTake;
+
+  // base de capital para limitar o tamanho (EM USO se tiver, senão conta × alavancagem, senão só conta)
+  let baseCapital = 0;
+  if (tradeCap > 0) {
+    baseCapital = tradeCap;
+  } else if (account > 0 && lev > 0) {
+    baseCapital = account * lev;
+  } else {
+    baseCapital = account;
+  }
+
+  // risco máximo em dinheiro (por trade) baseado % da conta real
+  const maxRiskMoney = account * (riskPct / 100);
+
+  // tamanho de posição pelo risco e pelo capital
+  const sharesByRisk    = maxRiskMoney / stopDist;
+  const sharesByCapital = baseCapital && entry ? baseCapital / entry : sharesByRisk;
+  let shares = Math.floor(Math.min(sharesByRisk, sharesByCapital));
+
+  if (!Number.isFinite(shares) || shares <= 0) {
+    setStatus('Verifique os valores: o risco em dólares precisa ser maior que a distância do stop.');
+    return;
+  }
+
+  // preços de stop e take
+  const stopPrice = side === 'short'
+    ? entry + stopDist
+    : entry - stopDist;
+
+  const takePrice = side === 'short'
+    ? entry - takeDist
+    : entry + takeDist;
+
+  // risco real com a quantidade ajustada
+  const realRiskMoney = shares * stopDist;
+  const realRiskPct   = account ? (realRiskMoney / account) * 100 : 0;
+
+  // ==== atualiza os textos do card ====
+  if (sbEls.outStopDistance)
+    sbEls.outStopDistance.textContent = `Distância do STOP: ${stopDist.toFixed(2)} USD`;
+
+  if (sbEls.outStopPrice)
+    sbEls.outStopPrice.textContent = `Stop Loss sugerido: ${stopPrice.toFixed(2)}`;
+
+  if (sbEls.outTakePrice)
+    sbEls.outTakePrice.textContent = `Take Profit sugerido: ${takePrice.toFixed(2)}`;
+
+  if (sbEls.outPositionSize)
+    sbEls.outPositionSize.textContent = `Qtd sugerida: ${shares.toFixed(0)}`;
+
+  if (sbEls.outRiskDollar)
+    sbEls.outRiskDollar.textContent = `Risco aprox.: $ ${realRiskMoney.toFixed(2)}`;
+
+  if (sbEls.outRiskPercent)
+    sbEls.outRiskPercent.textContent =
+      `Risco % trade / conta: ${realRiskPct.toFixed(2)}%`;
+
+  setStatus(
+    `Ok: ${shares.toFixed(0)} shares, risco ≈ ${realRiskPct.toFixed(2)}% (${realRiskMoney.toFixed(2)} USD).`
+  );
+
+  // Alimenta o bloco de baixo (Aaron Pine) com a distância do stop em USD/share
+  if (els.sizingStopInput) {
+    els.sizingStopInput.value = stopDist.toFixed(2);
+    if (typeof updateSizingPhrase === 'function') {
+      updateSizingPhrase();
+    }
+  }
+}
+   
 
 
 // liga o toggle dos botões PT / EN
