@@ -2771,8 +2771,8 @@ function setSizingMeter(score) {
   if (!fill || !label) return;
 
   let v = Number(score);
-  if (!Number.isFinite(v)) v = 40;
-  v = Math.max(0, Math.min(100, v));
+  if (!Number.isFinite(v)) v = 40;        // neutro
+  v = Math.max(0, Math.min(100, v));     // limita 0–100
 
   fill.style.width = v.toFixed(0) + '%';
   label.textContent =
@@ -2781,7 +2781,7 @@ function setSizingMeter(score) {
     '%';
 }
 
-// ====== SIZING BRAIN – INPUTS OFFLINE (FRASES + TERMÔMETRO) ======
+// ====== SIZING BRAIN – frases + termômetro baseado nos inputs ======
 function updateSizingPhrase() {
   const accEl    = els.sizingAccountRealInput;
   const useEl    = els.sizingUseInput;
@@ -2809,15 +2809,27 @@ function updateSizingPhrase() {
   const stopUsd      = numFromInput(stopEl);
   const fixedQty     = fixedEl ? numFromInput(fixedEl) : 0;
 
-  // Base de cálculo: prioridade para capital em uso
-  let baseCapital = capitalUso > 0 ? capitalUso : capitalReal;
-  if (leverage > 0) baseCapital *= leverage;
+  // Base de cálculo:
+  // 1) Se Capital EM USO > 0 → usa esse
+  // 2) Senão, se Capital REAL e alavancagem > 0 → real × alavancagem
+  // 3) Senão, usa só o capital real
+  let baseCapital = 0;
+  if (capitalUso > 0) {
+    baseCapital = capitalUso;
+  } else if (capitalReal > 0 && leverage > 0) {
+    baseCapital = capitalReal * leverage;
+  } else if (capitalReal > 0) {
+    baseCapital = capitalReal;
+  }
 
+  const baseMsg =
+    currentLang === 'en'
+      ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
+      : 'Digite capital real, capital em uso, risco % e distância do stop para ver o tamanho sugerido da posição.';
+
+  // Se ainda não tem dados suficientes → mensagem neutra + termômetro neutro
   if (!baseCapital || !riskPct || !stopUsd) {
-    mainEl.textContent =
-      currentLang === 'en'
-        ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
-        : 'Digite capital real, capital em uso, risco % e distância do stop para ver o tamanho sugerido da posição.';
+    mainEl.textContent   = baseMsg;
     detailEl.textContent = '';
     setSizingMeter(40);
     return;
@@ -2836,70 +2848,42 @@ function updateSizingPhrase() {
     return;
   }
 
-  function fmtUSD(v) {
-    return v.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    });
-  }
+  const aboveSafe = fixedQty > 0 && fixedQty > sharesRisk;
 
-  // Mensagem principal
+  // Frase principal
   if (currentLang === 'en') {
     mainEl.textContent =
-      'Base capital: ' +
-      fmtUSD(baseCapital) +
-      '. With ' +
-      riskPct.toFixed(2) +
-      '% risk per trade, max risk is about ' +
-      fmtUSD(riskMoney) +
-      ' per trade.';
+      'Suggested safe size: ~' + sharesRisk + ' shares for this stop and risk %.';
   } else {
     mainEl.textContent =
-      'Base de cálculo: ' +
-      fmtUSD(baseCapital) +
-      '. Com ' +
-      riskPct.toFixed(2) +
-      '% de risco por trade, o risco máximo é de cerca de ' +
-      fmtUSD(riskMoney) +
-      ' por operação.';
+      'Tamanho seguro sugerido: ~' + sharesRisk + ' shares para este stop e risco %.';
   }
 
-  // Detalhe: tamanho sugerido + comparação com quantidade fixa
-  const aboveSafe = fixedQty > sharesRisk && sharesRisk > 0;
-
+  // Detalhe + comparação com quantidade fixa (se existir)
   if (fixedQty > 0) {
     if (currentLang === 'en') {
       detailEl.textContent =
-        'With a stop at ' +
-        stopUsd.toFixed(2) +
-        ' USD per share, the risk-based safe size is around ' +
-        sharesRisk +
-        ' shares. Your fixed size is ' +
+        'Your fixed size is ' +
         fixedQty +
         ' shares, which is ' +
         (aboveSafe ? 'ABOVE' : 'within') +
-        ' the safe size.';
+        ' the suggested safe size.';
     } else {
       detailEl.textContent =
-        'Com o stop a ' +
-        stopUsd.toFixed(2) +
-        ' USD por share, o tamanho de posição sugerido é de cerca de ' +
-        sharesRisk +
-        ' shares. Sua quantidade fixa é ' +
+        'Sua quantidade fixa é ' +
         fixedQty +
         ' shares, o que está ' +
         (aboveSafe ? 'ACIMA' : 'dentro') +
-        ' do tamanho considerado seguro pelo Sizing Brain.';
+        ' do tamanho considerado seguro.';
     }
   } else {
     if (currentLang === 'en') {
       detailEl.textContent =
         'With a stop at ' +
         stopUsd.toFixed(2) +
-        ' USD per share, the suggested position size is about ' +
+        ' USD per share, the suggested position size is around ' +
         sharesRisk +
-        ' shares. You may round down if you want to be more conservative.';
+        ' shares. You can round down if you want to be more conservative.';
     } else {
       detailEl.textContent =
         'Com o stop a ' +
@@ -2911,11 +2895,11 @@ function updateSizingPhrase() {
   }
 
   // 🔥 Termômetro: baseado no risco real
-  let usage = 40;
+  let usage = 40; // neutro
 
   if (sharesRisk > 0) {
     if (fixedQty > 0) {
-      const ratio = fixedQty / sharesRisk; // 1 = seguro, 2 = 2x o seguro
+      const ratio = fixedQty / sharesRisk; // 1 = tamanho seguro, 2 = 2x o seguro
       usage = 40 + (ratio - 1) * 60;       // 1x → ~40–50, 2x → ~100
     } else {
       // 0.5% → ~25, 1% → ~50, 2% → ~100
@@ -2956,25 +2940,24 @@ function updateSizingBrain(data) {
     return n.toFixed(1) + '%';
   }
 
-  // Atualiza frase baseada nos inputs manuais
+  // Sempre que chegar dado novo, recalcula frase com os inputs atuais
   updateSizingPhrase();
 
-  // Se não tiver dados do backend, usa defaults "bonitos"
+  // Sem dados do backend → defaults bonitos
   if (!data || Object.keys(data).length === 0) {
     if (els.sizingTarget)      els.sizingTarget.textContent      = '0.8–1.2%';
     if (els.sizingMaxDD)       els.sizingMaxDD.textContent       = '0.8%';
     if (els.sizingRiskTrade)   els.sizingRiskTrade.textContent   = '0.25%';
     if (els.sizingTradesCount) els.sizingTradesCount.textContent = '3';
 
-    // Tags padrão
     if (els.sizingProfileTag) {
-      els.sizingProfileTag.className = 'sizing-pill profile-normal';
+      els.sizingProfileTag.className = 'sizing-tag profile-normal';
       els.sizingProfileTag.textContent =
         currentLang === 'en' ? 'Normal profile' : 'Perfil normal';
     }
 
     if (els.sizingStyleTag) {
-      els.sizingStyleTag.className = 'sizing-pill style-daytrade';
+      els.sizingStyleTag.className = 'sizing-tag style-daytrade';
       els.sizingStyleTag.textContent =
         currentLang === 'en'
           ? 'Day trade · Direction of the day'
@@ -3000,201 +2983,6 @@ function updateSizingBrain(data) {
   const tradesCount  = data.trades_count       ?? data.recommended_trades_count;
   const score        = data.score              ?? data.risk_usage_score ?? 40;
 
-  // alvo
-  let targetText = '';
-  const tMinFmt    = fmtPct(tMin);
-  const tMaxFmt    = fmtPct(tMax);
-  const tSingleFmt = fmtPct(tSingle);
-
-  if (tMinFmt && tMaxFmt) targetText = `${tMinFmt}–${tMaxFmt}`;
-  else if (tSingleFmt)    targetText = tSingleFmt;
-
-  if (els.sizingTarget && targetText) els.sizingTarget.textContent = targetText;
-  if (els.sizingMaxDD && maxDD != null) els.sizingMaxDD.textContent = fmtPct(maxDD);
-  if (els.sizingRiskTrade && riskPerTrade != null) els.sizingRiskTrade.textContent = fmtPct(riskPerTrade);
-  if (els.sizingTradesCount && tradesCount != null) els.sizingTradesCount.textContent = String(tradesCount);
-
-  // tags de perfil
-  if (els.sizingProfileTag) {
-    const tag = els.sizingProfileTag;
-    const p = (profile || '').toString().toLowerCase();
-    tag.classList.remove('profile-conservative','profile-normal','profile-aggressive');
-
-    if (p.includes('conserv')) {
-      tag.classList.add('profile-conservative');
-      tag.textContent = currentLang === 'en' ? 'Conservative' : 'Conservador';
-    } else if (p.includes('agress') || p.includes('aggress')) {
-      tag.classList.add('profile-aggressive');
-      tag.textContent = currentLang === 'en' ? 'Aggressive' : 'Agressivo';
-    } else {
-      tag.classList.add('profile-normal');
-      tag.textContent = currentLang === 'en' ? 'Normal profile' : 'Perfil normal';
-    }
-  }
-
-  // tag de estilo do dia
-  if (els.sizingStyleTag) {
-    const tag = els.sizingStyleTag;
-    const s   = (style || '').toString().toLowerCase();
-
-    tag.classList.remove('style-daytrade','style-swing','style-momentum','style-noedge');
-
-    let txtPt = styleLabelPt || 'Day trade · Direção do dia';
-    let txtEn = styleLabelEn || 'Day trade · Direction of the day';
-
-    if (s.includes('swing')) {
-      tag.classList.add('style-swing');
-    } else if (s.includes('momentum') || s.includes('scalp')) {
-      tag.classList.add('style-momentum');
-    } else if (!s) {
-      tag.classList.add('style-noedge');
-      txtPt = 'Sem edge claro';
-      txtEn = 'No clear edge';
-    } else {
-      tag.classList.add('style-daytrade');
-    }
-
-    tag.textContent = currentLang === 'en' ? txtEn : txtPt;
-  }
-
-  // se veio score do backend, inicializa termômetro com ele
-  setSizingMeter(score);
-}
-
-// ====== SIZING BRAIN – FUNÇÃO GLOBAL ======
-function updateSizingBrain(data) {
-  lastSizingBrain = data || null;
-
-  if (!els.sizingTarget) return;
-
-  function fmtPct(v) {
-    const n = Number(v);
-    if (!Number.isFinite(n)) return null;
-    return n.toFixed(1) + '%';
-  }
-
-  // sempre que chegar dado novo (ou trocar idioma), recalcula frase
-  updateSizingPhrase();
-
-  function setProfileTag(profile) {
-    const tag = els.sizingProfileTag;
-    if (!tag) return;
-
-    const p = (profile || '').toString().toLowerCase();
-    tag.classList.remove(
-      'profile-conservative',
-      'profile-normal',
-      'profile-aggressive'
-    );
-
-    if (p.includes('conserv')) {
-      tag.classList.add('profile-conservative');
-      tag.textContent =
-        currentLang === 'en' ? 'Conservative' : 'Conservador';
-    } else if (p.includes('agress') || p.includes('aggress')) {
-      tag.classList.add('profile-aggressive');
-      tag.textContent =
-        currentLang === 'en' ? 'Aggressive' : 'Agressivo';
-    } else {
-      tag.classList.add('profile-normal');
-      tag.textContent =
-        currentLang === 'en' ? 'Normal' : 'Normal';
-    }
-  }
-
-  function setStyleTag(style, labelPt, labelEn) {
-    const tag = els.sizingStyleTag;
-    if (!tag) return;
-
-    const s = (style || '').toString().toLowerCase();
-    tag.classList.remove(
-      'style-daytrade',
-      'style-swing',
-      'style-momentum',
-      'style-noedge'
-    );
-
-    let txt =
-      currentLang === 'en'
-        ? (labelEn || '')
-        : (labelPt || '');
-
-    if (!txt) {
-      if (s.includes('day')) {
-        txt =
-          currentLang === 'en'
-            ? 'Trend day trade'
-            : 'Day trade tendencial';
-      } else if (s.includes('swing')) {
-        txt =
-          currentLang === 'en'
-            ? 'Swing trade'
-            : 'Swing trade';
-      } else if (s.includes('momentum') || s.includes('scalp')) {
-        txt =
-          currentLang === 'en'
-            ? 'Momentum / scalp'
-            : 'Momentum / scalp';
-      } else {
-        txt =
-          currentLang === 'en'
-            ? 'No clear edge'
-            : 'Sem edge claro';
-      }
-    }
-
-    if (s.includes('day')) {
-      tag.classList.add('style-daytrade');
-    } else if (s.includes('swing')) {
-      tag.classList.add('style-swing');
-    } else if (s.includes('momentum') || s.includes('scalp')) {
-      tag.classList.add('style-momentum');
-    } else {
-      tag.classList.add('style-noedge');
-    }
-
-    tag.textContent = txt;
-  }
-
-  
-
-  // ===== estado neutro (sem dados do backend) =====
-  if (!data || Object.keys(data).length === 0) {
-    if (els.sizingTarget) els.sizingTarget.textContent = '0.8–1.2%';
-    if (els.sizingMaxDD) els.sizingMaxDD.textContent = '0.8%';
-    if (els.sizingRiskTrade) els.sizingRiskTrade.textContent = '0.25%';
-    if (els.sizingTradesCount) els.sizingTradesCount.textContent = '3';
-
-    setProfileTag('normal');
-    setStyleTag('day_trade', null, null);
-    setSizingMeter(40);
-
-    if (els.sizingComment) {
-      els.sizingComment.textContent =
-        currentLang === 'en'
-          ? 'Today you can think in terms of a realistic 0.8–1.2% if you focus on 2–3 A+ trades and respect your max daily loss.'
-          : 'Hoje você pode pensar em algo em torno de 0.8–1.2% se focar em 2–3 trades A+ e respeitar sua perda máxima do dia.';
-    }
-
-    return;
-  }
-
-  // ===== com dados do backend (sizing_brain) =====
-  const profile      = data.profile;
-  const style        = data.style_today;
-  const styleLabelPt = data.style_label_pt;
-  const styleLabelEn = data.style_label_en;
-
-  const tMin    = data.target_min_pct   ?? data.recommended_target_min_pct;
-  const tMax    = data.target_max_pct   ?? data.recommended_target_max_pct;
-  const tSingle = data.target_pct       ?? data.recommended_target_pct;
-
-  const maxDD        = data.max_dd_pct         ?? data.recommended_max_dd_pct;
-  const riskPerTrade = data.risk_per_trade_pct ?? data.recommended_risk_per_trade_pct;
-  const tradesCount  = data.trades_count       ?? data.recommended_trades_count;
-  const score        = data.score              ?? data.risk_usage_score ?? 40;
-
-  // alvo
   let targetText = '';
   const tMinFmt    = fmtPct(tMin);
   const tMaxFmt    = fmtPct(tMax);
@@ -3218,9 +3006,12 @@ function updateSizingBrain(data) {
     els.sizingTradesCount.textContent = String(tradesCount);
   }
 
+  // Usa as mesmas funções de tag que você já tem
   setProfileTag(profile);
   setStyleTag(style, styleLabelPt, styleLabelEn);
-  setMeter(score);
+
+  // 🔥 AQUI estava o bug: antes chamava setMeter(), agora chamamos o termômetro certo:
+  setSizingMeter(score);
 
   const comment =
     currentLang === 'en'
@@ -3238,6 +3029,7 @@ function updateSizingBrain(data) {
     }
   }
 }
+
 
 
 
