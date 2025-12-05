@@ -2802,11 +2802,8 @@ function updatePullbackBrain(data) {
 }
 
   
-
-
 // ====== SIZING BRAIN – frases + termômetro + STOP & ALVO ======
 function updateSizingPhrase() {
-  // Pega os inputs direto pelo ID
   const accEl   = document.getElementById('sizing-account-real-input');
   const useEl   = document.getElementById('sizing-use-input');
   const levEl   = document.getElementById('sizing-leverage-input');
@@ -2844,7 +2841,7 @@ function updateSizingPhrase() {
       ? 'Type account capital, capital in use, risk % and stop distance to see the suggested position size.'
       : 'Digite capital real, capital em uso, risco % e distância do stop para ver o tamanho sugerido da posição.';
 
-  // 1) Define capital base (EM USO > REAL×ALAVANCAGEM > REAL)
+  // 1) Capital base: EM USO > REAL×ALAVANCAGEM > REAL
   let baseCapital = 0;
   if (capitalUso > 0) {
     baseCapital = capitalUso;
@@ -2854,7 +2851,7 @@ function updateSizingPhrase() {
     baseCapital = capitalReal;
   }
 
-  // Se não tem dados mínimos → mensagem neutra
+  // Se não tem dados mínimos
   if (!baseCapital || !riskPct || !stopUsd) {
     if (mainEl) mainEl.textContent = baseMsg;
     if (detailEl) detailEl.textContent = '';
@@ -2862,14 +2859,18 @@ function updateSizingPhrase() {
     if (qtyOut) qtyOut.textContent = '—';
     if (riskOut) riskOut.textContent = 'Risco aproximado em $: —';
     if (stLine) stLine.textContent = '—';
-    if (stDetail) stDetail.textContent =
-      'Preencha preço de entrada, lado e distância do stop para ver STOP / Take Profit sugeridos.';
+    if (stDetail) {
+      stDetail.textContent =
+        currentLang === 'en'
+          ? 'Fill entry price, side and stop distance to see suggested STOP / Take Profit.'
+          : 'Preencha preço de entrada, lado e distância do stop para ver STOP / Take Profit sugeridos.';
+    }
 
     setSizingMeter(40);
     return;
   }
 
-  // 2) Cálculo de risco e tamanho de posição
+  // 2) Cálculo risco + tamanho
   const riskMoney  = baseCapital * (riskPct / 100);
   const sharesRisk = Math.floor(riskMoney / stopUsd);
 
@@ -2900,7 +2901,7 @@ function updateSizingPhrase() {
         : `Tamanho seguro sugerido: ~${sharesRisk} shares para este stop e risco %.`;
   }
 
-  // Detalhe comparando com quantidade fixa
+  // Detalhe / comparação com QTD fixa
   if (detailEl) {
     if (fixedQty > 0) {
       detailEl.textContent =
@@ -2909,10 +2910,12 @@ function updateSizingPhrase() {
           : 'Sua quantidade fixa é ') +
         fixedQty +
         (currentLang === 'en'
-          ? (aboveSafe ? ' shares, ABOVE the suggested safe size.'
-                       : ' shares, within the suggested safe size.')
-          : (aboveSafe ? ' shares, ACIMA do tamanho considerado seguro.'
-                       : ' shares, dentro do tamanho considerado seguro.'));
+          ? (aboveSafe
+              ? ' shares, ABOVE the suggested safe size.'
+              : ' shares, within the suggested safe size.')
+          : (aboveSafe
+              ? ' shares, ACIMA do tamanho considerado seguro.'
+              : ' shares, dentro do tamanho considerado seguro.'));
     } else {
       detailEl.textContent =
         (currentLang === 'en'
@@ -2921,7 +2924,7 @@ function updateSizingPhrase() {
     }
   }
 
-  // 3) Preenche QTD e risco em $ (lado direito, igual ao mock)
+  // 3) Preenche QTD e risco em $
   if (qtyOut) qtyOut.textContent = sharesRisk.toString();
   if (riskOut) {
     riskOut.textContent =
@@ -2929,17 +2932,15 @@ function updateSizingPhrase() {
       riskMoney.toFixed(2);
   }
 
-  // 4) Calcula STOP e ALVO com base no preço de entrada
+  // 4) STOP & ALVO a partir do preço de entrada
   let stopPrice = null;
   let targetPrice = null;
 
   if (entryPrice && stopUsd) {
     if (side === 'sell') {
-      // venda: stop acima, alvo abaixo
       stopPrice   = entryPrice + stopUsd;
       targetPrice = entryPrice - stopUsd * 2; // 2R
     } else {
-      // compra: stop abaixo, alvo acima
       stopPrice   = entryPrice - stopUsd;
       targetPrice = entryPrice + stopUsd * 2; // 2R
     }
@@ -2969,19 +2970,21 @@ function updateSizingPhrase() {
     }
   }
 
-  // 5) Termômetro: uso de risco
+  // 5) Termômetro – quanto risco você está usando
   let usage = 40;
   if (sharesRisk > 0) {
     if (fixedQty > 0) {
-      const ratio = fixedQty / sharesRisk;   // 1 = seguro, 2 = 2x
-      usage = 40 + (ratio - 1) * 60;         // 1x→~40–50, 2x→~100
+      const ratio = fixedQty / sharesRisk;  // 1 = ok, 2 = 2x
+      usage = 40 + (ratio - 1) * 60;        // 1x → ~40–50, 2x → ~100
     } else {
-      usage = riskPct * 50;                  // 0.5%→25, 1%→50, 2%→100
+      usage = riskPct * 50;                 // 0.5%→25, 1%→50, 2%→100
     }
   }
   usage = Math.max(5, Math.min(100, usage));
   setSizingMeter(usage);
 }
+
+
 
 
 // Eventos para recalcular quando digitar
