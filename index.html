@@ -1108,7 +1108,7 @@
   background: rgba(34, 197, 94, 0.08);
   border: 1px solid rgba(34, 197, 94, 0.4);
 }
-    /* ====== SIZING BRAIN – GESTÃO DE CAPITAL DO DIA ====== */
+   /* ====== SIZING BRAIN – GESTÃO DE CAPITAL DO DIA ====== */
 
 .sizing-header-row {
   display: flex;
@@ -1125,99 +1125,98 @@
 }
 
 .sizing-label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--text-soft);
-}
-
-.sizing-target-value {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.sizing-secondary-numbers {
-  font-size: 0.76rem;
-  color: var(--text-soft);
-  text-align: right;
-}
-
-.sizing-tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-  margin-bottom: 6px;
-}
-
-.sizing-tag {
-  border-radius: 999px;
-  padding: 3px 9px;
   font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  color: var(--text-soft);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  border: 1px solid rgba(148,163,184,0.6);
-  background: rgba(15,23,42,0.9);
-  white-space: nowrap;
 }
 
-.sizing-tag.profile-conservative {
-  border-color: rgba(56,189,248,0.9);
-  color: #bae6fd;
+.sizing-target-value,
+.sizing-maxdd-value,
+.sizing-risktrade-value,
+.sizing-trades-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
 }
 
-.sizing-tag.profile-normal {
-  border-color: rgba(34,197,94,0.9);
+.sizing-main-row-tiny {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.sizing-main-row-tiny span {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+/* Perfil / estilo do dia */
+
+.sizing-tags-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.sizing-pill {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(148,163,184,0.5);
+  color: var(--text-soft);
+}
+
+.sizing-pill.profile-conservative {
+  border-color: #22c55e;
   color: #bbf7d0;
 }
-
-.sizing-tag.profile-aggressive {
-  border-color: rgba(234,179,8,0.9);
-  color: #fef9c3;
+.sizing-pill.profile-normal {
+  border-color: #38bdf8;
+  color: #e0f2fe;
+}
+.sizing-pill.profile-aggressive {
+  border-color: #fb7185;
+  color: #fecaca;
 }
 
-.sizing-tag.style-daytrade {
-  border-color: rgba(94,234,212,0.9);
-  color: #a5f3fc;
+.sizing-pill.style-daytrade {
+  border-color: #38bdf8;
+  color: #bae6fd;
+}
+.sizing-pill.style-swing {
+  border-color: #a855f7;
+  color: #e9d5ff;
+}
+.sizing-pill.style-momentum {
+  border-color: #f97316;
+  color: #ffedd5;
+}
+.sizing-pill.style-noedge {
+  border-color: #64748b;
+  color: #cbd5f5;
 }
 
-.sizing-tag.style-swing {
-  border-color: rgba(129,140,248,0.9);
-  color: #e0e7ff;
-}
+/* TERMÔMETRO */
 
-.sizing-tag.style-momentum {
-  border-color: rgba(251,146,60,0.9);
-  color: #fed7aa;
-}
-
-.sizing-tag.style-noedge {
-  border-color: rgba(148,163,184,0.9);
-  color: #e5e7eb;
-}
-
-.sizing-meter {
-  margin-top: 4px;
-  margin-bottom: 6px;
-}
-
-.sizing-meter-label {
+.sizing-meter-row {
+  margin-top: 8px;
   display: flex;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: var(--text-soft);
-  margin-bottom: 4px;
+  align-items: center;
+  gap: 10px;
 }
 
-.sizing-meter-bar {
-  position: relative;
-  width: 100%;
-  height: 7px;
+.sizing-meter-shell {
+  flex: 1;
+  height: 8px;
   border-radius: 999px;
-  background: rgba(15,23,42,0.9);
-  border: 1px solid rgba(31,41,55,0.9);
+  background: radial-gradient(circle at left, #0f172a, #020617);
+  border: 1px solid rgba(30,64,175,0.8);
   overflow: hidden;
+  position: relative;
 }
 
 .sizing-meter-fill {
@@ -1225,25 +1224,19 @@
   inset: 0;
   width: 40%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #22c55e, #facc15);
+  background: linear-gradient(90deg, #22c55e, #eab308, #f97316, #ef4444);
   transition: width 0.25s ease-out;
 }
 
-.sizing-comment {
-  margin-top: 4px;
-  font-size: 0.78rem;
-  color: var(--text-main);
-  background: rgba(15,23,42,0.85);
-  border-radius: 10px;
-  padding: 6px 8px;
-  border: 1px dashed rgba(148,163,184,0.6);
+.sizing-meter-label {
+  font-size: 0.7rem;
+  color: var(--text-soft);
 }
 
-    /* --- SIZING BRAIN · inputs de capital/risco/stop + frases --- */
+/* Inputs do Sizing Brain (parte de baixo) */
 
 .sizing-inputs {
-  margin-top: 6px;
-  margin-bottom: 6px;
+  margin-top: 10px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -1274,91 +1267,89 @@
 .sizing-input input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent-soft);
+  box-shadow: 0 0 0 1px rgba(34,211,238,0.5);
 }
 
-.sizing-phrase {
-  margin-top: 2px;
-  margin-bottom: 6px;
-  font-size: 0.8rem;
-  line-height: 1.35;
+/* Frases / resultado estilo Aaron Pine */
+
+.sizing-phrase-box {
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px dashed rgba(148,163,184,0.4);
+  background: radial-gradient(circle at top left, rgba(15,23,42,0.9), #020617);
+  padding: 10px 12px;
 }
 
 .sizing-phrase-main {
+  font-size: 0.8rem;
   color: var(--text-main);
+  margin-bottom: 4px;
 }
 
 .sizing-phrase-detail {
-  color: var(--text-soft);
-  margin-top: 2px;
-}
-
-/* responsivo */
-@media (max-width: 900px) {
-  .sizing-inputs {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* === SIZING BRAIN – GERENCIADOR DE RISCO === */
-.sizing-brain-card {
-  border: 1px solid var(--card-border);
-  border-radius: 16px;
-  padding: 16px 20px;
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.4));
-  box-shadow: 0 0 40px rgba(15, 23, 42, 0.8);
-}
-
-.sizing-brain-card .card-header h2 {
-  margin: 0;
-  font-size: 1.1rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.sizing-brain-card .card-subtitle {
-  margin: 4px 0 0;
   font-size: 0.75rem;
   color: var(--text-soft);
 }
 
-.sb-grid {
+/* “Bloco Aaron Pine” visual dentro do card */
+
+.sb-row-2col {
+  margin-top: 6px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px 16px;
-  margin-top: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .sb-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(30,64,175,0.8);
+  background: radial-gradient(circle at top left, rgba(15,23,42,0.8), #020617);
 }
 
-.sb-field label {
-  font-size: 0.8rem;
+.sb-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--text-soft);
+  margin-bottom: 3px;
 }
+
+.sb-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.sb-subtext {
+  font-size: 0.7rem;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+
+/* Campos de input dentro do bloco Aaron Pine */
 
 .sb-field input {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(31,41,55,0.9);
   background: #020617;
-  border-radius: 10px;
-  border: 1px solid var(--card-border);
-  padding: 6px 8px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
   color: var(--text-main);
-  font-size: 0.9rem;
 }
 
 .sb-field input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 0 1px rgba(34,211,238,0.3);
 }
 
 .sb-hint {
   font-size: 0.7rem;
   color: var(--text-soft);
 }
+
 
 .sb-divider {
   margin: 14px 0;
