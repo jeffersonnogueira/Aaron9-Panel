@@ -1852,27 +1852,40 @@
     <hr class="sb-divider" />
 
     <div class="sb-results-grid">
-      <div class="sb-result-block">
-        <h3>Stop & Alvo (ATR)</h3>
-        <p id="sb-stop-distance" class="sb-result-main">Distância do STOP: –</p>
-        <p id="sb-stop-price" class="sb-result-sub">Stop Loss sugerido: –</p>
-        <p id="sb-take-price" class="sb-result-sub">Take Profit sugerido: –</p>
-      </div>
+  <div class="sb-result-block">
+    <h3>Stop &amp; Alvo (ATR)</h3>
+    <p id="sb-stop-distance" class="sb-result-main">Distância do STOP: –</p>
+    <p id="sb-stop-price" class="sb-result-sub">Stop Loss sugerido: –</p>
+    <p id="sb-take-price" class="sb-result-sub">Take Profit sugerido: –</p>
+  </div>
 
-      <div class="sb-result-block">
-        <h3>Qtd & Risco</h3>
-        <p id="sb-position-size" class="sb-result-main">Qtd sugerida: –</p>
-        <p id="sb-risk-dollar" class="sb-result-sub">Risco aprox.: –</p>
-        <p id="sb-risk-percent" class="sb-result-sub">Risco % trade / conta: –</p>
-      </div>
-    </div>
+  <div class="sb-result-block">
+    <h3>Qtd &amp; Risco</h3>
+    <p id="sb-position-size" class="sb-result-main">Qtd sugerida: –</p>
+    <p id="sb-risk-dollar" class="sb-result-sub">Risco aprox.: –</p>
+    <p id="sb-risk-percent" class="sb-result-sub">Risco % trade / conta: –</p>
+  </div>
+</div>
 
-    <div class="sb-actions">
-      <button id="sb-calcular" class="primary-btn">Recalcular Sizing</button>
-      <span id="sb-status" class="sb-status">
-        Ajuste os valores e clique em “Recalcular Sizing”.
-      </span>
-    </div>
+<!-- NOVO · TERMÔMETRO DO GERENCIADOR DE RISCO (OFFLINE) -->
+<div class="sb-meter">
+  <div class="sb-meter-label">
+    <span>Conservador</span>
+    <span id="sb-meter-label">Uso de risco 0%</span>
+    <span>Agressivo</span>
+  </div>
+  <div class="sb-meter-bar">
+    <div id="sb-meter-fill" class="sb-meter-fill safe"></div>
+  </div>
+</div>
+
+<div class="sb-actions">
+  <button id="sb-calcular" class="primary-btn">Recalcular Sizing</button>
+  <span id="sb-status" class="sb-status">
+    Ajuste os valores e clique em “Recalcular Sizing”.
+  </span>
+</div>
+
 
     <!-- DIVISOR ENTRE GERENCIADOR E CAPITAL DO DIA -->
     <hr class="sb-divider" />
