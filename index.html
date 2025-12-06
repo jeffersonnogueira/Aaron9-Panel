@@ -3850,13 +3850,40 @@ function recalcSizingBrainLocal() {
   if (sbEls.outRiskDollar)
     sbEls.outRiskDollar.textContent = `Risco aprox.: $ ${realRiskMoney.toFixed(2)}`;
 
-  if (sbEls.outRiskPercent)
+    if (sbEls.outRiskPercent)
     sbEls.outRiskPercent.textContent =
       `Risco % trade / conta: ${realRiskPct.toFixed(2)}%`;
 
   setStatus(
     `Ok: ${shares.toFixed(0)} shares, risco ≈ ${realRiskPct.toFixed(2)}% (${realRiskMoney.toFixed(2)} USD).`
   );
+
+  // NOVO · Termômetro offline do gerenciador de risco
+  const sbMeterFill  = document.getElementById('sb-meter-fill');
+  const sbMeterLabel = document.getElementById('sb-meter-label');
+  if (sbMeterFill && sbMeterLabel) {
+    // ratio = quanto do risco planejado você está usando
+    const ratio = riskPct > 0 ? realRiskPct / riskPct : 0; // 1 = exatamente o risco que você planejou
+    let score   = ratio * 100;                             // transforma em "porcentagem de uso"
+    score       = Math.max(0, Math.min(130, score));       // trava para não explodir
+    const width = Math.max(8, Math.min(100, score));       // largura da barra
+
+    sbMeterFill.style.width = width.toFixed(0) + '%';
+
+    sbMeterFill.classList.remove('safe', 'warn', 'danger');
+    if (ratio <= 0.6) {
+      sbMeterFill.classList.add('safe');    // bem conservador
+    } else if (ratio <= 1.0) {
+      sbMeterFill.classList.add('warn');    // perto do limite planejado
+    } else {
+      sbMeterFill.classList.add('danger');  // acima do risco planejado
+    }
+
+    sbMeterLabel.textContent =
+      (currentLang === 'en'
+        ? `Risk usage ${realRiskPct.toFixed(2)}% (plan ${riskPct.toFixed(2)}%)`
+        : `Uso de risco ${realRiskPct.toFixed(2)}% (alvo ${riskPct.toFixed(2)}%)`);
+  }
 
   // Alimenta o bloco de baixo (Aaron Pine) com a distância do stop em USD/share
   if (els.sizingStopInput) {
