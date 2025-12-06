@@ -1108,6 +1108,67 @@
   background: rgba(34, 197, 94, 0.08);
   border: 1px solid rgba(34, 197, 94, 0.4);
 }
+
+    /* === SIZING BRAIN – GERENCIADOR DE RISCO (OFFLINE) – EXTRA UI === */
+
+/* Stop e Take bem destacados */
+#sb-stop-price {
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+#sb-take-price {
+  color: var(--success);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Termômetro offline */
+.sb-meter {
+  margin-top: 10px;
+}
+
+.sb-meter-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+}
+
+.sb-meter-bar {
+  position: relative;
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.9);
+  border: 1px solid rgba(31,41,55,0.9);
+  overflow: hidden;
+}
+
+.sb-meter-fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22c55e, #facc15);
+  transition: width 0.25s ease-out;
+}
+
+/* variações de cor conforme o risco usado */
+.sb-meter-fill.safe {
+  background: linear-gradient(90deg, #22c55e, #22d3ee);
+}
+
+.sb-meter-fill.warn {
+  background: linear-gradient(90deg, #facc15, #fb923c);
+}
+
+.sb-meter-fill.danger {
+  background: linear-gradient(90deg, #f97373, #fb7185);
+}
+
     /* ====== SIZING BRAIN – GESTÃO DE CAPITAL DO DIA ====== */
 
 .sizing-header-row {
