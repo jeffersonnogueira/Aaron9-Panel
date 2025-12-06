@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>AARON 9 – Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: rgba(15, 23, 42, 0.96);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.18);
+      --text: #e5e7eb;
+      --text-soft: #9ca3af;
+      --radius-xl: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #1d4ed8 0, transparent 55%),
+        radial-gradient(circle at bottom right, #0f172a 0, transparent 55%),
+        var(--bg-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .landing-shell {
+      width: 100%;
+      max-width: 760px;
+      background: linear-gradient(
+          135deg,
+          rgba(15, 23, 42, 0.92),
+          rgba(2, 6, 23, 0.98)
+        );
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.9),
+        0 28px 80px rgba(15, 23, 42, 0.95);
+      padding: 40px 36px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .landing-shell::before {
+      content: "";
+      position: absolute;
+      inset: -120px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.16), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.16), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .landing-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .logo-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      width: fit-content;
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e, #16a34a);
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.9);
+    }
+
+    .brand-main {
+      font-size: clamp(2.6rem, 4vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .brand-main span {
+      background: linear-gradient(120deg, #e5e7eb, #38bdf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .pill {
+      font-size: 0.74rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+    }
+
+    .actions-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-primary {
+      padding: 10px 26px;
+      border-radius: 999px;
+      border: none;
+      background: radial-gradient(circle at top left, #38bdf8, #1d4ed8);
+      color: #0b1120;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow:
+        0 12px 30px rgba(37, 99, 235, 0.7),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out,
+        filter 0.12s ease-out;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow:
+        0 16px 40px rgba(37, 99, 235, 0.8),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow:
+        0 8px 22px rgba(15, 23, 42, 0.95),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-secondary {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    .btn-secondary span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .footer-note {
+      font-size: 0.7rem;
+      text-align: center;
+      color: var(--text-soft);
+      opacity: 0.78;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .landing-shell {
+        padding: 28px 20px 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="landing-shell">
+    <div class="landing-inner">
+      <div class="logo-mark">
+        <span class="logo-dot"></span>
+        <span>AARON · TRADING PANEL</span>
+      </div>
+
+      <div>
+        <div class="brand-main">
+          <span>AARON&nbsp;9</span>
+        </div>
+        <p class="brand-subtitle">
+          Seu cockpit de trading para leitura institucional, gestão de risco
+          e decisões de alta precisão – tudo em um único painel.
+        </p>
+
+        <div class="pill-row">
+          <div class="pill">Risk management</div>
+          <div class="pill">ATR sizing</div>
+          <div class="pill">Pattern radar</div>
+          <div class="pill">Flow &amp; sentiment</div>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <!-- TROCAR panel.html PELO NOME DO ARQUIVO DO SEU PAINEL -->
+        <button class="btn-primary" onclick="window.location.href='panel.html'">
+          Entrar no painel
+          <span>→</span>
+        </button>
+
+        <div class="btn-secondary">
+          Versão privada · <span>beta do criador</span>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        AARON 9 não executa ordens. Você continua 100% responsável pelas
+        decisões e pelo risco dos seus trades.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
