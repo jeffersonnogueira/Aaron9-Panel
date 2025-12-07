@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <title>AARON 9 – Garimpo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* ===========================
+       RESET BÁSICO
+       =========================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #13254a, #050816 55%),
+        radial-gradient(circle at bottom right, #041226, #02030a 60%);
+      color: #f5f7ff;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* ===========================
+       CONTAINER PRINCIPAL
+       =========================== */
+    .garimpo-shell {
+      width: 100%;
+      max-width: 1200px;
+      border-radius: 22px;
+      padding: 1.75rem 2rem 2rem;
+      background:
+        radial-gradient(circle at top left, rgba(0, 255, 200, 0.16), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(0, 120, 255, 0.18), transparent 60%),
+        rgba(6, 12, 30, 0.96);
+      border: 1px solid rgba(120, 220, 255, 0.4);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.7),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+    }
+
+    /* ===========================
+       HEADER
+       =========================== */
+    .garimpo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .garimpo-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .garimpo-kicker {
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(180, 220, 255, 0.9);
+    }
+
+    .garimpo-main-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .garimpo-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.86;
+    }
+
+    .garimpo-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .lang-toggle {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid rgba(150, 210, 255, 0.6);
+      overflow: hidden;
+      background: rgba(5, 12, 30, 0.9);
+      font-size: 0.78rem;
+    }
+
+    .lang-toggle button {
+      padding: 0.35rem 0.9rem;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #cfe6ff;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .lang-toggle button.active {
+      background: linear-gradient(135deg, #04d9ff, #22ff88);
+      color: #03101f;
+      font-weight: 600;
+    }
+
+    .back-link {
+      font-size: 0.8rem;
+      text-decoration: none;
+      color: #cfe6ff;
+      opacity: 0.85;
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid rgba(120, 200, 255, 0.4);
+      background: rgba(3, 10, 25, 0.8);
+      transition: background 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .back-link:hover {
+      opacity: 1;
+      background: rgba(15, 40, 90, 0.95);
+      transform: translateY(-1px);
+    }
+
+    /* ===========================
+       GRID DOS 4 QUADROS
+       =========================== */
+    .garimpo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .garimpo-card {
+      position: relative;
+      padding: 1rem 1rem 1.1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(140, 200, 255, 0.45);
+      background:
+        linear-gradient(145deg, rgba(6, 14, 32, 0.92), rgba(5, 10, 24, 0.98));
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .garimpo-card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at top left, rgba(0, 255, 200, 0.12), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .garimpo-card-title {
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .garimpo-card-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.15rem;
+    }
+
+    .garimpo-card-label {
+      font-size: 0.8rem;
+      opacity: 0.78;
+      margin-bottom: 0.45rem;
+    }
+
+    .garimpo-card-note {
+      font-size: 0.78rem;
+      opacity: 0.9;
+      color: #e3f1ff;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 255, 190, 0.7);
+      background: rgba(2, 25, 25, 0.8);
+      color: #cfffec;
+      margin-bottom: 0.45rem;
+    }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #11ff88;
+      box-shadow: 0 0 9px #11ff88;
+    }
+
+    /* ===========================
+       RESPONSIVO
+       =========================== */
+    @media (max-width: 960px) {
+      .garimpo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .garimpo-shell {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 0.75rem;
+        align-items: stretch;
+      }
+
+      .garimpo-shell {
+        padding: 1.1rem 1rem 1.4rem;
+      }
+
+      .garimpo-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .garimpo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="garimpo-shell">
+    <!-- HEADER -->
+    <header class="garimpo-header">
+      <div class="garimpo-title-block">
+        <span class="garimpo-kicker" data-i18n="kicker">AARON 9 · GARIMPO</span>
+        <h1 class="garimpo-main-title" data-i18n="mainTitle">
+          Garimpo – Resumo do Dia
+        </h1>
+        <p class="garimpo-subtitle" data-i18n="subtitle">
+          Visão macro do que o AARON viu hoje no mercado.
+        </p>
+      </div>
+
+      <div class="garimpo-header-actions">
+        <a href="panel.html" class="back-link" data-i18n="backLink">
+          Voltar para o painel
+        </a>
+
+        <div class="lang-toggle">
+          <button id="btn-lang-pt" class="active">PT</button>
+          <button id="btn-lang-en">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- GRID DOS 4 QUADROS -->
+    <section class="garimpo-grid">
+      <!-- QUADRO 1 – Alertas -->
+      <article class="garimpo-card">
+        <div class="chip">
+          <span class="chip-dot"></span>
+          <span data-i18n="chip1">Radar ligado</span>
+        </div>
+        <h2 class="garimpo-card-title" data-i18n="card1.title">
+          Alertas do Garimpo
+        </h2>
+        <p class="garimpo-card-number" id="garimpo-alertas">12</p>
+        <p class="garimpo-card-label" data-i18n="card1.label">
+          alertas hoje
+        </p>
+        <p class="garimpo-card-note" data-i18n="card1.note">
+          AARON já varreu o mercado e encontrou oportunidades para o dia.
+        </p>
+      </article>
+
+      <!-- QUADRO 2 – Sinais A+ -->
+      <article class="garimpo-card">
+        <div class="chip">
+          <span class="chip-dot"></span>
+          <span data-i18n="chip2">Qualidade</span>
+        </div>
+        <h2 class="garimpo-card-title" data-i18n="card2.title">
+          Sinais A+
+        </h2>
+        <p class="garimpo-card-number" id="garimpo-sinais-a-plus">4</p>
+        <p class="garimpo-card-label" data-i18n="card2.label">
+          setups de alta qualidade
+        </p>
+        <p class="garimpo-card-note" data-i18n="card2.note">
+          Combinação forte de fluxo, estrutura e volatilidade.
+        </p>
+      </article>
+
+      <!-- QUADRO 3 – Direção institucional -->
+      <article class="garimpo-card">
+        <div class="chip">
+          <span class="chip-dot"></span>
+          <span data-i18n="chip3">Fluxo institucional</span>
+        </div>
+        <h2 class="garimpo-card-title" data-i18n="card3.title">
+          Direção institucional
+        </h2>
+        <p class="garimpo-card-number" id="garimpo-direcao-dia">
+          Baixa forte
+        </p>
+        <p class="garimpo-card-label" data-i18n="card3.label">
+          70% a favor · 30% contra
+        </p>
+        <p class="garimpo-card-note" data-i18n="card3.note">
+          Tendência dominante baseada em A8/A9, fluxo e volatilidade.
+        </p>
+      </article>
+
+      <!-- QUADRO 4 – Meta do dia -->
+      <article class="garimpo-card">
+        <div class="chip">
+          <span class="chip-dot"></span>
+          <span data-i18n="chip4">Gestão de risco</span>
+        </div>
+        <h2 class="garimpo-card-title" data-i18n="card4.title">
+          Meta do dia
+        </h2>
+        <p class="garimpo-card-number" id="garimpo-meta-dia">
+          0.8–1.4%
+        </p>
+        <p class="garimpo-card-label" data-i18n="card4.label">
+          faixa alvo razoável
+        </p>
+        <p class="garimpo-card-note" id="garimpo-status-meta" data-i18n="card4.note">
+          Se bater a parte alta da faixa com disciplina, já é um dia excelente.
+        </p>
+      </article>
+    </section>
+  </div>
+
+  <!-- ===========================
+       SCRIPT DE TRADUÇÃO PT / EN
+       =========================== -->
+  <script>
+    const translations = {
+      pt: {
+        kicker: "AARON 9 · GARIMPO",
+        mainTitle: "Garimpo – Resumo do Dia",
+        subtitle: "Visão macro do que o AARON viu hoje no mercado.",
+        backLink: "Voltar para o painel",
+
+        chip1: "Radar ligado",
+        card1_title: "Alertas do Garimpo",
+        card1_label: "alertas hoje",
+        card1_note: "AARON já varreu o mercado e encontrou oportunidades para o dia.",
+
+        chip2: "Qualidade",
+        card2_title: "Sinais A+",
+        card2_label: "setups de alta qualidade",
+        card2_note: "Combinação forte de fluxo, estrutura e volatilidade.",
+
+        chip3: "Fluxo institucional",
+        card3_title: "Direção institucional",
+        card3_label: "70% a favor · 30% contra",
+        card3_note: "Tendência dominante baseada em A8/A9, fluxo e volatilidade.",
+
+        chip4: "Gestão de risco",
+        card4_title: "Meta do dia",
+        card4_label: "faixa alvo razoável",
+        card4_note: "Se bater a parte alta da faixa com disciplina, já é um dia excelente."
+      },
+      en: {
+        kicker: "AARON 9 · GARIMPO",
+        mainTitle: "Garimpo – Daily Summary",
+        subtitle: "Macro view of what AARON has seen in the market today.",
+        backLink: "Back to main panel",
+
+        chip1: "Radar on",
+        card1_title: "Garimpo Alerts",
+        card1_label: "alerts today",
+        card1_note: "AARON has already scanned the market and found opportunities for the day.",
+
+        chip2: "Quality",
+        card2_title: "A+ Signals",
+        card2_label: "high-quality setups",
+        card2_note: "Strong combination of flow, structure and volatility.",
+
+        chip3: "Institutional flow",
+        card3_title: "Institutional Direction",
+        card3_label: "70% with trend · 30% against",
+        card3_note: "Dominant trend based on A8/A9, flow and volatility.",
+
+        chip4: "Risk management",
+        card4_title: "Daily Target",
+        card4_label: "reasonable target range",
+        card4_note: "If you hit the top of the range with discipline, it's already an excellent day."
+      }
+    };
+
+    function applyLanguage(lang) {
+      const dict = translations[lang];
+      if (!dict) return;
+
+      const map = {
+        kicker: "kicker",
+        mainTitle: "mainTitle",
+        subtitle: "subtitle",
+        backLink: "backLink",
+        chip1: "chip1",
+        chip2: "chip2",
+        chip3: "chip3",
+        chip4: "chip4",
+        "card1.title": "card1_title",
+        "card1.label": "card1_label",
+        "card1.note": "card1_note",
+        "card2.title": "card2_title",
+        "card2.label": "card2_label",
+        "card2.note": "card2_note",
+        "card3.title": "card3_title",
+        "card3.label": "card3_label",
+        "card3.note": "card3_note",
+        "card4.title": "card4_title",
+        "card4.label": "card4_label",
+        "card4.note": "card4_note"
+      };
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const dictKey = map[key] || key;
+        if (dict[dictKey]) {
+          el.textContent = dict[dictKey];
+        }
+      });
+
+      document.documentElement.lang = lang;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const btnPT = document.getElementById("btn-lang-pt");
+      const btnEN = document.getElementById("btn-lang-en");
+
+      btnPT.addEventListener("click", () => {
+        btnPT.classList.add("active");
+        btnEN.classList.remove("active");
+        applyLanguage("pt");
+      });
+
+      btnEN.addEventListener("click", () => {
+        btnEN.classList.add("active");
+        btnPT.classList.remove("active");
+        applyLanguage("en");
+      });
+
+      // Garantir que começa em PT
+      applyLanguage("pt");
+    });
+  </script>
+</body>
+</html>
