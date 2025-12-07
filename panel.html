@@ -4180,21 +4180,9 @@ function updateGarimpoTodayCard(data) {
 // Chamada inicial (quando a página carrega)
 updateGarimpoTodayCard(garimpoTodayData);
 
-// Se o seu toggle de idioma já muda window.currentLang e chama applyTranslations(),
-// você pode conectar o garimpo nisso também.
-// Exemplo: se você tiver uma função applyTranslations(), podemos "encaixar":
-
-if (typeof window.applyTranslations === 'function') {
-  const originalApplyTranslations = window.applyTranslations;
-  window.applyTranslations = function () {
-    originalApplyTranslations();
-    updateGarimpoTodayCard(garimpoTodayData);
-  };
-}
-
 // ================== GARIMPO DE HOJE - TEXTOS PT/EN ==================
-if (window.translations && translations.pt && translations.en) {
-  Object.assign(translations.pt, {
+if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
+  Object.assign(I18N.pt, {
     garimpo_badge: 'Garimpo de Hoje',
     garimpo_best_label: 'Melhor ativo para hoje',
     garimpo_comment:
@@ -4205,7 +4193,7 @@ if (window.translations && translations.pt && translations.en) {
     garimpo_metric_confidence: 'Confiança do cérebro',
   });
 
-  Object.assign(translations.en, {
+  Object.assign(I18N.en, {
     garimpo_badge: "Today's Mining Pick",
     garimpo_best_label: 'Best stock to trade today',
     garimpo_comment:
@@ -4217,6 +4205,7 @@ if (window.translations && translations.pt && translations.en) {
   });
 }
 // ================== FIM GARIMPO DE HOJE ==================
+
 
     
 </script>
