@@ -3975,30 +3975,47 @@ async function loadPanel(showSpinner) {
 }
 
 // ====== INICIALIZAÇÃO ======
-function initAaron9() {
-  // cria o gráfico do TradingView UMA VEZ
-  if (window.TradingView) {
-    new TradingView.widget({
-      container_id: 'aaron9-tv-chart',
 
-      // padrão inicial (pode ser NVDA na NASDAQ)
-      symbol: 'NASDAQ:NVDA',
-      interval: '1',               // começa em 1m
-      timezone: 'America/Denver',  // horário de Utah
-      theme: 'dark',
-      style: '1',
-      autosize: true,
-      locale: 'en',
+// cria o gráfico do TradingView, com tentativa repetida até o script tv.js carregar
+let tvWidgetCreated = false;
+function createTVChart() {
+  const container = document.getElementById('aaron9-tv-chart');
+  if (!container) return; // se o container não existir, não faz nada
 
-      withdateranges: false,
-      hide_top_toolbar: false,
-      hide_side_toolbar: false,
-      allow_symbol_change: true,
-
-      disabled_features: [],
-      enabled_features: [],
-    });
+  // se o TradingView ainda não carregou, tenta de novo em 800ms
+  if (typeof window.TradingView === 'undefined') {
+    setTimeout(createTVChart, 800);
+    return;
   }
+
+  if (tvWidgetCreated) return; // evita criar o widget mais de uma vez
+  tvWidgetCreated = true;
+
+  new TradingView.widget({
+    container_id: 'aaron9-tv-chart',
+
+    // padrão inicial (pode ser NVDA na NASDAQ)
+    symbol: 'NASDAQ:NVDA',
+    interval: '1',               // começa em 1m
+    timezone: 'America/Denver',  // horário de Utah
+    theme: 'dark',
+    style: '1',
+    autosize: true,
+    locale: 'en',
+
+    withdateranges: false,
+    hide_top_toolbar: false,
+    hide_side_toolbar: false,
+    allow_symbol_change: true,
+
+    disabled_features: [],
+    enabled_features: [],
+  });
+}
+
+function initAaron9() {
+  // garante que o gráfico será criado assim que o TradingView estiver pronto
+  createTVChart();
 
   // botão ATUALIZAR
   if (els.btnRefresh) {
@@ -4011,6 +4028,7 @@ function initAaron9() {
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
 }
+
 
 // ================ TOGGLE DE IDIOMA PT / EN ==================
 
