@@ -1500,6 +1500,160 @@
   color: var(--text-soft);
 }
 
+/* ================== GARIMPO DE HOJE ================== */
+.garimpo-banner {
+  width: 100%;
+  margin: 16px auto 20px auto;
+  display: flex;
+  justify-content: center;
+}
+
+.garimpo-container {
+  width: 100%;
+  max-width: 1180px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: radial-gradient(circle at top left, rgba(80, 220, 255, 0.25), transparent 55%),
+              linear-gradient(135deg, rgba(7, 16, 40, 0.95), rgba(10, 26, 70, 0.98));
+  border: 1px solid rgba(120, 220, 255, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.garimpo-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(9, 189, 140, 0.18);
+  color: #5df2c8;
+  border: 1px solid rgba(93, 242, 200, 0.5);
+}
+
+.garimpo-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.garimpo-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.garimpo-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.garimpo-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a5b4fc;
+}
+
+.garimpo-ticker-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.garimpo-ticker {
+  font-size: 26px;
+  font-weight: 700;
+  color: #e5e7ff;
+}
+
+.garimpo-profile-tag {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #bfdbfe;
+  border: 1px solid rgba(129, 199, 255, 0.5);
+}
+
+.garimpo-confidence-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(15, 118, 110, 0.24);
+  border: 1px solid rgba(45, 212, 191, 0.6);
+}
+
+.garimpo-confidence-chip .chip-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a7f3d0;
+}
+
+.garimpo-confidence-chip .chip-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ecfeff;
+}
+
+.garimpo-metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.garimpo-metric {
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.garimpo-metric .metric-label {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.garimpo-metric .metric-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.garimpo-comment {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #d1d5db;
+  max-width: 800px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .garimpo-container {
+    padding: 12px 12px;
+  }
+  .garimpo-ticker {
+    font-size: 22px;
+  }
+}
+/* ================== FIM GARIMPO DE HOJE ================== */
 
 
   </style>
