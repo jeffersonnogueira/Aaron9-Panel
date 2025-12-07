@@ -2702,7 +2702,205 @@ const sbEls = {
   calcBtn: document.getElementById('sb-calcular'),
   status: document.getElementById('sb-status'),
 };
- 
+
+    // ====== SIZING BRAIN OFFLINE – CÁLCULO COMPLETO ======
+function sbNum(el) {
+  if (!el) return 0;
+  const raw = (el.value || '').toString().replace(',', '.');
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function recalcSizingBrainOffline() {
+  if (!sbEls.accountBalance) return;
+
+  const account    = sbNum(sbEls.accountBalance);   // capital real da conta
+  const leverage   = sbNum(sbEls.leverage);         // alavancagem (x)
+  const tradeInput = sbNum(sbEls.tradeCapital);     // capital em uso neste trade
+  const riskPct    = sbNum(sbEls.riskPercentInput); // risco % por trade (da conta)
+  const entry      = sbNum(sbEls.entryPrice);       // preço de entrada
+  const atr        = sbNum(sbEls.atrValue);         // ATR $
+  const multStop   = sbNum(sbEls.atrMultStop);      // mult stop
+  const multTake   = sbNum(sbEls.atrMultTake);      // mult take
+
+  const sideRadio  = Array.from(sbEls.sideRadios || []).find(r => r.checked);
+  const side       = sideRadio ? sideRadio.value : 'long';
+
+  const statusEl   = sbEls.status;
+
+  // validações básicas
+  if (!account || !entry || !atr || !multStop || !riskPct) {
+    if (statusEl) {
+      statusEl.textContent =
+        (typeof currentLang !== 'undefined' && currentLang === 'en')
+          ? 'Fill account, risk %, entry price and ATR to calculate.'
+          : 'Preencha conta, risco %, preço de entrada e ATR para calcular.';
+    }
+    return;
+  }
+
+  // buying power = conta * alavancagem
+  const lev = leverage > 0 ? leverage : 1;
+  const buyingPower = account * lev;
+
+  // capital em uso: se não preencher, usamos o buying power
+  let tradeCapital = tradeInput > 0 ? tradeInput : buyingPower;
+  if (tradeCapital > buyingPower) tradeCapital = buyingPower;
+
+  const stopDist = atr * multStop; // distância do stop em dólar
+  if (!stopDist) {
+    if (statusEl) {
+      statusEl.textContent =
+        (typeof currentLang !== 'undefined' && currentLang === 'en')
+          ? 'Stop distance (ATR × mult) is zero. Check ATR and multiplier.'
+          : 'Distância do stop (ATR × mult) está zero. Confira ATR e multiplicador.';
+    }
+    return;
+  }
+
+  // risco máximo permitido pela regra (risco % da conta)
+  const riskAllowedDollar = account * (riskPct / 100);
+
+  // limite por capital e por risco
+  const maxSharesByCapital = tradeCapital / entry;
+  const maxSharesByRisk    = riskAllowedDollar / stopDist;
+  let shares               = Math.floor(Math.max(0, Math.min(maxSharesByCapital, maxSharesByRisk)));
+
+  if (!Number.isFinite(shares) || shares <= 0) {
+    shares = 0;
+  }
+
+  const riskUsedDollar       = shares * stopDist;
+  const riskUsedPctAccount   = account > 0 ? (riskUsedDollar / account) * 100 : 0;
+
+  // preços de stop e alvo
+  let stopPrice, takePrice;
+  if (side === 'short') {
+    stopPrice = entry + stopDist;
+    takePrice = entry - (atr * multTake);
+  } else {
+    stopPrice = entry - stopDist;
+    takePrice = entry + (atr * multTake);
+  }
+
+  // ====== escreve nos campos ======
+  if (sbEls.outStopDistance) {
+    sbEls.outStopDistance.textContent =
+      (typeof currentLang !== 'undefined' && currentLang === 'en'
+        ? 'Stop distance: '
+        : 'Distância do STOP: ') +
+      stopDist.toFixed(2) +
+      ' USD';
+  }
+
+  if (sbEls.outStopPrice) {
+    sbEls.outStopPrice.textContent =
+      (typeof currentLang !== 'undefined' && currentLang === 'en'
+        ? 'Suggested Stop Loss: '
+        : 'Stop Loss sugerido: ') +
+      '$ ' +
+      stopPrice.toFixed(2);
+  }
+
+  if (sbEls.outTakePrice) {
+    sbEls.outTakePrice.textContent =
+      (typeof currentLang !== 'undefined' && currentLang === 'en'
+        ? 'Suggested Take Profit: '
+        : 'Take Profit sugerido: ') +
+      '$ ' +
+      takePrice.toFixed(2);
+  }
+
+  if (sbEls.outPositionSize) {
+    sbEls.outPositionSize.textContent =
+      (typeof currentLang !== 'undefined' && currentLang === 'en'
+        ? 'Suggested size: '
+        : 'Qtd sugerida: ') +
+      (shares > 0 ? shares + ' shares' : '—');
+  }
+
+  if (sbEls.outRiskDollar) {
+    sbEls.outRiskDollar.textContent =
+      (typeof currentLang !== 'undefined' && currentLang === 'en'
+        ? 'Approx. risk: '
+        : 'Risco aprox.: ') +
+      '$ ' +
+      riskUsedDollar.toFixed(2);
+  }
+
+  if (sbEls.outRiskPercent) {
+    sbEls.outRiskPercent.textContent =
+      (typeof currentLang !== 'undefined' && currentLang === 'en'
+        ? 'Risk % trade / account: '
+        : 'Risco % trade / conta: ') +
+      riskUsedPctAccount.toFixed(2) +
+      '%';
+  }
+
+  // ====== termômetro do Sizing Brain offline ======
+  const meterFill  = document.getElementById('sb-meter-fill');
+  const meterLabel = document.getElementById('sb-meter-label');
+
+  if (meterFill && meterLabel) {
+    // uso de risco = quanto do risco permitido (riskAllowedDollar) você está usando
+    let usage = riskAllowedDollar > 0
+      ? (riskUsedDollar / riskAllowedDollar) * 100
+      : 0;
+
+    // clamp
+    usage = Math.max(0, Math.min(usage, 150));
+    const width = Math.max(0, Math.min(usage, 100));
+
+    meterFill.style.width = width.toFixed(0) + '%';
+    meterFill.classList.remove('safe', 'warn', 'danger');
+
+    let modeClass = 'safe';
+    if (usage <= 60) {
+      modeClass = 'safe';
+    } else if (usage <= 100) {
+      modeClass = 'warn';
+    } else {
+      modeClass = 'danger';
+    }
+    meterFill.classList.add(modeClass);
+
+    meterLabel.textContent =
+      (typeof currentLang !== 'undefined' && currentLang === 'en'
+        ? 'Risk usage '
+        : 'Uso de risco ') +
+      usage.toFixed(0) +
+      '%';
+  }
+
+  // ====== status em texto ======
+  if (statusEl) {
+    if (!shares) {
+      statusEl.textContent =
+        (typeof currentLang !== 'undefined' && currentLang === 'en'
+          ? 'Position too small or zero. Check risk %, ATR and stop distance.'
+          : 'Posição muito pequena ou zero. Confira risco %, ATR e distância do stop.');
+    } else if (usage > 100) {
+      statusEl.textContent =
+        (typeof currentLang !== 'undefined' && currentLang === 'en'
+          ? 'You are using more than 100% of the risk you defined. Consider reducing size or widening the base capital.'
+          : 'Você está usando mais de 100% do risco que definiu. Considere reduzir o tamanho ou ajustar o capital base.');
+    } else {
+      statusEl.textContent =
+        (typeof currentLang !== 'undefined' && currentLang === 'en'
+          ? 'Sizing calculated. Size stays within your defined risk. Execute only if setup is A+.'
+          : 'Sizing calculado. Tamanho dentro do risco que você definiu. Execute apenas se o setup for A+.');
+    }
+  }
+}
+
+// liga o botão "Recalcular Sizing"
+if (sbEls.calcBtn) {
+  sbEls.calcBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    recalcSizingBrainOffline();
+  });
+}
+
 
 // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
 let lastPullbackBrain = null;
