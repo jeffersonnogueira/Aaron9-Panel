@@ -1500,162 +1500,6 @@
   color: var(--text-soft);
 }
 
-/* ================== GARIMPO DE HOJE ================== */
-.garimpo-banner {
-  width: 100%;
-  /* menos espaço em cima e embaixo, encaixa melhor entre o header e o painel */
-  margin: 8px auto 12px auto;
-  display: flex;
-  justify-content: center;
-}
-
-.garimpo-container {
-  width: 100%;
-  max-width: 100%;         /* agora acompanha a largura inteira da .page */
-  padding: 14px 24px;      /* um pouco mais de “respiro” nas laterais */
-  border-radius: 18px;
-  background: radial-gradient(circle at top left, rgba(80, 220, 255, 0.25), transparent 55%),
-              linear-gradient(135deg, rgba(7, 16, 40, 0.95), rgba(10, 26, 70, 0.98));
-  border: 1px solid rgba(120, 220, 255, 0.35);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-
-.garimpo-badge {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: rgba(9, 189, 140, 0.18);
-  color: #5df2c8;
-  border: 1px solid rgba(93, 242, 200, 0.5);
-}
-
-.garimpo-main {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.garimpo-header-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.garimpo-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.garimpo-label {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #a5b4fc;
-}
-
-.garimpo-ticker-line {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.garimpo-ticker {
-  font-size: 26px;
-  font-weight: 700;
-  color: #e5e7ff;
-}
-
-.garimpo-profile-tag {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: rgba(59, 130, 246, 0.15);
-  color: #bfdbfe;
-  border: 1px solid rgba(129, 199, 255, 0.5);
-}
-
-.garimpo-confidence-chip {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-  padding: 6px 10px;
-  border-radius: 12px;
-  background: rgba(15, 118, 110, 0.24);
-  border: 1px solid rgba(45, 212, 191, 0.6);
-}
-
-.garimpo-confidence-chip .chip-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #a7f3d0;
-}
-
-.garimpo-confidence-chip .chip-value {
-  font-size: 16px;
-  font-weight: 700;
-  color: #ecfeff;
-}
-
-.garimpo-metrics-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 4px;
-}
-
-.garimpo-metric {
-  min-width: 120px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.garimpo-metric .metric-label {
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-.garimpo-metric .metric-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: #e5e7eb;
-}
-
-.garimpo-comment {
-  margin-top: 4px;
-  font-size: 12px;
-  color: #d1d5db;
-  max-width: 800px;
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-  .garimpo-container {
-    padding: 12px 12px;
-  }
-  .garimpo-ticker {
-    font-size: 22px;
-  }
-}
-/* ================== FIM GARIMPO DE HOJE ================== */
 
 
   </style>
@@ -1712,63 +1556,6 @@
   </div>
 </header>
 
-    <!-- ================== GARIMPO DE HOJE / BEST STOCK TO TRADE ================== -->
-<section id="garimpo-today" class="garimpo-banner">
-  <div class="garimpo-container">
-    <div class="garimpo-badge" data-i18n="garimpo_badge">
-      Garimpo de Hoje
-    </div>
-
-    <div class="garimpo-main">
-      <div class="garimpo-header-row">
-        <div class="garimpo-title-block">
-          <span class="garimpo-label" data-i18n="garimpo_best_label">
-            Melhor ativo para hoje
-          </span>
-          <div class="garimpo-ticker-line">
-            <span id="garimpo-ticker" class="garimpo-ticker">NVDA</span>
-            <span id="garimpo-profile" class="garimpo-profile-tag">
-              Day Trade Momentum
-            </span>
-          </div>
-        </div>
-
-        <div class="garimpo-confidence-chip">
-          <span class="chip-label" data-i18n="garimpo_metric_confidence">
-            Confiança do cérebro
-          </span>
-          <span id="garimpo-confidence" class="chip-value">91%</span>
-        </div>
-      </div>
-
-      <div class="garimpo-metrics-row">
-        <div class="garimpo-metric">
-          <div class="metric-label" data-i18n="garimpo_metric_gap">Gap</div>
-          <div id="garimpo-gap" class="metric-value">+2.3%</div>
-        </div>
-        <div class="garimpo-metric">
-          <div class="metric-label" data-i18n="garimpo_metric_premarket">
-            Pré-market vs média
-          </div>
-          <div id="garimpo-premarket" class="metric-value">1.8×</div>
-        </div>
-        <div class="garimpo-metric">
-          <div class="metric-label" data-i18n="garimpo_metric_atr">
-            ATR% (volatilidade)
-          </div>
-          <div id="garimpo-atr" class="metric-value">2.1%</div>
-        </div>
-      </div>
-
-      <p class="garimpo-comment" data-i18n="garimpo_comment">
-        Hoje este é o ativo com melhor combinação de fluxo, liquidez e
-        volatilidade para o seu perfil.
-      </p>
-    </div>
-  </div>
-</section>
-<!-- ================== FIM GARIMPO DE HOJE ================== -->
-
 
     <div id="error-banner" class="error-banner">
       <strong>Erro ao carregar painel.</strong> Verifique o n8n / webhook e tente novamente.
@@ -1783,23 +1570,20 @@
   <div class="risk-header">
     <div>
       <div class="risk-title" data-i18n="risk.title">
-        Gerenciador de risco · ATR
-      </div>
-      <div class="risk-subtitle" data-i18n="risk.subtitle">
-        Ajuste os parâmetros do ATR e calcule risco / reward da operação.
-      </div>
-    </div>
-
-    <button
-      type="button"
-      class="risk-toggle"
-      id="atr-risk-toggle"
-      data-i18n="risk.toggle_open"
-    >
-      Abrir
-    </button>
-  </div>
-
+  Gerenciador de risco · ATR
+</div>
+<div class="risk-subtitle" data-i18n="risk.subtitle">
+  Ajuste os parâmetros do ATR e calcule risco / reward da operação.
+</div>
+...
+<button
+  type="button"
+  class="risk-toggle"
+  id="atr-risk-toggle"
+  data-i18n="risk.toggle_open"
+>
+  Abrir
+</button>
 
 
   <div class="risk-body" id="atr-risk-body" style="display:none;">
@@ -2703,205 +2487,7 @@ const sbEls = {
   calcBtn: document.getElementById('sb-calcular'),
   status: document.getElementById('sb-status'),
 };
-
-    // ====== SIZING BRAIN OFFLINE – CÁLCULO COMPLETO ======
-function sbNum(el) {
-  if (!el) return 0;
-  const raw = (el.value || '').toString().replace(',', '.');
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function recalcSizingBrainOffline() {
-  if (!sbEls.accountBalance) return;
-
-  const account    = sbNum(sbEls.accountBalance);   // capital real da conta
-  const leverage   = sbNum(sbEls.leverage);         // alavancagem (x)
-  const tradeInput = sbNum(sbEls.tradeCapital);     // capital em uso neste trade
-  const riskPct    = sbNum(sbEls.riskPercentInput); // risco % por trade (da conta)
-  const entry      = sbNum(sbEls.entryPrice);       // preço de entrada
-  const atr        = sbNum(sbEls.atrValue);         // ATR $
-  const multStop   = sbNum(sbEls.atrMultStop);      // mult stop
-  const multTake   = sbNum(sbEls.atrMultTake);      // mult take
-
-  const sideRadio  = Array.from(sbEls.sideRadios || []).find(r => r.checked);
-  const side       = sideRadio ? sideRadio.value : 'long';
-
-  const statusEl   = sbEls.status;
-
-  // validações básicas
-  if (!account || !entry || !atr || !multStop || !riskPct) {
-    if (statusEl) {
-      statusEl.textContent =
-        (typeof currentLang !== 'undefined' && currentLang === 'en')
-          ? 'Fill account, risk %, entry price and ATR to calculate.'
-          : 'Preencha conta, risco %, preço de entrada e ATR para calcular.';
-    }
-    return;
-  }
-
-  // buying power = conta * alavancagem
-  const lev = leverage > 0 ? leverage : 1;
-  const buyingPower = account * lev;
-
-  // capital em uso: se não preencher, usamos o buying power
-  let tradeCapital = tradeInput > 0 ? tradeInput : buyingPower;
-  if (tradeCapital > buyingPower) tradeCapital = buyingPower;
-
-  const stopDist = atr * multStop; // distância do stop em dólar
-  if (!stopDist) {
-    if (statusEl) {
-      statusEl.textContent =
-        (typeof currentLang !== 'undefined' && currentLang === 'en')
-          ? 'Stop distance (ATR × mult) is zero. Check ATR and multiplier.'
-          : 'Distância do stop (ATR × mult) está zero. Confira ATR e multiplicador.';
-    }
-    return;
-  }
-
-  // risco máximo permitido pela regra (risco % da conta)
-  const riskAllowedDollar = account * (riskPct / 100);
-
-  // limite por capital e por risco
-  const maxSharesByCapital = tradeCapital / entry;
-  const maxSharesByRisk    = riskAllowedDollar / stopDist;
-  let shares               = Math.floor(Math.max(0, Math.min(maxSharesByCapital, maxSharesByRisk)));
-
-  if (!Number.isFinite(shares) || shares <= 0) {
-    shares = 0;
-  }
-
-  const riskUsedDollar       = shares * stopDist;
-  const riskUsedPctAccount   = account > 0 ? (riskUsedDollar / account) * 100 : 0;
-
-  // preços de stop e alvo
-  let stopPrice, takePrice;
-  if (side === 'short') {
-    stopPrice = entry + stopDist;
-    takePrice = entry - (atr * multTake);
-  } else {
-    stopPrice = entry - stopDist;
-    takePrice = entry + (atr * multTake);
-  }
-
-  // ====== escreve nos campos ======
-  if (sbEls.outStopDistance) {
-    sbEls.outStopDistance.textContent =
-      (typeof currentLang !== 'undefined' && currentLang === 'en'
-        ? 'Stop distance: '
-        : 'Distância do STOP: ') +
-      stopDist.toFixed(2) +
-      ' USD';
-  }
-
-  if (sbEls.outStopPrice) {
-    sbEls.outStopPrice.textContent =
-      (typeof currentLang !== 'undefined' && currentLang === 'en'
-        ? 'Suggested Stop Loss: '
-        : 'Stop Loss sugerido: ') +
-      '$ ' +
-      stopPrice.toFixed(2);
-  }
-
-  if (sbEls.outTakePrice) {
-    sbEls.outTakePrice.textContent =
-      (typeof currentLang !== 'undefined' && currentLang === 'en'
-        ? 'Suggested Take Profit: '
-        : 'Take Profit sugerido: ') +
-      '$ ' +
-      takePrice.toFixed(2);
-  }
-
-  if (sbEls.outPositionSize) {
-    sbEls.outPositionSize.textContent =
-      (typeof currentLang !== 'undefined' && currentLang === 'en'
-        ? 'Suggested size: '
-        : 'Qtd sugerida: ') +
-      (shares > 0 ? shares + ' shares' : '—');
-  }
-
-  if (sbEls.outRiskDollar) {
-    sbEls.outRiskDollar.textContent =
-      (typeof currentLang !== 'undefined' && currentLang === 'en'
-        ? 'Approx. risk: '
-        : 'Risco aprox.: ') +
-      '$ ' +
-      riskUsedDollar.toFixed(2);
-  }
-
-  if (sbEls.outRiskPercent) {
-    sbEls.outRiskPercent.textContent =
-      (typeof currentLang !== 'undefined' && currentLang === 'en'
-        ? 'Risk % trade / account: '
-        : 'Risco % trade / conta: ') +
-      riskUsedPctAccount.toFixed(2) +
-      '%';
-  }
-
-  // ====== termômetro do Sizing Brain offline ======
-  const meterFill  = document.getElementById('sb-meter-fill');
-  const meterLabel = document.getElementById('sb-meter-label');
-
-  if (meterFill && meterLabel) {
-    // uso de risco = quanto do risco permitido (riskAllowedDollar) você está usando
-    let usage = riskAllowedDollar > 0
-      ? (riskUsedDollar / riskAllowedDollar) * 100
-      : 0;
-
-    // clamp
-    usage = Math.max(0, Math.min(usage, 150));
-    const width = Math.max(0, Math.min(usage, 100));
-
-    meterFill.style.width = width.toFixed(0) + '%';
-    meterFill.classList.remove('safe', 'warn', 'danger');
-
-    let modeClass = 'safe';
-    if (usage <= 60) {
-      modeClass = 'safe';
-    } else if (usage <= 100) {
-      modeClass = 'warn';
-    } else {
-      modeClass = 'danger';
-    }
-    meterFill.classList.add(modeClass);
-
-    meterLabel.textContent =
-      (typeof currentLang !== 'undefined' && currentLang === 'en'
-        ? 'Risk usage '
-        : 'Uso de risco ') +
-      usage.toFixed(0) +
-      '%';
-  }
-
-  // ====== status em texto ======
-  if (statusEl) {
-    if (!shares) {
-      statusEl.textContent =
-        (typeof currentLang !== 'undefined' && currentLang === 'en'
-          ? 'Position too small or zero. Check risk %, ATR and stop distance.'
-          : 'Posição muito pequena ou zero. Confira risco %, ATR e distância do stop.');
-    } else if (usage > 100) {
-      statusEl.textContent =
-        (typeof currentLang !== 'undefined' && currentLang === 'en'
-          ? 'You are using more than 100% of the risk you defined. Consider reducing size or widening the base capital.'
-          : 'Você está usando mais de 100% do risco que definiu. Considere reduzir o tamanho ou ajustar o capital base.');
-    } else {
-      statusEl.textContent =
-        (typeof currentLang !== 'undefined' && currentLang === 'en'
-          ? 'Sizing calculated. Size stays within your defined risk. Execute only if setup is A+.'
-          : 'Sizing calculado. Tamanho dentro do risco que você definiu. Execute apenas se o setup for A+.');
-    }
-  }
-}
-
-// liga o botão "Recalcular Sizing"
-if (sbEls.calcBtn) {
-  sbEls.calcBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    recalcSizingBrainOffline();
-  });
-}
-
+ 
 
 // dados atuais do "cérebro de pullback" para re-renderizar quando trocar PT/EN
 let lastPullbackBrain = null;
@@ -3976,47 +3562,30 @@ async function loadPanel(showSpinner) {
 }
 
 // ====== INICIALIZAÇÃO ======
-
-// cria o gráfico do TradingView, com tentativa repetida até o script tv.js carregar
-let tvWidgetCreated = false;
-function createTVChart() {
-  const container = document.getElementById('aaron9-tv-chart');
-  if (!container) return; // se o container não existir, não faz nada
-
-  // se o TradingView ainda não carregou, tenta de novo em 800ms
-  if (typeof window.TradingView === 'undefined') {
-    setTimeout(createTVChart, 800);
-    return;
-  }
-
-  if (tvWidgetCreated) return; // evita criar o widget mais de uma vez
-  tvWidgetCreated = true;
-
-  new TradingView.widget({
-    container_id: 'aaron9-tv-chart',
-
-    // padrão inicial (pode ser NVDA na NASDAQ)
-    symbol: 'NASDAQ:NVDA',
-    interval: '1',               // começa em 1m
-    timezone: 'America/Denver',  // horário de Utah
-    theme: 'dark',
-    style: '1',
-    autosize: true,
-    locale: 'en',
-
-    withdateranges: false,
-    hide_top_toolbar: false,
-    hide_side_toolbar: false,
-    allow_symbol_change: true,
-
-    disabled_features: [],
-    enabled_features: [],
-  });
-}
-
 function initAaron9() {
-  // garante que o gráfico será criado assim que o TradingView estiver pronto
-  createTVChart();
+  // cria o gráfico do TradingView UMA VEZ
+  if (window.TradingView) {
+    new TradingView.widget({
+      container_id: 'aaron9-tv-chart',
+
+      // padrão inicial (pode ser NVDA na NASDAQ)
+      symbol: 'NASDAQ:NVDA',
+      interval: '1',               // começa em 1m
+      timezone: 'America/Denver',  // horário de Utah
+      theme: 'dark',
+      style: '1',
+      autosize: true,
+      locale: 'en',
+
+      withdateranges: false,
+      hide_top_toolbar: false,
+      hide_side_toolbar: false,
+      allow_symbol_change: true,
+
+      disabled_features: [],
+      enabled_features: [],
+    });
+  }
 
   // botão ATUALIZAR
   if (els.btnRefresh) {
@@ -4029,7 +3598,6 @@ function initAaron9() {
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
 }
-
 
 // ================ TOGGLE DE IDIOMA PT / EN ==================
 
@@ -4176,7 +3744,7 @@ function applyLang(lang) {
   }
 
   // re-renderiza o Pullback Brain no idioma atual
-  if (typeof updatePullbackBrain === 'function') {
+        if (typeof updatePullbackBrain === 'function') {
     updatePullbackBrain(lastPullbackBrain);
   }
   if (typeof updateSizingBrain === 'function') {
@@ -4185,14 +3753,7 @@ function applyLang(lang) {
   if (typeof updateSizingPhrase === 'function') {
     updateSizingPhrase();
   }
-
-  // re-renderiza o Garimpo de Hoje no idioma atual (PT / EN)
-  if (typeof updateGarimpoTodayCard === 'function' &&
-      typeof garimpoTodayData !== 'undefined') {
-    updateGarimpoTodayCard(garimpoTodayData);
-  }
 }
-
 
  // ====== SIZING BRAIN – CÁLCULO LOCAL DO GERENCIADOR DE RISCO ======
 function recalcSizingBrainLocal() {
@@ -4370,73 +3931,7 @@ if (document.readyState === 'loading') {
 } else {
   initAaron9();
 }
-
-   // ================== GARIMPO DE HOJE - DADOS EXEMPLO ==================
-const garimpoTodayData = {
-  ticker: 'NVDA',
-  profile: {
-    pt: 'Day Trade Momentum',
-    en: 'Day Trade Momentum',
-  },
-  gapPct: '+2.3%',
-  preMarketRatio: '1.8×',
-  atrPct: '2.1%',
-  confidence: '91%',
-};
-
-// Função para atualizar o card de garimpo
-function updateGarimpoTodayCard(data) {
-  const tickerEl = document.getElementById('garimpo-ticker');
-  const profileEl = document.getElementById('garimpo-profile');
-  const gapEl = document.getElementById('garimpo-gap');
-  const pmEl = document.getElementById('garimpo-premarket');
-  const atrEl = document.getElementById('garimpo-atr');
-  const confEl = document.getElementById('garimpo-confidence');
-
-  // se o card não existir por algum motivo, não quebra nada
-  if (!tickerEl) return;
-
-  const lang = (window.currentLang === 'en' ? 'en' : 'pt');
-
-  tickerEl.textContent = data.ticker;
-  profileEl.textContent = data.profile[lang] || data.profile.pt;
-  gapEl.textContent = data.gapPct;
-  pmEl.textContent = data.preMarketRatio;
-  atrEl.textContent = data.atrPct;
-  confEl.textContent = data.confidence;
-}
-
-// Chamada inicial (quando a página carrega)
-updateGarimpoTodayCard(garimpoTodayData);
-
-// ================== GARIMPO DE HOJE - TEXTOS PT/EN =================
-if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
-  Object.assign(I18N.pt, {
-    garimpo_badge: 'Garimpo de Hoje',
-    garimpo_best_label: 'Melhor ativo para hoje',
-    garimpo_comment:
-      'Hoje este é o ativo com melhor combinação de fluxo, liquidez e volatilidade para o seu perfil.',
-    garimpo_metric_gap: 'Gap',
-    garimpo_metric_premarket: 'Pré-market vs média',
-    garimpo_metric_atr: 'ATR% (volatilidade)',
-    garimpo_metric_confidence: 'Confiança do cérebro',
-  });
-
-  Object.assign(I18N.en, {
-    garimpo_badge: "Today's Mining Pick",
-    garimpo_best_label: 'Best stock to trade today',
-    garimpo_comment:
-      "Today this is the asset with the best combination of flow, liquidity and volatility for your profile.",
-    garimpo_metric_gap: 'Gap',
-    garimpo_metric_premarket: 'Pre-market vs avg.',
-    garimpo_metric_atr: 'ATR% (volatility)',
-    garimpo_metric_confidence: "Brain's confidence",
-  });
-}
-
-// ================== FIM GARIMPO DE HOJE ==================
 </script>
 
 </body>
 </html>
-
