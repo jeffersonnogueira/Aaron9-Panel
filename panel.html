@@ -4352,7 +4352,7 @@ if (document.readyState === 'loading') {
   initAaron9();
 }
 
-    // ================== GARIMPO DE HOJE - DADOS EXEMPLO ==================
+   // ================== GARIMPO DE HOJE - DADOS EXEMPLO ==================
 const garimpoTodayData = {
   ticker: 'NVDA',
   profile: {
@@ -4374,7 +4374,8 @@ function updateGarimpoTodayCard(data) {
   const atrEl = document.getElementById('garimpo-atr');
   const confEl = document.getElementById('garimpo-confidence');
 
-  if (!tickerEl) return; // se o card não existir, não faz nada
+  // se o card não existir por algum motivo, não quebra nada
+  if (!tickerEl) return;
 
   const lang = (window.currentLang === 'en' ? 'en' : 'pt');
 
@@ -4389,7 +4390,7 @@ function updateGarimpoTodayCard(data) {
 // Chamada inicial (quando a página carrega)
 updateGarimpoTodayCard(garimpoTodayData);
 
-// ================== GARIMPO DE HOJE - TEXTOS PT/EN ==================
+// ================== GARIMPO DE HOJE - TEXTOS PT/EN =================
 if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
   Object.assign(I18N.pt, {
     garimpo_badge: 'Garimpo de Hoje',
@@ -4406,7 +4407,7 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
     garimpo_badge: "Today's Mining Pick",
     garimpo_best_label: 'Best stock to trade today',
     garimpo_comment:
-      'Today this is the asset with the best mix of flow, liquidity and volatility for your profile.',
+      "Today this is the asset with the best combination of flow, liquidity and volatility for your profile.",
     garimpo_metric_gap: 'Gap',
     garimpo_metric_premarket: 'Pre-market vs avg.',
     garimpo_metric_atr: 'ATR% (volatility)',
@@ -4415,11 +4416,8 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 }
 
 // ================== FIM GARIMPO DE HOJE ==================
-
-
-
-    
 </script>
 
 </body>
 </html>
+
