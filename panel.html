@@ -4142,6 +4142,83 @@ if (document.readyState === 'loading') {
 } else {
   initAaron9();
 }
+
+    // ================== GARIMPO DE HOJE - DADOS EXEMPLO ==================
+const garimpoTodayData = {
+  ticker: 'NVDA',
+  profile: {
+    pt: 'Day Trade Momentum',
+    en: 'Day Trade Momentum',
+  },
+  gapPct: '+2.3%',
+  preMarketRatio: '1.8×',
+  atrPct: '2.1%',
+  confidence: '91%',
+};
+
+// Função para atualizar o card de garimpo
+function updateGarimpoTodayCard(data) {
+  const tickerEl = document.getElementById('garimpo-ticker');
+  const profileEl = document.getElementById('garimpo-profile');
+  const gapEl = document.getElementById('garimpo-gap');
+  const pmEl = document.getElementById('garimpo-premarket');
+  const atrEl = document.getElementById('garimpo-atr');
+  const confEl = document.getElementById('garimpo-confidence');
+
+  if (!tickerEl) return; // se o card não existir, não faz nada
+
+  const lang = (window.currentLang === 'en' ? 'en' : 'pt');
+
+  tickerEl.textContent = data.ticker;
+  profileEl.textContent = data.profile[lang] || data.profile.pt;
+  gapEl.textContent = data.gapPct;
+  pmEl.textContent = data.preMarketRatio;
+  atrEl.textContent = data.atrPct;
+  confEl.textContent = data.confidence;
+}
+
+// Chamada inicial (quando a página carrega)
+updateGarimpoTodayCard(garimpoTodayData);
+
+// Se o seu toggle de idioma já muda window.currentLang e chama applyTranslations(),
+// você pode conectar o garimpo nisso também.
+// Exemplo: se você tiver uma função applyTranslations(), podemos "encaixar":
+
+if (typeof window.applyTranslations === 'function') {
+  const originalApplyTranslations = window.applyTranslations;
+  window.applyTranslations = function () {
+    originalApplyTranslations();
+    updateGarimpoTodayCard(garimpoTodayData);
+  };
+}
+
+// ================== GARIMPO DE HOJE - TEXTOS PT/EN ==================
+if (window.translations && translations.pt && translations.en) {
+  Object.assign(translations.pt, {
+    garimpo_badge: 'Garimpo de Hoje',
+    garimpo_best_label: 'Melhor ativo para hoje',
+    garimpo_comment:
+      'Hoje este é o ativo com melhor combinação de fluxo, liquidez e volatilidade para o seu perfil.',
+    garimpo_metric_gap: 'Gap',
+    garimpo_metric_premarket: 'Pré-market vs média',
+    garimpo_metric_atr: 'ATR% (volatilidade)',
+    garimpo_metric_confidence: 'Confiança do cérebro',
+  });
+
+  Object.assign(translations.en, {
+    garimpo_badge: "Today's Mining Pick",
+    garimpo_best_label: 'Best stock to trade today',
+    garimpo_comment:
+      'Today this is the asset with the best mix of flow, liquidity and volatility for your profile.',
+    garimpo_metric_gap: 'Gap',
+    garimpo_metric_premarket: 'Pre-market vs avg.',
+    garimpo_metric_atr: 'ATR% (volatility)',
+    garimpo_metric_confidence: "Brain's confidence",
+  });
+}
+// ================== FIM GARIMPO DE HOJE ==================
+
+    
 </script>
 
 </body>
