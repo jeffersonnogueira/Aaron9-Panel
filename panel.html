@@ -1511,8 +1511,8 @@
 
 .garimpo-container {
   width: 100%;
-  max-width: 1180px;
-  padding: 14px 18px;
+  max-width: 100%;         /* agora acompanha a largura inteira da .page */
+  padding: 14px 24px;      /* um pouco mais de “respiro” nas laterais */
   border-radius: 18px;
   background: radial-gradient(circle at top left, rgba(80, 220, 255, 0.25), transparent 55%),
               linear-gradient(135deg, rgba(7, 16, 40, 0.95), rgba(10, 26, 70, 0.98));
@@ -1522,6 +1522,7 @@
   flex-direction: column;
   gap: 10px;
 }
+
 
 .garimpo-badge {
   display: inline-flex;
