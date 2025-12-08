@@ -1654,6 +1654,44 @@
   .garimpo-ticker {
     font-size: 22px;
   }
+
+  .garimpo-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Botão para abrir a página completa do garimpo */
+.garimpo-page-btn {
+  border-radius: 999px;
+  padding: 6px 14px;
+  border: 1px solid rgba(120, 220, 255, 0.6);
+  background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), transparent);
+  color: #e0f2fe;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.garimpo-page-btn:hover {
+  background: radial-gradient(circle at top, rgba(56, 189, 248, 0.55), transparent);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
+  transform: translateY(-1px);
+}
+
+.garimpo-page-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+  
 }
 /* ================== FIM GARIMPO DE HOJE ================== */
 
