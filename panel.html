@@ -1552,6 +1552,44 @@
   flex-wrap: wrap;
 }
 
+    .garimpo-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+/* Botão "Ver página do garimpo" no painel principal */
+.garimpo-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 200, 255, 0.5);
+  background: rgba(3, 10, 25, 0.85);
+  color: #e5f2ff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.garimpo-link-btn:hover {
+  background: linear-gradient(135deg, #04d9ff, #22ff88);
+  color: #02101f;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+  transform: translateY(-1px);
+}
+
+
     .garimpo-right-block {
   display: flex;
   align-items: center;
