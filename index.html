@@ -290,5 +290,34 @@
 </div>
 
   </div>
+
+<script>
+  // Logins de exemplo (troque aqui depois)
+  const USERS = [
+    { username: 'admin', password: '1234', redirect: 'panel-admin.html' },
+    { username: 'user',  password: 'abcd', redirect: 'panel.html' }
+  ];
+
+  function handleLogin(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+
+    const found = USERS.find(
+      (u) => u.username === username && u.password === password
+    );
+
+    if (!found) {
+      alert('Usuário ou senha inválidos.');
+      return;
+    }
+
+    // Redireciona de acordo com o tipo de usuário
+    window.location.href = found.redirect;
+  }
+</script>
+
+    
 </body>
 </html>
