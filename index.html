@@ -73,6 +73,13 @@
       gap: 28px;
     }
 
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
     .logo-mark {
       display: inline-flex;
       align-items: center;
@@ -94,6 +101,31 @@
       border-radius: 999px;
       background: radial-gradient(circle, #22c55e, #16a34a);
       box-shadow: 0 0 14px rgba(34, 197, 94, 0.9);
+    }
+
+    .lang-toggle {
+      display: inline-flex;
+      padding: 2px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lang-btn.active {
+      background: var(--accent-soft);
+      color: #e5e7eb;
     }
 
     .brand-main {
@@ -146,34 +178,33 @@
     }
 
     .login-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 320px;
-}
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+    }
 
-.input-field {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  background: rgba(15, 23, 42, 0.9);
-  color: var(--text);
-  font-size: 0.9rem;
-  outline: none;
-}
+    .input-field {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
 
-.input-field::placeholder {
-  color: var(--text-soft);
-}
+    .input-field::placeholder {
+      color: var(--text-soft);
+    }
 
-.input-field:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
-}
-
+    .input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+    }
 
     .btn-primary {
       padding: 10px 26px;
@@ -231,93 +262,205 @@
       .landing-shell {
         padding: 28px 20px 22px;
       }
+
+      .top-row {
+        flex-direction: row;
+        justify-content: space-between;
+      }
     }
   </style>
 </head>
 <body>
   <div class="landing-shell">
     <div class="landing-inner">
-      <div class="logo-mark">
-        <span class="logo-dot"></span>
-        <span>AARON · TRADING PANEL</span>
+      <div class="top-row">
+        <div class="logo-mark">
+          <span class="logo-dot"></span>
+          <span>AARON · TRADING PANEL</span>
+        </div>
+
+        <div class="lang-toggle">
+          <button
+            type="button"
+            class="lang-btn active"
+            data-lang="pt"
+            onclick="setLanguage('pt')"
+          >
+            PT
+          </button>
+          <button
+            type="button"
+            class="lang-btn"
+            data-lang="en"
+            onclick="setLanguage('en')"
+          >
+            EN
+          </button>
+        </div>
       </div>
 
       <div>
         <div class="brand-main">
           <span>AARON&nbsp;9</span>
         </div>
-        <p class="brand-subtitle">
+        <p id="brandSubtitle" class="brand-subtitle">
           Seu cockpit de trading para leitura institucional, gestão de risco
           e decisões de alta precisão – tudo em um único painel.
         </p>
 
         <div class="pill-row">
-          <div class="pill">Risk management</div>
-          <div class="pill">ATR sizing</div>
-          <div class="pill">Pattern radar</div>
-          <div class="pill">Flow &amp; sentiment</div>
+          <div class="pill">Gestão de risco</div>
+          <div class="pill">Dimensionamento ATR</div>
+          <div class="pill">Radar de padrões</div>
+          <div class="pill">Fluxo &amp; sentimento</div>
         </div>
       </div>
 
-     <div class="actions-row">
-  <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
-    <input
-      id="username"
-      class="input-field"
-      type="text"
-      placeholder="Usuário (ex: admin)"
-      autocomplete="username"
-      required
-    />
-    <input
-      id="password"
-      class="input-field"
-      type="password"
-      placeholder="Senha"
-      autocomplete="current-password"
-      required
-    />
+      <div class="actions-row">
+        <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+          <input
+            id="username"
+            class="input-field"
+            type="text"
+            placeholder="Usuário (ex: admin)"
+            autocomplete="username"
+            required
+          />
+          <input
+            id="password"
+            class="input-field"
+            type="password"
+            placeholder="Senha"
+            autocomplete="current-password"
+            required
+          />
 
-    <button type="submit" class="btn-primary">
-      Entrar no painel
-      <span>→</span>
-    </button>
-  </form>
+          <button type="submit" class="btn-primary">
+            <span id="loginButtonLabel">Entrar no painel</span>
+            <span>→</span>
+          </button>
+        </form>
 
-  <div class="btn-secondary">
-    Versão privada · <span>beta do criador</span>
+        <div class="btn-secondary">
+          <span id="privateTextMain">Versão privada · </span>
+          <span id="privateTextTag">beta do criador</span>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-  </div>
+  <script>
+    // ===== LOGIN (Admin / Aaron10) =====
+    const USERS = [
+      {
+        username: 'admin',
+        password: 'Aaron10',
+        redirect: 'panel.html', // mude se quiser outro painel
+      },
+    ];
 
-<script>
-  // Logins de exemplo (troque aqui depois)
-  const USERS = [
-    { username: 'admin', password: '1234', redirect: 'panel-admin.html' },
-    { username: 'user',  password: 'abcd', redirect: 'panel.html' }
-  ];
+    let currentLang = 'pt';
 
-  function handleLogin(event) {
-    event.preventDefault();
+    const translations = {
+      pt: {
+        subtitle:
+          'Seu cockpit de trading para leitura institucional, gestão de risco e decisões de alta precisão – tudo em um único painel.',
+        usernamePlaceholder: 'Usuário (ex: admin)',
+        passwordPlaceholder: 'Senha',
+        loginButton: 'Entrar no painel',
+        privateMain: 'Versão privada · ',
+        privateTag: 'beta do criador',
+        pills: [
+          'Gestão de risco',
+          'Dimensionamento ATR',
+          'Radar de padrões',
+          'Fluxo & sentimento',
+        ],
+        invalidLogin: 'Usuário ou senha inválidos.',
+      },
+      en: {
+        subtitle:
+          'Your trading cockpit for institutional reading, risk management and high-precision decisions – all in a single panel.',
+        usernamePlaceholder: 'User (e.g. admin)',
+        passwordPlaceholder: 'Password',
+        loginButton: 'Enter panel',
+        privateMain: 'Private version · ',
+        privateTag: "creator's beta",
+        pills: [
+          'Risk management',
+          'ATR sizing',
+          'Pattern radar',
+          'Flow & sentiment',
+        ],
+        invalidLogin: 'Invalid username or password.',
+      },
+    };
 
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
+    function applyLanguage(lang) {
+      const t = translations[lang] || translations.pt;
+      currentLang = lang;
 
-    const found = USERS.find(
-      (u) => u.username === username && u.password === password
-    );
+      // <html lang="...">
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
 
-    if (!found) {
-      alert('Usuário ou senha inválidos.');
-      return;
+      // Textos principais
+      const subtitleEl = document.getElementById('brandSubtitle');
+      if (subtitleEl) subtitleEl.textContent = t.subtitle;
+
+      const usernameEl = document.getElementById('username');
+      const passwordEl = document.getElementById('password');
+      if (usernameEl) usernameEl.placeholder = t.usernamePlaceholder;
+      if (passwordEl) passwordEl.placeholder = t.passwordPlaceholder;
+
+      const loginBtnLabel = document.getElementById('loginButtonLabel');
+      if (loginBtnLabel) loginBtnLabel.textContent = t.loginButton;
+
+      const privateMain = document.getElementById('privateTextMain');
+      const privateTag = document.getElementById('privateTextTag');
+      if (privateMain) privateMain.textContent = t.privateMain;
+      if (privateTag) privateTag.textContent = t.privateTag;
+
+      // Pills
+      const pillEls = document.querySelectorAll('.pill-row .pill');
+      pillEls.forEach((el, idx) => {
+        if (t.pills[idx]) el.textContent = t.pills[idx];
+      });
+
+      // Estado visual dos botões PT/EN
+      const langButtons = document.querySelectorAll('.lang-btn');
+      langButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
     }
 
-    // Redireciona de acordo com o tipo de usuário
-    window.location.href = found.redirect;
-  }
-</script>
+    function setLanguage(lang) {
+      applyLanguage(lang);
+    }
 
-    
+    function handleLogin(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      const found = USERS.find(
+        (u) =>
+          u.username.toLowerCase() === username.toLowerCase() &&
+          u.password === password
+      );
+
+      if (!found) {
+        alert(translations[currentLang].invalidLogin);
+        return;
+      }
+
+      // Redireciona de acordo com o usuário
+      window.location.href = found.redirect;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      applyLanguage(currentLang);
+    });
+  </script>
 </body>
 </html>
