@@ -34,6 +34,26 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+      position: relative;
+    }
+
+    /* ===== LOGO THE SIX SEATS NO TOPO ===== */
+    .brand-header {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none; /* não atrapalha cliques no painel */
+    }
+
+    .brand-logo {
+      max-width: 260px;
+      width: 22vw;
+      height: auto;
+      filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.35));
     }
 
     .landing-shell {
@@ -267,10 +287,23 @@
         flex-direction: row;
         justify-content: space-between;
       }
+
+      .brand-header {
+        top: 20px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- LOGO THE SIX SEATS INVESTMENTS -->
+  <header class="brand-header">
+    <img
+      src="six-seats-logo.png"
+      alt="The Six Seats Investments"
+      class="brand-logo"
+    />
+  </header>
+
   <div class="landing-shell">
     <div class="landing-inner">
       <div class="top-row">
