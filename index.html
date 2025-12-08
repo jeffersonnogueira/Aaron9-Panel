@@ -259,23 +259,36 @@
         </div>
       </div>
 
-      <div class="actions-row">
-        <!-- TROCAR panel.html PELO NOME DO ARQUIVO DO SEU PAINEL -->
-        <button class="btn-primary" onclick="window.location.href='panel.html'">
-          Entrar no painel
-          <span>→</span>
-        </button>
+     <div class="actions-row">
+  <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+    <input
+      id="username"
+      class="input-field"
+      type="text"
+      placeholder="Usuário (ex: admin)"
+      autocomplete="username"
+      required
+    />
+    <input
+      id="password"
+      class="input-field"
+      type="password"
+      placeholder="Senha"
+      autocomplete="current-password"
+      required
+    />
 
-        <div class="btn-secondary">
-          Versão privada · <span>beta do criador</span>
-        </div>
-      </div>
+    <button type="submit" class="btn-primary">
+      Entrar no painel
+      <span>→</span>
+    </button>
+  </form>
 
-      <div class="footer-note">
-        AARON 9 não executa ordens. Você continua 100% responsável pelas
-        decisões e pelo risco dos seus trades.
-      </div>
-    </div>
+  <div class="btn-secondary">
+    Versão privada · <span>beta do criador</span>
+  </div>
+</div>
+
   </div>
 </body>
 </html>
