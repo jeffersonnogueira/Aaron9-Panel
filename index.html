@@ -21,7 +21,7 @@
       padding: 0;
     }
 
-    body {
+       body {
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
         "Segoe UI", sans-serif;
@@ -31,11 +31,12 @@
         radial-gradient(circle at bottom right, #0f172a 0, transparent 55%),
         var(--bg-main);
       display: flex;
+      flex-direction: column;      /* logo em cima, painel embaixo */
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      position: relative;
+      padding: 80px 24px 24px;     /* reserva espaço pro logo */
     }
+
 
     /* ===== LOGO THE SIX SEATS NO TOPO ===== */
     .brand-header {
