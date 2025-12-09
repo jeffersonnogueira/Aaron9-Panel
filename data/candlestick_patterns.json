@@ -1,0 +1,314 @@
+[
+  {
+    "id": "hammer",
+    "group": "single_candle",
+    "bias": "bullish_reversal",
+    "name_en": "Hammer",
+    "name_pt": "Martelo",
+    "description_en": "Small body near the top of the range with a long lower wick after a downtrend. Shows strong rejection of lower prices.",
+    "description_pt": "Corpo pequeno perto do topo do candle com pavio inferior longo após uma tendência de baixa. Mostra forte rejeição dos preços baixos.",
+    "confirmation_en": "Best when the next candle closes bullish above the hammer body and near a support zone.",
+    "confirmation_pt": "Funciona melhor quando o próximo candle fecha em alta acima do corpo do martelo e perto de uma zona de suporte."
+  },
+  {
+    "id": "inverted_hammer",
+    "group": "single_candle",
+    "bias": "bullish_reversal",
+    "name_en": "Inverted Hammer",
+    "name_pt": "Martelo Invertido",
+    "description_en": "Small body near the bottom with a long upper wick after a downtrend. Buyers test higher prices but still need confirmation.",
+    "description_pt": "Corpo pequeno perto da base com pavio superior longo após queda. Compradores testam preços mais altos, mas ainda precisam de confirmação.",
+    "confirmation_en": "Next candle should close above the high of the inverted hammer.",
+    "confirmation_pt": "Próximo candle deve fechar acima da máxima do martelo invertido."
+  },
+  {
+    "id": "shooting_star",
+    "group": "single_candle",
+    "bias": "bearish_reversal",
+    "name_en": "Shooting Star",
+    "name_pt": "Estrela Cadente",
+    "description_en": "Small body near the low with a long upper wick after an uptrend. Shows rejection of higher prices.",
+    "description_pt": "Corpo pequeno perto da mínima com pavio superior longo após uma tendência de alta. Mostra rejeição dos preços altos.",
+    "confirmation_en": "Stronger if followed by a bearish candle closing below the star body.",
+    "confirmation_pt": "Mais forte se for seguido de um candle de baixa fechando abaixo do corpo da estrela."
+  },
+  {
+    "id": "doji",
+    "group": "single_candle",
+    "bias": "indecision",
+    "name_en": "Doji",
+    "name_pt": "Doji",
+    "description_en": "Open and close are almost equal; wicks show a strong battle between buyers and sellers.",
+    "description_pt": "Abertura e fechamento quase iguais; pavios mostram forte briga entre compradores e vendedores.",
+    "confirmation_en": "Direction depends on the next candles and the location relative to support/resistance.",
+    "confirmation_pt": "A direção depende dos candles seguintes e da região de suporte ou resistência."
+  },
+  {
+    "id": "marubozu_bullish",
+    "group": "single_candle",
+    "bias": "bullish_continuation",
+    "name_en": "Bullish Marubozu",
+    "name_pt": "Marubozu de Alta",
+    "description_en": "Long bullish candle with almost no wicks. Shows strong one-sided buying pressure.",
+    "description_pt": "Candle de alta longo, quase sem pavios. Mostra forte pressão compradora em uma direção.",
+    "confirmation_en": "Often signals trend continuation when aligned with higher timeframe trend.",
+    "confirmation_pt": "Costuma sinalizar continuação da tendência quando alinhado com a tendência do timeframe maior."
+  },
+  {
+    "id": "marubozu_bearish",
+    "group": "single_candle",
+    "bias": "bearish_continuation",
+    "name_en": "Bearish Marubozu",
+    "name_pt": "Marubozu de Baixa",
+    "description_en": "Long bearish candle with almost no wicks. Strong selling pressure.",
+    "description_pt": "Candle de baixa longo, quase sem pavios. Forte pressão vendedora.",
+    "confirmation_en": "Often signals continuation of a downtrend when volume increases.",
+    "confirmation_pt": "Costuma sinalizar continuação da queda quando o volume aumenta."
+  },
+
+  {
+    "id": "bullish_engulfing",
+    "group": "double_candle",
+    "bias": "bullish_reversal",
+    "name_en": "Bullish Engulfing",
+    "name_pt": "Engolfo de Alta",
+    "description_en": "After a downtrend, a large green candle completely engulfs the previous red body.",
+    "description_pt": "Após uma tendência de baixa, um candle verde grande engole totalmente o corpo do candle vermelho anterior.",
+    "confirmation_en": "Stronger near support and when volume expands on the engulfing bar.",
+    "confirmation_pt": "Mais forte em zona de suporte e com aumento de volume no candle de engolfo."
+  },
+  {
+    "id": "bearish_engulfing",
+    "group": "double_candle",
+    "bias": "bearish_reversal",
+    "name_en": "Bearish Engulfing",
+    "name_pt": "Engolfo de Baixa",
+    "description_en": "After an uptrend, a large red candle engulfs the previous green body.",
+    "description_pt": "Após uma tendência de alta, um candle vermelho grande engole o corpo do candle verde anterior.",
+    "confirmation_en": "More reliable near resistance and with rising volume.",
+    "confirmation_pt": "Mais confiável perto de resistência e com volume crescente."
+  },
+  {
+    "id": "bullish_harami",
+    "group": "double_candle",
+    "bias": "bullish_reversal",
+    "name_en": "Bullish Harami",
+    "name_pt": "Harami de Alta",
+    "description_en": "Small bullish candle contained inside the previous large bearish body.",
+    "description_pt": "Pequeno candle de alta contido dentro do corpo do grande candle de baixa anterior.",
+    "confirmation_en": "Needs a bullish close after the pattern to confirm reversal.",
+    "confirmation_pt": "Precisa de um fechamento em alta após o padrão para confirmar reversão."
+  },
+  {
+    "id": "bearish_harami",
+    "group": "double_candle",
+    "bias": "bearish_reversal",
+    "name_en": "Bearish Harami",
+    "name_pt": "Harami de Baixa",
+    "description_en": "Small bearish candle contained inside the previous large bullish body.",
+    "description_pt": "Pequeno candle de baixa contido dentro do corpo do grande candle de alta anterior.",
+    "confirmation_en": "Confirmation comes with a bearish candle closing below the pattern.",
+    "confirmation_pt": "Confirmação vem com um candle de baixa fechando abaixo do padrão."
+  },
+  {
+    "id": "morning_star",
+    "group": "triple_candle",
+    "bias": "bullish_reversal",
+    "name_en": "Morning Star",
+    "name_pt": "Estrela da Manhã",
+    "description_en": "Strong bearish candle, then a small indecision candle, then a strong bullish candle closing well into the first candle.",
+    "description_pt": "Candle de baixa forte, depois candle pequeno de indecisão e depois candle de alta forte fechando dentro do corpo do primeiro.",
+    "confirmation_en": "Powerful when formed at major support after a downtrend.",
+    "confirmation_pt": "Muito forte quando aparece em suporte importante após tendência de baixa."
+  },
+  {
+    "id": "evening_star",
+    "group": "triple_candle",
+    "bias": "bearish_reversal",
+    "name_en": "Evening Star",
+    "name_pt": "Estrela da Tarde",
+    "description_en": "Strong bullish candle, then a small indecision candle, then a strong bearish candle closing well into the first candle.",
+    "description_pt": "Candle de alta forte, depois candle pequeno de indecisão e depois candle de baixa forte fechando dentro do corpo do primeiro.",
+    "confirmation_en": "Best at resistance after a strong uptrend.",
+    "confirmation_pt": "Melhor em zona de resistência após forte tendência de alta."
+  },
+  {
+    "id": "three_white_soldiers",
+    "group": "triple_candle",
+    "bias": "bullish_reversal",
+    "name_en": "Three White Soldiers",
+    "name_pt": "Três Soldados Brancos",
+    "description_en": "Three consecutive bullish candles with higher closes, usually after a downtrend.",
+    "description_pt": "Três candles de alta consecutivos com fechamentos cada vez mais altos, normalmente após uma queda.",
+    "confirmation_en": "Signals strong shift to bullish control, especially with high volume.",
+    "confirmation_pt": "Sinaliza forte domínio comprador, especialmente com volume alto."
+  },
+  {
+    "id": "three_black_crows",
+    "group": "triple_candle",
+    "bias": "bearish_reversal",
+    "name_en": "Three Black Crows",
+    "name_pt": "Três Corvos Negros",
+    "description_en": "Three consecutive bearish candles with lower closes, usually after an uptrend.",
+    "description_pt": "Três candles de baixa consecutivos com fechamentos cada vez mais baixos, normalmente após uma alta.",
+    "confirmation_en": "Shows strong shift to bearish control, often starting a downtrend.",
+    "confirmation_pt": "Mostra forte domínio vendedor, muitas vezes iniciando uma tendência de baixa."
+  },
+
+  {
+    "id": "double_top",
+    "group": "chart_pattern",
+    "bias": "bearish_reversal",
+    "name_en": "Double Top",
+    "name_pt": "Topo Duplo",
+    "description_en": "Price tests the same resistance twice and fails, then breaks the neckline downward.",
+    "description_pt": "Preço testa a mesma resistência duas vezes e falha, depois rompe a linha de pescoço para baixo.",
+    "confirmation_en": "Break and retest of the neckline increases reliability.",
+    "confirmation_pt": "Rompimento e reteste da linha de pescoço aumentam a confiabilidade."
+  },
+  {
+    "id": "double_bottom",
+    "group": "chart_pattern",
+    "bias": "bullish_reversal",
+    "name_en": "Double Bottom",
+    "name_pt": "Fundo Duplo",
+    "description_en": "Price tests the same support twice and holds, then breaks the neckline upward.",
+    "description_pt": "Preço testa o mesmo suporte duas vezes e segura, depois rompe a linha de pescoço para cima.",
+    "confirmation_en": "Breakout above neckline with strong bullish candle.",
+    "confirmation_pt": "Rompimento acima da linha de pescoço com candle de alta forte."
+  },
+  {
+    "id": "head_and_shoulders",
+    "group": "chart_pattern",
+    "bias": "bearish_reversal",
+    "name_en": "Head and Shoulders",
+    "name_pt": "Ombro-Cabeça-Ombro",
+    "description_en": "Three peaks: a higher middle peak (head) between two lower peaks (shoulders), followed by a break of the neckline.",
+    "description_pt": "Três topos: um topo mais alto no meio (cabeça) entre dois topos menores (ombros), seguido do rompimento da linha de pescoço.",
+    "confirmation_en": "Neckline break and retest to the downside.",
+    "confirmation_pt": "Rompimento da linha de pescoço e reteste para baixo."
+  },
+  {
+    "id": "inverse_head_and_shoulders",
+    "group": "chart_pattern",
+    "bias": "bullish_reversal",
+    "name_en": "Inverse Head and Shoulders",
+    "name_pt": "Ombro-Cabeça-Ombro Invertido",
+    "description_en": "Three troughs: a lower middle trough (head) between two higher troughs (shoulders), then a break of the neckline upward.",
+    "description_pt": "Três fundos: um fundo mais baixo no meio (cabeça) entre dois fundos mais altos (ombros), seguido do rompimento da linha de pescoço para cima.",
+    "confirmation_en": "Bullish breakout and retest of the neckline.",
+    "confirmation_pt": "Rompimento de alta da linha de pescoço com reteste."
+  },
+
+  {
+    "id": "ascending_triangle",
+    "group": "chart_pattern",
+    "bias": "bullish_continuation",
+    "name_en": "Ascending Triangle",
+    "name_pt": "Triângulo Ascendente",
+    "description_en": "Horizontal resistance with rising lows forming a triangle. Buyers absorb supply at the top.",
+    "description_pt": "Resistência horizontal com fundos ascendentes formando um triângulo. Compradores absorvem a oferta na parte superior.",
+    "confirmation_en": "Bullish breakout above resistance with volume.",
+    "confirmation_pt": "Rompimento de alta acima da resistência com volume."
+  },
+  {
+    "id": "descending_triangle",
+    "group": "chart_pattern",
+    "bias": "bearish_continuation",
+    "name_en": "Descending Triangle",
+    "name_pt": "Triângulo Descendente",
+    "description_en": "Horizontal support with lower highs. Sellers press the price toward a breakdown.",
+    "description_pt": "Suporte horizontal com topos descendentes. Vendedores pressionam o preço para um rompimento para baixo.",
+    "confirmation_en": "Breakdown below support with strong bearish candle.",
+    "confirmation_pt": "Rompimento para baixo do suporte com candle de baixa forte."
+  },
+  {
+    "id": "symmetrical_triangle",
+    "group": "chart_pattern",
+    "bias": "neutral_continuation",
+    "name_en": "Symmetrical Triangle",
+    "name_pt": "Triângulo Simétrico",
+    "description_en": "Series of lower highs and higher lows converging. Energy is being compressed.",
+    "description_pt": "Sequência de topos mais baixos e fundos mais altos convergindo. A energia está sendo comprimida.",
+    "confirmation_en": "Breakout in the direction of the prior trend is more likely.",
+    "confirmation_pt": "Rompimento na direção da tendência anterior é mais provável."
+  },
+
+  {
+    "id": "bull_flag",
+    "group": "chart_pattern",
+    "bias": "bullish_continuation",
+    "name_en": "Bullish Flag",
+    "name_pt": "Bandeira de Alta",
+    "description_en": "Sharp impulsive move up followed by a small downward or sideways channel.",
+    "description_pt": "Movimento impulsivo forte para cima seguido de um pequeno canal de correção para baixo ou lateral.",
+    "confirmation_en": "Breakout above the flag with renewed volume.",
+    "confirmation_pt": "Rompimento acima da bandeira com renovação de volume."
+  },
+  {
+    "id": "bear_flag",
+    "group": "chart_pattern",
+    "bias": "bearish_continuation",
+    "name_en": "Bearish Flag",
+    "name_pt": "Bandeira de Baixa",
+    "description_en": "Sharp move down followed by a small upward or sideways channel.",
+    "description_pt": "Movimento forte de queda seguido de pequeno canal de correção para cima ou lateral.",
+    "confirmation_en": "Breakdown below the flag pattern.",
+    "confirmation_pt": "Rompimento para baixo da bandeira."
+  },
+  {
+    "id": "bull_pennant",
+    "group": "chart_pattern",
+    "bias": "bullish_continuation",
+    "name_en": "Bullish Pennant",
+    "name_pt": "Flâmula de Alta",
+    "description_en": "Strong impulsive up move followed by a tiny triangle consolidation.",
+    "description_pt": "Forte movimento de alta seguido de pequena consolidação em forma de triângulo.",
+    "confirmation_en": "Bullish breakout in the direction of the prior move.",
+    "confirmation_pt": "Rompimento de alta na direção do movimento anterior."
+  },
+  {
+    "id": "bear_pennant",
+    "group": "chart_pattern",
+    "bias": "bearish_continuation",
+    "name_en": "Bearish Pennant",
+    "name_pt": "Flâmula de Baixa",
+    "description_en": "Strong move down followed by small triangle consolidation.",
+    "description_pt": "Forte movimento de queda seguido de pequena consolidação em forma de triângulo.",
+    "confirmation_en": "Breakdown in the direction of the prior down move.",
+    "confirmation_pt": "Rompimento para baixo na direção da queda anterior."
+  },
+  {
+    "id": "cup_and_handle",
+    "group": "chart_pattern",
+    "bias": "bullish_continuation",
+    "name_en": "Cup and Handle",
+    "name_pt": "Xícara com Alça",
+    "description_en": "Rounded bottom forming a cup, followed by a shallow pullback (handle) before breakout.",
+    "description_pt": "Fundo arredondado formando uma xícara, seguido de pequena correção (alça) antes do rompimento.",
+    "confirmation_en": "Bullish breakout above the rim of the cup/handle.",
+    "confirmation_pt": "Rompimento de alta acima da borda da xícara/alça."
+  },
+  {
+    "id": "rising_wedge",
+    "group": "chart_pattern",
+    "bias": "bearish_reversal",
+    "name_en": "Rising Wedge",
+    "name_pt": "Wedge Ascendente",
+    "description_en": "Price rises within converging trendlines; momentum weakens.",
+    "description_pt": "Preço sobe dentro de linhas de tendência convergentes; o momentum enfraquece.",
+    "confirmation_en": "Breakdown below the lower trendline.",
+    "confirmation_pt": "Rompimento para baixo da linha de tendência inferior."
+  },
+  {
+    "id": "falling_wedge",
+    "group": "chart_pattern",
+    "bias": "bullish_reversal",
+    "name_en": "Falling Wedge",
+    "name_pt": "Wedge Descendente",
+    "description_en": "Price falls within converging trendlines; selling pressure is losing strength.",
+    "description_pt": "Preço cai dentro de linhas de tendência convergentes; a pressão vendedora perde força.",
+    "confirmation_en": "Bullish breakout above the upper trendline.",
+    "confirmation_pt": "Rompimento de alta acima da linha de tendência superior."
+  }
+]
