@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>AARON 9 – Painel Institucional em Tempo Real</title>
+  <title>AARON 9 – Painel Institucional em Tempo Real </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
@@ -2851,6 +2851,25 @@ const els = {
   heroSideLabel: document.getElementById('hero-side-label'),
   heroSummary: document.getElementById('hero-summary-text'),
 
+    // --- Cartão de Trade (Citadel) ---
+  tradeCard: document.getElementById('trade-card'),
+  tradeStatusText: document.getElementById('trade-status-text'),
+  tradeSymbol: document.getElementById('trade-symbol'),
+  tradeTimeframe: document.getElementById('trade-timeframe'),
+  tradeMode: document.getElementById('trade-mode'),
+  tradeAgainst: document.getElementById('trade-against'),
+  tradeDirection: document.getElementById('trade-direction'),
+  tradeEntry: document.getElementById('trade-entry'),
+  tradeStop: document.getElementById('trade-stop'),
+  tradeTP1: document.getElementById('trade-tp1'),
+  tradeTP2: document.getElementById('trade-tp2'),
+  tradeSize: document.getElementById('trade-size'),
+  tradeRisk: document.getElementById('trade-risk'),
+  tradeThermo: document.getElementById('trade-thermo'),
+  tradeComment: document.getElementById('trade-comment'),
+  tradeBadge: document.getElementById('trade-badge'),
+
+
   // Estrutura recente (HH / HL / LH / LL)
   structureHHStatus: document.getElementById('structure-hh-status'),
   structureHLStatus: document.getElementById('structure-hl-status'),
@@ -3301,6 +3320,114 @@ function setRiskPill(level) {
 
   el.textContent = txt;
 }
+
+// === ATUALIZAR CARTÃO DE TRADE (CITADEL) ===
+function updateTradeCard(trade) {
+  // se o HTML ainda não carregou, sai
+  if (!els.tradeStatusText) return;
+
+  const t = trade || {};
+  const lang = currentLang === 'en' ? 'en' : 'pt';
+
+  // helpers para pegar PT/EN
+  const pick = (obj, baseKey) => {
+    if (!obj) return null;
+    if (lang === 'en') return obj[baseKey + '_en'] || obj[baseKey];
+    return obj[baseKey + '_pt'] || obj[baseKey];
+  };
+
+  // ===== texto de status (linha de cima) =====
+  const statusText =
+    pick(t, 'status_text') ||
+    pick(t, 'status') ||
+    (lang === 'en'
+      ? '✅ Valid setup | ❌ No trade'
+      : '✅ Setup válido | ❌ Sem trade');
+
+  els.tradeStatusText.textContent = statusText;
+
+  // ===== campos “neutros” (sem idioma) =====
+  safeText(els.tradeSymbol,    t.symbol   || t.ticker || '—');
+  safeText(els.tradeTimeframe, t.timeframe || t.tf    || '—');
+  safeText(els.tradeEntry,     t.entry_text || t.entry_range || t.entry || '—');
+  safeText(els.tradeStop,      t.stop      != null ? t.stop      : '—');
+  safeText(els.tradeTP1,       t.tp1       != null ? t.tp1       : '—');
+  safeText(els.tradeTP2,       t.tp2       != null ? t.tp2       : '—');
+  safeText(els.tradeSize,      t.size_text || t.size || '—');
+  safeText(els.tradeRisk,      t.risk_text || t.risk || '—');
+
+  // ===== textos com PT/EN =====
+  const modeText =
+    pick(t, 'mode') ||
+    (lang === 'en' ? 'Reversal at resistance' : 'Reversão em Resistência');
+
+  const againstText =
+    pick(t, 'against') ||
+    (t.against_text || t.against_pct) ||
+    (lang === 'en' ? '—' : '—');
+
+  const directionText =
+    pick(t, 'direction') ||
+    (lang === 'en' ? 'SELL' : 'VENDA');
+
+  const thermoText =
+    pick(t, 'thermo') ||
+    pick(t, 'thermometer') ||
+    (lang === 'en' ? 'Moderately aggressive' : 'Agressivo moderado');
+
+  const commentText =
+    pick(t, 'comment') ||
+    (lang === 'en'
+      ? 'Statistically strong reversal after false breakout. If you execute, do not move the stop against the position.'
+      : 'Reversão estatisticamente forte após falso rompimento. Se executar, não mova o stop contra a posição.');
+
+  safeText(els.tradeMode,    modeText);
+  safeText(els.tradeAgainst, againstText);
+  safeText(els.tradeDirection, directionText);
+  safeText(els.tradeThermo,  thermoText);
+  safeText(els.tradeComment, commentText);
+
+  // ===== visual do cartão (cor / badge) =====
+  const card  = els.tradeCard;
+  const badge = els.tradeBadge;
+
+  if (card) {
+    card.classList.remove('status-buy', 'status-sell', 'status-wait', 'status-no-trade');
+
+    const side = (t.side || t.direction || '').toString().toLowerCase();
+    const state = (t.state || t.trade_state || '').toString().toLowerCase();
+
+    let modeClass = 'status-wait';
+
+    if (state.includes('no') || state.includes('sem')) {
+      modeClass = 'status-no-trade';
+    } else if (side.includes('buy') || side.includes('compra')) {
+      modeClass = 'status-buy';
+    } else if (side.includes('sell') || side.includes('venda')) {
+      modeClass = 'status-sell';
+    }
+
+    card.classList.add(modeClass);
+  }
+
+  if (badge) {
+    const rawBadge = (t.badge || t.mode_badge || '').toString().toLowerCase();
+
+    let text;
+    if (rawBadge.includes('wait') || rawBadge.includes('aguardar')) {
+      text = 'WAIT';
+    } else if (rawBadge.includes('no')) {
+      text = 'NO TRADE';
+    } else if (rawBadge) {
+      text = rawBadge.toUpperCase();
+    } else {
+      text = 'GO FULL';
+    }
+
+    badge.textContent = text;
+  }
+}
+
 
 function applyHeroDecision(executionText, summaryText) {
   if (!els.heroBlock) return;
@@ -3986,6 +4113,22 @@ async function loadPanel(showSpinner) {
       panel.capital_brain ||
       {};
     updateSizingBrain(sizingBrain);
+
+        // "cérebro" de pullback vindo do n8n
+    const pullbackBrain =
+      panel.pullback_brain ||
+      panel.pullbackBrain ||
+      panel.pullback ||
+      {};
+    updatePullbackBrain(pullbackBrain);
+
+        const sizingBrain =
+      panel.sizing_brain ||
+      panel.sizingBrain ||
+      panel.capital_brain ||
+      {};
+    updateSizingBrain(sizingBrain);
+
 
 
     // Cabeçalho
