@@ -4114,20 +4114,16 @@ async function loadPanel(showSpinner) {
       {};
     updateSizingBrain(sizingBrain);
 
-        // "cérebro" de pullback vindo do n8n
-    const pullbackBrain =
-      panel.pullback_brain ||
-      panel.pullbackBrain ||
-      panel.pullback ||
+            // Cartão de trade (Citadel / cartão atual)
+    const tradeCard =
+      panel.trade_card ||
+      panel.current_trade ||
+      panel.citadel_card ||
+      panel.trade ||
       {};
-    updatePullbackBrain(pullbackBrain);
 
-        const sizingBrain =
-      panel.sizing_brain ||
-      panel.sizingBrain ||
-      panel.capital_brain ||
-      {};
-    updateSizingBrain(sizingBrain);
+    updateTradeCard(tradeCard);
+
 
 
 
