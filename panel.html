@@ -4331,30 +4331,65 @@ async function loadPanel(showSpinner) {
 }
 
 // ====== INICIALIZAÇÃO ======
+// ========= TRADINGVIEW – CHART HELPER =========
+function createTradingViewChart() {
+  // se o container não existe, não faz nada
+  const container = document.getElementById('aaron9-tv-chart');
+  if (!container) return;
+
+  // evita criar o gráfico duas vezes
+  if (window.__aaronTvCreated) return;
+  if (!window.TradingView) return;
+
+  window.__aaronTvCreated = true;
+
+  new TradingView.widget({
+    container_id: 'aaron9-tv-chart',
+    symbol: 'NASDAQ:NVDA',
+    interval: '1',
+    timezone: 'America/New_York',
+    theme: 'dark',
+    style: '1',
+    locale: 'en',
+    hide_side_toolbar: false,
+    allow_symbol_change: true,
+    autosize: true,
+  });
+}
+
+// ========= INICIALIZAÇÃO GERAL =========
 function initAaron9() {
-  // cria o gráfico do TradingView UMA VEZ
-  if (window.TradingView) {
-    new TradingView.widget({
-      container_id: 'aaron9-tv-chart',
+  // 🔹 tenta criar o gráfico logo que a página carrega
+  createTradingViewChart();
 
-      // padrão inicial (pode ser NVDA na NASDAQ)
-      symbol: 'NASDAQ:NVDA',
-      interval: '1',               // começa em 1m
-      timezone: 'America/Denver',  // horário de Utah
-      theme: 'dark',
-      style: '1',
-      autosize: true,
-      locale: 'en',
+  // 🔹 se o tv.js ainda não carregou, fica tentando até carregar
+  const tvCheck = setInterval(() => {
+    if (window.TradingView) {
+      createTradingViewChart();
+      clearInterval(tvCheck);
+    }
+  }, 200);
 
-      withdateranges: false,
-      hide_top_toolbar: false,
-      hide_side_toolbar: false,
-      allow_symbol_change: true,
-
-      disabled_features: [],
-      enabled_features: [],
+  // 🔹 botão ATUALIZAR
+  if (els.btnRefresh) {
+    els.btnRefresh.addEventListener('click', function () {
+      loadPanel(true);
     });
   }
+
+  // 🔹 primeira carga + auto refresh do painel
+  loadPanel(false);
+  setInterval(() => loadPanel(false), REFRESH_MS);
+}
+
+// ========= START =========
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAaron9);
+} else {
+  initAaron9();
+}
+
+
 
   // botão ATUALIZAR
   if (els.btnRefresh) {
