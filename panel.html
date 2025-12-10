@@ -4357,39 +4357,50 @@ function createTradingViewChart() {
   });
 }
 
-// ========= INICIALIZAÇÃO GERAL =========
+// ====== TRADINGVIEW – GRÁFICO ======
+let tvChartCreated = false;
+
+function createTVChart() {
+  const container = document.getElementById('aaron9-tv-chart');
+  if (!container) return;              // se não tiver o container, sai
+  if (tvChartCreated) return;          // evita criar duas vezes
+  if (!window.TradingView) return;     // tv.js ainda não carregou
+
+  tvChartCreated = true;
+
+  new TradingView.widget({
+    container_id: 'aaron9-tv-chart',
+
+    // padrão inicial (pode ser NVDA na NASDAQ)
+    symbol: 'NASDAQ:NVDA',
+    interval: '1',               // começa em 1m
+    timezone: 'America/Denver',  // horário de Utah
+    theme: 'dark',
+    style: '1',
+    autosize: true,
+    locale: 'en',
+
+    withdateranges: false,
+    hide_top_toolbar: false,
+    hide_side_toolbar: false,
+    allow_symbol_change: true,
+
+    disabled_features: [],
+    enabled_features: [],
+  });
+}
+
+// ====== INICIALIZAÇÃO ======
 function initAaron9() {
-  // 🔹 tenta criar o gráfico logo que a página carrega
-  createTradingViewChart();
-
-  // 🔹 se o tv.js ainda não carregou, fica tentando até carregar
-  const tvCheck = setInterval(() => {
-    if (window.TradingView) {
-      createTradingViewChart();
-      clearInterval(tvCheck);
-    }
-  }, 200);
-
-  // 🔹 botão ATUALIZAR
-  if (els.btnRefresh) {
-    els.btnRefresh.addEventListener('click', function () {
-      loadPanel(true);
+  // garante que o gráfico é criado quando o TradingView estiver pronto
+  if (window.TradingView && window.TradingView.onready) {
+    window.TradingView.onready(function () {
+      createTVChart();
     });
+  } else {
+    // fallback – tenta criar direto
+    createTVChart();
   }
-
-  // 🔹 primeira carga + auto refresh do painel
-  loadPanel(false);
-  setInterval(() => loadPanel(false), REFRESH_MS);
-}
-
-// ========= START =========
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAaron9);
-} else {
-  initAaron9();
-}
-
-
 
   // botão ATUALIZAR
   if (els.btnRefresh) {
@@ -4403,22 +4414,6 @@ if (document.readyState === 'loading') {
   setInterval(() => loadPanel(false), REFRESH_MS);
 }
 
-
-function initAaron9() {
-  // garante que o gráfico será criado assim que o TradingView estiver pronto
-  createTVChart();
-
-  // botão ATUALIZAR
-  if (els.btnRefresh) {
-    els.btnRefresh.addEventListener('click', function () {
-      loadPanel(true);
-    });
-  }
-
-  // primeira carga + auto refresh do painel
-  loadPanel(false);
-  setInterval(() => loadPanel(false), REFRESH_MS);
-}
 
 
 
