@@ -1776,51 +1776,7 @@
 /* ================== FIM GARIMPO DE HOJE ================== */
 
 
-  
-    /* === SIZING BRAIN – REFERÊNCIA (aba retrátil) === */
-    .ref-accordion{
-      margin-top: 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(31,41,55,0.95);
-      background: rgba(2,6,23,0.55);
-      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.55);
-      overflow: hidden;
-    }
-    .ref-accordion > summary{
-      list-style: none;
-      cursor: pointer;
-      padding: 10px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      color: var(--text-main);
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.10), transparent 60%);
-      border-bottom: 1px solid rgba(148,163,184,0.14);
-    }
-    .ref-accordion > summary::-webkit-details-marker{ display:none; }
-    .ref-accordion .ref-hint{
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: none;
-      color: var(--text-soft);
-    }
-    .ref-body{
-      padding: 12px;
-    }
-    .ref-img{
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      border: 1px solid rgba(148,163,184,0.18);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.55);
-      display: block;
-    }
-
-</style>
+  </style>
 </head>
 
 <body>
@@ -2450,19 +2406,6 @@
       trades A+. Acima disso já entra zona de ganância; abaixo disso ainda é um
       dia ok se você seguiu o plano.
     </div>
-  
-    <!-- ====== REFERÊNCIA VISUAL (aba retrátil) ====== -->
-    <details class="ref-accordion" id="sizing-reference">
-      <summary>
-        <span data-i18n="ref.title">Referência visual</span>
-        <span class="ref-hint" data-i18n="ref.hint">Clique para abrir</span>
-      </summary>
-      <div class="ref-body">
-        <!-- Coloque sua imagem no repo: /assets/sizing-reference.png -->
-        <img class="ref-img" src="assets/sizing-reference.png" alt="Sizing Brain reference" />
-      </div>
-    </details>
-
   </div>
 </section>
 
@@ -4179,163 +4122,6 @@ async function loadPanel(showSpinner) {
       panel.trade ||
       {};
 
-
-    // =======================================================
-    // NOVOS CAMPOS (AARON 10): Type of Trade · Premarket · Garimpo
-    // (não muda aparência — só alimenta os blocos existentes)
-    // =======================================================
-
-    // 1) Type of Trade → cai no campo "Modo" do Trade Card (se o backend não mandar mode)
-    const tradeTypeRaw =
-      panel.trade_type ||
-      panel.type_of_trade ||
-      panel.trade_style ||
-      panel.tradeStyle ||
-      null;
-
-    if (tradeTypeRaw && (!tradeCard.mode && !tradeCard.mode_pt && !tradeCard.mode_en)) {
-      if (typeof tradeTypeRaw === 'object') {
-        tradeCard.mode_pt =
-          tradeTypeRaw.pt ||
-          tradeTypeRaw.pt_br ||
-          tradeTypeRaw.label_pt ||
-          tradeTypeRaw.text_pt ||
-          tradeTypeRaw.value_pt ||
-          tradeTypeRaw.value ||
-          '';
-        tradeCard.mode_en =
-          tradeTypeRaw.en ||
-          tradeTypeRaw.label_en ||
-          tradeTypeRaw.text_en ||
-          tradeTypeRaw.value_en ||
-          tradeTypeRaw.value ||
-          '';
-        tradeCard.mode = tradeCard.mode_pt || tradeCard.mode_en || tradeCard.mode;
-      } else {
-        tradeCard.mode_pt = String(tradeTypeRaw);
-        tradeCard.mode_en = String(tradeTypeRaw);
-        tradeCard.mode = String(tradeTypeRaw);
-      }
-    }
-
-    // 2) Premarket / Day before / Volume → entra como linhas extras no "Contexto"
-    const premarketRaw =
-      panel.premarket_context ||
-      panel.pre_market_context ||
-      panel.premarket ||
-      panel.pre_market ||
-      null;
-
-    const dayBeforeRaw =
-      panel.day_before_analysis ||
-      panel.day_before_context ||
-      panel.prev_day_context ||
-      panel.previous_day_context ||
-      panel.day_before ||
-      null;
-
-    const volPremarket =
-      panel.premarket_volume_ratio ??
-      panel.volume_premarket_ratio ??
-      (typeof premarketRaw === 'object' ? (premarketRaw.volume_ratio ?? premarketRaw.vol_ratio) : null);
-
-    const volOpen =
-      panel.open_volume_ratio ??
-      panel.volume_open_ratio ??
-      (typeof premarketRaw === 'object' ? (premarketRaw.open_volume_ratio ?? premarketRaw.open_vol_ratio) : null);
-
-    const pmPt =
-      typeof premarketRaw === 'object'
-        ? (premarketRaw.text_pt || premarketRaw.pt || premarketRaw.comment_pt || premarketRaw.comment || '')
-        : (premarketRaw ? String(premarketRaw) : '');
-
-    const pmEn =
-      typeof premarketRaw === 'object'
-        ? (premarketRaw.text_en || premarketRaw.en || premarketRaw.comment_en || premarketRaw.comment || '')
-        : (premarketRaw ? String(premarketRaw) : '');
-
-    const dayPt =
-      typeof dayBeforeRaw === 'object'
-        ? (dayBeforeRaw.text_pt || dayBeforeRaw.pt || dayBeforeRaw.comment_pt || dayBeforeRaw.comment || '')
-        : (dayBeforeRaw ? String(dayBeforeRaw) : '');
-
-    const dayEn =
-      typeof dayBeforeRaw === 'object'
-        ? (dayBeforeRaw.text_en || dayBeforeRaw.en || dayBeforeRaw.comment_en || dayBeforeRaw.comment || '')
-        : (dayBeforeRaw ? String(dayBeforeRaw) : '');
-
-    let extraContext = '';
-    if (currentLang === 'en') {
-      if (pmEn) extraContext += `Premarket: ${pmEn}\n`;
-      if (dayEn) extraContext += `Prev day: ${dayEn}\n`;
-      if (volPremarket != null) extraContext += `Premarket vol: ${volPremarket}\n`;
-      if (volOpen != null) extraContext += `Open vol: ${volOpen}\n`;
-    } else {
-      if (pmPt) extraContext += `Pré-market: ${pmPt}\n`;
-      if (dayPt) extraContext += `Dia anterior: ${dayPt}\n`;
-      if (volPremarket != null) extraContext += `Volume pré-market: ${volPremarket}\n`;
-      if (volOpen != null) extraContext += `Volume na abertura: ${volOpen}\n`;
-    }
-    panel.__extra_context = extraContext.trim();
-
-    // 3) Garimpo de Hoje → alimenta o banner do topo (se o backend mandar)
-    const garimpo =
-      panel.garimpo_today ||
-      panel.garimpo ||
-      panel.garimpo_pick ||
-      panel.garimpoTop ||
-      null;
-
-    if (garimpo && typeof garimpo === 'object' && Object.keys(garimpo).length) {
-      const gTicker = garimpo.ticker || garimpo.symbol || garimpo.asset || '—';
-
-      const gProfilePt =
-        garimpo.profile_pt ||
-        garimpo.trade_type_pt ||
-        garimpo.type_pt ||
-        garimpo.profile ||
-        garimpo.trade_type ||
-        '';
-
-      const gProfileEn =
-        garimpo.profile_en ||
-        garimpo.trade_type_en ||
-        garimpo.type_en ||
-        garimpo.profile ||
-        garimpo.trade_type ||
-        gProfilePt ||
-        '';
-
-      const gGap = garimpo.gap_pct || garimpo.gapPct || garimpo.gap || '—';
-      const gPm = garimpo.premarket_ratio || garimpo.preMarketRatio || garimpo.pm_ratio || garimpo.premarketVolRatio || '—';
-      const gAtr = garimpo.atr_pct || garimpo.atrPct || garimpo.atr || '—';
-      const gConf = garimpo.confidence || garimpo.confidence_pct || garimpo.confidencePct || garimpo.score || '—';
-
-      const fmtRatio = (v) => {
-        if (v == null) return '—';
-        if (typeof v === 'number') return v.toFixed(2) + '×';
-        return String(v);
-      };
-      const fmtPercent = (v) => {
-        if (v == null) return '—';
-        if (typeof v === 'number') return v.toFixed(1) + '%';
-        return String(v);
-      };
-
-      garimpoTodayData = {
-        ticker: gTicker,
-        profile: { pt: gProfilePt || '—', en: gProfileEn || '—' },
-        gapPct: fmtPercent(gGap),
-        preMarketRatio: fmtRatio(gPm),
-        atrPct: fmtPercent(gAtr),
-        confidence: fmtPercent(gConf),
-      };
-
-      if (typeof updateGarimpoTodayCard === 'function') {
-        updateGarimpoTodayCard(garimpoTodayData);
-      }
-    }
-
     updateTradeCard(tradeCard);
 
 
@@ -4514,20 +4300,10 @@ async function loadPanel(showSpinner) {
       aiAdvisor.motivo ||
       '—';
 
-    let contextComment =
+    const contextComment =
       panel.context_comment ||
       panel.painel_terminal ||
       '—';
-
-    // adiciona Premarket / Dia anterior / Volume (se vierem do JSON)
-    const __extraCtx = panel.__extra_context;
-    if (__extraCtx) {
-      const _base = (contextComment || '');
-      const hasPm = _base.includes('Pré-market') || _base.includes('Premarket');
-      if (!contextComment || contextComment === '—') contextComment = __extraCtx;
-      else if (!hasPm) contextComment = contextComment + '
-' + __extraCtx;
-    }
 
     const executionPlan =
       panel.execution_plan ||
@@ -4721,11 +4497,6 @@ const I18N = {
     'trade_card.comment_label': 'Comentário do AARON:',
 
 
-
-
-    // REFERÊNCIA
-    'ref.title': 'Referência visual',
-    'ref.hint': 'Clique para abrir',
   },
 
   en: {
@@ -4805,11 +4576,6 @@ const I18N = {
     'trade_card.comment_label': 'AARON\'s comment:',
 
 
-
-
-    // REFERENCE
-    'ref.title': 'Visual reference',
-    'ref.hint': 'Click to open',
   },
 };
 
@@ -4868,13 +4634,6 @@ function applyLang(lang) {
   if (typeof updateGarimpoTodayCard === 'function' &&
       typeof garimpoTodayData !== 'undefined') {
     updateGarimpoTodayCard(garimpoTodayData);
-  }
-
-  // quando trocar PT/EN, recarrega os dados no idioma atual (sem mexer no layout)
-  if (window.__aaronLangInitDone) {
-    if (typeof loadPanel === 'function') loadPanel(false);
-  } else {
-    window.__aaronLangInitDone = true;
   }
 }
 
