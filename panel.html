@@ -4270,8 +4270,17 @@ function updatePatternReference(panel, patterns) {
   if (!img) img = 'padrao_ref.png';
 
   // se não é URL, assume que é arquivo local dentro do repo
-  const isUrl = /^https?:\/\//i.test(img);
-  const finalSrcBase = isUrl ? img : `assets/patterns/${img}`;
+const isUrl = /^https?:\/\//i.test(img);
+
+// se vier "assets/patterns/..." no JSON, limpa o prefixo pra não duplicar
+const cleanFile = String(img).replace(/^\/?assets\/patterns\//i, '');
+
+// encodeURIComponent resolve espaço, parênteses, etc.
+// e usamos caminho absoluto (mais robusto no Vercel)
+const finalSrcBase = isUrl
+  ? img
+  : `/assets/patterns/${encodeURIComponent(cleanFile)}`;
+
 
   // cache-buster: força atualizar se você trocar a imagem e o browser cache “segurar”
   const finalSrc = `${finalSrcBase}${finalSrcBase.includes('?') ? '&' : '?'}t=${Date.now()}`;
