@@ -2506,25 +2506,24 @@
 <section class="card ref-card" id="pattern-reference-card">
   <div class="card-header">
     <div>
-      <div class="card-title">Referência de Padrões</div>
-      <div class="card-subtitle">Abra para ver a imagem/guia rápido do padrão.</div>
+      <div class="card-title">Referência de Padrão</div>
+      <div class="card-subtitle">Abra para ver a imagem que o THE EYE está usando.</div>
     </div>
     <span class="pill neutral">REF</span>
   </div>
 
-  <details class="ref-details">
+  <details class="ref-details" id="refDetails">
     <summary class="ref-summary">
       <span class="ref-summary-left">
-        <span class="ref-summary-title">Abrir referência</span>
+        <span class="ref-summary-title" id="refSummaryTitle">Abrir referência</span>
         <span class="ref-summary-mini" id="refPatternMini">—</span>
       </span>
-      <span class="ref-summary-right">Abrir</span>
+      <span class="ref-summary-right" id="refSummaryRight">Abrir</span>
     </summary>
 
     <div class="ref-body">
       <div class="ref-grid">
         <div class="ref-img-wrap">
-          <!-- IMPORTANTE: coloque sua imagem nesse path (ver passo 4) -->
           <img
             id="refPatternImg"
             src="assets/patterns/padrao_ref.png"
@@ -2546,7 +2545,7 @@
 
           <div class="ref-line">
             <span class="muted">Notas:</span>
-            <span id="refPatternNotes">Use isso como referência visual. Depois a gente pluga o padrão vindo do JSON.</span>
+            <span id="refPatternNotes">—</span>
           </div>
 
           <a
@@ -2564,6 +2563,7 @@
   </details>
 </section>
 <!-- ====== /ABA DE REFERÊNCIA ====== -->
+
 
 
 
@@ -2998,6 +2998,18 @@ const els = {
   executionText: document.getElementById('execution-text'),
   directionDayText: document.getElementById('direction-day-text'),
   directionNowText: document.getElementById('direction-now-text'),
+
+    // Pattern Reference (ABA)
+  refDetails: document.getElementById('refDetails'),
+  refSummaryTitle: document.getElementById('refSummaryTitle'),
+  refSummaryRight: document.getElementById('refSummaryRight'),
+  refPatternMini: document.getElementById('refPatternMini'),
+  refPatternImg: document.getElementById('refPatternImg'),
+  refPatternLabel: document.getElementById('refPatternLabel'),
+  refPatternSetup: document.getElementById('refPatternSetup'),
+  refPatternNotes: document.getElementById('refPatternNotes'),
+  refPatternLink: document.getElementById('refPatternLink'),
+
 
   // HERO / MODO CEGO
   heroBlock: document.getElementById('hero-block'),
@@ -4230,6 +4242,63 @@ function updateSizingBrain(data) {
   }
 }
 
+function updatePatternReference(panel, patterns) {
+  // Se a aba não existe no HTML, não faz nada (evita quebrar)
+  if (!els.refPatternImg || !els.refPatternLabel) return;
+
+  // Onde vamos procurar os dados:
+  // 1) panel.pattern_reference (ideal)
+  // 2) patterns.day (fallback do que você já tem)
+  const ref = panel.pattern_reference || panel.pattern_ref || {};
+  const day = (patterns && patterns.day) ? patterns.day : {};
+
+  const namePt = ref.name_pt || ref.name || panel.pattern_day || day.name || '—';
+  const nameEn = ref.name_en || ref.name || panel.pattern_day || day.name || '—';
+
+  const setupPt = ref.setup_pt || ref.setup || day.desc || '—';
+  const setupEn = ref.setup_en || ref.setup || day.desc || '—';
+
+  const notesPt = ref.notes_pt || ref.notes || '—';
+  const notesEn = ref.notes_en || ref.notes || '—';
+
+  // imagem pode vir como:
+  // - URL completa: https://...
+  // - nome do arquivo: bull_flag.png  (vamos buscar em assets/patterns/)
+  let img = ref.image_url || ref.image || ref.img || '';
+
+  // fallback: se não veio nada, usa a imagem default
+  if (!img) img = 'padrao_ref.png';
+
+  // se não é URL, assume que é arquivo local dentro do repo
+  const isUrl = /^https?:\/\//i.test(img);
+  const finalSrcBase = isUrl ? img : `assets/patterns/${img}`;
+
+  // cache-buster: força atualizar se você trocar a imagem e o browser cache “segurar”
+  const finalSrc = `${finalSrcBase}${finalSrcBase.includes('?') ? '&' : '?'}t=${Date.now()}`;
+
+  const label = (currentLang === 'en') ? nameEn : namePt;
+  const setup = (currentLang === 'en') ? setupEn : setupPt;
+  const notes = (currentLang === 'en') ? notesEn : notesPt;
+
+  // Texto mini na linha do summary
+  if (els.refPatternMini) els.refPatternMini.textContent = label;
+
+  // Campos
+  els.refPatternLabel.textContent = label;
+  if (els.refPatternSetup) els.refPatternSetup.textContent = setup;
+  if (els.refPatternNotes) els.refPatternNotes.textContent = notes;
+
+  // Imagem + link
+  els.refPatternImg.src = finalSrc;
+  if (els.refPatternLink) els.refPatternLink.href = finalSrcBase;
+
+  // Troca “Abrir/Fechar” no summary (sem CSS hack)
+  if (els.refDetails && els.refSummaryRight) {
+    els.refSummaryRight.textContent = els.refDetails.open
+      ? (currentLang === 'en' ? 'Close' : 'Fechar')
+      : (currentLang === 'en' ? 'Open' : 'Abrir');
+  }
+}
 
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
@@ -4376,6 +4445,22 @@ async function loadPanel(showSpinner) {
         micro.direcao,
       panel.trend_now_label
     );
+
+        // Atualiza aba de referência (imagem + textos)
+    updatePatternReference(panel, patterns);
+
+    // Listener do abre/fecha (pra atualizar o texto "Abrir/Fechar")
+    if (els.refDetails && !els.refDetails.__bound) {
+      els.refDetails.__bound = true;
+      els.refDetails.addEventListener('toggle', () => {
+        if (els.refSummaryRight) {
+          els.refSummaryRight.textContent = els.refDetails.open
+            ? (currentLang === 'en' ? 'Close' : 'Fechar')
+            : (currentLang === 'en' ? 'Open' : 'Abrir');
+        }
+      });
+    }
+
 
     // =======================================================
     // TEXTO DINÂMICO: DIREÇÃO DO DIA / 1–3 CANDLES
