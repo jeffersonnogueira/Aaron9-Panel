@@ -2526,7 +2526,7 @@
         <div class="ref-img-wrap">
           <img
             id="refPatternImg"
-            src="/assets/patterns/padrao_ref.png"
+            src="assets/patterns/F%20(1).jpg"
             alt="Referência do padrão"
             loading="lazy"
           />
@@ -2551,7 +2551,7 @@
           <a
             id="refPatternLink"
             class="ref-link"
-            href="/assets/patterns/padrao_ref.png"
+            href="assets/patterns/F%20(1).jpg"
             target="_blank"
             rel="noopener"
           >
@@ -4242,6 +4242,52 @@ function updateSizingBrain(data) {
   }
 }
 
+function uniq(list) {
+  return Array.from(new Set(list.filter(Boolean)));
+}
+
+function buildPatternFileCandidates(file) {
+  const f = String(file || '').trim();
+  if (!f) return [];
+
+  const cand = [f];
+
+  // Caso clássico: JSON = "F(1).jpg" mas arquivo = "F (1).jpg"
+  if (/^F\(\d+\)\./i.test(f)) cand.push(f.replace(/^F\(/i, 'F ('));
+  if (/^F \(\d+\)\./i.test(f)) cand.push(f.replace(/^F \(/i, 'F('));
+
+  // Tentativas genéricas: com e sem espaço antes do "("
+  if (f.includes('(')) cand.push(f.replace('(', ' ('));
+  if (f.includes(' (')) cand.push(f.replace(' (', '('));
+
+  return uniq(cand);
+}
+
+function setRefImageWithFallback(file) {
+  if (!els.refPatternImg) return;
+
+  const candidates = buildPatternFileCandidates(file);
+  if (!candidates.length) return;
+
+  let idx = 0;
+
+  const tryLoad = () => {
+    const base = encodeURI(`assets/patterns/${candidates[idx]}`);
+    const bust = `${base}${base.includes('?') ? '&' : '?'}t=${Date.now()}`;
+
+    els.refPatternImg.src = bust;
+    if (els.refPatternLink) els.refPatternLink.href = base;
+  };
+
+  els.refPatternImg.onerror = () => {
+    idx += 1;
+    if (idx < candidates.length) tryLoad();
+  };
+
+  tryLoad();
+}
+
+
 function updatePatternReference(panel, patterns) {
   // Se a aba não existe no HTML, não faz nada (evita quebrar)
   if (!els.refPatternImg || !els.refPatternLabel) return;
@@ -4264,42 +4310,29 @@ function updatePatternReference(panel, patterns) {
   // imagem pode vir como:
   // - URL completa: https://...
   // - nome do arquivo: bull_flag.png  (vamos buscar em assets/patterns/)
-  let img = ref.image_url || ref.image || ref.img || '';
+  let img =
+  ref.image_url ||
+  ref.image ||
+  ref.img ||
+  ref.file ||
+  ref.filename ||
+  panel.pattern_image ||
+  panel.pattern_img ||
+  '';
 
-  // fallback: se não veio nada, usa a imagem default
-  if (!img) img = 'padrao_ref.png';
+if (!img) img = 'F(1).jpg'; // fallback no teu padrão do JSON (sem espaço)
 
-  // se não é URL, assume que é arquivo local dentro do repo
 const isUrl = /^https?:\/\//i.test(img);
 
-// se vier "assets/patterns/..." no JSON, limpa o prefixo pra não duplicar
-const cleanFile = String(img).replace(/^\/?assets\/patterns\//i, '');
-
-// encodeURIComponent resolve espaço, parênteses, etc.
-// e usamos caminho absoluto (mais robusto no Vercel)
-const finalSrcBase = isUrl
-  ? img
-  : `/assets/patterns/${encodeURIComponent(cleanFile)}`;
-
-
-  // cache-buster: força atualizar se você trocar a imagem e o browser cache “segurar”
-  const finalSrc = `${finalSrcBase}${finalSrcBase.includes('?') ? '&' : '?'}t=${Date.now()}`;
-
-  const label = (currentLang === 'en') ? nameEn : namePt;
-  const setup = (currentLang === 'en') ? setupEn : setupPt;
-  const notes = (currentLang === 'en') ? notesEn : notesPt;
-
-  // Texto mini na linha do summary
-  if (els.refPatternMini) els.refPatternMini.textContent = label;
-
-  // Campos
-  els.refPatternLabel.textContent = label;
-  if (els.refPatternSetup) els.refPatternSetup.textContent = setup;
-  if (els.refPatternNotes) els.refPatternNotes.textContent = notes;
-
-  // Imagem + link
+if (isUrl) {
+  const finalSrc = `${img}${img.includes('?') ? '&' : '?'}t=${Date.now()}`;
   els.refPatternImg.src = finalSrc;
-  if (els.refPatternLink) els.refPatternLink.href = finalSrcBase;
+  if (els.refPatternLink) els.refPatternLink.href = img;
+} else {
+  // aqui é o pulo do gato: tenta "F(1).jpg" e se falhar tenta "F (1).jpg"
+  setRefImageWithFallback(img);
+}
+
 
   // Troca “Abrir/Fechar” no summary (sem CSS hack)
   if (els.refDetails && els.refSummaryRight) {
