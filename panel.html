@@ -1775,6 +1775,99 @@
 }
 /* ================== FIM GARIMPO DE HOJE ================== */
 
+/* ====== PATTERN REFERENCE (ABAIXO DO SIZING BRAIN) ====== */
+.ref-card { margin-top: 14px; }
+
+.ref-details { margin-top: 8px; }
+
+.ref-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(10, 18, 35, 0.55);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ref-summary::-webkit-details-marker { display: none; }
+
+.ref-summary-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ref-summary-title {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.ref-summary-mini {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.ref-summary-right {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(2, 6, 23, 0.35);
+  opacity: 0.9;
+}
+
+.ref-details[open] .ref-summary-right { content: "Fechar"; }
+
+.ref-body { padding-top: 12px; }
+
+.ref-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 980px) {
+  .ref-grid { grid-template-columns: 1fr; }
+}
+
+.ref-img-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(2, 6, 23, 0.55);
+}
+
+.ref-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.ref-text {
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(2, 6, 23, 0.35);
+  padding: 12px;
+}
+
+.ref-line { margin-bottom: 10px; }
+
+.ref-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  text-decoration: none;
+}
+/* ====== /PATTERN REFERENCE ====== */
 
   </style>
 </head>
@@ -2408,6 +2501,70 @@
     </div>
   </div>
 </section>
+
+<!-- ====== ABA DE REFERÊNCIA (ABAIXO DO SIZING BRAIN) ====== -->
+<section class="card ref-card" id="pattern-reference-card">
+  <div class="card-header">
+    <div>
+      <div class="card-title">Referência de Padrões</div>
+      <div class="card-subtitle">Abra para ver a imagem/guia rápido do padrão.</div>
+    </div>
+    <span class="pill neutral">REF</span>
+  </div>
+
+  <details class="ref-details">
+    <summary class="ref-summary">
+      <span class="ref-summary-left">
+        <span class="ref-summary-title">Abrir referência</span>
+        <span class="ref-summary-mini" id="refPatternMini">—</span>
+      </span>
+      <span class="ref-summary-right">Abrir</span>
+    </summary>
+
+    <div class="ref-body">
+      <div class="ref-grid">
+        <div class="ref-img-wrap">
+          <!-- IMPORTANTE: coloque sua imagem nesse path (ver passo 4) -->
+          <img
+            id="refPatternImg"
+            src="assets/patterns/padrao_ref.png"
+            alt="Referência do padrão"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="ref-text">
+          <div class="ref-line">
+            <span class="muted">Padrão:</span>
+            <strong id="refPatternLabel">—</strong>
+          </div>
+
+          <div class="ref-line">
+            <span class="muted">Setup:</span>
+            <span id="refPatternSetup">—</span>
+          </div>
+
+          <div class="ref-line">
+            <span class="muted">Notas:</span>
+            <span id="refPatternNotes">Use isso como referência visual. Depois a gente pluga o padrão vindo do JSON.</span>
+          </div>
+
+          <a
+            id="refPatternLink"
+            class="ref-link"
+            href="assets/patterns/padrao_ref.png"
+            target="_blank"
+            rel="noopener"
+          >
+            Ver imagem em tamanho real
+          </a>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+<!-- ====== /ABA DE REFERÊNCIA ====== -->
+
 
 
 
