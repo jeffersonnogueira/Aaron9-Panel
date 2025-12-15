@@ -2661,6 +2661,12 @@
           <span id="trade-status-text">✅ Setup válido | ❌ Sem trade</span>
         </div>
 
+        <div class="trade-line" id="trade-stats-top-line" style="display:none;">
+  <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+  <span id="trade-stats-top">—</span>
+</div>
+
+
         <div class="trade-line">
           <strong data-i18n="trade_card.asset_label">Ativo:</strong>
           <span id="trade-symbol">NVDA</span>
@@ -3053,6 +3059,8 @@ const els = {
     // --- Cartão de Trade (Citadel) ---
   tradeCard: document.getElementById('trade-card'),
   tradeStatusText: document.getElementById('trade-status-text'),
+  tradeStatsTopLine: document.getElementById('trade-stats-top-line'),
+  tradeStatsTop: document.getElementById('trade-stats-top'),
   tradeStats: document.getElementById('trade-stats'),
   tradeSymbol: document.getElementById('trade-symbol'),
   tradeTimeframe: document.getElementById('trade-timeframe'),
@@ -3669,6 +3677,15 @@ const statsText =
   '—';
 
 safeText(els.tradeStats, statsText, '—');
+
+safeText(els.tradeStatsTop, statsText, '—');
+
+if (els.tradeStatsTopLine) {
+  const s = (statsText || '').trim();
+  const hasStats = s && s !== '—' && s !== '-';
+  els.tradeStatsTopLine.style.display = hasStats ? '' : 'none';
+}
+
 
 // --- comentário: só título bold + linhas organizadas; remove estatística do comentário ---
 setFormattedComment(els.tradeComment, parsed.comment || commentText);
