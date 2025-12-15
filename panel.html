@@ -4456,17 +4456,16 @@ function setRefImageWithFallback(file) {
 
 
 function updatePatternReference(panel, patterns) {
-  // Se a aba não existe no HTML, não faz nada (evita quebrar)
   if (!els.refPatternImg || !els.refPatternLabel) return;
 
-  // Onde vamos procurar os dados:
-  // 1) panel.pattern_reference (ideal)
-  // 2) patterns.day (fallback do que você já tem)
+  const trade = panel.trade_card || panel.tradeCard || {};
   const ref = panel.pattern_reference || panel.pattern_ref || {};
   const day = (patterns && patterns.day) ? patterns.day : {};
 
-  const namePt = ref.name_pt || ref.name || panel.pattern_day || day.name || '—';
-  const nameEn = ref.name_en || ref.name || panel.pattern_day || day.name || '—';
+  const pid = trade.pattern_id || ref.id || '';
+
+  const namePt = ref.name_pt || ref.name || (pid ? `Padrão ${pid}` : '') || panel.pattern_day || day.name || '—';
+  const nameEn = ref.name_en || ref.name || (pid ? `Pattern ${pid}` : '') || panel.pattern_day || day.name || '—';
 
   const setupPt = ref.setup_pt || ref.setup || day.desc || '—';
   const setupEn = ref.setup_en || ref.setup || day.desc || '—';
@@ -4474,40 +4473,45 @@ function updatePatternReference(panel, patterns) {
   const notesPt = ref.notes_pt || ref.notes || '—';
   const notesEn = ref.notes_en || ref.notes || '—';
 
-  // imagem pode vir como:
-  // - URL completa: https://...
-  // - nome do arquivo: bull_flag.png  (vamos buscar em assets/patterns/)
+  // imagem: prioriza o que veio do n8n; senão monta pelo pattern_id
   let img =
-  ref.image_url ||
-  ref.image ||
-  ref.img ||
-  ref.file ||
-  ref.filename ||
-  panel.pattern_image ||
-  panel.pattern_img ||
-  '';
+    ref.image_url ||
+    ref.image ||
+    ref.img ||
+    ref.file ||
+    ref.filename ||
+    panel.pattern_image ||
+    panel.pattern_img ||
+    trade.pattern_image ||
+    (pid ? pid : '') ||
+    '';
 
-if (!img) img = 'F(1).jpg'; // fallback no teu padrão do JSON (sem espaço)
+  if (!img) img = 'F(1).jpg';
 
-const isUrl = /^https?:\/\//i.test(img);
+  // textos
+  if (els.refPatternLabel) els.refPatternLabel.textContent = (currentLang === 'en') ? nameEn : namePt;
+  if (els.refPatternSetup) els.refPatternSetup.textContent = (currentLang === 'en') ? setupEn : setupPt;
+  if (els.refPatternNotes) els.refPatternNotes.textContent = (currentLang === 'en') ? notesEn : notesPt;
+  if (els.refPatternMini) els.refPatternMini.textContent = (currentLang === 'en') ? nameEn : namePt;
 
-if (isUrl) {
-  const finalSrc = `${img}${img.includes('?') ? '&' : '?'}t=${Date.now()}`;
-  els.refPatternImg.src = finalSrc;
-  if (els.refPatternLink) els.refPatternLink.href = img;
-} else {
-  // aqui é o pulo do gato: tenta "F(1).jpg" e se falhar tenta "F (1).jpg"
-  setRefImageWithFallback(img);
-}
+  const isUrl = /^https?:\/\//i.test(img);
 
+  if (isUrl) {
+    const finalSrc = `${img}${img.includes('?') ? '&' : '?'}t=${Date.now()}`;
+    els.refPatternImg.src = finalSrc;
+    if (els.refPatternLink) els.refPatternLink.href = img;
+  } else {
+    setRefImageWithFallback(img);
+  }
 
-  // Troca “Abrir/Fechar” no summary (sem CSS hack)
+  // Abrir/Fechar
   if (els.refDetails && els.refSummaryRight) {
     els.refSummaryRight.textContent = els.refDetails.open
       ? (currentLang === 'en' ? 'Close' : 'Fechar')
       : (currentLang === 'en' ? 'Open' : 'Abrir');
   }
 }
+
 
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
