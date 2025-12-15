@@ -709,9 +709,33 @@
 
 .status-hero-main {
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 500; /* <-- aqui para de deixar tudo bold */
   color: #e5e7eb;
 }
+
+/* mantém os labels (strong) com destaque */
+.status-hero-main strong {
+  font-weight: 800;
+}
+
+/* Comentário do AARON formatado em linhas */
+.comment-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.comment-line {
+  font-weight: 500;
+  line-height: 1.35;
+  font-size: 0.92rem;
+}
+
+.comment-line strong {
+  font-weight: 800;
+}
+
 
 .status-hero-sub {
   font-size: 0.8rem;
@@ -2646,6 +2670,12 @@
         </div>
 
         <div class="trade-line">
+          <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+          <span id="trade-stats">—</span>
+        </div>
+
+
+        <div class="trade-line">
           <strong data-i18n="trade_card.mode_label">Modo:</strong>
           <span id="trade-mode">Reversão em Resistência</span>
         </div>
@@ -3023,6 +3053,7 @@ const els = {
     // --- Cartão de Trade (Citadel) ---
   tradeCard: document.getElementById('trade-card'),
   tradeStatusText: document.getElementById('trade-status-text'),
+  tradeStats: document.getElementById('trade-stats'),
   tradeSymbol: document.getElementById('trade-symbol'),
   tradeTimeframe: document.getElementById('trade-timeframe'),
   tradeMode: document.getElementById('trade-mode'),
@@ -3427,6 +3458,77 @@ function safeText(el, value, fallback = '—') {
       : String(value);
 }
 
+function escapeHTML(str) {
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+// Puxa "Estatística: ...." de dentro do comentário (PT/EN) e remove do comentário
+function splitStatsFromComment(raw) {
+  const out = { stats: '', comment: '' };
+  if (raw === undefined || raw === null) return out;
+
+  let s = String(raw);
+
+  // remove aspas bonitas do começo/fim se vierem
+  s = s.replace(/^[“"]+/, '').replace(/[”"]+$/, '');
+
+  const rx = /(?:^|\n)\s*(estat[ií]stica|statistics|stats)\s*:\s*(.+?)(?=\n|$)/i;
+  const m = s.match(rx);
+
+  if (m) {
+    out.stats = (m[2] || '').trim();
+    s = s.replace(rx, '').trim();
+  }
+
+  out.comment = s.trim();
+  return out;
+}
+
+function formatCommentToHTML(raw) {
+  if (raw === undefined || raw === null) return '<div class="comment-lines"><div class="comment-line">—</div></div>';
+
+  let s = String(raw).trim();
+  s = s.replace(/^[“"]+/, '').replace(/[”"]+$/, '');
+
+  // quebra por linhas / bullets
+  let lines = s
+    .split(/\r?\n|•|\u2022/g)
+    .map(x => x.trim())
+    .filter(Boolean);
+
+  // se veio tudo numa frase gigante, quebra por sentenças
+  if (lines.length <= 1 && s.length > 90) {
+    lines = s
+      .split(/(?<=[.!?])\s+/g)
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
+
+  const html = lines.map(line => {
+    const idx = line.indexOf(':');
+    // Se parecer "Título: texto", deixa o título em bold
+    if (idx > 0 && idx <= 28) {
+      const key = line.slice(0, idx + 1);
+      const val = line.slice(idx + 1).trim();
+      return `<div class="comment-line"><strong>${escapeHTML(key)}</strong> ${escapeHTML(val)}</div>`;
+    }
+    return `<div class="comment-line">${escapeHTML(line)}</div>`;
+  }).join('');
+
+  return `<div class="comment-lines">${html || '<div class="comment-line">—</div>'}</div>`;
+}
+
+function setFormattedComment(el, raw) {
+  if (!el) return;
+  el.innerHTML = formatCommentToHTML(raw);
+}
+
+
 function setArrow(el, dir) {
   if (!el) return;
   el.classList.remove('arrow-up', 'arrow-down');
@@ -3553,8 +3655,24 @@ function updateTradeCard(trade) {
   safeText(els.tradeMode,    modeText);
   safeText(els.tradeAgainst, againstText);
   safeText(els.tradeDirection, directionText);
-  safeText(els.tradeThermo,  thermoText);
-  safeText(els.tradeComment, commentText);
+  safeText(els.tradeThermo, thermoText);
+
+// --- estatística: tenta vir pronta no JSON; se não, extrai do comentário ---
+const parsed = splitStatsFromComment(commentText);
+
+const statsText =
+  pick(t, 'stats_text') ||
+  pick(t, 'statistics_text') ||
+  pick(t, 'stats') ||
+  pick(t, 'statistics') ||
+  parsed.stats ||
+  '—';
+
+safeText(els.tradeStats, statsText, '—');
+
+// --- comentário: só título bold + linhas organizadas; remove estatística do comentário ---
+setFormattedComment(els.tradeComment, parsed.comment || commentText);
+
 
   // ===== visual do cartão (cor / badge) =====
   const card  = els.tradeCard;
@@ -4767,6 +4885,7 @@ const I18N = {
         // CARTÃO DE TRADE CITADEL
     'trade_card.title': 'AARON – Cartão de Trade Atual',
     'trade_card.status_label': 'Status:',
+    'trade_card.stats_label': 'Estatística:',
     'trade_card.asset_label': 'Ativo:',
     'trade_card.timeframe_label': 'Timeframe:',
     'trade_card.mode_label': 'Modo:',
@@ -4846,6 +4965,7 @@ const I18N = {
         // CITADEL TRADE CARD
     'trade_card.title': 'AARON – Current Trade Card',
     'trade_card.status_label': 'Status:',
+    'trade_card.stats_label': 'Statistics:',
     'trade_card.asset_label': 'Asset:',
     'trade_card.timeframe_label': 'Timeframe:',
     'trade_card.mode_label': 'Mode:',
