@@ -2666,6 +2666,12 @@
   <span id="trade-stats-top">—</span>
 </div>
 
+        <!-- NOVO: Estatística (7y) no topo -->
+        <div class="trade-line" id="trade-stats-top-line"
+             style="display:none; font-size:0.92rem; color:var(--text-soft); margin-top:6px;">
+          <span id="trade-stats-top">—</span>
+        </div>
+
 
         <div class="trade-line">
           <strong data-i18n="trade_card.asset_label">Ativo:</strong>
@@ -3059,6 +3065,9 @@ const els = {
     // --- Cartão de Trade (Citadel) ---
   tradeCard: document.getElementById('trade-card'),
   tradeStatusText: document.getElementById('trade-status-text'),
+  // NOVO (topo)
+  tradeStatsTopLine: document.getElementById('trade-stats-top-line'),
+  tradeStatsTop: document.getElementById('trade-stats-top'),
   tradeStatsTopLine: document.getElementById('trade-stats-top-line'),
   tradeStatsTop: document.getElementById('trade-stats-top'),
   tradeStats: document.getElementById('trade-stats'),
@@ -3485,17 +3494,17 @@ function splitStatsFromComment(raw) {
   // remove aspas bonitas do começo/fim se vierem
   s = s.replace(/^[“"]+/, '').replace(/[”"]+$/, '');
 
-  const rx = /(?:^|\n)\s*(estat[ií]stica|statistics|stats)\s*:\s*(.+?)(?=\n|$)/i;
+  // pega a LINHA INTEIRA: "📊 Estatística (7y): ...." (PT/EN) sem remover do comentário
+  const rx =
+    /(?:^|\n)\s*(?:📊\s*)?(?:estat[ií]stica(?:\s*\([^)]*\))?|statistics(?:\s*\([^)]*\))?|stats(?:\s*\([^)]*\))?)\s*:\s*.+?(?=\n|$)/i;
+
   const m = s.match(rx);
+  if (m) out.stats = m[0].trim();
 
-  if (m) {
-    out.stats = (m[2] || '').trim();
-    s = s.replace(rx, '').trim();
-  }
-
-  out.comment = s.trim();
+  out.comment = s.trim(); // mantém intacto
   return out;
 }
+
 
 function formatCommentToHTML(raw) {
   if (raw === undefined || raw === null) return '<div class="comment-lines"><div class="comment-line">—</div></div>';
@@ -3665,30 +3674,42 @@ function updateTradeCard(trade) {
   safeText(els.tradeDirection, directionText);
   safeText(els.tradeThermo, thermoText);
 
-// --- estatística: tenta vir pronta no JSON; se não, extrai do comentário ---
+// --- estatística: pega do JSON (normal) ---
 const parsed = splitStatsFromComment(commentText);
 
-const statsText =
+// Estatística “normal” do campo do cartão (não usa a linha do comentário)
+const setupStatsText =
   pick(t, 'stats_text') ||
   pick(t, 'statistics_text') ||
   pick(t, 'stats') ||
   pick(t, 'statistics') ||
-  parsed.stats ||
   '—';
 
-safeText(els.tradeStats, statsText, '—');
+safeText(els.tradeStats, setupStatsText, '—');
 
-safeText(els.tradeStatsTop, statsText, '—');
+// NOVO: Estatística (7y) no topo — vem do comentário (ou cai pro JSON)
+const topStatsText = parsed.stats || setupStatsText || '—';
+
+if (els.tradeStatsTop) safeText(els.tradeStatsTop, topStatsText, '—');
 
 if (els.tradeStatsTopLine) {
-  const s = (statsText || '').trim();
+  const s = (topStatsText || '').trim();
   const hasStats = s && s !== '—' && s !== '-';
   els.tradeStatsTopLine.style.display = hasStats ? '' : 'none';
+
+  // garante "Com estatística" no Status quando existir
+  if (hasStats && els.tradeStatusText) {
+    const token = (lang === 'en') ? 'With stats' : 'Com estatística';
+    const cur = els.tradeStatusText.textContent || '';
+    if (!cur.toLowerCase().includes(token.toLowerCase())) {
+      els.tradeStatusText.textContent = `${cur} | ${token}`;
+    }
+  }
 }
 
-
-// --- comentário: só título bold + linhas organizadas; remove estatística do comentário ---
+// Comentário: NÃO remove nada
 setFormattedComment(els.tradeComment, parsed.comment || commentText);
+
 
 
   // ===== visual do cartão (cor / badge) =====
