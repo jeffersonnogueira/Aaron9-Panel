@@ -4408,16 +4408,27 @@ function buildPatternFileCandidates(file) {
 
   const cand = [f];
 
-  // Caso clássico: JSON = "F(1).jpg" mas arquivo = "F (1).jpg"
-  if (/^F\(\d+\)\./i.test(f)) cand.push(f.replace(/^F\(/i, 'F ('));
-  if (/^F \(\d+\)\./i.test(f)) cand.push(f.replace(/^F \(/i, 'F('));
+  const hasExt = /\.[a-z0-9]{2,5}$/i.test(f);
+  if (!hasExt) {
+    // tenta extensões comuns
+    cand.push(`${f}.jpg`, `${f}.png`, `${f}.jpeg`, `${f}.webp`);
+  } else {
+    // se veio jpg, tenta png equivalente (e vice-versa)
+    if (f.toLowerCase().endsWith('.jpg')) cand.push(f.replace(/\.jpg$/i, '.png'));
+    if (f.toLowerCase().endsWith('.png')) cand.push(f.replace(/\.png$/i, '.jpg'));
 
-  // Tentativas genéricas: com e sem espaço antes do "("
-  if (f.includes('(')) cand.push(f.replace('(', ' ('));
-  if (f.includes(' (')) cand.push(f.replace(' (', '('));
+    // casos “F(1).jpg” vs “F (1).jpg”
+    if (/^F\(\d+\)\./i.test(f)) cand.push(f.replace(/^F\(/i, 'F ('));
+    if (/^F \(\d+\)\./i.test(f)) cand.push(f.replace(/^F \(/i, 'F('));
+
+    // Tentativas genéricas: com e sem espaço antes do "("
+    if (f.includes('(')) cand.push(f.replace('(', ' ('));
+    if (f.includes(' (')) cand.push(f.replace(' (', '('));
+  }
 
   return uniq(cand);
 }
+
 
 function setRefImageWithFallback(file) {
   if (!els.refPatternImg) return;
