@@ -3592,37 +3592,6 @@ function setRiskPill(level) {
   el.textContent = txt;
 }
 
-function extractStatsForHeader(raw) {
-  if (!raw) return '';
-
-  const lines = String(raw).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    // acha a linha que contém Estatistica/Statistics/Stats + ":" (aceita "(7y)")
-    if (/(estat[ií]stica|statistics|stats)/i.test(line) && line.includes(':')) {
-      const block = [line.replace(/^📊\s*/,'')]; // tira só o emoji do começo (opcional)
-
-      // se a estatística continuar na próxima linha, junta também (até parar)
-      for (let j = i + 1; j < lines.length; j++) {
-        const nxt = lines[j];
-
-        // para quando começar checklist/gate/itens com emoji
-        if (/^(📌|🧾|✅|❌|☑️|☑|•|\u2022)/.test(nxt)) break;
-        if (/(checklist|gate)/i.test(nxt)) break;
-
-        // se for continuação (ex: "wins=..., amostras=..., rows=..."), junta
-        block.push(nxt);
-      }
-
-      return block.join(' ');
-    }
-  }
-
-  return '';
-}
-
 // === ATUALIZAR CARTÃO DE TRADE (CITADEL) ===
 function updateTradeCard(trade) {
   // se o HTML ainda não carregou, sai
@@ -3646,7 +3615,7 @@ function updateTradeCard(trade) {
       ? '✅ Valid setup | ❌ No trade'
       : '✅ Setup válido | ❌ Sem trade');
 
-  
+  els.tradeStatusText.textContent = statusText;
 
   // ===== campos “neutros” (sem idioma) =====
   safeText(els.tradeSymbol,    t.symbol   || t.ticker || '—');
@@ -3682,13 +3651,6 @@ function updateTradeCard(trade) {
     (lang === 'en'
       ? 'Statistically strong reversal after false breakout. If you execute, do not move the stop against the position.'
       : 'Reversão estatisticamente forte após falso rompimento. Se executar, não mova o stop contra a posição.');
-const statsForHeader = extractStatsForHeader(commentText);
-if (statsForHeader) {
-  // só acrescenta (não muda mais nada)
-  statusText = `${statusText} | ${statsForHeader}`;
-}
-
-els.tradeStatusText.textContent = statusText;
 
   safeText(els.tradeMode,    modeText);
   safeText(els.tradeAgainst, againstText);
