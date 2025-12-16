@@ -3874,9 +3874,14 @@ function applyInstitutionalDecision(panel, executionPlan, riskLevel) {
 };
 
 
-  let buy = normPct(c.buy);
-  let sell = normPct(c.sell);
-  let neu = normPct(c.neutral);
+  const buyRaw = c.buy ?? c.BUY ?? c.long ?? c.LONG ?? c.compra ?? c.call ?? c.bull ?? c.bullish ?? c.up;
+const sellRaw = c.sell ?? c.SELL ?? c.short ?? c.SHORT ?? c.venda ?? c.put ?? c.bear ?? c.bearish ?? c.down;
+const neuRaw  = c.neutral ?? c.NEUTRAL ?? c.flat ?? c.wait ?? c.hold ?? c.aguardar ?? c.sideways ?? c.range;
+
+let buy = normPct(buyRaw);
+let sell = normPct(sellRaw);
+let neu = normPct(neuRaw);
+
 
   buy = Number.isFinite(buy) ? buy : 0;
   sell = Number.isFinite(sell) ? sell : 0;
