@@ -4533,6 +4533,8 @@ async function loadPanel(showSpinner) {
     const data = await res.json();
     const panel = data.panel || data;
     const raw = data.raw || {};
+    updateGarimpoTodayCard(panel?.garimpo_today || null);
+
 
     // Preenche ATR + preço de entrada
     prefillAtrFromPanel(panel, raw);
@@ -5279,19 +5281,11 @@ if (document.readyState === 'loading') {
 }
 
    // ================== GARIMPO DE HOJE - DADOS EXEMPLO ==================
-var garimpoTodayData = {
-  ticker: 'NVDA',
-  profile: {
-    pt: 'Day Trade Momentum',
-    en: 'Day Trade Momentum',
-  },
-  gapPct: '+2.3%',
-  preMarketRatio: '1.8×',
-  atrPct: '2.1%',
-  confidence: '91%',
-};
-// Função para atualizar o card de garimpo
+let lastGarimpoToday = null;
+
 function updateGarimpoTodayCard(data) {
+  lastGarimpoToday = data || null;
+
   const tickerEl = document.getElementById('garimpo-ticker');
   const profileEl = document.getElementById('garimpo-profile');
   const gapEl = document.getElementById('garimpo-gap');
@@ -5299,21 +5293,27 @@ function updateGarimpoTodayCard(data) {
   const atrEl = document.getElementById('garimpo-atr');
   const confEl = document.getElementById('garimpo-confidence');
 
-  // se o card não existir por algum motivo, não quebra nada
   if (!tickerEl) return;
 
+  const d = data || {};
   const lang = (window.currentLang === 'en' ? 'en' : 'pt');
 
-  tickerEl.textContent = data.ticker;
-  profileEl.textContent = data.profile[lang] || data.profile.pt;
-  gapEl.textContent = data.gapPct;
-  pmEl.textContent = data.preMarketRatio;
-  atrEl.textContent = data.atrPct;
-  confEl.textContent = data.confidence;
+  const profile =
+    (d.profile && typeof d.profile === 'object')
+      ? (d.profile[lang] || d.profile.pt || '—')
+      : (d.profile || '—');
+
+  tickerEl.textContent = d.ticker || '—';
+  if (profileEl) profileEl.textContent = profile;
+  if (gapEl) gapEl.textContent = d.gapPct || '—';
+  if (pmEl) pmEl.textContent = d.preMarketRatio || '—';
+  if (atrEl) atrEl.textContent = d.atrPct || '—';
+  if (confEl) confEl.textContent = d.confidence || '—';
 }
 
-// Chamada inicial (quando a página carrega)
-updateGarimpoTodayCard(garimpoTodayData);
+// chamada inicial (vazio até chegar JSON do n8n)
+updateGarimpoTodayCard(null);
+
 
 // ================== GARIMPO DE HOJE - TEXTOS PT/EN =================
 if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
