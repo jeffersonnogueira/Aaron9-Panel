@@ -4882,13 +4882,20 @@ async function loadPanel(showSpinner) {
       '—';
 
     const riskLevel =
-      panel.risk_level ||
-      aiAdvisor.risco;
+  panel.risk_level ||
+  aiAdvisor.risk_text ||
+  aiAdvisor.risco ||
+  panel.trade_card?.risk_text ||
+  '—';
 
-    const riskComment =
-      panel.risk_comment ||
-      aiAdvisor.motivo ||
-      '—';
+const riskComment =
+  panel.risk_comment ||
+  aiAdvisor.motivo ||
+  aiAdvisor.motivo_pt ||
+  panel.trade_card?.comment_pt ||
+  panel.painel_terminal ||
+  '—';
+
 
     const contextComment =
       panel.context_comment ||
@@ -4896,8 +4903,12 @@ async function loadPanel(showSpinner) {
       '—';
 
     const executionPlan =
-      panel.execution_plan ||
-      '—';
+  panel.execution_plan ||
+  aiAdvisor.acao_recomendada ||
+  panel.trade_card?.direction_pt ||
+  panel.trade_card?.direction_en ||
+  '—';
+
 
     safeText(els.summary, finalSummary);
     setRiskPill(riskLevel);
