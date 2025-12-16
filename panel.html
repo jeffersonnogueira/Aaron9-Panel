@@ -3887,25 +3887,27 @@ let neu = normPct(neuRaw);
   sell = Number.isFinite(sell) ? sell : 0;
   neu = Number.isFinite(neu) ? neu : 0;
 
+  // transforma 3-way em 2 barras (buy vs sell) de forma “institucional”
+  const dirTotal = buy + sell;
+  const total = buy + sell + neu;
+
+  let favorPct = 0;
+  let contraPct = 0;
+
+  if (dirTotal > 0) {
+    const favorRaw =
+      mode === 'sell' ? sell :
+      mode === 'buy'  ? buy  :
+      Math.max(buy, sell); // wait -> mostra o lado mais forte
+    favorPct = Math.round((favorRaw / dirTotal) * 100);
+    favorPct = Math.max(0, Math.min(100, favorPct));
+    contraPct = 100 - favorPct;
   } else if (total > 0) {
-  // Se não existe direção (buy+sell==0), então isso é NEUTRO, não "A favor"
-  const neutralPct = Math.round((neu / total) * 100);
-  favorPct = Math.max(0, Math.min(100, neutralPct));
-  contraPct = 100 - favorPct;
-
-  // muda o label pra não enganar
-  if (els.heroFavorLabel) els.heroFavorLabel.textContent = `Neutro: ${favorPct}%`;
-  if (els.heroContraLabel) els.heroContraLabel.textContent = `—`;
-
-  els.heroFavorBar.style.width = `${favorPct}%`;
-  els.heroContraBar.style.width = `0%`;
-
-  if (els.heroFavorPhrase) els.heroFavorPhrase.textContent =
-    'Sem consenso direcional (NEUTRO). Prefira esperar ou operar menor.';
-  if (els.heroContraPhrase) els.heroContraPhrase.textContent = '';
-  // não dá return: deixa o resto (RISCO/CONTEXTO/EXECUÇÃO) atualizar normalmente
-}
-
+    const favorRaw = Math.max(buy, sell, neu);
+    favorPct = Math.round((favorRaw / total) * 100);
+    favorPct = Math.max(0, Math.min(100, favorPct));
+    contraPct = 100 - favorPct;
+  }
 
   // labels + barras
   if (els.heroFavorLabel) els.heroFavorLabel.textContent = `A favor: ${favorPct}%`;
