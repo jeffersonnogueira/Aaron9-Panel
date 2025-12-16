@@ -3859,12 +3859,20 @@ function applyInstitutionalDecision(panel, executionPlan, riskLevel) {
     (panel && (panel.ai_consensus || panel.consensus || panel.aiConsensus)) || {};
 
   const normPct = (v) => {
-    const n = Number(v);
-    if (!Number.isFinite(n)) return NaN;
-    // aceita 0–1 OU 0–100
-    if (n >= 0 && n <= 1) return n * 100;
-    return n;
-  };
+  if (v === null || v === undefined) return NaN;
+
+  if (typeof v === 'string') {
+    v = v.replace('%', '').trim().replace(',', '.');
+  }
+
+  const n = parseFloat(v);
+  if (!Number.isFinite(n)) return NaN;
+
+  // aceita 0–1 OU 0–100
+  if (n >= 0 && n <= 1) return n * 100;
+  return n;
+};
+
 
   let buy = normPct(c.buy);
   let sell = normPct(c.sell);
@@ -4346,10 +4354,14 @@ function updateSizingBrain(data) {
   if (!els.sizingTarget) return;
 
   function fmtPct(v) {
-    const n = Number(v);
-    if (!Number.isFinite(n)) return null;
-    return n.toFixed(1) + '%';
-  }
+  if (v === null || v === undefined) return null;
+  if (typeof v === 'string') v = v.replace('%', '').trim().replace(',', '.');
+
+  const n = parseFloat(v);
+  if (!Number.isFinite(n)) return null;
+  return n.toFixed(1) + '%';
+}
+
 
   // sempre que chegar dado novo (ou trocar idioma), recalcula frase
   updateSizingPhrase();
@@ -4439,9 +4451,11 @@ function updateSizingBrain(data) {
     const label = els.sizingMeterLabel;
     if (!fill || !label) return;
 
-    let v = Number(score);
-    if (!Number.isFinite(v)) v = 40;
-    v = Math.max(0, Math.min(100, v));
+    let v = score;
+if (typeof v === 'string') v = v.replace('%', '').trim().replace(',', '.');
+v = parseFloat(v);
+if (!Number.isFinite(v)) v = 40;
+
 
     fill.style.width = v.toFixed(0) + '%';
     label.textContent =
