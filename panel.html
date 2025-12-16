@@ -2763,51 +2763,55 @@
 
 
   <!-- RESUMO INSTITUCIONAL / VEREDITO -->
-  <section class="decision-card">
-    <div class="decision-title">Resumo institucional</div>
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">
-  <span id="hero-mode-pill" class="decision-pill go-full">GO FULL</span>
-  <span id="hero-side-label" class="decision-label-strong">VENDA</span>
-</div>
+<section class="right-col">
 
+  <div class="decision-card hero-mode-card" id="hero-block">
+    <div class="decision-row">
+      <div>
+        <div class="decision-title">RESUMO INSTITUCIONAL</div>
+        <button class="decision-pill go-full" id="hero-mode-pill">GO FULL</button>
+      </div>
+      <div class="decision-verdict" id="hero-side-label">—</div>
+    </div>
 
-    <div id="hero-summary-text" style="font-size:0.8rem; margin-bottom:10px; color:var(--text-soft);">
-  Continuação muito provável. Fluxo bem alinhado com a direção atual. Operar a favor é mais seguro que contra.
-</div>
+    <div class="decision-text" id="hero-summary-text">
+      Carregando leitura institucional do mercado...
+    </div>
 
-
-    <div style="font-size:0.78rem; margin-bottom:4px;">A favor: 78%</div>
+    <div class="decision-title" style="margin-bottom:2px;">A favor</div>
+    <div class="decision-subtitle" id="hero-favor-label">A favor: —%</div>
     <div class="decision-bar">
-      <div class="decision-bar-fill" style="width:78%;"></div>
+      <div class="decision-bar-fill" id="hero-favor-bar" style="width:0%"></div>
     </div>
+    <div class="prob-phrase" id="hero-favor-phrase">—</div>
 
-    <div style="font-size:0.78rem; margin:10px 0 4px;">Contra: 22%</div>
+    <div style="height:10px"></div>
+
+    <div class="decision-title" style="margin-bottom:2px;">Contra</div>
+    <div class="decision-subtitle" id="hero-contra-label">Contra: —%</div>
     <div class="decision-bar">
-      <div class="decision-bar-fill-danger" style="width:22%;"></div>
+      <div class="decision-bar-fill-danger" id="hero-contra-bar" style="width:0%"></div>
     </div>
-<div class="prob-phrase favor">
-  Continuação muito provável; fluxo bem alinhado com a direção atual. Operar a favor é mais seguro que ir contra.
-</div>
+    <div class="prob-phrase prob-phrase-danger" id="hero-contra-phrase">—</div>
 
-<div class="prob-phrase contra">
-  Probabilidade moderada de reação contra ainda existe; evite alavancagem exagerada e respeite o stop.
-</div>
-
-    <div style="display:flex; gap:10px; margin-top:12px; font-size:0.78rem;">
+    <div class="decision-grid3">
       <div>
-        <div class="decision-title" style="margin-bottom:2px;">Risco</div>
-        <div>Moderado</div>
+        <div class="decision-mini-title">RISCO</div>
+        <div class="decision-mini-text" id="hero-mini-risk">—</div>
       </div>
       <div>
-        <div class="decision-title" style="margin-bottom:2px;">Contexto</div>
-        <div>Vulcão · 7:30–8:45</div>
+        <div class="decision-mini-title">CONTEXTO</div>
+        <div class="decision-mini-text" id="hero-mini-context">—</div>
       </div>
       <div>
-        <div class="decision-title" style="margin-bottom:2px;">Execução</div>
-        <div>Executar venda</div>
+        <div class="decision-mini-title">EXECUÇÃO</div>
+        <div class="decision-mini-text" id="hero-mini-execution">—</div>
       </div>
     </div>
-  </section>
+  </div>
+
+</section>
+
     <!-- PULLBACK BRAIN · CÉREBRO ESPECIAL DE PULLBACK -->
   <section class="decision-card" id="pullback-brain-card">
     <div class="decision-title" data-i18n="pullback.title">
@@ -3065,6 +3069,20 @@ const els = {
   heroModePill: document.getElementById('hero-mode-pill'),
   heroSideLabel: document.getElementById('hero-side-label'),
   heroSummary: document.getElementById('hero-summary-text'),
+
+    // RESUMO INSTITUCIONAL (barras)
+  heroFavorLabel: document.getElementById('hero-favor-label'),
+  heroFavorBar: document.getElementById('hero-favor-bar'),
+  heroFavorPhrase: document.getElementById('hero-favor-phrase'),
+
+  heroContraLabel: document.getElementById('hero-contra-label'),
+  heroContraBar: document.getElementById('hero-contra-bar'),
+  heroContraPhrase: document.getElementById('hero-contra-phrase'),
+
+  heroMiniRisk: document.getElementById('hero-mini-risk'),
+  heroMiniContext: document.getElementById('hero-mini-context'),
+  heroMiniExecution: document.getElementById('hero-mini-execution'),
+
 
     // --- Cartão de Trade (Citadel) ---
   tradeCard: document.getElementById('trade-card'),
@@ -3813,6 +3831,104 @@ function applyHeroDecision(executionText, summaryText) {
     else side.textContent = '—';
   }
 }
+
+function applyInstitutionalDecision(panel, executionPlan, riskLevel) {
+  // se o HTML não existe (ou não é essa página), sai
+  if (!els.heroFavorBar || !els.heroContraBar) return;
+
+  const baseText = executionPlan || '—';
+  const t = (baseText || '').toLowerCase();
+
+  let mode = 'wait';
+  if (t.includes('compra') || t.includes('buy')) mode = 'buy';
+  else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
+
+  // pega consensus real do JSON
+  const c =
+    (panel && (panel.ai_consensus || panel.consensus || panel.aiConsensus)) || {};
+
+  const normPct = (v) => {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return NaN;
+    // aceita 0–1 OU 0–100
+    if (n >= 0 && n <= 1) return n * 100;
+    return n;
+  };
+
+  let buy = normPct(c.buy);
+  let sell = normPct(c.sell);
+  let neu = normPct(c.neutral);
+
+  buy = Number.isFinite(buy) ? buy : 0;
+  sell = Number.isFinite(sell) ? sell : 0;
+  neu = Number.isFinite(neu) ? neu : 0;
+
+  // transforma 3-way em 2 barras (buy vs sell) de forma “institucional”
+  const dirTotal = buy + sell;
+  const total = buy + sell + neu;
+
+  let favorPct = 0;
+  let contraPct = 0;
+
+  if (dirTotal > 0) {
+    const favorRaw =
+      mode === 'sell' ? sell :
+      mode === 'buy'  ? buy  :
+      Math.max(buy, sell); // wait -> mostra o lado mais forte
+    favorPct = Math.round((favorRaw / dirTotal) * 100);
+    favorPct = Math.max(0, Math.min(100, favorPct));
+    contraPct = 100 - favorPct;
+  } else if (total > 0) {
+    const favorRaw = Math.max(buy, sell, neu);
+    favorPct = Math.round((favorRaw / total) * 100);
+    favorPct = Math.max(0, Math.min(100, favorPct));
+    contraPct = 100 - favorPct;
+  }
+
+  // labels + barras
+  if (els.heroFavorLabel) els.heroFavorLabel.textContent = `A favor: ${favorPct}%`;
+  if (els.heroContraLabel) els.heroContraLabel.textContent = `Contra: ${contraPct}%`;
+
+  els.heroFavorBar.style.width = `${favorPct}%`;
+  els.heroContraBar.style.width = `${contraPct}%`;
+
+  // frases (realistas, mas derivadas de dado real)
+  const favorPhrase =
+    favorPct >= 70
+      ? 'Continuação muito provável. Fluxo bem alinhado com a direção atual. Operar a favor é mais seguro que contra.'
+      : favorPct >= 55
+        ? 'Leve vantagem a favor. Fluxo parcialmente alinhado; reduza tamanho e exija confirmação.'
+        : 'Sem vantagem clara. A favor e contra estão equilibrados; prefira esperar ou operar menor.';
+
+  const contraPhrase =
+    contraPct >= 35
+      ? 'Probabilidade moderada de reação contra ainda existe; evite alavancagem exagerada e respeite o stop.'
+      : 'Contra-movimento menos provável, mas sempre possível; disciplina de stop obrigatória.';
+
+  if (els.heroFavorPhrase) els.heroFavorPhrase.textContent = favorPhrase;
+  if (els.heroContraPhrase) els.heroContraPhrase.textContent = contraPhrase;
+
+  // minis (RISCO / CONTEXTO / EXECUÇÃO)
+  if (els.heroMiniRisk) els.heroMiniRisk.textContent = riskLevel || '—';
+
+  const ctx =
+    panel?.context_tag ||
+    panel?.context_short ||
+    panel?.trade_window ||
+    panel?.session_window ||
+    panel?.session ||
+    panel?.window ||
+    panel?.time_window ||
+    panel?.trade_style ||
+    panel?.style_today ||
+    panel?.style_label_pt ||
+    panel?.style_label_en ||
+    '—';
+
+  if (els.heroMiniContext) els.heroMiniContext.textContent = ctx;
+  if (els.heroMiniExecution) els.heroMiniExecution.textContent = baseText;
+}
+
 
 // Atualiza os chips HH/HL/LH/LL a partir do JSON
 function updateStructureUI(struct) {
@@ -4780,6 +4896,8 @@ async function loadPanel(showSpinner) {
 
     // MODO CEGO usa os mesmos textos
     applyHeroDecision(executionPlan, finalSummary);
+    applyInstitutionalDecision(panel, executionPlan, riskLevel);
+
 
   } catch (err) {
     console.error('Erro ao carregar painel', err);
