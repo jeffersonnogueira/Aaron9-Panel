@@ -4677,8 +4677,17 @@ async function loadPanel(showSpinner) {
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
     const data = await res.json();
-    const panel = data.panel || data;
-    const raw = data.raw || {};
+
+// n8n pode devolver: {panel, raw}  OU  [ { json: {panel, raw} } ]  OU  [ {panel, raw} ]
+const root = Array.isArray(data) ? (data[0] || {}) : (data || {});
+const payload =
+  (root && typeof root === 'object' && root.json && typeof root.json === 'object')
+    ? root.json
+    : root;
+
+const panel = payload.panel || payload;
+const raw = payload.raw || payload.raw_eye || {};
+
     updateGarimpoTodayCard(panel?.garimpo_today || null);
 
 
