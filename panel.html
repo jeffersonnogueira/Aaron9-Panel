@@ -2661,10 +2661,18 @@
           <span id="trade-status-text">✅ Setup válido | ❌ Sem trade</span>
         </div>
 
+<div class="trade-line">
+  <strong>Pulse:</strong>
+  <span id="pulseLine">—</span>
+</div>
+
         <div class="trade-line" id="trade-stats-top-line" style="display:none;">
   <strong data-i18n="trade_card.stats_label">Estatística:</strong>
   <span id="trade-stats-top">—</span>
 </div>
+
+
+
 
         <!-- NOVO: Estatística (7y) no topo -->
         <div class="trade-line" id="trade-stats-top-line"
@@ -3022,6 +3030,7 @@ const els = {
   state: document.getElementById('state-pill'),
   symbol: document.getElementById('symbol-label'),
   timeframe: document.getElementById('timeframe-label'),
+  pulseLine: document.getElementById('pulseLine'),
   session: document.getElementById('session-label'),
   lastUpdate: document.getElementById('last-update-label'),
   flow: document.getElementById('flow-label'),
@@ -3643,6 +3652,8 @@ function updateTradeCard(trade) {
   safeText(els.tradeTP2,       t.tp2       != null ? t.tp2       : '—');
   safeText(els.tradeSize,      t.size_text || t.size || '—');
   safeText(els.tradeRisk,      t.risk_text || t.risk || '—');
+  safeText(els.pulseLine, pick(t, 'pulse_line') || '—');
+
 
   // ===== textos com PT/EN =====
   const modeText =
