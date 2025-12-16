@@ -3887,7 +3887,7 @@ let neu = normPct(neuRaw);
   sell = Number.isFinite(sell) ? sell : 0;
   neu = Number.isFinite(neu) ? neu : 0;
 
-  // transforma 3-way em 2 barras (buy vs sell) de forma “institucional”
+    // transforma 3-way em 2 barras (buy vs sell) de forma “institucional”
   const dirTotal = buy + sell;
   const total = buy + sell + neu;
 
@@ -3898,23 +3898,27 @@ let neu = normPct(neuRaw);
     const favorRaw =
       mode === 'sell' ? sell :
       mode === 'buy'  ? buy  :
-      Math.max(buy, sell); // wait -> mostra o lado mais forte
+      Math.max(buy, sell); // wait -> mostra o lado mais forte (entre buy/sell)
+
     favorPct = Math.round((favorRaw / dirTotal) * 100);
     favorPct = Math.max(0, Math.min(100, favorPct));
     contraPct = 100 - favorPct;
+
   } else if (total > 0) {
-    const favorRaw = Math.max(buy, sell, neu);
-    favorPct = Math.round((favorRaw / total) * 100);
-    favorPct = Math.max(0, Math.min(100, favorPct));
-    contraPct = 100 - favorPct;
+    // ✅ Se não há BUY/SELL (só NEUTRAL), não existe “vantagem” direcional
+    // então mostramos equilíbrio (50/50) em vez de 100%
+    favorPct = 50;
+    contraPct = 50;
   }
 
   // labels + barras
   if (els.heroFavorLabel) els.heroFavorLabel.textContent = `A favor: ${favorPct}%`;
   if (els.heroContraLabel) els.heroContraLabel.textContent = `Contra: ${contraPct}%`;
 
-  els.heroFavorBar.style.width = `${favorPct}%`;
-  els.heroContraBar.style.width = `${contraPct}%`;
+  // ✅ SAFE: nunca deixa isso quebrar o resto do painel (e o TradingView)
+  if (els.heroFavorBar) els.heroFavorBar.style.width = `${favorPct}%`;
+  if (els.heroContraBar) els.heroContraBar.style.width = `${contraPct}%`;
+
 
   // frases (realistas, mas derivadas de dado real)
   const favorPhrase =
