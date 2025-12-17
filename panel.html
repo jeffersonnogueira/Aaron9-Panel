@@ -4039,9 +4039,16 @@ function updatePullbackBrain(data) {
     const label = els.pullbackMeterLabel;
     if (!fill || !label) return;
 
-    let v = Number(score);
-    if (!Number.isFinite(v)) v = 40; // fallback
-    v = Math.max(0, Math.min(100, v));
+    let v = score;
+
+if (typeof v === 'string') {
+  v = v.replace('%', '').trim().replace(',', '.');
+}
+v = parseFloat(v);
+
+if (!Number.isFinite(v)) v = 40; // fallback (só quando não vem dado)
+v = Math.max(0, Math.min(100, v));
+
 
     fill.style.width = v.toFixed(0) + '%';
 
