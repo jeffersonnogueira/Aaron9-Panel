@@ -707,6 +707,44 @@
   color: rgba(148,163,184,0.9);
 }
 
+/* ===== AUTOPILOT (simulador) ===== */
+.trade-autopilot { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.ap-switch { position:relative; width:42px; height:22px; display:inline-block; }
+.ap-switch input { opacity:0; width:0; height:0; }
+.ap-slider {
+  position:absolute; cursor:pointer; inset:0;
+  background: rgba(148,163,184,0.25);
+  border:1px solid rgba(148,163,184,0.35);
+  transition:.2s; border-radius:999px;
+}
+.ap-slider:before {
+  content:""; position:absolute; height:16px; width:16px; left:3px; top:2px;
+  background: rgba(226,232,240,0.9);
+  transition:.2s; border-radius:999px;
+}
+.ap-switch input:checked + .ap-slider {
+  background: rgba(34,197,94,0.25);
+  border-color: rgba(34,197,94,0.45);
+}
+.ap-switch input:checked + .ap-slider:before { transform: translateX(19px); }
+
+.ap-btn {
+  border:1px solid rgba(148,163,184,0.25);
+  background: rgba(15,23,42,0.35);
+  color:#e2e8f0; font-weight:800; letter-spacing:.4px;
+  padding:7px 10px; border-radius:12px; cursor:pointer;
+}
+.ap-btn:hover { filter:brightness(1.08); }
+
+.ap-meta { opacity:.85; font-size:0.86rem; }
+
+#ap-state { padding:4px 10px; border-radius:999px; font-weight:800; }
+#ap-state.ap-on { border-color: rgba(34,197,94,0.55); }
+#ap-state.ap-off { border-color: rgba(148,163,184,0.35); opacity:.8; }
+#ap-state.ap-buy { border-color: rgba(56,189,248,0.55); }
+#ap-state.ap-sell { border-color: rgba(248,113,113,0.55); }
+
+
 .status-hero-main {
   font-size: 1.35rem;
   font-weight: 500; /* <-- aqui para de deixar tudo bold */
@@ -2666,6 +2704,25 @@
   <span id="pulseLine">—</span>
 </div>
 
+<!-- AUTOPILOT (simulação de posição) -->
+<div class="trade-line trade-autopilot">
+  <strong>Autopilot:</strong>
+
+  <label class="ap-switch" title="Liga/desliga o Autopilot (simulador)">
+    <input type="checkbox" id="ap-toggle" />
+    <span class="ap-slider"></span>
+  </label>
+
+  <span id="ap-state" class="badge-outline ap-off">OFF</span>
+
+  <button id="ap-buy" class="ap-btn ap-buy">BUY</button>
+  <button id="ap-sell" class="ap-btn ap-sell">SELL</button>
+  <button id="ap-close" class="ap-btn ap-close">CLOSE</button>
+
+  <span id="ap-meta" class="ap-meta">—</span>
+</div>
+
+
         <div class="trade-line" id="trade-stats-top-line" style="display:none;">
   <strong data-i18n="trade_card.stats_label">Estatística:</strong>
   <span id="trade-stats-top">—</span>
@@ -3030,6 +3087,14 @@ const els = {
   symbol: document.getElementById('symbol-label'),
   timeframe: document.getElementById('timeframe-label'),
   pulseLine: document.getElementById('pulseLine'),
+    // AUTOPILOT
+  apToggle: document.getElementById('ap-toggle'),
+  apState: document.getElementById('ap-state'),
+  apBuy: document.getElementById('ap-buy'),
+  apSell: document.getElementById('ap-sell'),
+  apClose: document.getElementById('ap-close'),
+  apMeta: document.getElementById('ap-meta'),
+
   session: document.getElementById('session-label'),
   lastUpdate: document.getElementById('last-update-label'),
   flow: document.getElementById('flow-label'),
@@ -3164,6 +3229,102 @@ const els = {
   sizingPhraseDetail: document.getElementById('sizing-phrase-detail'),
 
 };
+
+// ===============================
+// AUTOPILOT v1 (simulação local)
+// ===============================
+const AP_KEY = 'AARON_AUTOPILOT_V1';
+let lastTradeCard = null;
+
+function apLoad() {
+  try {
+    const raw = localStorage.getItem(AP_KEY);
+    const obj = raw ? JSON.parse(raw) : null;
+    return {
+      enabled: !!obj?.enabled,
+      active:  !!obj?.active,
+      side:    (obj?.side === 'buy' || obj?.side === 'sell') ? obj.side : null,
+      entry:   (typeof obj?.entry === 'number' && isFinite(obj.entry)) ? obj.entry : null,
+      startedAt: (typeof obj?.startedAt === 'number' && isFinite(obj.startedAt)) ? obj.startedAt : null,
+    };
+  } catch {
+    return { enabled:false, active:false, side:null, entry:null, startedAt:null };
+  }
+}
+function apSave(state) {
+  localStorage.setItem(AP_KEY, JSON.stringify(state));
+}
+let autopilot = apLoad();
+
+function apSideLabel(side, lang) {
+  if (lang === 'en') return side === 'buy' ? 'BUY' : 'SELL';
+  return side === 'buy' ? 'COMPRA' : 'VENDA';
+}
+function apPickEntryFromUI() {
+  const txt = (els.tradeEntry?.textContent || '').replace(',', '.');
+  const m = txt.match(/(\d+(\.\d+)?)/);
+  return m ? Number(m[1]) : null;
+}
+function apSyncUI() {
+  if (!els.apToggle || !els.apState || !els.apMeta) return;
+
+  els.apToggle.checked = !!autopilot.enabled;
+
+  els.apState.classList.remove('ap-on','ap-off','ap-buy','ap-sell');
+  if (!autopilot.enabled) {
+    els.apState.classList.add('ap-off');
+    els.apState.textContent = 'OFF';
+    els.apMeta.textContent = '—';
+    return;
+  }
+
+  els.apState.classList.add('ap-on');
+  if (autopilot.active && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
+    els.apState.classList.add(autopilot.side === 'buy' ? 'ap-buy' : 'ap-sell');
+    els.apState.textContent = autopilot.side === 'buy' ? 'BUY' : 'SELL';
+
+    const entry = autopilot.entry != null ? autopilot.entry.toFixed(2) : '—';
+    const started = autopilot.startedAt
+      ? new Date(autopilot.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : '—';
+    els.apMeta.textContent = `@ ${entry} · ${started}`;
+  } else {
+    els.apState.textContent = 'ON';
+    els.apMeta.textContent = 'armado (sem posição)';
+  }
+}
+
+function apActivate(side) {
+  autopilot = apLoad(); // re-hidrata
+  autopilot.enabled = true;
+  autopilot.active = true;
+  autopilot.side = side;
+
+  const entry = apPickEntryFromUI();
+  autopilot.entry = (entry != null && isFinite(entry)) ? entry : autopilot.entry;
+  autopilot.startedAt = Date.now();
+
+  apSave(autopilot);
+  apSyncUI();
+
+  // força re-render do painel no estado "travado"
+  if (typeof fetchPanel === 'function') fetchPanel();
+}
+
+function apClose() {
+  autopilot = apLoad();
+  autopilot.enabled = false;
+  autopilot.active = false;
+  autopilot.side = null;
+  autopilot.entry = null;
+  autopilot.startedAt = null;
+
+  apSave(autopilot);
+  apSyncUI();
+
+  if (typeof fetchPanel === 'function') fetchPanel();
+}
+
 
    // ====== SIZING BRAIN – CAMPOS DO CARD COMPLETO ======
 const sbEls = {
@@ -3648,6 +3809,8 @@ function updateTradeCard(trade) {
   if (!els.tradeStatusText) return;
 
   const t = trade || {};
+    lastTradeCard = t;
+
   const lang = currentLang === 'en' ? 'en' : 'pt';
 
   // helpers para pegar PT/EN
@@ -3707,6 +3870,36 @@ function updateTradeCard(trade) {
   safeText(els.tradeMode,    modeText);
   safeText(els.tradeAgainst, againstText);
   safeText(els.tradeDirection, directionText);
+    // ===== AUTOPILOT override (trava o card no estado da posição) =====
+  autopilot = apLoad();
+  apSyncUI();
+
+  if (autopilot.enabled && autopilot.active && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
+    const sideLabel = apSideLabel(autopilot.side, lang);
+    const entry = autopilot.entry != null ? autopilot.entry.toFixed(2) : '—';
+
+    // status no topo
+    els.tradeStatusText.textContent = (lang === 'en')
+      ? `🧠 AUTOPILOT ON | Simulating position: ${sideLabel} @ ${entry}`
+      : `🧠 AUTOPILOT ON | Simulando posição: ${sideLabel} @ ${entry}`;
+
+    // força direção do card
+    safeText(els.tradeDirection, sideLabel);
+
+    // troca “skin” buy/sell do card
+    if (els.tradeCard) {
+      els.tradeCard.classList.remove('status-buy','status-sell','status-neutral');
+      els.tradeCard.classList.add(autopilot.side === 'buy' ? 'status-buy' : 'status-sell');
+    }
+
+    // badge vira “HOLD / EM POSIÇÃO”
+    if (els.tradeBadge) {
+      els.tradeBadge.classList.remove('buy','sell');
+      els.tradeBadge.classList.add(autopilot.side === 'buy' ? 'buy' : 'sell');
+      els.tradeBadge.textContent = (lang === 'en') ? 'IN POSITION' : 'EM POSIÇÃO';
+    }
+  }
+
   safeText(els.tradeThermo, thermoText);
 
 // --- estatística: pega do JSON (normal) ---
@@ -3800,8 +3993,28 @@ function applyHeroDecision(executionText, summaryText) {
   const side = els.heroSideLabel;
   const heroSummary = els.heroSummary;
 
-  const baseText = executionText || 'AGUARDAR / OBSERVAR';
-  const t = baseText.toLowerCase();
+    autopilot = apLoad();
+  apSyncUI();
+
+  let execution = executionText || '';
+  let summary = summaryText || '';
+
+  if (autopilot.enabled && autopilot.active && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
+    const lang = currentLang === 'en' ? 'en' : 'pt';
+    const sideLabel = apSideLabel(autopilot.side, lang);
+    const entry = autopilot.entry != null ? autopilot.entry.toFixed(2) : '—';
+
+    execution = (lang === 'en')
+      ? `IN POSITION (${sideLabel})`
+      : `EM POSIÇÃO (${sideLabel})`;
+
+    summary = (lang === 'en')
+      ? `🧠 Autopilot ON — managing open ${sideLabel} position (entry ${entry}). Click CLOSE to reset.`
+      : `🧠 Autopilot ON — gerenciando posição aberta de ${sideLabel} (entrada ${entry}). Clique CLOSE para resetar.`;
+  }
+
+  const baseText = (execution || '').toLowerCase();
+
 
   let mode = 'wait';
   if (t.includes('compra') || t.includes('buy')) mode = 'buy';
@@ -5056,6 +5269,31 @@ function initAaron9() {
   setInterval(() => loadPanel(false), REFRESH_MS);
 }
 
+  // AUTOPILOT init
+  autopilot = apLoad();
+  apSyncUI();
+
+  if (els.apToggle) {
+    els.apToggle.addEventListener('change', () => {
+      autopilot = apLoad();
+      autopilot.enabled = !!els.apToggle.checked;
+
+      // se desligar o toggle, encerra simulação
+      if (!autopilot.enabled) {
+        autopilot.active = false;
+        autopilot.side = null;
+        autopilot.entry = null;
+        autopilot.startedAt = null;
+      }
+      apSave(autopilot);
+      apSyncUI();
+      fetchPanel();
+    });
+  }
+
+  if (els.apBuy)  els.apBuy.addEventListener('click',  () => apActivate('buy'));
+  if (els.apSell) els.apSell.addEventListener('click', () => apActivate('sell'));
+  if (els.apClose) els.apClose.addEventListener('click', () => apClose());
 
 
 
