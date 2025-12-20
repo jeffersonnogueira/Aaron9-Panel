@@ -2791,141 +2791,100 @@
     <div class="ap-foot-line"><span class="ap-k">Entry</span><span class="ap-v" id="ap-entry">—</span></div>
   </div>
 
+    <!-- ===== TRADE CARD (movido para dentro do AUTO PILOT) ===== -->
+  <hr style="border:none;border-top:1px solid rgba(148,163,184,0.18); margin:12px 0;" />
+
+  <div class="status-hero-label" data-i18n="trade_card.title">AARON – Cartão de Trade Atual</div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.status_label">Status:</strong>
+    <span id="trade-status-text">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong>Pulse:</strong>
+    <span id="pulseLine">—</span>
+  </div>
+
+  <div class="trade-line" id="trade-stats-top-line" style="display:none;">
+    <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+    <span id="trade-stats-top">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.asset_label">Ativo:</strong>
+    <span id="trade-symbol">—</span>
+    <span class="trade-sep">|</span>
+    <strong data-i18n="trade_card.timeframe_label">Timeframe:</strong>
+    <span id="trade-timeframe">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+    <span id="trade-stats">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.mode_label">Modo:</strong>
+    <span id="trade-mode">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.against_label">Contra:</strong>
+    <span id="trade-against">—</span>
+  </div>
+
+  <hr class="trade-divider" />
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.entry_label">Entrada:</strong>
+    <span id="trade-entry">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.stop_label">Stop:</strong>
+    <span id="trade-stop">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.tp_label">TP1:</strong>
+    <span id="trade-tp1">—</span>
+    <span class="trade-sep">|</span>
+    <strong>TP2:</strong>
+    <span id="trade-tp2">—</span>
+  </div>
+
+  <hr class="trade-divider" />
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.size_label">Tamanho:</strong>
+    <span id="trade-size">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.risk_label">Risco:</strong>
+    <span id="trade-risk">—</span>
+  </div>
+
+  <div class="trade-line">
+    <strong data-i18n="trade_card.thermo_label">Termômetro:</strong>
+    <span id="trade-thermo">—</span>
+  </div>
+
+  <hr class="trade-divider" />
+
+  <div class="trade-line trade-comment">
+    <strong data-i18n="trade_card.comment_label">Comentário do AARON:</strong>
+    <span id="trade-comment">—</span>
+  </div>
+
+  <div id="trade-badge" class="status-hero-badge sell">GO FULL</div>
+
+
 </section>
 
 
-  <!-- CARTÃO CITADEL · CARTÃO DE TRADE ATUAL -->
-  <section id="trade-card" class="status-hero status-sell blink-hero">
-    <div>
-      <!-- TÍTULO -->
-      <div class="status-hero-label" data-i18n="trade_card.title">
-        AARON – Cartão de Trade Atual
-      </div>
-
-      <!-- BLOCO PRINCIPAL DO CARTÃO -->
-      <div class="status-hero-main">
-        <div class="trade-line">
-          <strong data-i18n="trade_card.status_label">Status:</strong>
-          <span id="trade-status-text">✅ Setup válido | ❌ Sem trade</span>
-        </div>
-
-<div class="trade-line">
-  <strong>Pulse:</strong>
-  <span id="pulseLine">—</span>
-</div>
-
-<!-- AUTOPILOT (simulação de posição) -->
-<div class="trade-line trade-autopilot">
-  <strong>Autopilot:</strong>
-
-  <label class="ap-switch" title="Liga/desliga o Autopilot (simulador)">
-    <input type="checkbox" id="ap-toggle" />
-    <span class="ap-slider"></span>
-  </label>
-
-  <span id="ap-state" class="badge-outline ap-off">OFF</span>
-
-  <button id="ap-buy" class="ap-btn ap-buy">BUY</button>
-  <button id="ap-sell" class="ap-btn ap-sell">SELL</button>
-  <button id="ap-close" class="ap-btn ap-close">CLOSE</button>
-
-  <span id="ap-meta" class="ap-meta">—</span>
-</div>
-
-
-        <div class="trade-line" id="trade-stats-top-line" style="display:none;">
-  <strong data-i18n="trade_card.stats_label">Estatística:</strong>
-  <span id="trade-stats-top">—</span>
-</div>
-
-
-
-
-        <!-- NOVO: Estatística (7y) no topo -->
-      
-        <div class="trade-line">
-          <strong data-i18n="trade_card.asset_label">Ativo:</strong>
-          <span id="trade-symbol">NVDA</span>
-          <span class="trade-sep">|</span>
-          <strong data-i18n="trade_card.timeframe_label">Timeframe:</strong>
-          <span id="trade-timeframe">1m</span>
-        </div>
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.stats_label">Estatística:</strong>
-          <span id="trade-stats">—</span>
-        </div>
-
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.mode_label">Modo:</strong>
-          <span id="trade-mode">Reversão em Resistência</span>
-        </div>
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.against_label">Contra:</strong>
-          <span id="trade-against">57% (base 7 anos)</span>
-        </div>
-
-        <hr class="trade-divider" />
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.dir_label">Direção sugerida:</strong>
-          <span id="trade-direction">VENDA</span>
-        </div>
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.entry_label">Entrada:</strong>
-          <span id="trade-entry">492.80 – 493.10</span>
-        </div>
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.stop_label">Stop:</strong>
-          <span id="trade-stop">494.20</span>
-        </div>
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.tp_label">TP1:</strong>
-          <span id="trade-tp1">490.00</span>
-          <span class="trade-sep">|</span>
-          <strong>TP2:</strong>
-          <span id="trade-tp2">487.50</span>
-        </div>
-
-        <hr class="trade-divider" />
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.size_label">Tamanho:</strong>
-          <span id="trade-size">227 shares</span>
-        </div>
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.risk_label">Risco:</strong>
-          <span id="trade-risk">US$ 250 (1% do risk budget)</span>
-        </div>
-
-        <div class="trade-line">
-          <strong data-i18n="trade_card.thermo_label">Termômetro:</strong>
-          <span id="trade-thermo">Agressivo moderado</span>
-        </div>
-
-        <hr class="trade-divider" />
-
-        <div class="trade-line trade-comment">
-          <strong data-i18n="trade_card.comment_label">Comentário do AARON:</strong>
-          <span id="trade-comment">
-            “Reversão estatisticamente forte após falso rompimento.
-            Se executar, não mova stop contra a posição.”
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- BADGE LATERAL IGUAL AO COMPRA EM CONTINUAÇÃO -->
-    <div id="trade-badge" class="status-hero-badge sell">
-      GO FULL
-    </div>
-  </section>
+  
 
 
 
@@ -3448,100 +3407,7 @@ function initAutopilotUI() {
 }
 
 
-// ===============================
-// AUTOPILOT v1 (simulação local)
-// ===============================
-const AP_KEY = 'AARON_AUTOPILOT_V1';
-let lastTradeCard = null;
 
-function apLoad() {
-  try {
-    const raw = localStorage.getItem(AP_KEY);
-    const obj = raw ? JSON.parse(raw) : null;
-    return {
-      enabled: !!obj?.enabled,
-      active:  !!obj?.active,
-      side:    (obj?.side === 'buy' || obj?.side === 'sell') ? obj.side : null,
-      entry:   (typeof obj?.entry === 'number' && isFinite(obj.entry)) ? obj.entry : null,
-      startedAt: (typeof obj?.startedAt === 'number' && isFinite(obj.startedAt)) ? obj.startedAt : null,
-    };
-  } catch {
-    return { enabled:false, active:false, side:null, entry:null, startedAt:null };
-  }
-}
-function apSave(state) {
-  localStorage.setItem(AP_KEY, JSON.stringify(state));
-}
-let autopilot = apLoad();
-
-function apSideLabel(side, lang) {
-  if (lang === 'en') return side === 'buy' ? 'BUY' : 'SELL';
-  return side === 'buy' ? 'COMPRA' : 'VENDA';
-}
-function apPickEntryFromUI() {
-  const txt = (els.tradeEntry?.textContent || '').replace(',', '.');
-  const m = txt.match(/(\d+(\.\d+)?)/);
-  return m ? Number(m[1]) : null;
-}
-function apSyncUI() {
-  if (!els.apToggle || !els.apState || !els.apMeta) return;
-
-  els.apToggle.checked = !!autopilot.enabled;
-
-  els.apState.classList.remove('ap-on','ap-off','ap-buy','ap-sell');
-  if (!autopilot.enabled) {
-    els.apState.classList.add('ap-off');
-    els.apState.textContent = 'OFF';
-    els.apMeta.textContent = '—';
-    return;
-  }
-
-  els.apState.classList.add('ap-on');
-  if (autopilot.active && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
-    els.apState.classList.add(autopilot.side === 'buy' ? 'ap-buy' : 'ap-sell');
-    els.apState.textContent = autopilot.side === 'buy' ? 'BUY' : 'SELL';
-
-    const entry = autopilot.entry != null ? autopilot.entry.toFixed(2) : '—';
-    const started = autopilot.startedAt
-      ? new Date(autopilot.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      : '—';
-    els.apMeta.textContent = `@ ${entry} · ${started}`;
-  } else {
-    els.apState.textContent = 'ON';
-    els.apMeta.textContent = 'armado (sem posição)';
-  }
-}
-
-function apActivate(side) {
-  autopilot = apLoad(); // re-hidrata
-  autopilot.enabled = true;
-  autopilot.active = true;
-  autopilot.side = side;
-
-  const entry = apPickEntryFromUI();
-  autopilot.entry = (entry != null && isFinite(entry)) ? entry : autopilot.entry;
-  autopilot.startedAt = Date.now();
-
-  apSave(autopilot);
-  apSyncUI();
-
-  // força re-render do painel no estado "travado"
-  if (typeof fetchPanel === 'function') fetchPanel();
-}
-
-function apClose() {
-  autopilot = apLoad();
-  autopilot.enabled = false;
-  autopilot.active = false;
-  autopilot.side = null;
-  autopilot.entry = null;
-  autopilot.startedAt = null;
-
-  apSave(autopilot);
-  apSyncUI();
-
-  if (typeof fetchPanel === 'function') fetchPanel();
-}
 
 
    // ====== SIZING BRAIN – CAMPOS DO CARD COMPLETO ======
