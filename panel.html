@@ -5588,58 +5588,69 @@ function initAaron9() {
 }
 
 
-// AUTOPILOT init (vira função e é chamada dentro do initAaron9)
-function initAutopilotUI() {
-  autopilot = apLoad();
-  apSyncUI();
+// AUTOPILOT init
+autopilot = apLoad();
+apSyncUI();
 
-  if (els.apToggle) {
-    els.apToggle.addEventListener('change', () => {
-      autopilot = apLoad();
-      autopilot.enabled = !!els.apToggle.checked;
-
-      // se desligar o toggle, encerra simulação
-      if (!autopilot.enabled) {
-        autopilot.active = false;
-        autopilot.side = null;
-        autopilot.entry = null;
-        autopilot.startedAt = null;
-      }
-
-      apSave(autopilot);
-      apSyncUI();
-      fetchPanel();
-    });
+function apArmFromButton(side) {
+  // força o toggle visual ficar ON também
+  if (els.apToggle && !els.apToggle.checked) {
+    els.apToggle.checked = true;
   }
-
-  if (els.apBuy) {
-    els.apBuy.addEventListener('click', () => apActivate('buy'));
-  }
-  if (els.apSell) {
-    els.apSell.addEventListener('click', () => apActivate('sell'));
-  }
-  if (els.apClose) {
-    els.apClose.addEventListener('click', () => apClose());
-  }
-
-
-
-    // AUTOPILOT 2.0: quando muda capital, recalcula units e reflete no Citadel
-  if (els.apCapital) {
-    els.apCapital.addEventListener('input', () => {
-      apRenderSizing();
-      apSyncUI();
-      if (typeof loadPanel === 'function') loadPanel(false);
-    });
-  }
-
+  apActivate(side); // isso já seta enabled=true e salva
 }
 
-  
+if (els.apToggle) {
+  els.apToggle.addEventListener('change', () => {
+    autopilot = apLoad();
+    autopilot.enabled = !!els.apToggle.checked;
 
+    // se desligar o toggle, encerra simulação
+    if (!autopilot.enabled) {
+      autopilot.active = false;
+      autopilot.side = null;
+      autopilot.entry = null;
+      autopilot.startedAt = null;
+    }
 
+    apSave(autopilot);
+    apSyncUI();
+    fetchPanel();
+  });
+}
 
+if (els.apBuy) {
+  els.apBuy.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    apArmFromButton('buy');
+  });
+}
 
+if (els.apSell) {
+  els.apSell.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    apArmFromButton('sell');
+  });
+}
+
+if (els.apClose) {
+  els.apClose.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    apClose();
+  });
+}
+
+// AUTOPILOT 2.0: quando muda capital, recalcula units e reflete no Citadel
+if (els.apCapital) {
+  els.apCapital.addEventListener('input', () => {
+    apRenderSizing();
+    apSyncUI();
+    if (typeof loadPanel === 'function') loadPanel(false);
+  });
+ }
 // ================ TOGGLE DE IDIOMA PT / EN ==================
 
 const I18N = {
