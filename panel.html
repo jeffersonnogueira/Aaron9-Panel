@@ -5579,11 +5579,17 @@ function initAaron9() {
     });
   }
 
-  // primeira carga + auto refresh do painel
+    // primeira carga + auto refresh do painel
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
 
-// AUTOPILOT init
+  // AUTOPILOT (bind após DOM pronto)
+  initAutopilotUI();
+}
+
+
+// AUTOPILOT init (vira função e é chamada dentro do initAaron9)
+function initAutopilotUI() {
   autopilot = apLoad();
   apSyncUI();
 
@@ -5599,15 +5605,24 @@ function initAaron9() {
         autopilot.entry = null;
         autopilot.startedAt = null;
       }
+
       apSave(autopilot);
       apSyncUI();
       fetchPanel();
     });
   }
 
-  if (els.apBuy)  els.apBuy.addEventListener('click',  () => apActivate('buy'));
-  if (els.apSell) els.apSell.addEventListener('click', () => apActivate('sell'));
-  if (els.apClose) els.apClose.addEventListener('click', () => apClose());
+  if (els.apBuy) {
+    els.apBuy.addEventListener('click', () => apActivate('buy'));
+  }
+  if (els.apSell) {
+    els.apSell.addEventListener('click', () => apActivate('sell'));
+  }
+  if (els.apClose) {
+    els.apClose.addEventListener('click', () => apClose());
+  }
+}
+
 
     // AUTOPILOT 2.0: quando muda capital, recalcula units e reflete no Citadel
   if (els.apCapital) {
