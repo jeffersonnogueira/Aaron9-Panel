@@ -5582,9 +5582,8 @@ function initAaron9() {
   // primeira carga + auto refresh do painel
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
-}
 
-  // AUTOPILOT init
+// AUTOPILOT init
   autopilot = apLoad();
   apSyncUI();
 
@@ -5618,6 +5617,10 @@ function initAaron9() {
       if (typeof loadPanel === 'function') loadPanel(false);
     });
   }
+
+}
+
+  
 
 
 
