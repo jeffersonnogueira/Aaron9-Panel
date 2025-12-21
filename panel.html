@@ -3435,6 +3435,8 @@ const els = {
 
 // ===============================
 // AUTOPILOT v1 (simulação local) — CONTRATO OFICIAL (State Machine + Snapshot + Regra de Conflito)
+// Estados: FLAT / LONG_ACTIVE / SHORT_ACTIVE / EXIT_PENDING
+// Eventos: OPEN_LONG / OPEN_SHORT / PANEL_UPDATE / CLOSE
 // ===============================
 const AP_KEY = 'AARON_AUTOPILOT_V1';
 
@@ -3454,18 +3456,10 @@ const AP_STATE = Object.freeze({
   EXIT_PENDING: 'EXIT_PENDING',
 });
 
-// cache do último JSON (pra snapshot congelar contexto)
+// último contexto do painel recebido (para regras e snapshot)
 let apLastPanelCtx = null;
-let lastTradeCard = null;
 
-function apNormProb(x) {
-  const n = Number(x);
-  if (!isFinite(n)) return NaN;
-  // aceita 0–1 OU 0–100
-  if (n >= 0 && n <= 1) return n;
-  if (n > 1 && n <= 100) return n / 100;
-  return NaN;
-}
+let lastTradeCard = null;
 
 function apLoad() {
   try {
@@ -3475,100 +3469,250 @@ function apLoad() {
     const capital =
       (typeof obj?.capital === 'number' && isFinite(obj.capital)) ? obj.capital : 25000;
 
-    // ---- compat / legado ----
-    const legacySide = (obj?.side === 'buy' || obj?.side === 'sell') ? obj.side : null;
-    const legacyEntry = (typeof obj?.entry === 'number' && isFinite(obj.entry)) ? obj.entry : null;
-    const legacyStartedAt = (typeof obj?.startedAt === 'number' && isFinite(obj.startedAt)) ? obj.startedAt : null;
+    // estado (compat com versões antigas)
+    const state = (obj?.state && Object.values(AP_STATE).includes(obj.state))
+      ? obj.state
+      : ((obj?.active && obj?.side === 'buy') ? AP_STATE.LONG_ACTIVE
+        : (obj?.active && obj?.side === 'sell') ? AP_STATE.SHORT_ACTIVE
+        : AP_STATE.FLAT);
 
-    // ---- state (contrato) ----
-    let state = String(obj?.state || '').toUpperCase();
-    if (!Object.values(AP_STATE).includes(state)) {
-      // migra do formato antigo
-      if (obj?.enabled && obj?.active && legacySide) {
-        state = legacySide === 'buy' ? AP_STATE.LONG_ACTIVE : AP_STATE.SHORT_ACTIVE;
-      } else {
-        state = AP_STATE.FLAT;
-      }
+    // snapshot (compat com versões antigas)
+    let snapshot = (obj?.snapshot && typeof obj.snapshot === 'object') ? obj.snapshot : null;
+    if (!snapshot && (state === AP_STATE.LONG_ACTIVE || state === AP_STATE.SHORT_ACTIVE)) {
+      const legacyEntry = (typeof obj?.entry === 'number' && isFinite(obj.entry)) ? obj.entry : null;
+      snapshot = {
+        side: (state === AP_STATE.LONG_ACTIVE) ? 'buy' : 'sell',
+        timestamp: (typeof obj?.startedAt === 'number' && isFinite(obj.startedAt)) ? obj.startedAt : Date.now(),
+        entry_price: legacyEntry,
+      };
     }
 
-    // ---- snapshot (contrato) ----
-    const snap = (obj && typeof obj.snapshot === 'object' && obj.snapshot) ? obj.snapshot : null;
-
-    // se veio legado sem snapshot, cria snapshot mínimo (para não quebrar)
-    const snapshot = snap || (
-      (state !== AP_STATE.FLAT && legacySide && legacyEntry)
-        ? {
-            side: legacySide,
-            entry: legacyEntry,
-            openedAt: legacyStartedAt || Date.now(),
-          }
-        : null
-    );
-
-    // enabled (toggle) é separado do estado
-    const enabled = !!obj?.enabled;
-
-    // campos derivados (mantém compat com o resto do painel)
-    const side = snapshot?.side === 'buy' || snapshot?.side === 'sell'
-      ? snapshot.side
-      : legacySide;
-
-    const entry = (typeof snapshot?.entry === 'number' && isFinite(snapshot.entry))
-      ? snapshot.entry
-      : legacyEntry;
-
-    const startedAt = (typeof snapshot?.openedAt === 'number' && isFinite(snapshot.openedAt))
-      ? snapshot.openedAt
-      : legacyStartedAt;
-
-    const active = enabled && (state !== AP_STATE.FLAT);
-
-    return {
-      // toggle
-      enabled,
+    const ap = {
+      enabled: !!obj?.enabled,
 
       // contrato
       state,
-      snapshot: snapshot || null,
+      snapshot,
+      exit_reason: (typeof obj?.exit_reason === 'string') ? obj.exit_reason : null,
 
-      // compat
-      active,
-      side: side || null,
-      entry: entry ?? null,
-      startedAt: startedAt ?? null,
-
-      // runtime (atualiza via PANEL_UPDATE)
-      priceNow: (typeof obj?.priceNow === 'number' && isFinite(obj.priceNow)) ? obj.priceNow : null,
-      pnlUsd: (typeof obj?.pnlUsd === 'number' && isFinite(obj.pnlUsd)) ? obj.pnlUsd : null,
-      exitPendingAt: (typeof obj?.exitPendingAt === 'number' && isFinite(obj.exitPendingAt)) ? obj.exitPendingAt : null,
-      exitReason: (typeof obj?.exitReason === 'string') ? obj.exitReason : '',
-
-      // sizing 2.0
+      // 2.0
       capital,
       units: (typeof obj?.units === 'number' && isFinite(obj.units)) ? obj.units : null,
-    };
-  } catch {
-    return {
-      enabled: false,
-      state: AP_STATE.FLAT,
-      snapshot: null,
+      priceNow: (typeof obj?.priceNow === 'number' && isFinite(obj.priceNow)) ? obj.priceNow : null,
+
+      // compat (vai ser derivado)
       active: false,
       side: null,
       entry: null,
       startedAt: null,
-      priceNow: null,
-      pnlUsd: null,
-      exitPendingAt: null,
-      exitReason: '',
+    };
+
+    apDeriveCompatFields(ap);
+    return ap;
+  } catch {
+    const ap = {
+      enabled: false,
+      state: AP_STATE.FLAT,
+      snapshot: null,
+      exit_reason: null,
       capital: 25000,
       units: null,
+      priceNow: null,
+      active: false,
+      side: null,
+      entry: null,
+      startedAt: null,
     };
+    apDeriveCompatFields(ap);
+    return ap;
   }
 }
 
-function apSave(state) {
-  localStorage.setItem(AP_KEY, JSON.stringify(state));
+function apSave(obj) {
+  try {
+    const payload = {
+      enabled: !!obj?.enabled,
+
+      // contrato
+      state: obj?.state || AP_STATE.FLAT,
+      snapshot: obj?.snapshot || null,
+      exit_reason: obj?.exit_reason || null,
+
+      // 2.0
+      capital: (typeof obj?.capital === 'number' && isFinite(obj.capital)) ? obj.capital : 25000,
+      units: (typeof obj?.units === 'number' && isFinite(obj.units)) ? obj.units : null,
+      priceNow: (typeof obj?.priceNow === 'number' && isFinite(obj.priceNow)) ? obj.priceNow : null,
+    };
+    localStorage.setItem(AP_KEY, JSON.stringify(payload));
+  } catch {
+    // ignore
+  }
 }
+
+function apDeriveCompatFields(ap) {
+  if (!ap || typeof ap !== 'object') return;
+
+  ap.active = (ap.state && ap.state !== AP_STATE.FLAT);
+  const snap = (ap.snapshot && typeof ap.snapshot === 'object') ? ap.snapshot : null;
+  ap.side = (snap?.side === 'buy' || snap?.side === 'sell') ? snap.side : null;
+
+  const ep = snap?.entry_price;
+  ap.entry = (typeof ep === 'number' && isFinite(ep)) ? ep : null;
+
+  const ts = snap?.timestamp;
+  ap.startedAt = (typeof ts === 'number' && isFinite(ts)) ? ts : null;
+}
+
+function apNormProb(v) {
+  if (v == null) return null;
+  if (typeof v === 'number' && isFinite(v)) return v;
+  const s = String(v).trim();
+  if (!s) return null;
+  const pct = s.includes('%');
+  const num = parseFloat(s.replace('%','').replace(',','.'));
+  if (!isFinite(num)) return null;
+  return pct ? num : (num <= 1 ? num * 100 : num);
+}
+
+function apMarketNowFromTradeCard(t) {
+  const raw = (t && (t.direction || t.direcao || t.market_now || t.marketNow || t.veredito || '')) || '';
+  const s = String(raw).toUpperCase();
+  if (s.includes('WAIT') || s.includes('ESPERA')) return 'WAIT';
+  if (s.includes('BUY') || s.includes('COMPRA')) return 'BUY';
+  if (s.includes('SELL') || s.includes('VENDA')) return 'SELL';
+  return null;
+}
+
+function apIsStrongContra(side) {
+  const marketNow = apMarketNowFromTradeCard(lastTradeCard) || null;
+
+  const panel = apLastPanelCtx?.panel || {};
+  const consensus = apExtractConsensus(panel); // {buy,sell}
+  const buyP = apNormProb(consensus?.buy);
+  const sellP = apNormProb(consensus?.sell);
+  const structureConfirm = !!apExtractStructureConfirm(panel);
+
+  if (side === 'buy') {
+    if (marketNow !== 'SELL') return { ok:false, reason:null };
+    if (structureConfirm) return { ok:true, reason:'estrutura confirma contra' };
+    if (sellP != null && buyP != null && sellP > buyP) return { ok:true, reason:'consenso SELL dominante' };
+    return { ok:false, reason:null };
+  }
+
+  if (side === 'sell') {
+    if (marketNow !== 'BUY') return { ok:false, reason:null };
+    if (structureConfirm) return { ok:true, reason:'estrutura confirma contra' };
+    if (sellP != null && buyP != null && buyP > sellP) return { ok:true, reason:'consenso BUY dominante' };
+    return { ok:false, reason:null };
+  }
+
+  return { ok:false, reason:null };
+}
+
+function apCreateSnapshot(side) {
+  const entry = apPickEntryFromUI() ?? apGetMarketPrice();
+  const entry_price = (entry != null && isFinite(entry)) ? Number(entry) : null;
+
+  const stopTp = apGetStopTpFromUI() || {};
+  const stop = (stopTp.stop != null && isFinite(stopTp.stop)) ? Number(stopTp.stop) : null;
+  const tp1  = (stopTp.tp1  != null && isFinite(stopTp.tp1 )) ? Number(stopTp.tp1 ) : null;
+  const tp2  = (stopTp.tp2  != null && isFinite(stopTp.tp2 )) ? Number(stopTp.tp2 ) : null;
+
+  const symbol =
+    (lastTradeCard && (lastTradeCard.symbol || lastTradeCard.ativo || lastTradeCard.asset)) ||
+    (els.tradeSymbol?.textContent?.trim()) ||
+    (els.symbol?.textContent?.trim()) ||
+    '—';
+
+  const timeframe =
+    (lastTradeCard && (lastTradeCard.timeframe || lastTradeCard.tf)) ||
+    (els.tradeTimeframe?.textContent?.trim()) ||
+    '';
+
+  return {
+    side,
+    timestamp: Date.now(),
+    symbol,
+    timeframe,
+    entry_price,
+    stop,
+    tp1,
+    tp2,
+
+    market_now_at_entry: apMarketNowFromTradeCard(lastTradeCard),
+    consensus_at_entry: apExtractConsensus(apLastPanelCtx?.panel || {}),
+    structure_confirm_at_entry: !!apExtractStructureConfirm(apLastPanelCtx?.panel || {}),
+    pullback_active_at_entry: !!apExtractPullbackActive(apLastPanelCtx?.panel || {}),
+  };
+}
+
+function apDispatch(evt, payload) {
+  autopilot = apLoad();
+
+  // mantém 2.0 atualizado
+  if (els.apCapital) {
+    const cap = Number(String(els.apCapital.value || '').replace(',','.'));
+    if (isFinite(cap) && cap > 0) autopilot.capital = cap;
+  }
+  autopilot.priceNow = apGetMarketPrice() ?? autopilot.priceNow;
+  autopilot.units = apComputeUnits(autopilot.capital, autopilot.priceNow ?? autopilot.entry);
+
+  if (evt === AP_EVT.PANEL_UPDATE && payload && typeof payload === 'object') {
+    apLastPanelCtx = payload;
+  }
+
+  if (evt === AP_EVT.OPEN_LONG) {
+    autopilot.enabled = true;
+    autopilot.state = AP_STATE.LONG_ACTIVE;
+    autopilot.snapshot = apCreateSnapshot('buy');
+    autopilot.exit_reason = null;
+  }
+
+  if (evt === AP_EVT.OPEN_SHORT) {
+    autopilot.enabled = true;
+    autopilot.state = AP_STATE.SHORT_ACTIVE;
+    autopilot.snapshot = apCreateSnapshot('sell');
+    autopilot.exit_reason = null;
+  }
+
+  if (evt === AP_EVT.CLOSE) {
+    // fecha posição mas mantém o Auto Pilot ON (toggle controla OFF/ON)
+    autopilot.state = AP_STATE.FLAT;
+    autopilot.snapshot = null;
+    autopilot.exit_reason = null;
+  }
+
+  if (evt === AP_EVT.PANEL_UPDATE) {
+    const side = autopilot.snapshot?.side;
+    const hasPos =
+      autopilot.enabled &&
+      (autopilot.state === AP_STATE.LONG_ACTIVE || autopilot.state === AP_STATE.SHORT_ACTIVE || autopilot.state === AP_STATE.EXIT_PENDING) &&
+      (side === 'buy' || side === 'sell');
+
+    if (hasPos) {
+      const strong = apIsStrongContra(side);
+      if (strong.ok) {
+        autopilot.state = AP_STATE.EXIT_PENDING;
+        autopilot.exit_reason = strong.reason || 'contra forte';
+      } else if (autopilot.state === AP_STATE.EXIT_PENDING) {
+        autopilot.state = (side === 'buy') ? AP_STATE.LONG_ACTIVE : AP_STATE.SHORT_ACTIVE;
+        autopilot.exit_reason = null;
+      }
+    }
+  }
+
+  apDeriveCompatFields(autopilot);
+
+  apRenderSizing();
+  apSave(autopilot);
+  apSyncUI();
+
+  // evita loop: loadPanel chama PANEL_UPDATE
+  if (evt !== AP_EVT.PANEL_UPDATE && typeof loadPanel === 'function') {
+    loadPanel(false);
+  }
+}
+
 
 let autopilot = apLoad();
 let apMarketPrice = null;
@@ -3910,17 +4054,13 @@ function apPickEntryFromUI() {
 function apSyncUI() {
   if (!els.apToggle || !els.apState || !els.apMeta) return;
 
-  // re-hidrata sempre (pra pegar state/snapshot) mas sem quebrar o 2.0
-  if (!autopilot) autopilot = apLoad();
-
   els.apToggle.checked = !!autopilot.enabled;
 
-  // garante que o 2.0 (capital/units) está sempre renderizado
   if (els.apCapital) els.apCapital.value = String(autopilot.capital ?? 25000);
   apRenderSizing();
 
-  // visual
   els.apState.classList.remove('ap-on','ap-off','ap-buy','ap-sell');
+
   if (!autopilot.enabled) {
     els.apState.classList.add('ap-off');
     els.apState.textContent = 'OFF';
@@ -3928,52 +4068,52 @@ function apSyncUI() {
     return;
   }
 
-  // enabled ON
-  if (autopilot.state === AP_STATE.FLAT) {
-    els.apState.classList.add('ap-on');
-    els.apState.textContent = 'ON';
-    els.apMeta.textContent = 'armado (sem posição)';
+  els.apState.classList.add('ap-on');
+
+  const side = autopilot.snapshot?.side || autopilot.side;
+  const hasPos = (autopilot.state !== AP_STATE.FLAT) && (side === 'buy' || side === 'sell');
+
+  if (hasPos) {
+    els.apState.classList.add(side === 'buy' ? 'ap-buy' : 'ap-sell');
+
+    const entryPx = (typeof autopilot.snapshot?.entry_price === 'number' && isFinite(autopilot.snapshot.entry_price))
+      ? autopilot.snapshot.entry_price
+      : autopilot.entry;
+
+    const entry = entryPx != null ? entryPx.toFixed(2) : '—';
+    const started = autopilot.startedAt
+      ? new Date(autopilot.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : '—';
+
+    const capTxt = (currentLang === 'en') ? apMoneyEN(autopilot.capital) : apMoneyPT(autopilot.capital);
+    const unitsTxt = (autopilot.units != null) ? `${autopilot.units.toLocaleString('en-US')} sh` : '—';
+
+    if (autopilot.state === AP_STATE.EXIT_PENDING) {
+      els.apState.textContent = 'EXIT';
+      els.apMeta.textContent = `@ ${entry} · ${started} · ${capTxt} · ${unitsTxt} · ${autopilot.exit_reason || 'contra forte'}`;
+    } else {
+      els.apState.textContent = (side === 'buy') ? 'BUY' : 'SELL';
+      els.apMeta.textContent = `@ ${entry} · ${started} · ${capTxt} · ${unitsTxt}`;
+    }
     return;
   }
 
-  // posição ativa / exit pending
-  const side = autopilot.snapshot?.side || autopilot.side;
-  const isBuy = side === 'buy';
-  els.apState.classList.add(isBuy ? 'ap-buy' : 'ap-sell');
-
-  if (autopilot.state === AP_STATE.EXIT_PENDING) {
-    els.apState.textContent = 'EXIT';
-  } else {
-    els.apState.textContent = isBuy ? 'BUY' : 'SELL';
-  }
-
-  const entry = autopilot.entry != null ? Number(autopilot.entry).toFixed(2) : '—';
-  const started = autopilot.startedAt
-    ? new Date(autopilot.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    : '—';
-
-  const capTxt = (currentLang === 'en') ? apMoneyEN(autopilot.capital) : apMoneyPT(autopilot.capital);
-  const unitsTxt = (autopilot.units != null) ? `${autopilot.units.toLocaleString('en-US')} sh` : '—';
-
-  const pnlTxt = (typeof autopilot.pnlUsd === 'number' && isFinite(autopilot.pnlUsd))
-    ? (autopilot.pnlUsd >= 0 ? `+${autopilot.pnlUsd.toFixed(0)}` : `${autopilot.pnlUsd.toFixed(0)}`)
-    : null;
-
-  els.apMeta.textContent =
-    pnlTxt
-      ? `@ ${entry} · ${started} · ${capTxt} · ${unitsTxt} · PnL ${pnlTxt}`
-      : `@ ${entry} · ${started} · ${capTxt} · ${unitsTxt}`;
+  els.apState.textContent = 'ON';
+  els.apMeta.textContent = 'armado (sem posição)';
 }
+
 
 function apActivate(side) {
-  // compat: mantém assinatura, mas vira evento do contrato
-  if (side === 'buy') apDispatch(AP_EVT.OPEN_LONG);
-  else if (side === 'sell') apDispatch(AP_EVT.OPEN_SHORT);
+  // compat: mantém API antiga, mas despacha eventos do contrato
+  if (side === 'buy') return apDispatch(AP_EVT.OPEN_LONG);
+  if (side === 'sell') return apDispatch(AP_EVT.OPEN_SHORT);
 }
 
+
 function apClose() {
-  apDispatch(AP_EVT.CLOSE);
+  return apDispatch(AP_EVT.CLOSE);
 }
+
 
 function apArmFromButton(side) {
   // força o toggle visual ficar ON também
@@ -4587,7 +4727,10 @@ function updateTradeCard(trade) {
     if (els.tradeBadge) {
       els.tradeBadge.classList.remove('buy','sell');
       els.tradeBadge.classList.add(autopilot.side === 'buy' ? 'buy' : 'sell');
-      els.tradeBadge.textContent = (lang === 'en') ? 'IN POSITION' : 'EM POSIÇÃO';
+      els.tradeBadge.textContent = (autopilot.state === AP_STATE.EXIT_PENDING)
+  ? ((lang === 'en') ? 'EXIT' : 'SAIR')
+  : ((lang === 'en') ? 'IN POSITION' : 'EM POSIÇÃO');
+
     }
   }
 
@@ -4670,7 +4813,7 @@ setFormattedComment(els.tradeComment, parsed.comment || commentText);
 
     badge.textContent = text;
   }
-}
+
 
 
 function applyHeroDecision(executionText, summaryText) {
@@ -4690,9 +4833,16 @@ function applyHeroDecision(executionText, summaryText) {
   let execution = executionText || '';
   let summary = summaryText || '';
 
-    if (autopilot.enabled && autopilot.state && autopilot.state !== AP_STATE.FLAT && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
-    const sideLabel = apSideLabel(autopilot.side, lang).toUpperCase();
-    const entry = autopilot.entry != null ? Number(autopilot.entry).toFixed(2) : '—';
+      const apSide = autopilot.snapshot?.side || autopilot.side;
+  const apHasPos = autopilot.enabled && (autopilot.state === AP_STATE.LONG_ACTIVE || autopilot.state === AP_STATE.SHORT_ACTIVE || autopilot.state === AP_STATE.EXIT_PENDING) && (apSide === 'buy' || apSide === 'sell');
+
+  if (apHasPos) {
+
+    const sideLabel = apSideLabel(apSide, lang);
+
+    const entryPx = (typeof autopilot.snapshot?.entry_price === 'number' && isFinite(autopilot.snapshot.entry_price)) ? autopilot.snapshot.entry_price : autopilot.entry;
+const entry = entryPx != null ? entryPx.toFixed(2) : '—';
+
     const marketNow = lastTradeCard ? apGetMarketNowFromTrade(lastTradeCard) : 'WAIT';
 
     if (autopilot.state === AP_STATE.EXIT_PENDING) {
@@ -5665,6 +5815,12 @@ if (typeof apDispatch === 'function') {
 
     updateTradeCard(tradeCard);
 
+        // AUTOPILOT contrato: atualiza contexto e aplica regra de conflito
+    if (typeof apDispatch === 'function') {
+      apDispatch(AP_EVT.PANEL_UPDATE, { panel, raw, tradeCard });
+    }
+
+
 
 
 
@@ -5999,34 +6155,39 @@ function apArmFromButton(side) {
     els.apToggle.checked = true;
   }
 
-  apActivate(side); // seta enabled=true, salva e sincroniza UI
-
-  // garante que o resto do painel atualiza imediatamente
-  if (typeof loadPanel === 'function') loadPanel(false);
+  if (side === 'buy') return apDispatch(AP_EVT.OPEN_LONG);
+  if (side === 'sell') return apDispatch(AP_EVT.OPEN_SHORT);
 }
+
 
 
 if (els.apToggle) {
   els.apToggle.addEventListener('change', () => {
-    // OFF = CLOSE total (limpa snapshot + volta FLAT)
-    if (!els.apToggle.checked) {
-      apDispatch(AP_EVT.CLOSE);
+    autopilot = apLoad();
+    const turningOn = !!els.apToggle.checked;
+
+    if (turningOn) {
+      autopilot.enabled = true;
+      if (!autopilot.state) autopilot.state = AP_STATE.FLAT;
+      apDeriveCompatFields(autopilot);
+      apSave(autopilot);
+      apSyncUI();
+      if (typeof loadPanel === 'function') loadPanel(false);
       return;
     }
 
-    // ON = armado em FLAT (sem posição)
-    autopilot = apLoad();
-    autopilot.enabled = true;
+    // turning OFF: desliga e limpa snapshot/estado
+    autopilot.enabled = false;
     autopilot.state = AP_STATE.FLAT;
     autopilot.snapshot = null;
-    autopilot.exitPendingAt = null;
-    autopilot.exitReason = '';
+    autopilot.exit_reason = null;
     apDeriveCompatFields(autopilot);
     apSave(autopilot);
     apSyncUI();
     if (typeof loadPanel === 'function') loadPanel(false);
   });
 }
+
 
 
 
