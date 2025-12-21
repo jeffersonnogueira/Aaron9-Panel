@@ -3593,7 +3593,7 @@ function apActivate(side) {
   apSyncUI();
 
   // força re-render do painel no estado "travado"
-  if (typeof fetchPanel === 'function') fetchPanel();
+if (typeof loadPanel === 'function') loadPanel(false);
 }
 
 function apClose() {
@@ -3607,7 +3607,7 @@ function apClose() {
   apSave(autopilot);
   apSyncUI();
 
-  if (typeof fetchPanel === 'function') fetchPanel();
+  if (typeof loadPanel === 'function') loadPanel(false);
 }
 
 
@@ -5584,7 +5584,8 @@ function initAaron9() {
   setInterval(() => loadPanel(false), REFRESH_MS);
 
   // AUTOPILOT (bind após DOM pronto)
-  initAutopilotUI();
+if (typeof initAutopilotUI === 'function') initAutopilotUI();
+
 }
 
 
@@ -5597,8 +5598,13 @@ function apArmFromButton(side) {
   if (els.apToggle && !els.apToggle.checked) {
     els.apToggle.checked = true;
   }
-  apActivate(side); // isso já seta enabled=true e salva
+
+  apActivate(side); // seta enabled=true, salva e sincroniza UI
+
+  // garante que o resto do painel atualiza imediatamente
+  if (typeof loadPanel === 'function') loadPanel(false);
 }
+
 
 if (els.apToggle) {
   els.apToggle.addEventListener('change', () => {
@@ -5615,7 +5621,7 @@ if (els.apToggle) {
 
     apSave(autopilot);
     apSyncUI();
-    fetchPanel();
+    if (typeof loadPanel === 'function') loadPanel(false);
   });
 }
 
