@@ -5827,8 +5827,9 @@ if (typeof initAutopilotUI === 'function') initAutopilotUI();
 
 
 // AUTOPILOT init
-autopilot = apLoad();
+let autopilot = apLoad();
 apSyncUI();
+
 
 function apArmFromButton(side) {
   // força o toggle visual ficar ON também
