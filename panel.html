@@ -3500,7 +3500,8 @@ function apComputeUnits(capital, price){
 
 function apRenderSizing(){
   // mantém state sempre “2.0-ready”
-  autopilot = apLoad();
+  // NÃO re-hidratar aqui (apLoad), senão apActivate() perde enabled/active/side recém-setados
+  if (!autopilot) autopilot = apLoad();
 
   // capital vem do input (se existir)
   if (els.apCapital) {
@@ -3514,12 +3515,10 @@ function apRenderSizing(){
   const units = apComputeUnits(autopilot.capital, price);
   autopilot.units = units;
 
-  // UI: units
   if (els.apUnits) {
     els.apUnits.value = (units != null) ? units.toLocaleString('en-US') : '—';
   }
 
-  // UI: quotes (sem inventar spread -> sell/buy = price)
   const px = (price != null) ? Number(price) : null;
   if (els.apPriceSell) els.apPriceSell.textContent = (px != null) ? px.toFixed(2) : '—';
   if (els.apPriceBuy)  els.apPriceBuy.textContent  = (px != null) ? px.toFixed(2) : '—';
@@ -3527,6 +3526,7 @@ function apRenderSizing(){
 
   apSave(autopilot);
 }
+
 
 
 function apSideLabel(side, lang) {
@@ -3606,7 +3606,6 @@ function apClose() {
 
   apSave(autopilot);
   apSyncUI();
-
   if (typeof loadPanel === 'function') loadPanel(false);
 }
 
