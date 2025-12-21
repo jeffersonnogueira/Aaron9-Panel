@@ -707,231 +707,6 @@
   color: rgba(148,163,184,0.9);
 }
 
-/* ===== AUTOPILOT (simulador) ===== */
-.trade-autopilot { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.ap-switch { position:relative; width:42px; height:22px; display:inline-block; }
-.ap-switch input { opacity:0; width:0; height:0; }
-.ap-slider {
-  position:absolute; cursor:pointer; inset:0;
-  background: rgba(148,163,184,0.25);
-  border:1px solid rgba(148,163,184,0.35);
-  transition:.2s; border-radius:999px;
-}
-.ap-slider:before {
-  content:""; position:absolute; height:16px; width:16px; left:3px; top:2px;
-  background: rgba(226,232,240,0.9);
-  transition:.2s; border-radius:999px;
-}
-.ap-switch input:checked + .ap-slider {
-  background: rgba(34,197,94,0.25);
-  border-color: rgba(34,197,94,0.45);
-}
-.ap-switch input:checked + .ap-slider:before { transform: translateX(19px); }
-
-.ap-btn {
-  border:1px solid rgba(148,163,184,0.25);
-  background: rgba(15,23,42,0.35);
-  color:#e2e8f0; font-weight:800; letter-spacing:.4px;
-  padding:7px 10px; border-radius:12px; cursor:pointer;
-}
-.ap-btn:hover { filter:brightness(1.08); }
-
-.ap-meta { opacity:.85; font-size:0.86rem; }
-
-#ap-state { padding:4px 10px; border-radius:999px; font-weight:800; }
-#ap-state.ap-on { border-color: rgba(34,197,94,0.55); }
-#ap-state.ap-off { border-color: rgba(148,163,184,0.35); opacity:.8; }
-#ap-state.ap-buy { border-color: rgba(56,189,248,0.55); }
-#ap-state.ap-sell { border-color: rgba(248,113,113,0.55); }
-
-/* ===== AUTOPILOT UI v2 (premium) ===== */
-#autopilot-panel.autopilot-v2{
-  padding: 14px;
-  border: 1px solid rgba(148,163,184,0.18);
-  background:
-    radial-gradient(1200px 500px at 20% 0%, rgba(56,189,248,0.10), transparent 60%),
-    radial-gradient(900px 420px at 85% 10%, rgba(34,197,94,0.08), transparent 55%),
-    rgba(2,6,23,0.35);
-}
-
-#autopilot-panel .ap2-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:10px;
-}
-
-#autopilot-panel .ap2-sub{
-  margin-top:2px;
-  font-size:0.78rem;
-  opacity:0.75;
-}
-
-#autopilot-panel .ap2-controls{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-#autopilot-panel .ap2-bottom{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-#autopilot-panel .ap-btn{
-  min-width: 98px;
-  border-radius: 14px;
-  padding: 9px 12px;
-  letter-spacing: .6px;
-}
-
-#autopilot-panel .ap-btn:active{
-  transform: translateY(1px);
-}
-
-#autopilot-panel .ap2-ico{
-  display:inline-block;
-  margin-right:7px;
-  opacity:.85;
-  font-weight:900;
-}
-
-#autopilot-panel #ap-meta{
-  margin-left:auto;
-  padding-left:10px;
-  opacity:0.85;
-  font-size:0.86rem;
-}
-
-/* Deixa o estado mais "badge premium" */
-#autopilot-panel #ap-state{
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-weight: 900;
-  letter-spacing: .6px;
-}
-
-/* ===== AUTOPILOT 2.0 (cores fortes + sizing) ===== */
-#autopilot-panel .ap-btn.ap-buy{
-  background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(34,197,94,0.08));
-  border-color: rgba(34,197,94,0.55);
-  color: rgba(236,253,245,0.98);
-}
-#autopilot-panel .ap-btn.ap-sell{
-  background: linear-gradient(135deg, rgba(248,113,113,0.22), rgba(248,113,113,0.08));
-  border-color: rgba(248,113,113,0.62);
-  color: rgba(255,241,242,0.98);
-}
-#autopilot-panel .ap-btn.ap-close{
-  background: rgba(15,23,42,0.25);
-  border-color: rgba(148,163,184,0.28);
-}
-#autopilot-panel .ap-btn:disabled{
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-#autopilot-panel .ap2-sizing{
-  margin: 10px 0 12px 0;
-  padding: 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(148,163,184,0.16);
-  background: rgba(0,0,0,0.18);
-  box-shadow: inset 0 0 0 1px rgba(2,6,23,0.15);
-}
-
-#autopilot-panel .ap2-price-row{
-  display:grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-#autopilot-panel .ap2-quote{
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(148,163,184,0.18);
-  background: rgba(2,6,23,0.28);
-}
-
-#autopilot-panel .ap2-quote-sell{
-  border-color: rgba(248,113,113,0.30);
-}
-#autopilot-panel .ap2-quote-buy{
-  border-color: rgba(34,197,94,0.30);
-}
-
-#autopilot-panel .ap2-quote-label{
-  font-size: 0.72rem;
-  opacity: .78;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-#autopilot-panel .ap2-quote-price{
-  margin-top: 2px;
-  font-size: 1.05rem;
-  font-weight: 900;
-}
-
-#autopilot-panel .ap2-quote-mid{
-  padding: 0 4px;
-  text-align:center;
-  opacity: .82;
-}
-#autopilot-panel .ap2-quote-mid-label{
-  font-size: 0.70rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-#autopilot-panel .ap2-quote-mid-price{
-  margin-top: 2px;
-  font-weight: 800;
-}
-
-#autopilot-panel .ap2-input-row{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-@media (max-width: 520px){
-  #autopilot-panel .ap2-input-row{ grid-template-columns: 1fr; }
-  #autopilot-panel .ap2-price-row{ grid-template-columns: 1fr; }
-  #autopilot-panel .ap2-quote-mid{ display:none; }
-}
-
-#autopilot-panel .ap2-field{
-  display:flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-#autopilot-panel .ap2-label{
-  font-size: 0.72rem;
-  opacity: .78;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-#autopilot-panel .ap2-input{
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(148,163,184,0.20);
-  background: rgba(2,6,23,0.35);
-  color: rgba(226,232,240,0.96);
-  outline: none;
-}
-#autopilot-panel .ap2-input:focus{
-  border-color: rgba(34,211,238,0.45);
-  box-shadow: 0 0 0 4px rgba(34,211,238,0.10);
-}
-
-
 .status-hero-main {
   font-size: 1.35rem;
   font-weight: 500; /* <-- aqui para de deixar tudo bold */
@@ -2836,67 +2611,40 @@
 <!-- ====== AARON 9 – COLUNA DIREITA (DECISION PANEL) ====== -->
 <div class="decision-column">
 
-    <!-- AUTO PILOT (fora do Citadel, dentro do Resumo Institucional) -->
-<section class="decision-card autopilot-v2" id="autopilot-panel">
-  <div class="ap2-top">
-    <div>
-      <div class="decision-title">AUTO PILOT</div>
-      <div class="ap2-sub">Execução rápida (simulador)</div>
-    </div>
-
-    <div class="ap2-controls">
-      <span id="ap-state" class="badge-outline ap-off">OFF</span>
-
-      <label class="ap-switch ap2-switch" title="Liga/desliga o Autopilot (simulador)">
-        <input type="checkbox" id="ap-toggle" />
-        <span class="ap-slider"></span>
-      </label>
-    </div>
-  </div>
-
-  <!-- ====== MODO 2.0: capital -> units (shares) ====== -->
-  <div class="ap2-sizing">
-    <div class="ap2-price-row">
-      <div class="ap2-quote ap2-quote-sell">
-        <div class="ap2-quote-label">Sell</div>
-        <div id="ap-price-sell" class="ap2-quote-price">—</div>
+  <!-- RADAR VISUAL DE DIREÇÃO -->
+   <!-- RADAR VISUAL DE DIREÇÃO -->
+  <section class="decision-card">
+    <div class="decision-title" data-i18n="radar.day_title">Direção geral do dia</div>
+    <div class="radar-header">
+      <div id="direction-day-arrow" class="radar-circle">
+        <!-- seta pra baixo ou pra cima -->
+        ↓
       </div>
-
-      <div class="ap2-quote-mid">
-        <div class="ap2-quote-mid-label">Price</div>
-        <div id="ap-price-mid" class="ap2-quote-mid-price">—</div>
-      </div>
-
-      <div class="ap2-quote ap2-quote-buy">
-        <div class="ap2-quote-label">Buy</div>
-        <div id="ap-price-buy" class="ap2-quote-price">—</div>
+      <div>
+        <!-- label forte da direção do dia -->
+        <div id="trend-day-pill" class="decision-label-strong">Baixa forte</div>
+        <!-- texto de % + descrição -->
+        <div id="direction-day-text" class="radar-percent">
+          70% · baseada em tendência, volatilidade e memória A8/A9.
+        </div>
       </div>
     </div>
 
-    <div class="ap2-input-row">
-      <div class="ap2-field">
-        <label class="ap2-label">Units (shares)</label>
-        <input id="ap-units" class="ap2-input" type="text" value="—" readonly />
-      </div>
+    <hr style="border: none; border-top: 1px solid rgba(148,163,184,0.18); margin: 12px 0;" />
 
-      <div class="ap2-field">
-        <label class="ap2-label">Capital USD</label>
-        <input id="ap-capital" class="ap2-input" type="number" step="100" value="25000" />
+    <div class="decision-title" data-i18n="radar.now_title">Direção prevista · 1–3 candles</div>
+    <div class="radar-header">
+      <div id="direction-now-arrow" class="radar-circle buy">
+        ↑
+      </div>
+      <div>
+        <div id="trend-now-pill" class="decision-label-strong">Baixa</div>
+        <div id="direction-now-text" class="radar-percent">
+          65% · fluxo geral puxa movimentos de baixa. Contexto favorece vendas.
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="ap2-bottom">
-    <button id="ap-buy" class="ap-btn ap-buy"><span class="ap2-ico">▲</span>BUY</button>
-    <button id="ap-sell" class="ap-btn ap-sell"><span class="ap2-ico">▼</span>SELL</button>
-    <button id="ap-close" class="ap-btn ap-close"><span class="ap2-ico">✕</span>CLOSE</button>
-
-    <span id="ap-meta" class="ap-meta">—</span>
-  </div>
-</section>
-
-
-
+  </section>
 
   <!-- CARTÃO CITADEL · CARTÃO DE TRADE ATUAL -->
   <section id="trade-card" class="status-hero status-sell blink-hero">
@@ -2917,7 +2665,6 @@
   <strong>Pulse:</strong>
   <span id="pulseLine">—</span>
 </div>
-
 
         <div class="trade-line" id="trade-stats-top-line" style="display:none;">
   <strong data-i18n="trade_card.stats_label">Estatística:</strong>
@@ -3283,21 +3030,6 @@ const els = {
   symbol: document.getElementById('symbol-label'),
   timeframe: document.getElementById('timeframe-label'),
   pulseLine: document.getElementById('pulseLine'),
-    // AUTOPILOT
-  apToggle: document.getElementById('ap-toggle'),
-  apState: document.getElementById('ap-state'),
-  apBuy: document.getElementById('ap-buy'),
-  apSell: document.getElementById('ap-sell'),
-  apClose: document.getElementById('ap-close'),
-  apMeta: document.getElementById('ap-meta'),
-    // AUTOPILOT 2.0 (sizing / quotes)
-  apCapital: document.getElementById('ap-capital'),
-  apUnits: document.getElementById('ap-units'),
-  apPriceSell: document.getElementById('ap-price-sell'),
-  apPriceMid: document.getElementById('ap-price-mid'),
-  apPriceBuy: document.getElementById('ap-price-buy'),
-
-
   session: document.getElementById('session-label'),
   lastUpdate: document.getElementById('last-update-label'),
   flow: document.getElementById('flow-label'),
@@ -3432,184 +3164,6 @@ const els = {
   sizingPhraseDetail: document.getElementById('sizing-phrase-detail'),
 
 };
-
-// ===============================
-// AUTOPILOT v1 (simulação local)
-// ===============================
-const AP_KEY = 'AARON_AUTOPILOT_V1';
-let lastTradeCard = null;
-
-function apLoad() {
-  try {
-    const raw = localStorage.getItem(AP_KEY);
-    const obj = raw ? JSON.parse(raw) : null;
-
-    const capital =
-      (typeof obj?.capital === 'number' && isFinite(obj.capital)) ? obj.capital : 25000;
-
-    return {
-      enabled: !!obj?.enabled,
-      active:  !!obj?.active,
-      side:    (obj?.side === 'buy' || obj?.side === 'sell') ? obj.side : null,
-      entry:   (typeof obj?.entry === 'number' && isFinite(obj.entry)) ? obj.entry : null,
-      startedAt: (typeof obj?.startedAt === 'number' && isFinite(obj.startedAt)) ? obj.startedAt : null,
-
-      // 2.0
-      capital,
-      units: (typeof obj?.units === 'number' && isFinite(obj.units)) ? obj.units : null,
-      priceNow: (typeof obj?.priceNow === 'number' && isFinite(obj.priceNow)) ? obj.priceNow : null,
-    };
-  } catch {
-    return { enabled:false, active:false, side:null, entry:null, startedAt:null, capital:25000, units:null, priceNow:null };
-  }
-}
-
-function apSave(state) {
-  localStorage.setItem(AP_KEY, JSON.stringify(state));
-}
-let autopilot = apLoad();
-let apMarketPrice = null;
-
-function apMoneyEN(n){
-  return (typeof n === 'number' && isFinite(n))
-    ? '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 })
-    : '—';
-}
-function apMoneyPT(n){
-  return (typeof n === 'number' && isFinite(n))
-    ? 'US$ ' + n.toLocaleString('pt-BR', { maximumFractionDigits: 0 })
-    : '—';
-}
-
-function apGetMarketPrice(){
-  if (typeof apMarketPrice === 'number' && isFinite(apMarketPrice) && apMarketPrice > 0) return apMarketPrice;
-  if (typeof autopilot.priceNow === 'number' && isFinite(autopilot.priceNow) && autopilot.priceNow > 0) return autopilot.priceNow;
-
-  const entry = apPickEntryFromUI();
-  if (typeof entry === 'number' && isFinite(entry) && entry > 0) return entry;
-
-  return null;
-}
-
-function apComputeUnits(capital, price){
-  const cap = Number(capital);
-  const p = Number(price);
-  if (!isFinite(cap) || cap <= 0 || !isFinite(p) || p <= 0) return null;
-  return Math.floor(cap / p);
-}
-
-function apRenderSizing(){
-  // mantém state sempre “2.0-ready”
-  autopilot = apLoad();
-
-  // capital vem do input (se existir)
-  if (els.apCapital) {
-    const cap = Number(String(els.apCapital.value || '').replace(',', '.'));
-    if (isFinite(cap) && cap > 0) autopilot.capital = cap;
-  }
-
-  const price = apGetMarketPrice();
-  autopilot.priceNow = (price != null) ? Number(price) : autopilot.priceNow;
-
-  const units = apComputeUnits(autopilot.capital, price);
-  autopilot.units = units;
-
-  // UI: units
-  if (els.apUnits) {
-    els.apUnits.value = (units != null) ? units.toLocaleString('en-US') : '—';
-  }
-
-  // UI: quotes (sem inventar spread -> sell/buy = price)
-  const px = (price != null) ? Number(price) : null;
-  if (els.apPriceSell) els.apPriceSell.textContent = (px != null) ? px.toFixed(2) : '—';
-  if (els.apPriceBuy)  els.apPriceBuy.textContent  = (px != null) ? px.toFixed(2) : '—';
-  if (els.apPriceMid)  els.apPriceMid.textContent  = (px != null) ? px.toFixed(2) : '—';
-
-  apSave(autopilot);
-}
-
-
-function apSideLabel(side, lang) {
-  if (lang === 'en') return side === 'buy' ? 'BUY' : 'SELL';
-  return side === 'buy' ? 'COMPRA' : 'VENDA';
-}
-function apPickEntryFromUI() {
-  const txt = (els.tradeEntry?.textContent || '').replace(',', '.');
-  const m = txt.match(/(\d+(\.\d+)?)/);
-  return m ? Number(m[1]) : null;
-}
-function apSyncUI() {
-  if (!els.apToggle || !els.apState || !els.apMeta) return;
-
-  els.apToggle.checked = !!autopilot.enabled;
-
-    // garante que o 2.0 (capital/units) está sempre renderizado
-  if (els.apCapital) els.apCapital.value = String(autopilot.capital ?? 25000);
-  apRenderSizing();
-
-
-  els.apState.classList.remove('ap-on','ap-off','ap-buy','ap-sell');
-  if (!autopilot.enabled) {
-    els.apState.classList.add('ap-off');
-    els.apState.textContent = 'OFF';
-    els.apMeta.textContent = '—';
-    return;
-  }
-
-  els.apState.classList.add('ap-on');
-  if (autopilot.active && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
-    els.apState.classList.add(autopilot.side === 'buy' ? 'ap-buy' : 'ap-sell');
-    els.apState.textContent = autopilot.side === 'buy' ? 'BUY' : 'SELL';
-
-    const entry = autopilot.entry != null ? autopilot.entry.toFixed(2) : '—';
-    const started = autopilot.startedAt
-      ? new Date(autopilot.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      : '—';
-        const capTxt = (currentLang === 'en') ? apMoneyEN(autopilot.capital) : apMoneyPT(autopilot.capital);
-    const unitsTxt = (autopilot.units != null) ? `${autopilot.units.toLocaleString('en-US')} sh` : '—';
-    els.apMeta.textContent = `@ ${entry} · ${started} · ${capTxt} · ${unitsTxt}`;
-
-  } else {
-    els.apState.textContent = 'ON';
-    els.apMeta.textContent = 'armado (sem posição)';
-  }
-}
-
-function apActivate(side) {
-  autopilot = apLoad(); // re-hidrata
-  autopilot.enabled = true;
-  autopilot.active = true;
-  autopilot.side = side;
-
-    const entry = apPickEntryFromUI() ?? apGetMarketPrice();
-  autopilot.entry = (entry != null && isFinite(entry)) ? Number(entry) : autopilot.entry;
-
-  // atualiza sizing 2.0 quando entra em posição
-  apRenderSizing();
-
-  autopilot.startedAt = Date.now();
-
-  apSave(autopilot);
-  apSyncUI();
-
-  // força re-render do painel no estado "travado"
-if (typeof loadPanel === 'function') loadPanel(false);
-}
-
-function apClose() {
-  autopilot = apLoad();
-  autopilot.enabled = false;
-  autopilot.active = false;
-  autopilot.side = null;
-  autopilot.entry = null;
-  autopilot.startedAt = null;
-
-  apSave(autopilot);
-  apSyncUI();
-
-  if (typeof loadPanel === 'function') loadPanel(false);
-}
-
 
    // ====== SIZING BRAIN – CAMPOS DO CARD COMPLETO ======
 const sbEls = {
@@ -4094,8 +3648,6 @@ function updateTradeCard(trade) {
   if (!els.tradeStatusText) return;
 
   const t = trade || {};
-    lastTradeCard = t;
-
   const lang = currentLang === 'en' ? 'en' : 'pt';
 
   // helpers para pegar PT/EN
@@ -4155,53 +3707,6 @@ function updateTradeCard(trade) {
   safeText(els.tradeMode,    modeText);
   safeText(els.tradeAgainst, againstText);
   safeText(els.tradeDirection, directionText);
-    // ===== AUTOPILOT override (trava o card no estado da posição) =====
-  autopilot = apLoad();
-  apSyncUI();
-
-  if (autopilot.enabled && autopilot.active && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
-    const sideLabel = apSideLabel(autopilot.side, lang);
-    const entry = autopilot.entry != null ? autopilot.entry.toFixed(2) : '—';
-
-    // status no topo
-    els.tradeStatusText.textContent = (lang === 'en')
-      ? `🧠 AUTOPILOT ON | Simulating position: ${sideLabel} @ ${entry}`
-      : `🧠 AUTOPILOT ON | Simulando posição: ${sideLabel} @ ${entry}`;
-
-    // força direção do card
-    safeText(els.tradeDirection, sideLabel);
-
-        // 2.0: empurra capital/units pro Cartão Citadel
-    const px = apGetMarketPrice() ?? autopilot.entry;
-    const units = apComputeUnits(autopilot.capital, px);
-
-    if (els.tradeSize) {
-      if (lang === 'en') {
-        const capTxt = apMoneyEN(autopilot.capital);
-        const uTxt = (units != null) ? `${units.toLocaleString('en-US')} shares` : '—';
-        els.tradeSize.textContent = `${capTxt} · ${uTxt}`;
-      } else {
-        const capTxt = apMoneyPT(autopilot.capital);
-        const uTxt = (units != null) ? `${units.toLocaleString('pt-BR')} ações` : '—';
-        els.tradeSize.textContent = `${capTxt} · ${uTxt}`;
-      }
-    }
-
-
-    // troca “skin” buy/sell do card
-    if (els.tradeCard) {
-      els.tradeCard.classList.remove('status-buy','status-sell','status-neutral');
-      els.tradeCard.classList.add(autopilot.side === 'buy' ? 'status-buy' : 'status-sell');
-    }
-
-    // badge vira “HOLD / EM POSIÇÃO”
-    if (els.tradeBadge) {
-      els.tradeBadge.classList.remove('buy','sell');
-      els.tradeBadge.classList.add(autopilot.side === 'buy' ? 'buy' : 'sell');
-      els.tradeBadge.textContent = (lang === 'en') ? 'IN POSITION' : 'EM POSIÇÃO';
-    }
-  }
-
   safeText(els.tradeThermo, thermoText);
 
 // --- estatística: pega do JSON (normal) ---
@@ -4295,28 +3800,8 @@ function applyHeroDecision(executionText, summaryText) {
   const side = els.heroSideLabel;
   const heroSummary = els.heroSummary;
 
-    autopilot = apLoad();
-  apSyncUI();
-
-  let execution = executionText || '';
-  let summary = summaryText || '';
-
-  if (autopilot.enabled && autopilot.active && (autopilot.side === 'buy' || autopilot.side === 'sell')) {
-    const lang = currentLang === 'en' ? 'en' : 'pt';
-    const sideLabel = apSideLabel(autopilot.side, lang);
-    const entry = autopilot.entry != null ? autopilot.entry.toFixed(2) : '—';
-
-    execution = (lang === 'en')
-      ? `IN POSITION (${sideLabel})`
-      : `EM POSIÇÃO (${sideLabel})`;
-
-    summary = (lang === 'en')
-      ? `🧠 Autopilot ON — managing open ${sideLabel} position (entry ${entry}). Click CLOSE to reset.`
-      : `🧠 Autopilot ON — gerenciando posição aberta de ${sideLabel} (entrada ${entry}). Clique CLOSE para resetar.`;
-  }
-
-  const baseText = (execution || '').toLowerCase();
-
+  const baseText = executionText || 'AGUARDAR / OBSERVAR';
+  const t = baseText.toLowerCase();
 
   let mode = 'wait';
   if (t.includes('compra') || t.includes('buy')) mode = 'buy';
@@ -5214,19 +4699,6 @@ const payload =
 const panel = payload.panel || payload;
 const raw = payload.raw || payload.raw_eye || {};
 
-// alimenta Autopilot 2.0 com o preço atual (sem inventar)
-const pxNow =
-  panel.price_now ||
-  panel.last_price ||
-  panel.reference_price ||
-  (raw && raw.candle && raw.candle.close);
-
-if (pxNow != null && isFinite(Number(pxNow))) {
-  apMarketPrice = Number(pxNow);
-}
-apRenderSizing();
-
-
     updateGarimpoTodayCard(panel?.garimpo_today || null);
 
 
@@ -5579,84 +5051,13 @@ function initAaron9() {
     });
   }
 
-    // primeira carga + auto refresh do painel
+  // primeira carga + auto refresh do painel
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
-
-  // AUTOPILOT (bind após DOM pronto)
-if (typeof initAutopilotUI === 'function') initAutopilotUI();
-
 }
 
 
-// AUTOPILOT init
-autopilot = apLoad();
-apSyncUI();
 
-function apArmFromButton(side) {
-  // força o toggle visual ficar ON também
-  if (els.apToggle && !els.apToggle.checked) {
-    els.apToggle.checked = true;
-  }
-
-  apActivate(side); // seta enabled=true, salva e sincroniza UI
-
-  // garante que o resto do painel atualiza imediatamente
-  if (typeof loadPanel === 'function') loadPanel(false);
-}
-
-
-if (els.apToggle) {
-  els.apToggle.addEventListener('change', () => {
-    autopilot = apLoad();
-    autopilot.enabled = !!els.apToggle.checked;
-
-    // se desligar o toggle, encerra simulação
-    if (!autopilot.enabled) {
-      autopilot.active = false;
-      autopilot.side = null;
-      autopilot.entry = null;
-      autopilot.startedAt = null;
-    }
-
-    apSave(autopilot);
-    apSyncUI();
-    if (typeof loadPanel === 'function') loadPanel(false);
-  });
-}
-
-if (els.apBuy) {
-  els.apBuy.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    apArmFromButton('buy');
-  });
-}
-
-if (els.apSell) {
-  els.apSell.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    apArmFromButton('sell');
-  });
-}
-
-if (els.apClose) {
-  els.apClose.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    apClose();
-  });
-}
-
-// AUTOPILOT 2.0: quando muda capital, recalcula units e reflete no Citadel
-if (els.apCapital) {
-  els.apCapital.addEventListener('input', () => {
-    apRenderSizing();
-    apSyncUI();
-    if (typeof loadPanel === 'function') loadPanel(false);
-  });
- }
 
 // ================ TOGGLE DE IDIOMA PT / EN ==================
 
