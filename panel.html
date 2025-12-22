@@ -3881,6 +3881,7 @@ function apSyncUI() {
 
 function apActivate(side) {
   autopilot = apLoad(); // re-hidrata
+
   autopilot.enabled = true;
   autopilot.active = true;
   autopilot.side = side;
@@ -3890,40 +3891,47 @@ function apActivate(side) {
 
   // atualiza sizing 2.0 quando entra em posição
   apRenderSizing();
-
   autopilot.startedAt = Date.now();
 
-  // ===== CONTRATO (state + snapshot + exitPending) =====
-  const tc = (typeof lastTradeCard !== 'undefined') ? lastTradeCard : null;
-
-  const snapSide = (side === 'sell') ? 'short' : 'long';
-
   // ===== CONTRATO (Snapshot congelado) =====
-const panel = apCtx.panel;
+  const panel = (typeof apCtx !== 'undefined' && apCtx && apCtx.panel) ? apCtx.panel : null;
 
-// 1) Base snapshot (já traz symbol/timeframe/pattern_id/setup_id)
-const snap = apBuildSnapshot(side);
+  // 1) Base snapshot (já traz symbol/timeframe/pattern_id/setup_id)
+  const snap = apBuildSnapshot(side);
 
-// 2) Congelar size/units no momento da entrada
-const unitsAtEntry = apComputeUnits(autopilot.capital, snap.entry_price);
-autopilot.units = unitsAtEntry;
+  // 2) Congelar size/units no momento da entrada
+  const unitsAtEntry = apComputeUnits(autopilot.capital, snap.entry_price);
+  autopilot.units = unitsAtEntry;
 
-snap.size = unitsAtEntry;
-snap.size_text = (unitsAtEntry != null) ? unitsAtEntry.toLocaleString('en-US') : null;
+  snap.size = unitsAtEntry;
+  snap.size_text = (unitsAtEntry != null) ? unitsAtEntry.toLocaleString('en-US') : null;
 
-// 3) Congelar capital/units também (ajuda em reload e PnL)
-snap.capital = autopilot.capital;
-snap.units = unitsAtEntry;
+  // 3) Congelar capital/units também (ajuda em reload e PnL)
+  snap.capital = autopilot.capital;
+  snap.units = unitsAtEntry;
 
-// 4) (Opcional, mas alinhado com o contrato) “contexto congelado”
-const scores = apConsensusScores(panel);
-snap.contexto = {
-  tendencia: panel?.status_geral?.tendencia ?? null,
-  estrutura_confirma: panel?.estrutura_mercado?.confirma ?? null,
-  ai_consensus: (scores.sell > scores.buy) ? 'sell' : (scores.buy > scores.sell) ? 'buy' : 'neutral',
-  pullback_ativo: panel?.pullback_brain?.pullback_ativo ?? null,
-  regime: panel?.regime ?? panel?.tags ?? null,
-};
+  // 4) Contexto congelado (safe)
+  const scores = apConsensusScores(panel);
+  snap.contexto = {
+    tendencia: panel?.status_geral?.tendencia ?? null,
+    estrutura_confirma: panel?.estrutura_mercado?.confirma ?? null,
+    ai_consensus: (scores.sell > scores.buy) ? 'sell' : (scores.buy > scores.sell) ? 'buy' : 'neutral',
+    pullback_ativo: panel?.pullback_brain?.pullback_ativo ?? null,
+    regime: panel?.regime ?? panel?.tags ?? null,
+  };
+
+  autopilot.snapshot = snap;
+
+  // estado
+  autopilot.state = (side === 'sell') ? AP_STATES.SHORT_ACTIVE : AP_STATES.LONG_ACTIVE;
+  autopilot.exitPending = false;
+
+  apSave(autopilot);
+  apSyncUI();
+
+  // força re-render do painel no estado "travado"
+  if (typeof loadPanel === 'function') loadPanel(false);
+}
 
 function apClose() {
   autopilot = apLoad();
@@ -3952,19 +3960,6 @@ function apClose() {
   if (typeof loadPanel === 'function') loadPanel(false);
 }
 
-
-autopilot.snapshot = snap;
-
-
-  autopilot.state = (snapSide === 'short') ? 'SHORT_ACTIVE' : 'LONG_ACTIVE';
-  autopilot.exitPending = false;
-
-  apSave(autopilot);
-  apSyncUI();
-
-  // força re-render do painel no estado "travado"
-  if (typeof loadPanel === 'function') loadPanel(false);
-}
 
 
 
