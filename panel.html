@@ -5956,15 +5956,15 @@ function createTVChart() {
 
 // ====== INICIALIZAÇÃO ======
 function initAaron9() {
-  // garante que o gráfico é criado quando o TradingView estiver pronto
-  if (window.TradingView && window.TradingView.onready) {
-    window.TradingView.onready(function () {
-      createTVChart();
-    });
-  } else {
-    // fallback – tenta criar direto
-    createTVChart();
-  }
+  // garante que o gráfico aparece mesmo se tv.js carregar depois
+  const tvBoot = setInterval(() => {
+    try {
+      if (window.TradingView) createTVChart();
+      if (tvChartCreated) clearInterval(tvBoot);
+    } catch (e) {
+      // não deixa travar o resto
+    }
+  }, 300);
 
   // botão ATUALIZAR
   if (els.btnRefresh) {
@@ -5973,14 +5973,10 @@ function initAaron9() {
     });
   }
 
-    // primeira carga + auto refresh do painel
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
-
-  // AUTOPILOT (bind após DOM pronto)
-if (typeof initAutopilotUI === 'function') initAutopilotUI();
-
 }
+
 
 
 // AUTOPILOT init
