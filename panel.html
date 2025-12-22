@@ -3544,13 +3544,15 @@ const AP_STATES = {
   EXIT_PENDING: 'EXIT_PENDING',
 };
 
-const apCtx = {
+window.apCtx = window.apCtx || {
   panel: null,
   executionPlan: '',
   riskLevel: '',
   finalSummary: '',
   marketNow: 'wait',
 };
+const apCtx = window.apCtx;
+
 
 function apToNum(v){
   const n = Number(v);
@@ -6074,11 +6076,33 @@ if (els.apToggle) {
 }
 
 
+// ===== AUTOPILOT: handlers robustos (BUY/SELL armam o toggle e ativam) =====
+const arm = (side) => {
+  try {
+    // liga o toggle (se existir)
+    if (els.apToggle && !els.apToggle.checked) els.apToggle.checked = true;
+
+    // ativa o autopilot no lado escolhido
+    if (typeof apActivate === 'function') apActivate(side);
+
+    // se você usa a função do contrato, pode chamar também:
+    if (typeof apArmFromButton === 'function') apArmFromButton(side);
+
+    // reflete na UI
+    if (typeof apSyncUI === 'function') apSyncUI();
+
+    // atualiza painel (se existir)
+    if (typeof loadPanel === 'function') loadPanel(false);
+  } catch (e) {
+    console.error('[AP] erro ao armar:', e);
+  }
+};
+
 if (els.apBuy) {
   els.apBuy.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    apArmFromButton('buy');
+    arm('buy');
   });
 }
 
@@ -6086,7 +6110,7 @@ if (els.apSell) {
   els.apSell.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    apArmFromButton('sell');
+    arm('sell');
   });
 }
 
@@ -6094,9 +6118,17 @@ if (els.apClose) {
   els.apClose.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    apClose();
+    try {
+      if (typeof apClose === 'function') apClose();
+      if (els.apToggle) els.apToggle.checked = false;
+      if (typeof apSyncUI === 'function') apSyncUI();
+      if (typeof loadPanel === 'function') loadPanel(false);
+    } catch (err) {
+      console.error('[AP] erro no close:', err);
+    }
   });
 }
+
 
 // AUTOPILOT 2.0: quando muda capital, recalcula units e reflete no Citadel
 if (els.apCapital) {
