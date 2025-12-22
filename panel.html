@@ -5968,35 +5968,42 @@ function createTradingViewChart() {
 // ====== TRADINGVIEW – GRÁFICO ======
 let tvChartCreated = false;
 
-function createTVChart() {
+function createTVChart(retries = 60) {
+  if (window.__aaronTvCreated) return;
+
+  // Espera o tv.js carregar (race condition)
+  if (!window.TradingView || typeof window.TradingView.widget !== 'function') {
+    if (retries > 0) {
+      return setTimeout(() => createTVChart(retries - 1), 250);
+    }
+    console.warn('[TV] TradingView não carregou a tempo (tv.js).');
+    return;
+  }
+
   const container = document.getElementById('aaron9-tv-chart');
-  if (!container) return;              // se não tiver o container, sai
-  if (tvChartCreated) return;          // evita criar duas vezes
-  if (!window.TradingView) return;     // tv.js ainda não carregou
+  if (!container) {
+    console.warn('[TV] Container #aaron9-tv-chart não existe.');
+    return;
+  }
 
-  tvChartCreated = true;
+  // limpa e cria
+  container.innerHTML = '';
+  window.__aaronTvCreated = true;
 
-  new TradingView.widget({
-    container_id: 'aaron9-tv-chart',
-
-    // padrão inicial (pode ser NVDA na NASDAQ)
-    symbol: 'NASDAQ:NVDA',
-    interval: '1',               // começa em 1m
-    timezone: 'America/Denver',  // horário de Utah
+  new window.TradingView.widget({
+    autosize: true,
+    symbol: (document.getElementById('symbol-select')?.value || 'NVDA'),
+    interval: (document.getElementById('timeframe-select')?.value || '1'),
+    timezone: 'America/New_York',
     theme: 'dark',
     style: '1',
-    autosize: true,
     locale: 'en',
-
-    withdateranges: false,
-    hide_top_toolbar: false,
-    hide_side_toolbar: false,
+    enable_publishing: false,
     allow_symbol_change: true,
-
-    disabled_features: [],
-    enabled_features: [],
+    container_id: 'aaron9-tv-chart',
   });
 }
+
 
 // ====== INICIALIZAÇÃO ======
 function initAaron9() {
