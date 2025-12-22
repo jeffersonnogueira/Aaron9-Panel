@@ -4749,48 +4749,7 @@ function applyHeroDecision(executionPlan, riskLevel, finalSummary) {
 }
 
 
-  const baseText = (execution || '').toLowerCase();
-
-
-  let mode = 'wait';
-  if (t.includes('compra') || t.includes('buy')) mode = 'buy';
-  else if (t.includes('venda') || t.includes('sell')) mode = 'sell';
-
-  block.classList.remove('status-buy', 'status-sell', 'status-wait');
-  if (mode === 'buy') block.classList.add('status-buy');
-  else if (mode === 'sell') block.classList.add('status-sell');
-  else block.classList.add('status-wait');
-
-  if (badge) {
-    badge.textContent = mode === 'wait' ? 'WAIT' : 'GO FULL';
-  }
-
-  if (pill) {
-    pill.classList.remove('go-full', 'wait', 'no-trade', 'scalp');
-    if (mode === 'wait') {
-      pill.classList.add('wait');
-      pill.textContent = 'WAIT';
-    } else {
-      pill.classList.add('go-full');
-      pill.textContent = 'GO FULL';
-    }
-  }
-
-  if (main) main.textContent = baseText.toUpperCase();
-
-  const fallbackSummary =
-    'Aguardando leitura completa do painel para decidir.';
-  const finalSummary = summaryText || fallbackSummary;
-
-  if (sub) sub.textContent = finalSummary;
-  if (heroSummary) heroSummary.textContent = finalSummary;
-
-  if (side) {
-    if (mode === 'buy') side.textContent = 'COMPRA';
-    else if (mode === 'sell') side.textContent = 'VENDA';
-    else side.textContent = '—';
-  }
-}
+  
 
 function applyInstitutionalDecision(panel, executionPlan, riskLevel) {
   // se o HTML não existe (ou não é essa página), sai
