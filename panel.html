@@ -3923,6 +3923,34 @@ snap.contexto = {
   regime: panel?.regime ?? panel?.tags ?? null,
 };
 
+function apClose() {
+  autopilot = apLoad();
+
+  // ✅ contrato: Close = apaga snapshot + OFF + FLAT (reset total)
+  autopilot.enabled = false;
+  autopilot.active = false;
+  autopilot.side = null;
+  autopilot.entry = null;
+  autopilot.startedAt = null;
+
+  autopilot.state = AP_STATES.FLAT;
+  autopilot.snapshot = null;
+  autopilot.exitPending = false;
+
+  autopilot.marketNow = 'wait';
+  autopilot.current_price = null;
+  autopilot.pnl = null;
+  autopilot.rMultiple = null;
+  autopilot.lastUpdate = null;
+
+  apSave(autopilot);
+
+  if (els?.apToggle) els.apToggle.checked = false;
+  if (typeof apSyncUI === 'function') apSyncUI();
+  if (typeof loadPanel === 'function') loadPanel(false);
+}
+
+
 autopilot.snapshot = snap;
 
 
@@ -6018,22 +6046,33 @@ function apArmFromButton(side) {
 
 if (els.apToggle) {
   els.apToggle.addEventListener('change', () => {
-    autopilot = apLoad();
-    autopilot.enabled = !!els.apToggle.checked;
+    const turningOn = !!els.apToggle.checked;
 
-    // se desligar o toggle, encerra simulação
-    if (!autopilot.enabled) {
-      autopilot.active = false;
-      autopilot.side = null;
-      autopilot.entry = null;
-      autopilot.startedAt = null;
+    if (!turningOn) {
+      apClose();          // ✅ contrato: OFF = reset total
+      return;
     }
+
+    // ON (armado, sem posição)
+    autopilot = apLoad();
+    autopilot.enabled = true;
+    autopilot.active = false;
+    autopilot.side = null;
+    autopilot.entry = null;
+    autopilot.startedAt = null;
+
+    // ✅ garante “sem resquícios”
+    autopilot.state = AP_STATES.FLAT;
+    autopilot.snapshot = null;
+    autopilot.exitPending = false;
+    autopilot.marketNow = autopilot.marketNow ?? 'wait';
 
     apSave(autopilot);
     apSyncUI();
     if (typeof loadPanel === 'function') loadPanel(false);
   });
 }
+
 
 if (els.apBuy) {
   els.apBuy.addEventListener('click', (e) => {
