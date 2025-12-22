@@ -4637,111 +4637,87 @@ setFormattedComment(els.tradeComment, parsed.comment || commentText);
 
 
 function applyHeroDecision(executionPlan, riskLevel, finalSummary) {
-  const lang = (typeof currentLang !== 'undefined' ? currentLang : 'en');
-  const heroBadge = document.getElementById('status-hero-badge');
-  const heroModePill = document.getElementById('heroModePill');
-  const heroMain = document.getElementById('heroMain');
-  const heroSummary = document.getElementById('heroSummary');
-  const heroSideLabel = document.getElementById('heroSideLabel');
-  const heroSecondary = document.getElementById('heroSecondary');
-  const heroBlock = document.querySelector('.status-hero');
+  const lang = (typeof currentLang !== 'undefined' ? currentLang : 'pt');
 
-  autopilot = apLoad();
+  // ✅ Suporta IDs antigos (camelCase) e os da sua UI nova (kebab-case)
+  const heroModePill =
+    document.getElementById('heroModePill') ||
+    document.getElementById('hero-mode-pill');
 
-  const marketNow = apParseMarketNow(executionPlan);
-  const mnText = String(marketNow).toUpperCase();
+  const heroMain =
+    document.getElementById('heroMain') ||
+    document.getElementById('hero-main') ||
+    null;
 
-  // ===== PRIMARY ACTION (contrato) =====
-  let primary = mnText; // FLAT: BUY/SELL/WAIT
-  let secondary = (lang === 'en')
-    ? `Market Now: ${mnText}`
-    : `Market Now: ${mnText}`;
+  const heroSummary =
+    document.getElementById('heroSummary') ||
+    document.getElementById('hero-summary-text') ||
+    null;
 
-  // Se autopilot ON e em posição -> muda primary para gerenciamento
-  const inPos = !!(autopilot.enabled && autopilot.active && autopilot.snapshot && autopilot.state !== 'FLAT');
+  const heroSideLabel =
+    document.getElementById('heroSideLabel') ||
+    document.getElementById('hero-side-label') ||
+    null;
 
-  if(inPos){
-    const st = autopilot.state;
-    const snap = autopilot.snapshot;
+  const heroSecondary =
+    document.getElementById('heroSecondary') ||
+    document.getElementById('hero-mini-context') ||
+    null;
 
-    // EXIT_PENDING = EXIT
-    if(st === 'EXIT_PENDING' || autopilot.exitPending){
-      primary = 'EXIT';
-      secondary = (lang === 'en')
-        ? `Market Now: ${mnText} (strong contra)`
-        : `Market Now: ${mnText} (contra forte)`;
-    }else{
-      // HOLD / MANAGE
-      const contra = (
-        (snap.side === 'long' && marketNow === 'sell') ||
-        (snap.side === 'short' && marketNow === 'buy')
-      );
+  const heroBadge =
+    document.getElementById('status-hero-badge') ||
+    document.querySelector('.status-hero-badge') ||
+    null;
 
-      // Se bateu TP2/TP1 => TAKE PROFIT / TAKE PARTIAL
-      const px = apToNum(autopilot.current_price) ?? apToNum(apGetMarketPrice());
-      const tp1 = apToNum(snap.tp1);
-      const tp2 = apToNum(snap.tp2);
-
-      const hitTP1 = (px != null && tp1 != null) ? (snap.side === 'long' ? px >= tp1 : px <= tp1) : false;
-      const hitTP2 = (px != null && tp2 != null) ? (snap.side === 'long' ? px >= tp2 : px <= tp2) : false;
-
-      if(hitTP2){
-        primary = 'TAKE PROFIT';
-      }else if(hitTP1){
-        primary = 'TAKE PARTIAL';
-      }else{
-        primary = contra ? 'MANAGE' : 'HOLD';
-      }
-
-      secondary = (lang === 'en')
-        ? `Market Now: ${mnText}${contra ? ' (contra)' : ''}`
-        : `Market Now: ${mnText}${contra ? ' (contra)' : ''}`;
-    }
-
-    // summary com métricas
-    const entry = apFmtPx(snap.entry_price ?? autopilot.entry);
-    const pnl = apFmtMoney(autopilot.pnl);
-    const r = (autopilot.rMultiple != null ? autopilot.rMultiple.toFixed(2) : '—');
-    const stop = apFmtPx(snap.stop);
-    const tp1s = apFmtPx(snap.tp1);
-    const tp2s = apFmtPx(snap.tp2);
-
-    heroSummary.textContent = (lang === 'en')
-      ? `Entry ${entry} • P/L ${pnl} • R ${r} • Stop ${stop} • TP1 ${tp1s} • TP2 ${tp2s}`
-      : `Entry ${entry} • P/L ${pnl} • R ${r} • Stop ${stop} • TP1 ${tp1s} • TP2 ${tp2s}`;
-
-    heroSideLabel.textContent = (snap.side === 'short')
-      ? (lang === 'en' ? 'SHORT' : 'VENDA')
-      : (lang === 'en' ? 'LONG' : 'COMPRA');
-
-  }else{
-    // FLAT: mantém o summary original do painel
-    heroSummary.textContent = String(finalSummary || '—');
-    heroSideLabel.textContent = (marketNow === 'sell')
-      ? (lang === 'en' ? 'SELL' : 'VENDA')
-      : (marketNow === 'buy')
-        ? (lang === 'en' ? 'BUY' : 'COMPRA')
-        : (lang === 'en' ? 'WAIT' : 'AGUARDE');
+  // ✅ Se a UI não tiver esses elementos, simplesmente não faz nada (NUNCA quebra o painel)
+  if (!heroModePill && !heroSummary && !heroSideLabel && !heroBadge && !heroMain && !heroSecondary) {
+    return;
   }
 
-  // ===== Render =====
-  heroMain.textContent = primary;
-  heroSecondary.textContent = secondary;
+  // --- Market Now / direção (com fallback seguro)
+  const marketNow =
+    (apCtx && apCtx.panel && (apCtx.panel.market_now || apCtx.panel.marketNow)) ||
+    autopilot.marketNow ||
+    null;
 
-  // badge/pill nunca somem
-  heroBadge.textContent = 'MARKET NOW';
-  heroModePill.textContent = mnText;
+  const mn =
+    (marketNow === 'buy' || marketNow === 'BUY') ? 'buy' :
+    (marketNow === 'sell' || marketNow === 'SELL') ? 'sell' :
+    'wait';
 
-  // cores por marketNow (não por primary)
-  heroBlock.classList.remove('status-buy','status-sell','status-wait');
-  if(marketNow === 'buy') heroBlock.classList.add('status-buy');
-  else if(marketNow === 'sell') heroBlock.classList.add('status-sell');
-  else heroBlock.classList.add('status-wait');
+  const mnText = (mn === 'buy') ? 'BUY' : (mn === 'sell') ? 'SELL' : 'WAIT';
 
-  heroModePill.classList.remove('go-full','wait');
-  if(marketNow === 'wait') heroModePill.classList.add('wait');
-  else heroModePill.classList.add('go-full');
+  // Texto principal/summary
+  const summaryText = String(finalSummary || executionPlan || '—');
+
+  // Side label (PT/EN)
+  const sideLabel =
+    (mn === 'buy') ? (lang === 'en' ? 'BUY' : 'COMPRA') :
+    (mn === 'sell') ? (lang === 'en' ? 'SELL' : 'VENDA') :
+    'WAIT';
+
+  // ✅ Aplica sem quebrar (tudo com guard)
+  if (heroSummary) heroSummary.textContent = summaryText;
+  if (heroSideLabel) heroSideLabel.textContent = sideLabel;
+
+  if (heroModePill) {
+    heroModePill.textContent = mnText;
+    // classes esperadas no seu CSS atual
+    heroModePill.classList.remove('go-full', 'wait', 'buy', 'sell');
+    if (mn === 'wait') heroModePill.classList.add('wait');
+    else heroModePill.classList.add('go-full');
+  }
+
+  if (heroBadge) {
+    // se for wait -> badge WAIT, senão GO FULL (como seu layout)
+    heroBadge.textContent = (mn === 'wait') ? 'WAIT' : 'GO FULL';
+  }
+
+  // Se existir “main/secondary” no layout antigo, preenche também
+  if (heroMain) heroMain.textContent = mnText;
+  if (heroSecondary) heroSecondary.textContent = summaryText;
 }
+
 
 
   
@@ -5877,9 +5853,15 @@ if (typeof apOnPanelUpdate === 'function') {
 }
 
 
-    // MODO CEGO usa os mesmos textos
-    applyHeroDecision(executionPlan, finalSummary);
-    applyInstitutionalDecision(panel, executionPlan, riskLevel);
+    // MODO CEGO usa os mesmos textos (NUNCA pode quebrar o loadPanel)
+try {
+  applyHeroDecision(executionPlan, riskLevel, finalSummary);
+} catch (e) {
+  console.warn('[HERO] applyHeroDecision falhou, mas o painel continua:', e);
+}
+
+applyInstitutionalDecision(panel, executionPlan, riskLevel);
+
 
 
   } catch (err) {
