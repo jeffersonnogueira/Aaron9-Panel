@@ -2821,6 +2821,52 @@
 
       <!-- ====== COLUNA DIREITA: RESUMO + RISCO ====== -->
       <section class="column">
+
+<!-- ===================== -->
+<!-- INTRADAY MONITOR BLOCK (ADD ONLY) -->
+<!-- ===================== -->
+<section id="intraday-monitor" class="card">
+  <div class="card-header">
+    <h2>Intraday Live Monitor</h2>
+    <div class="muted" id="intraday-monitor-status">aguardando dados...</div>
+  </div>
+
+  <div class="card-content">
+    <div class="grid-2">
+      <div class="stat">
+        <div class="label">Último refresh</div>
+        <div class="value" id="intraday-last-refresh">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Símbolos</div>
+        <div class="value" id="intraday-symbols-count">—</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table" id="intraday-monitor-table">
+        <thead>
+          <tr>
+            <th>Símbolo</th>
+            <th>Candles (1m)</th>
+            <th>Último Candle</th>
+            <th>Idade</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="intraday-monitor-tbody">
+          <tr><td colspan="5" class="muted">aguardando primeiro JSON...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="muted" style="margin-top:10px;font-size:12px;">
+      *Esse bloco não altera seu workflow. Ele só lê o JSON mais recente que já chega no seu painel.
+    </div>
+  </div>
+</section>
+
+
         <div class="card">
   <div class="card-header">
     <div>
@@ -6554,6 +6600,208 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
 // ================== FIM GARIMPO DE HOJE ==================
 </script>
+
+<script>
+/**
+ * ==========================
+ * INTRADAY MONITOR (ADD ONLY)
+ * - Não mexe no seu código atual
+ * - Intercepta fetch() para capturar o último JSON do painel
+ * - Renderiza uma tabela de monitoramento
+ * ==========================
+ */
+
+(function intradayMonitor_addOnly(){
+  // evita duplicar se você colar duas vezes
+  if (window.__INTRADAY_MONITOR_INSTALLED__) return;
+  window.__INTRADAY_MONITOR_INSTALLED__ = true;
+
+  // --------- tiny helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const pad2 = (n) => String(n).padStart(2, "0");
+
+  function fmtTime(d){
+    if (!(d instanceof Date) || isNaN(d.getTime())) return "—";
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+  }
+
+  function parseTimeAny(v){
+    if (!v) return null;
+    // se já é number (epoch seconds/ms)
+    if (typeof v === "number") {
+      // heurística: ms se for grande
+      const ms = v > 1e12 ? v : (v > 1e10 ? v : v * 1000);
+      const d = new Date(ms);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    // string ISO
+    if (typeof v === "string") {
+      const d = new Date(v);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+
+  function getLastBarTime(bar){
+    // tenta chaves comuns: t, time, timestamp, datetime
+    return parseTimeAny(bar?.t) ||
+           parseTimeAny(bar?.time) ||
+           parseTimeAny(bar?.timestamp) ||
+           parseTimeAny(bar?.datetime) ||
+           null;
+  }
+
+  function extractBarsFromSymbolObj(symObj){
+    // tenta nomes comuns sem quebrar nada:
+    // bars, candles, candles_1m, ohlc, data, intraday
+    const candidates = [
+      symObj?.bars,
+      symObj?.candles,
+      symObj?.candles_1m,
+      symObj?.ohlc,
+      symObj?.data,
+      symObj?.intraday,
+      symObj?.intraday_bars, // às vezes vem número, não array
+    ];
+
+    for (const c of candidates) {
+      if (Array.isArray(c)) return c;
+    }
+    return null;
+  }
+
+  function extractSymbolsRoot(json){
+    // tenta raízes comuns do seu painel/n8n:
+    // incoming (por símbolo), symbols, data, payload, result
+    if (json?.incoming && typeof json.incoming === "object") return json.incoming;
+    if (json?.symbols && typeof json.symbols === "object") return json.symbols;
+    if (json?.data && typeof json.data === "object") return json.data;
+    if (json?.payload && typeof json.payload === "object") return json.payload;
+    if (json?.result && typeof json.result === "object") return json.result;
+    return null;
+  }
+
+  function render(json){
+    const tbody = $("intraday-monitor-tbody");
+    if (!tbody) return;
+
+    const now = new Date();
+    $("intraday-last-refresh") && ($("intraday-last-refresh").textContent = fmtTime(now));
+
+    const root = extractSymbolsRoot(json) || {};
+    const symbols = Object.keys(root).filter(k => typeof root[k] === "object" && root[k] !== null);
+
+    $("intraday-symbols-count") && ($("intraday-symbols-count").textContent = String(symbols.length));
+
+    if (!symbols.length) {
+      tbody.innerHTML = `<tr><td colspan="5" class="muted">JSON recebido, mas não achei objeto por símbolo (incoming/data/etc).</td></tr>`;
+      $("intraday-monitor-status") && ($("intraday-monitor-status").textContent = "sem mapa de símbolos no JSON");
+      return;
+    }
+
+    // monta linhas
+    const rows = symbols.map(sym => {
+      const symObj = root[sym];
+
+      const bars = extractBarsFromSymbolObj(symObj);
+      let count = "—";
+      let last = "—";
+      let age = "—";
+      let status = "UNKNOWN";
+
+      if (Array.isArray(bars)) {
+        count = String(bars.length);
+        const lastBar = bars[bars.length - 1];
+        const lastTime = getLastBarTime(lastBar);
+
+        if (lastTime) {
+          last = lastTime.toISOString().replace("T"," ").slice(0,19);
+          const diffMs = now.getTime() - lastTime.getTime();
+          const diffMin = Math.round(diffMs / 60000);
+          age = `${diffMin}m`;
+          status = diffMin <= 2 ? "OK" : "LATE";
+        } else {
+          status = "NO_TIME";
+        }
+      } else if (typeof symObj?.intraday_bars === "number") {
+        // caso venha só o número
+        count = String(symObj.intraday_bars);
+        status = "COUNT_ONLY";
+      } else {
+        status = "NO_ARRAY";
+      }
+
+      const badge = (s) => {
+        const cls =
+          s === "OK" ? "badge ok" :
+          s === "LATE" ? "badge late" :
+          "badge warn";
+        return `<span class="${cls}">${s}</span>`;
+      };
+
+      return `
+        <tr>
+          <td><strong>${sym}</strong></td>
+          <td>${count}</td>
+          <td>${last}</td>
+          <td>${age}</td>
+          <td>${badge(status)}</td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rows.join("");
+
+    // status geral
+    const lateCount = tbody.querySelectorAll(".badge.late").length;
+    $("intraday-monitor-status") && ($("intraday-monitor-status").textContent =
+      lateCount ? `atrasado em ${lateCount} símbolo(s)` : "ok"
+    );
+  }
+
+  // --------- intercepta fetch SEM mexer no seu código ----------
+  const originalFetch = window.fetch;
+  window.fetch = async function(...args){
+    const res = await originalFetch.apply(this, args);
+
+    try {
+      const ct = res.headers.get("content-type") || "";
+      // só tenta JSON se parecer JSON
+      if (ct.includes("application/json")) {
+        const clone = res.clone();
+        const json = await clone.json();
+        window.__AARON_LAST_JSON__ = json;
+        render(json);
+      }
+    } catch (e) {
+      // não quebra nada do seu painel
+    }
+
+    return res;
+  };
+
+  // --------- estilos mínimos (ADD ONLY) ----------
+  const style = document.createElement("style");
+  style.textContent = `
+    #intraday-monitor .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px; }
+    #intraday-monitor .stat { padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,.08); }
+    #intraday-monitor .label { font-size:12px; opacity:.7; margin-bottom:6px; }
+    #intraday-monitor .value { font-size:18px; font-weight:700; }
+    #intraday-monitor .table-wrap { overflow:auto; border-radius:12px; border:1px solid rgba(255,255,255,.08); }
+    #intraday-monitor table { width:100%; border-collapse:collapse; }
+    #intraday-monitor th, #intraday-monitor td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.06); white-space:nowrap; }
+    #intraday-monitor thead th { position:sticky; top:0; background:rgba(0,0,0,.25); backdrop-filter: blur(6px); }
+    #intraday-monitor .muted { opacity:.7; }
+    #intraday-monitor .badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.12); }
+    #intraday-monitor .badge.ok { }
+    #intraday-monitor .badge.late { }
+    #intraday-monitor .badge.warn { }
+  `;
+  document.head.appendChild(style);
+
+})();
+</script>
+
 
 </body>
 </html>
