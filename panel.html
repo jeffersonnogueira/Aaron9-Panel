@@ -6554,6 +6554,275 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
 // ================== FIM GARIMPO DE HOJE ==================
 </script>
+<script>
+(function matcherPicker_addOnly(){
+  // evita instalar 2x
+  if (window.__AARON_MATCHER_PICKER_INSTALLED__) return;
+  window.__AARON_MATCHER_PICKER_INSTALLED__ = true;
+
+  // >>> TROQUE AQUI pela sua lista REAL de 13 ativos (se quiser)
+  const DEFAULT_SYMBOLS = ['NVDA','TSLA','AMD','AAPL','MSFT','AMZN','META','GOOGL','NFLX','SPY','QQQ','IWM','PLTR'];
+
+  const SYMBOLS =
+    (Array.isArray(window.AARON_SYMBOLS) && window.AARON_SYMBOLS.length)
+      ? window.AARON_SYMBOLS
+      : DEFAULT_SYMBOLS;
+
+  function injectStyles(){
+    const id = "aaron-matcher-picker-style";
+    if (document.getElementById(id)) return;
+
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = `
+      #matcher-picker-row{
+        display:flex;
+        justify-content:flex-end;
+        margin:10px 0 14px;
+      }
+      #matcher-picker{
+        width:min(520px, 100%);
+        border:1px solid rgba(255,255,255,.10);
+        background:rgba(0,0,0,.20);
+        backdrop-filter: blur(10px);
+        border-radius:16px;
+        padding:14px 14px 12px;
+        box-shadow: 0 12px 32px rgba(0,0,0,.35);
+      }
+      #matcher-picker .mp-top{
+        display:flex;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:12px;
+        margin-bottom:10px;
+      }
+      #matcher-picker .mp-title{
+        font-size:12px;
+        letter-spacing:.18em;
+        text-transform:uppercase;
+        opacity:.85;
+      }
+      #matcher-picker .mp-sub{
+        font-size:12px;
+        opacity:.7;
+        margin-top:3px;
+      }
+      #matcher-picker .mp-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:6px 10px;
+        border-radius:999px;
+        border:1px solid rgba(255,255,255,.12);
+        font-size:12px;
+        opacity:.85;
+        white-space:nowrap;
+      }
+      #matcher-picker .mp-dot{
+        width:8px; height:8px;
+        border-radius:50%;
+        background:rgba(46, 204, 113, .9);
+        box-shadow: 0 0 0 3px rgba(46,204,113,.16);
+      }
+      #matcher-picker .mp-grid{
+        display:grid;
+        grid-template-columns: 1fr 140px;
+        gap:10px;
+      }
+      #matcher-picker label{
+        display:block;
+        font-size:11px;
+        opacity:.7;
+        margin-bottom:6px;
+      }
+      #matcher-picker select, #matcher-picker input{
+        width:100%;
+        padding:10px 12px;
+        border-radius:12px;
+        border:1px solid rgba(255,255,255,.10);
+        background:rgba(0,0,0,.25);
+        color:#fff;
+        outline:none;
+      }
+      #matcher-picker input{
+        font-weight:700;
+        text-align:right;
+      }
+      #matcher-picker .mp-footer{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-top:10px;
+        gap:10px;
+      }
+      #matcher-picker .mp-hint{
+        font-size:11px;
+        opacity:.65;
+      }
+      #matcher-picker .mp-btn{
+        cursor:pointer;
+        border:1px solid rgba(255,255,255,.12);
+        background:rgba(0,0,0,.18);
+        color:#fff;
+        padding:8px 10px;
+        border-radius:12px;
+        font-size:12px;
+      }
+      #matcher-picker .mp-btn:hover{
+        background:rgba(255,255,255,.06);
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function buildBlock(){
+    const row = document.createElement("div");
+    row.id = "matcher-picker-row";
+    row.innerHTML = `
+      <section id="matcher-picker" aria-label="Matcher Symbol Picker">
+        <div class="mp-top">
+          <div>
+            <div class="mp-title">MATCHER • SYMBOL</div>
+            <div class="mp-sub">Escolha 1 ativo para enviar ao workflow X</div>
+          </div>
+          <div class="mp-badge" title="Somente seleção (não altera o painel)">
+            <span class="mp-dot"></span>
+            <span>Selector</span>
+          </div>
+        </div>
+
+        <div class="mp-grid">
+          <div>
+            <label for="mp-symbol">Ativo</label>
+            <select id="mp-symbol"></select>
+          </div>
+
+          <div>
+            <label for="mp-price">Preço</label>
+            <input id="mp-price" type="text" value="—" readonly />
+          </div>
+        </div>
+
+        <div class="mp-footer">
+          <div class="mp-hint">Evento: <code>aaron:symbolSelected</code></div>
+          <button class="mp-btn" id="mp-copy">Copiar símbolo</button>
+        </div>
+      </section>
+    `;
+    return row;
+  }
+
+  function install(){
+    injectStyles();
+    if (document.getElementById("matcher-picker-row")) return;
+
+    const row = buildBlock();
+
+    // âncora: logo depois do error-banner (se existir); senão, depois do Garimpo
+    const anchor = document.getElementById("error-banner") || document.getElementById("garimpo-today");
+    if (!anchor || !anchor.parentElement) return;
+
+    anchor.insertAdjacentElement("afterend", row);
+
+    const sel = row.querySelector("#mp-symbol");
+    const price = row.querySelector("#mp-price");
+    const copyBtn = row.querySelector("#mp-copy");
+
+    // popula dropdown
+    SYMBOLS.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s;
+      opt.textContent = s;
+      sel.appendChild(opt);
+    });
+
+    // restaura seleção
+    const saved = localStorage.getItem("aaron_selected_symbol");
+    if (saved && SYMBOLS.includes(saved)) sel.value = saved;
+
+    function getQuote(symbol){
+      // para o futuro: você pode preencher window.AARON_QUOTES = { NVDA:{price:123.45}, ... }
+      const q = (window.AARON_QUOTES && window.AARON_QUOTES[symbol]) ? window.AARON_QUOTES[symbol] : null;
+      if (q && typeof q.price === "number") return q.price;
+
+      // tenta pegar do último JSON carregado (se tiver)
+      const p = window.__AARON_LAST_PANEL_JSON__;
+      if (p){
+        const pSym = (p.symbol || p.ticker || (p.trade && p.trade.symbol) || (p.execution && p.execution.symbol));
+        const pPrice = p.price ?? p.last_price ?? (p.trade && (p.trade.price || p.trade.last_price));
+        if (pSym && String(pSym).toUpperCase().includes(symbol) && typeof pPrice === "number") return pPrice;
+      }
+      return null;
+    }
+
+    function refreshPrice(symbol){
+      const v = getQuote(symbol);
+      price.value = (typeof v === "number") ? v.toFixed(2) : "—";
+    }
+
+    function emit(symbol){
+      localStorage.setItem("aaron_selected_symbol", symbol);
+      window.AARON_SELECTED_SYMBOL = symbol;
+
+      // >>> isso é o “gancho” para o workflow X escutar depois
+      window.dispatchEvent(new CustomEvent("aaron:symbolSelected", { detail: { symbol } }));
+
+      refreshPrice(symbol);
+    }
+
+    sel.addEventListener("change", () => emit(sel.value));
+
+    copyBtn.addEventListener("click", () => {
+      const symbol = sel.value;
+      try {
+        navigator.clipboard.writeText(symbol);
+        copyBtn.textContent = "Copiado ✓";
+        setTimeout(() => copyBtn.textContent = "Copiar símbolo", 900);
+      } catch (e){
+        const ta = document.createElement("textarea");
+        ta.value = symbol;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+    });
+
+    // captura JSON das requisições (ADD ONLY)
+    (function hookFetchOnce(){
+      if (window.__AARON_FETCH_HOOKED__) return;
+      window.__AARON_FETCH_HOOKED__ = true;
+
+      const origFetch = window.fetch;
+      if (typeof origFetch !== "function") return;
+
+      window.fetch = async function(...args){
+        const res = await origFetch.apply(this, args);
+        try{
+          const clone = res.clone();
+          const ct = clone.headers.get("content-type") || "";
+          if (ct.includes("application/json")){
+            clone.json().then(j => {
+              window.__AARON_LAST_PANEL_JSON__ = j;
+              refreshPrice(sel.value);
+            }).catch(()=>{});
+          }
+        } catch(e){}
+        return res;
+      };
+    })();
+
+    // inicia
+    emit(sel.value);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", install);
+  } else {
+    install();
+  }
+})();
+</script>
 
 </body>
 </html>
