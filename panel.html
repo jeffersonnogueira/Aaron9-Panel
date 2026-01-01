@@ -6576,10 +6576,11 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
     style.id = id;
     style.textContent = `
       #matcher-picker-row{
-        display:flex;
-        justify-content:flex-end;
-        margin:10px 0 14px;
-      }
+  display:flex;
+  justify-content:flex-end;
+  margin:0 0 12px; /* mais “tight” e premium */
+}
+
       #matcher-picker{
         width:min(520px, 100%);
         border:1px solid rgba(255,255,255,.10);
@@ -6644,6 +6645,33 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
         color:#fff;
         outline:none;
       }
+        /* força o dropdown nativo a ficar “dark” (remove o cinza feio) */
+#matcher-picker { color-scheme: dark; }
+#matcher-picker select { color-scheme: dark; }
+
+/* melhora as opções (Chrome/Edge geralmente aplica) */
+#matcher-picker option{
+  background: rgba(8, 12, 20, 1);
+  color: #fff;
+}
+
+/* polimento “AaronView / SixSeats” */
+#matcher-picker select{
+  border: 1px solid rgba(148,163,184,.22);
+  background: rgba(15,23,42,.55);
+}
+#matcher-picker input{
+  border: 1px solid rgba(148,163,184,.22);
+  background: rgba(15,23,42,.55);
+}
+#matcher-picker .mp-btn{
+  border: 1px solid rgba(148,163,184,.22);
+  background: rgba(15,23,42,.35);
+}
+#matcher-picker .mp-btn:hover{
+  background: rgba(148,163,184,.12);
+}
+
       #matcher-picker input{
         font-weight:700;
         text-align:right;
@@ -6718,11 +6746,17 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
     const row = buildBlock();
 
-    // âncora: logo depois do error-banner (se existir); senão, depois do Garimpo
-    const anchor = document.getElementById("error-banner") || document.getElementById("garimpo-today");
-    if (!anchor || !anchor.parentElement) return;
+    // âncora NOVA: dentro da COLUNA DIREITA, antes do "Resumo institucional"
+// (isso elimina o “vão” em cima do Gerenciador de risco)
+const cols = document.querySelectorAll("main.layout > section.column");
+const rightCol = (cols && cols.length >= 2) ? cols[1] : null;
+if (!rightCol) return;
 
-    anchor.insertAdjacentElement("afterend", row);
+// insere antes do primeiro .card da coluna direita (o Resumo institucional)
+const firstCard = rightCol.querySelector(".card") || rightCol.firstElementChild;
+if (firstCard) firstCard.insertAdjacentElement("beforebegin", row);
+else rightCol.appendChild(row);
+
 
     const sel = row.querySelector("#mp-symbol");
     const price = row.querySelector("#mp-price");
