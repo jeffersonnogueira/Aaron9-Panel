@@ -6555,9 +6555,8 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 // ================== FIM GARIMPO DE HOJE ==================
 </script>
 <script>
-/* ===================== MATCHER PICKER (ADD ONLY) ===================== */
+/* ===================== MATCHER PICKER (AUTO PILOT LOOK) ===================== */
 (function matcherPicker_addOnly(){
-  // evita instalar 2x
   if (window.__AARON_MATCHER_PICKER_INSTALLED__) return;
   window.__AARON_MATCHER_PICKER_INSTALLED__ = true;
 
@@ -6570,124 +6569,134 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
   function injectStyles(){
     const id = "aaron-matcher-picker-style";
-
-    // IMPORTANTE: remove o style antigo quando você estiver iterando
-    // (assim você SEMPRE vê a mudança)
-    const old = document.getElementById(id);
-    if (old) old.remove();
+    if (document.getElementById(id)) return;
 
     const style = document.createElement("style");
     style.id = id;
     style.textContent = `
-      /* entra como um card “igual autopilot” */
-      #matcher-picker-row{ margin: 0 0 14px; }
-
-      #matcher-picker.decision-card{
-        padding: 14px 16px;
+      /* ====== MATCHER com o mesmo “DNA” do AUTOPILOT v2 ====== */
+      #matcher-picker.autopilot-v2{
+        padding: 14px;
+        border: 1px solid rgba(148,163,184,0.18);
+        background:
+          radial-gradient(1200px 500px at 20% 0%, rgba(56,189,248,0.10), transparent 60%),
+          radial-gradient(900px 420px at 85% 10%, rgba(34,197,94,0.08), transparent 55%),
+          rgba(2,6,23,0.35);
       }
 
-      #matcher-picker .mp-header{
+      #matcher-picker .ap2-top{
         display:flex;
-        align-items:flex-start;
+        align-items:center;
         justify-content:space-between;
         gap:12px;
         margin-bottom:10px;
       }
 
-      /* usa tipografia do painel */
-      #matcher-picker .decision-title{
-        margin:0;
+      #matcher-picker .ap2-sub{
+        margin-top:2px;
+        font-size:0.78rem;
+        opacity:0.75;
       }
 
-      #matcher-picker .mp-sub{
-        font-size:12px;
-        color: var(--text-soft, #9ca3af);
-        margin-top:4px;
-      }
-
-      #matcher-picker .mp-badge{
-        display:inline-flex;
-        align-items:center;
-        gap:8px;
-        padding:6px 10px;
-        border-radius:999px;
-        border:1px solid rgba(148,163,184,.22);
-        background: rgba(2,6,23,.25);
-        font-size:12px;
-        color: rgba(226,232,240,.78);
-        white-space:nowrap;
-      }
-
-      #matcher-picker .mp-dot{
-        width:8px; height:8px;
-        border-radius:50%;
-        background: rgba(34,197,94,.95);
-        box-shadow: 0 0 0 3px rgba(34,197,94,.14);
-      }
-
-      #matcher-picker .mp-grid{
-        display:grid;
-        grid-template-columns: 1.2fr .8fr;
-        gap:10px;
-        margin-top:10px;
-      }
-
-      #matcher-picker label{
-        display:block;
-        font-size:11px;
-        color: var(--text-soft, #9ca3af);
-        margin-bottom:6px;
-      }
-
-      #matcher-picker{
-        color-scheme: dark;
-      }
-
-      #matcher-picker select,
-      #matcher-picker input{
-        width:100%;
-        padding:10px 12px;
-        border-radius:14px;
-        border:1px solid rgba(148,163,184,.22);
-        background: rgba(15,23,42,.55);
-        color: rgba(226,232,240,.92);
-        outline:none;
-      }
-
-      #matcher-picker option{
-        background: rgba(2,6,23,1);
-        color: rgba(226,232,240,.95);
-      }
-
-      #matcher-picker input{
-        text-align:right;
-        font-weight:700;
-      }
-
-      #matcher-picker .mp-footer{
+      #matcher-picker .ap2-controls{
         display:flex;
-        justify-content:space-between;
         align-items:center;
         gap:10px;
-        margin-top:10px;
+      }
+
+      #matcher-picker .ap2-sizing{
+        margin: 10px 0 12px 0;
+        padding: 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(148,163,184,0.16);
+        background: rgba(0,0,0,0.18);
+        box-shadow: inset 0 0 0 1px rgba(2,6,23,0.15);
+      }
+
+      #matcher-picker .ap2-input-row{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      @media (max-width: 520px){
+        #matcher-picker .ap2-input-row{ grid-template-columns: 1fr; }
+      }
+
+      #matcher-picker .ap2-field{
+        display:flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      #matcher-picker .ap2-label{
+        font-size: 0.72rem;
+        opacity: .78;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      #matcher-picker .ap2-input{
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(148,163,184,0.20);
+        background: rgba(2,6,23,0.35);
+        color: rgba(226,232,240,0.96);
+        outline: none;
+      }
+
+      #matcher-picker .ap2-input:focus{
+        border-color: rgba(34,211,238,0.45);
+        box-shadow: 0 0 0 4px rgba(34,211,238,0.10);
+      }
+
+      /* select com cara “premium” (seta discreta) */
+      #matcher-picker select.ap2-input{
+        appearance:none;
+        padding-right: 34px;
+        background-image:
+          linear-gradient(45deg, transparent 50%, rgba(148,163,184,0.85) 50%),
+          linear-gradient(135deg, rgba(148,163,184,0.85) 50%, transparent 50%);
+        background-position:
+          calc(100% - 16px) 50%,
+          calc(100% - 11px) 50%;
+        background-size: 6px 6px, 6px 6px;
+        background-repeat: no-repeat;
       }
 
       #matcher-picker .mp-hint{
-        font-size:11px;
-        color: rgba(148,163,184,.85);
+        margin-top:10px;
+        font-size: 11px;
+        opacity: .85;
+        color: rgba(148,163,184,0.90);
       }
 
-      #matcher-picker .mp-btn{
-        cursor:pointer;
-        padding:8px 10px;
-        border-radius:12px;
-        border:1px solid rgba(148,163,184,.22);
-        background: rgba(2,6,23,.25);
-        color: rgba(226,232,240,.92);
+      #matcher-picker .ap2-bottom{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        flex-wrap:wrap;
       }
 
-      #matcher-picker .mp-btn:hover{
-        background: rgba(148,163,184,.12);
+      /* ap-btn existe global, mas o “premium” do autopilot é ID-scoped.
+         Então replicamos o ajuste aqui também: */
+      #matcher-picker .ap-btn{
+        border-radius: 14px;
+        padding: 9px 12px;
+        letter-spacing: .6px;
+        background: rgba(15,23,42,0.25);
+        border-color: rgba(148,163,184,0.28);
+      }
+
+      #matcher-picker .ap-btn:active{
+        transform: translateY(1px);
+      }
+
+      /* alinha o “Preço” como no print */
+      #matcher-picker #mp-price{
+        text-align:right;
+        font-weight:900;
       }
     `;
     document.head.appendChild(style);
@@ -6696,34 +6705,41 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
   function buildBlock(){
     const row = document.createElement("div");
     row.id = "matcher-picker-row";
+
     row.innerHTML = `
-      <section id="matcher-picker" class="decision-card" aria-label="Matcher Symbol Picker">
-        <div class="mp-header">
+      <section id="matcher-picker" class="decision-card autopilot-v2" aria-label="Matcher Symbol Picker">
+        <div class="ap2-top">
           <div>
             <div class="decision-title">MATCHER • SYMBOL</div>
-            <div class="mp-sub">Escolha 1 ativo para enviar ao workflow X</div>
+            <div class="ap2-sub">Escolha 1 ativo para enviar ao workflow X</div>
           </div>
-          <div class="mp-badge" title="Somente seleção (não altera o painel)">
-            <span class="mp-dot"></span>
-            <span>Selector</span>
+
+          <div class="ap2-controls">
+            <div class="badge-outline" title="Somente seleção (não altera o painel)">
+              <span class="dot"></span>
+              <span>Selector</span>
+            </div>
           </div>
         </div>
 
-        <div class="mp-grid">
-          <div>
-            <label for="mp-symbol">Ativo</label>
-            <select id="mp-symbol"></select>
+        <div class="ap2-sizing">
+          <div class="ap2-input-row">
+            <div class="ap2-field">
+              <label class="ap2-label" for="mp-symbol">Ativo</label>
+              <select id="mp-symbol" class="ap2-input"></select>
+            </div>
+
+            <div class="ap2-field">
+              <label class="ap2-label" for="mp-price">Preço</label>
+              <input id="mp-price" class="ap2-input" type="text" value="—" readonly />
+            </div>
           </div>
 
-          <div>
-            <label for="mp-price">Preço</label>
-            <input id="mp-price" type="text" value="—" readonly />
-          </div>
-        </div>
-
-        <div class="mp-footer">
           <div class="mp-hint">Evento: <code>aaron:symbolSelected</code></div>
-          <button class="mp-btn" id="mp-copy" type="button">Copiar símbolo</button>
+        </div>
+
+        <div class="ap2-bottom">
+          <button class="ap-btn" id="mp-copy" type="button">Copiar símbolo</button>
         </div>
       </section>
     `;
@@ -6753,7 +6769,6 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
     window.AARON_SELECTED_SYMBOL = symbol;
 
     window.dispatchEvent(new CustomEvent("aaron:symbolSelected", { detail: { symbol } }));
-
     refreshPrice(priceEl, symbol);
   }
 
@@ -6803,7 +6818,6 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
       });
     });
 
-    // inicia
     emit(sel.value, priceEl);
   }
 
@@ -6813,8 +6827,8 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
     install();
   }
 })();
-
 </script>
+
 
 
 </body>
