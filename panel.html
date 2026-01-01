@@ -6555,14 +6555,13 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 // ================== FIM GARIMPO DE HOJE ==================
 </script>
 <script>
+<script>
 (function matcherPicker_addOnly(){
   // evita instalar 2x
   if (window.__AARON_MATCHER_PICKER_INSTALLED__) return;
   window.__AARON_MATCHER_PICKER_INSTALLED__ = true;
 
-  // >>> TROQUE AQUI pela sua lista REAL de 13 ativos (se quiser)
   const DEFAULT_SYMBOLS = ['NVDA','TSLA','AMD','AAPL','MSFT','AMZN','META','GOOGL','NFLX','SPY','QQQ','IWM','PLTR'];
-
   const SYMBOLS =
     (Array.isArray(window.AARON_SYMBOLS) && window.AARON_SYMBOLS.length)
       ? window.AARON_SYMBOLS
@@ -6570,25 +6569,35 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
   function injectStyles(){
     const id = "aaron-matcher-picker-style";
-    if (document.getElementById(id)) return;
+    const prev = document.getElementById(id);
+    if (prev) prev.remove(); // << garante que você veja mudanças de estilo ao atualizar
 
     const style = document.createElement("style");
     style.id = id;
     style.textContent = `
-      #matcher-picker-row{
-  display:block;
-  margin:0 0 12px;
+/* ===== MATCHER PICKER — SixSeats / AaronView ===== */
+
+#matcher-picker-row{
+  display:flex;
+  justify-content:flex-end;
+  margin: 0 0 12px;
 }
 
 #matcher-picker{
-  width:100%;
-  border: 1px solid rgba(148,163,184,.14);
-  background: rgba(2, 6, 23, .42);
-  backdrop-filter: blur(10px);
+  width: min(520px, 100%);
   border-radius: 18px;
   padding: 14px 14px 12px;
-  box-shadow: 0 18px 44px rgba(0,0,0,.35);
+
+  /* “glass” do painel */
+  background: rgba(2, 6, 23, .38);
+  border: 1px solid rgba(148, 163, 184, .20);
+  box-shadow: 0 14px 40px rgba(0,0,0,.40);
+  backdrop-filter: blur(10px);
+
+  color: rgba(226, 232, 240, .95);
 }
+
+#matcher-picker { color-scheme: dark; }
 
 #matcher-picker .mp-top{
   display:flex;
@@ -6599,60 +6608,67 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 }
 
 #matcher-picker .mp-title{
-  font-size:12px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color: rgba(226,232,240,.82);
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .92;
 }
 
 #matcher-picker .mp-sub{
-  font-size:12px;
-  color: rgba(148,163,184,.78);
-  margin-top:4px;
+  font-size: 12px;
+  opacity: .72;
+  margin-top: 3px;
 }
 
 #matcher-picker .mp-badge{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid rgba(148,163,184,.18);
-  background: rgba(2,6,23,.28);
-  font-size:12px;
-  color: rgba(226,232,240,.78);
-  white-space:nowrap;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,.22);
+  background: rgba(15,23,42,.35);
+  font-size: 12px;
+  opacity: .92;
+  white-space: nowrap;
 }
 
 #matcher-picker .mp-dot{
-  width:8px; height:8px;
-  border-radius:50%;
-  background: rgba(34,197,94,.95);
-  box-shadow: 0 0 0 3px rgba(34,197,94,.14);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(46, 204, 113, .92);
+  box-shadow: 0 0 0 3px rgba(46,204,113,.16);
 }
 
 #matcher-picker .mp-grid{
   display:grid;
-  grid-template-columns: 1.2fr .8fr;
-  gap:10px;
+  grid-template-columns: 1fr 140px;
+  gap: 12px;
 }
 
 #matcher-picker label{
   display:block;
-  font-size:11px;
-  color: rgba(148,163,184,.78);
-  margin-bottom:6px;
+  font-size: 11px;
+  opacity: .72;
+  margin-bottom: 6px;
 }
 
-#matcher-picker select, #matcher-picker input{
-  width:100%;
-  padding:10px 12px;
+#matcher-picker .mp-select-wrap{
+  position: relative;
+}
+
+#matcher-picker select,
+#matcher-picker input{
+  width: 100%;
+  padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid rgba(148,163,184,.18);
+
+  border: 1px solid rgba(148,163,184,.22);
   background: rgba(15,23,42,.55);
-  color: rgba(226,232,240,.92);
-  outline:none;
-  color-scheme: dark;
+
+  color: rgba(226,232,240,.96);
+  outline: none;
 }
 
 #matcher-picker select{
@@ -6661,20 +6677,6 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
   -moz-appearance:none;
   padding-right: 38px;
   cursor:pointer;
-}
-
-#matcher-picker option{
-  background: rgba(8, 12, 20, 1);
-  color:#fff;
-}
-
-#matcher-picker input{
-  font-weight:700;
-  text-align:right;
-}
-
-#matcher-picker .mp-select-wrap{
-  position:relative;
 }
 
 #matcher-picker .mp-caret{
@@ -6687,34 +6689,44 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
   font-size:14px;
 }
 
+#matcher-picker option{
+  background: rgba(8, 12, 20, 1);
+  color: #fff;
+}
+
+#matcher-picker input{
+  font-weight: 800;
+  text-align: right;
+}
+
+#matcher-picker .mp-hint{
+  font-size: 11px;
+  opacity: .65;
+  margin-top: 8px;
+  color: rgba(148,163,184,.85);
+}
+
 #matcher-picker .mp-footer{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-top:10px;
-  gap:10px;
-}
-
-#matcher-picker .mp-hint{
-  font-size:11px;
-  opacity:.6;
-  color: rgba(148,163,184,.85);
+  margin-top: 10px;
+  gap: 10px;
 }
 
 #matcher-picker .mp-btn{
   cursor:pointer;
-  border:1px solid rgba(148,163,184,.20);
+  border: 1px solid rgba(148,163,184,.20);
   background: rgba(15,23,42,.35);
   color: rgba(226,232,240,.92);
-  padding:8px 12px;
+  padding: 8px 12px;
   border-radius: 14px;
-  font-size:12px;
+  font-size: 12px;
 }
 
 #matcher-picker .mp-btn:hover{
   background: rgba(148,163,184,.12);
 }
-
     `;
     document.head.appendChild(style);
   }
@@ -6724,40 +6736,39 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
     row.id = "matcher-picker-row";
     row.innerHTML = `
       <section id="matcher-picker" aria-label="Matcher Symbol Picker">
-  <div class="mp-top">
-    <div>
-      <div class="mp-title">MATCHER • SYMBOL</div>
-      <div class="mp-sub">Escolha 1 ativo para enviar ao workflow X</div>
-    </div>
+        <div class="mp-top">
+          <div>
+            <div class="mp-title">MATCHER • SYMBOL</div>
+            <div class="mp-sub">Escolha 1 ativo para enviar ao workflow X</div>
+          </div>
 
-    <div class="mp-badge" title="Somente seleção (não altera o painel)">
-      <span class="mp-dot"></span>
-      <span>Selector</span>
-    </div>
-  </div>
+          <div class="mp-badge" title="Somente seleção (não altera o painel)">
+            <span class="mp-dot"></span>
+            <span>Selector</span>
+          </div>
+        </div>
 
-  <div class="mp-grid">
-    <div>
-      <label for="mp-symbol">Ativo</label>
-      <div class="mp-select-wrap">
-        <select id="mp-symbol"></select>
-        <span class="mp-caret">▾</span>
-      </div>
-      <div class="mp-hint">Evento: <code>aaron:symbolSelected</code></div>
-    </div>
+        <div class="mp-grid">
+          <div>
+            <label for="mp-symbol">Ativo</label>
+            <div class="mp-select-wrap">
+              <select id="mp-symbol"></select>
+              <span class="mp-caret">▾</span>
+            </div>
+            <div class="mp-hint">Evento: <code>aaron:symbolSelected</code></div>
+          </div>
 
-    <div>
-      <label for="mp-price">Preço</label>
-      <input id="mp-price" type="text" value="—" readonly />
-    </div>
-  </div>
+          <div>
+            <label for="mp-price">Preço</label>
+            <input id="mp-price" type="text" value="—" readonly />
+          </div>
+        </div>
 
-  <div class="mp-footer">
-    <div class="mp-hint">Pronto para enviar ao Workflow X</div>
-    <button class="mp-btn" id="mp-copy">Copiar símbolo</button>
-  </div>
-</section>
-
+        <div class="mp-footer">
+          <div class="mp-hint">Pronto para enviar ao Workflow X</div>
+          <button class="mp-btn" id="mp-copy">Copiar símbolo</button>
+        </div>
+      </section>
     `;
     return row;
   }
@@ -6768,23 +6779,19 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
     const row = buildBlock();
 
-    // âncora NOVA: dentro da COLUNA DIREITA, antes do "Resumo institucional"
-// (isso elimina o “vão” em cima do Gerenciador de risco)
-const cols = document.querySelectorAll("main.layout > section.column");
-const rightCol = (cols && cols.length >= 2) ? cols[1] : null;
-if (!rightCol) return;
+    // âncora: COLUNA DIREITA, antes do primeiro card (Resumo institucional)
+    const cols = document.querySelectorAll("main.layout > section.column");
+    const rightCol = (cols && cols.length >= 2) ? cols[1] : null;
+    if (!rightCol) return;
 
-// insere antes do primeiro .card da coluna direita (o Resumo institucional)
-const firstCard = rightCol.querySelector(".card") || rightCol.firstElementChild;
-if (firstCard) firstCard.insertAdjacentElement("beforebegin", row);
-else rightCol.appendChild(row);
-
+    const firstCard = rightCol.querySelector(".card") || rightCol.firstElementChild;
+    if (firstCard) firstCard.insertAdjacentElement("beforebegin", row);
+    else rightCol.appendChild(row);
 
     const sel = row.querySelector("#mp-symbol");
     const price = row.querySelector("#mp-price");
     const copyBtn = row.querySelector("#mp-copy");
 
-    // popula dropdown
     SYMBOLS.forEach(s => {
       const opt = document.createElement("option");
       opt.value = s;
@@ -6792,16 +6799,13 @@ else rightCol.appendChild(row);
       sel.appendChild(opt);
     });
 
-    // restaura seleção
     const saved = localStorage.getItem("aaron_selected_symbol");
     if (saved && SYMBOLS.includes(saved)) sel.value = saved;
 
     function getQuote(symbol){
-      // para o futuro: você pode preencher window.AARON_QUOTES = { NVDA:{price:123.45}, ... }
       const q = (window.AARON_QUOTES && window.AARON_QUOTES[symbol]) ? window.AARON_QUOTES[symbol] : null;
       if (q && typeof q.price === "number") return q.price;
 
-      // tenta pegar do último JSON carregado (se tiver)
       const p = window.__AARON_LAST_PANEL_JSON__;
       if (p){
         const pSym = (p.symbol || p.ticker || (p.trade && p.trade.symbol) || (p.execution && p.execution.symbol));
@@ -6820,9 +6824,7 @@ else rightCol.appendChild(row);
       localStorage.setItem("aaron_selected_symbol", symbol);
       window.AARON_SELECTED_SYMBOL = symbol;
 
-      // >>> isso é o “gancho” para o workflow X escutar depois
       window.dispatchEvent(new CustomEvent("aaron:symbolSelected", { detail: { symbol } }));
-
       refreshPrice(symbol);
     }
 
@@ -6868,7 +6870,6 @@ else rightCol.appendChild(row);
       };
     })();
 
-    // inicia
     emit(sel.value);
   }
 
@@ -6879,6 +6880,7 @@ else rightCol.appendChild(row);
   }
 })();
 </script>
+
 
 </body>
 </html>
