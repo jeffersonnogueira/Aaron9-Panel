@@ -3321,8 +3321,14 @@ async function requestMatcher(symbol) {
 // Quando trocar o ativo, ele chama o n8n automaticamente.
 window.addEventListener("aaron:symbolSelected", (ev) => {
   const symbol = ev?.detail?.symbol;
+
+  // 1) chama o matcher (se você quiser manter)
   requestMatcher(symbol);
+
+  // 2) atualiza o painel JSON imediatamente
+  loadPanel(true);
 });
+
 
 // ✅ Ao abrir a página, dispara 1x com o último símbolo salvo (pra já mostrar algo)
 setTimeout(() => {
@@ -5629,7 +5635,10 @@ async function loadPanel(showSpinner) {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
 
-    const res = await fetch(PANEL_URL, { cache: 'no-store' });
+    const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
+const url = `${PANEL_URL}${PANEL_URL.includes('?') ? '&' : '?'}symbol=${encodeURIComponent(sym)}&t=${Date.now()}`;
+const res = await fetch(url, { cache: 'no-store' });
+
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
     const data = await res.json();
