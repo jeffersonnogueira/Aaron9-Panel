@@ -3276,6 +3276,65 @@
 const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/8b8d2c3f-2e7c-4d8d-9959-7c9f4823ed69';
 const REFRESH_MS = 60000; // 1 minuto
 
+// ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
+// COLE ESTE BLOCO LOGO ABAIXO DO: const REFRESH_MS = 60000;
+
+const MATCHER_WEBHOOK_URL = const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_matcher_request"; 
+// Exemplo (prod): https://SEU_WORKSPACE.app.n8n.cloud/webhook/aaron10_matcher_request
+// (não use a test url depois de publicar; use a url de produção)
+
+// chama o n8n e atualiza o painel com o retorno
+async function requestMatcher(symbol) {
+  if (!symbol) return;
+
+  // feedback visual rápido
+  const ctxEl = document.getElementById("context-text");
+  const exeEl = document.getElementById("execution-text");
+  if (ctxEl) ctxEl.textContent = `Carregando matcher para ${symbol}...`;
+  if (exeEl) exeEl.textContent = "—";
+
+  const res = await fetch(MATCHER_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ symbol })
+  });
+
+  if (!res.ok) {
+    const msg = `Matcher erro HTTP ${res.status}`;
+    if (ctxEl) ctxEl.textContent = msg;
+    if (exeEl) exeEl.textContent = "—";
+    return;
+  }
+
+  const data = await res.json().catch(() => ({}));
+  window.__AARON_MATCHER_LAST__ = data; // debug
+
+  // Esperado (fase final): data.ui.structure_line / data.ui.tactical_line
+  const structureLine = data?.ui?.structure_line ?? data?.structure_line ?? "—";
+  const tacticalLine  = data?.ui?.tactical_line  ?? data?.tactical_line  ?? "—";
+
+  if (ctxEl) ctxEl.textContent = structureLine;
+  if (exeEl) exeEl.textContent = tacticalLine;
+}
+
+// ✅ Isso aqui é a “conversa”: o seu dropdown já dispara esse evento.
+// Quando trocar o ativo, ele chama o n8n automaticamente.
+window.addEventListener("aaron:symbolSelected", (ev) => {
+  const symbol = ev?.detail?.symbol;
+  requestMatcher(symbol);
+});
+
+// ✅ Ao abrir a página, dispara 1x com o último símbolo salvo (pra já mostrar algo)
+setTimeout(() => {
+  const symbol =
+    window.AARON_SELECTED_SYMBOL ||
+    localStorage.getItem("aaron_selected_symbol") ||
+    "NVDA";
+
+  window.dispatchEvent(new CustomEvent("aaron:symbolSelected", { detail: { symbol } }));
+}, 200);
+
+
 // ======= LANG GLOBAL (precisa vir ANTES do AutoPilot / loadPanel) =======
 var currentLang = (function(){
   try { return localStorage.getItem('AARON_LANG') || 'pt'; } catch(e) { return 'pt'; }
