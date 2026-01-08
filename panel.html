@@ -3320,14 +3320,19 @@ async function requestMatcher(symbol) {
 // ✅ Isso aqui é a “conversa”: o seu dropdown já dispara esse evento.
 // Quando trocar o ativo, ele chama o n8n automaticamente.
 window.addEventListener("aaron:symbolSelected", (ev) => {
-  const symbol = ev?.detail?.symbol;
+  const symbol = String(ev?.detail?.symbol || '').toUpperCase().trim();
+  if (!symbol) return;
 
-  // 1) chama o matcher (se você quiser manter)
+  // 0) AutoPilot amarrado ao símbolo atual (evita “vazar” trade entre ativos)
+  if (typeof apOnSymbolChange === 'function') apOnSymbolChange(symbol);
+
+  // 1) chama o matcher
   requestMatcher(symbol);
 
   // 2) atualiza o painel JSON imediatamente
   loadPanel(true);
 });
+
 
 
 // ✅ Ao abrir a página, dispara 1x com o último símbolo salvo (pra já mostrar algo)
@@ -3607,6 +3612,55 @@ function apSave(state) {
 }
 let autopilot = apLoad();
 let apMarketPrice = null;
+
+function apOnSymbolChange(symbol){
+  try {
+    symbol = String(symbol || '').toUpperCase().trim();
+    if (!symbol) return;
+
+    // corta “preço velho” do ativo anterior
+    apMarketPrice = null;
+
+    // remove panel antigo do contexto (pra UI não mostrar símbolo velho)
+    if (window.apCtx) window.apCtx.panel = null;
+
+    // se estiver em trade de OUTRO símbolo, reseta contrato (sem reload duplo)
+    autopilot = apLoad();
+
+    const snapSym = autopilot?.snapshot?.symbol
+      ? String(autopilot.snapshot.symbol).toUpperCase()
+      : null;
+
+    const inTrade = !!autopilot?.snapshot && autopilot?.state && autopilot.state !== 'FLAT';
+
+    if (inTrade && snapSym && snapSym !== symbol) {
+      // reset “limpo” (igual Close), mas sem chamar loadPanel() aqui
+      autopilot.enabled = false;
+      autopilot.active = false;
+      autopilot.side = null;
+      autopilot.entry = null;
+      autopilot.startedAt = null;
+
+      autopilot.state = 'FLAT';
+      autopilot.snapshot = null;
+      autopilot.exitPending = false;
+
+      autopilot.marketNow = 'wait';
+      autopilot.current_price = null;
+      autopilot.pnl = null;
+      autopilot.rMultiple = null;
+      autopilot.lastUpdate = null;
+
+      apSave(autopilot);
+      if (els?.apToggle) els.apToggle.checked = false;
+    }
+
+    // atualiza UI imediatamente (mesmo antes do loadPanel terminar)
+    if (typeof apSyncUI === 'function') apSyncUI();
+  } catch (e) {
+    console.error('[AARON][AP] apOnSymbolChange error', e);
+  }
+}
 
 // ======================== AUTOPILOT CONTRACT ENGINE (state + snapshot + conflict) ========================
 const AP_STATES = {
@@ -3889,6 +3943,13 @@ function apSyncUI() {
 
   autopilot = apLoad();
 
+  const selSym = (localStorage.getItem('aaron_selected_symbol') || '').trim().toUpperCase() || '—';
+  const panelSym = apCtx?.panel?.symbol || apCtx?.panel?.ticker;
+  const sym = String(autopilot?.snapshot?.symbol || panelSym || selSym || '—').toUpperCase();
+  const tf = String(autopilot?.snapshot?.timeframe || apCtx?.panel?.timeframe || '—');
+  const symTf = `${sym} | ${tf}`;
+
+
   els.apToggle.checked = !!autopilot.enabled;
 
   // garante que o 2.0 (capital/units) está sempre renderizado
@@ -3911,7 +3972,7 @@ function apSyncUI() {
   if (!autopilot.enabled) {
     els.apState.classList.add('ap-off');
     els.apState.textContent = 'OFF';
-    els.apMeta.textContent = `— • ${st} • MN ${mnTxt}`;
+    els.apMeta.textContent = `${symTf} • ${st} • MN ${mnTxt}`;
     return;
   }
 
@@ -3941,13 +4002,13 @@ function apSyncUI() {
     const rTxt = (r == null) ? '' : ` • R ${r.toFixed(2)}`;
 
     els.apMeta.textContent =
-      `@ ${entry} • ${started} • ${capTxt} • ${unitsTxt} • ${st} • MN ${mnTxt}${pnlTxt}${rTxt}`;
+      `${symTf} • @ ${entry} • ${started} • ${capTxt} • ${unitsTxt} • ${st} • MN ${mnTxt}${pnlTxt}${rTxt}`;
     return;
   }
 
   // ON mas sem posição
   els.apState.textContent = 'ON';
-  els.apMeta.textContent = `armado (sem posição) • ${st} • MN ${mnTxt}`;
+  els.apMeta.textContent = `${symTf} • armado (sem posição) • ${st} • MN ${mnTxt}`;
 }
 
 
