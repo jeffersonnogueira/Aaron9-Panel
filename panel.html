@@ -3678,76 +3678,114 @@ async function requestMatcher(symbol) {
   if (exeEl) exeEl.textContent = tacticalLine;
 
   // ==========================
-  // ✅ NOVO: preencher CARTÃO DE TRADE com o RESPONDER (ui + digest)
-  // ==========================
-  try {
-    if (typeof updateTradeCard !== "function") return;
+// ✅ NOVO: preencher CARTÃO DE TRADE com o RESPONDER (ui + digest)
+// ==========================
+try {
+  if (typeof updateTradeCard !== "function") return;
 
-    const panel = data?.panel || {};
-    const ui    = data?.ui || {};
-    const dig   = data?.digest || {};
-    const sf    = dig?.shape_focus || {};
-    const sr    = dig?.sr_proxy || {};
+  const panel = data?.panel || {};
+  const ui    = data?.ui || {};
+  const dig   = data?.digest || {};
+  const sf    = dig?.shape_focus || {};
+  const sr    = dig?.sr_proxy || {};
 
-    const conf = Number(ui.confidence_pct ?? sf.confidence_pct);
-    const dirRaw = String(sf.direction || "").toLowerCase();
+  const dir = String(sf.direction || "").toLowerCase();     // up / down
+  const bias = String(sf.bias || "neutral").toLowerCase();  // neutral / bull / bear etc
+  const conf = Number(ui.confidence_pct ?? sf.confidence_pct);
 
-    const dirInfo =
-      (dirRaw === "up")   ? { pt: "COMPRA", en: "BUY",  cls: "status-buy"  } :
-      (dirRaw === "down") ? { pt: "VENDA",  en: "SELL", cls: "status-sell" } :
-                            { pt: "NEUTRO", en: "NEUTRAL", cls: "status-wait" };
+  const side = (dir === "up") ? "buy" : (dir === "down") ? "sell" : "wait";
+  const dirPT = (side === "buy") ? "COMPRA" : (side === "sell") ? "VENDA" : "NEUTRO";
+  const dirEN = (side === "buy") ? "BUY" : (side === "sell") ? "SELL" : "NEUTRAL";
 
-    const hasSetup = Number.isFinite(conf) ? conf >= 80 : false;
+  const namePT = fixUtf8(sf.name_pt) || sf.label || ui.structure_line || "—";
+  const nameEN = sf.label || ui.structure_line || "—";
 
-    const ptName = fixUtf8(sf.name_pt) || sf.label || structureLine || "—";
-    const enName = sf.label || structureLine || "—";
+  const updated = panel.updated_at || "—";
+  const pulse = `${panel.status?.label || panel.session || "—"} - ${panel.flow_label || "—"} - atualizado: ${updated}`;
 
-    const status_text_pt = hasSetup
-      ? `✅ Setup válido | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
-      : `⏳ Sem trade | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
+  const recentHigh = (sr.recent_high != null) ? Number(sr.recent_high) : null;
+  const recentLow  = (sr.recent_low  != null) ? Number(sr.recent_low)  : null;
 
-    const status_text_en = hasSetup
-      ? `✅ Valid setup | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
-      : `⏳ No trade | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
+  const priceNowRaw = panel.price_now ?? ui.price_now ?? dig.price_now;
+  const priceNow = (priceNowRaw != null && isFinite(Number(priceNowRaw))) ? Number(priceNowRaw) : null;
 
-    const recentHigh = (sr.recent_high ?? null);
-    const recentLow  = (sr.recent_low  ?? null);
+  // stop/tp simples e coerente com SR (sem inventar nada complexo)
+  const stop =
+    side === "buy"  ? (recentLow  != null ? recentLow  : "—") :
+    side === "sell" ? (recentHigh != null ? recentHigh : "—") : "—";
 
-    const priceNow = Number(panel.price_now ?? ui.price_now ?? dig.price_now ?? NaN);
+  const tp1 =
+    side === "buy"  ? (recentHigh != null ? recentHigh : "—") :
+    side === "sell" ? (recentLow  != null ? recentLow  : "—") : "—";
 
-    const trade = {
-      status_label_pt: status_text_pt,
-      status_label_en: status_text_en,
-      status_class: hasSetup ? dirInfo.cls : "status-wait",
+  const bars = dig.intraday_bars ?? "—";
 
-      symbol: panel.symbol || symbol,
-      timeframe: panel.timeframe || "1m",
-      updated_at: panel.updated_at || "",
-      pulse: panel.status?.label || panel.session || "",
+  const statsPT = `${namePT} | conf: ${Number.isFinite(conf) ? conf + "%" : "—"} | bias: ${bias} | dir: ${dir || "—"} | bars: ${bars}`;
+  const statsEN = `${nameEN} | conf: ${Number.isFinite(conf) ? conf + "%" : "—"} | bias: ${bias} | dir: ${dir || "—"} | bars: ${bars}`;
 
-      direction_pt: hasSetup ? dirInfo.pt : "—",
-      direction_en: hasSetup ? dirInfo.en : "—",
+  const modePT = fixUtf8(ui.market_structure_line || ui.pullback_line || ui.structure_line) || "—";
+  const modeEN = ui.market_structure_line || ui.pullback_line || ui.structure_line || "—";
 
-      // placeholders (futuro): entrada/stop/tps reais
-      entry: (Number.isFinite(priceNow) ? priceNow : "—"),
-      stop: "—",
-      tp1: "—",
-      tp2: "—",
+  const srLine =
+    (recentLow != null || recentHigh != null) ? `${recentLow ?? "—"} — ${recentHigh ?? "—"}` : "—";
 
-      recent_high: recentHigh,
-      recent_low: recentLow,
+  const commentPT = [
+    fixUtf8(ui.headline) || "",
+    fixUtf8(ui.structure_line) || "",
+    fixUtf8(ui.tactical_line) || "",
+    fixUtf8(ui.pullback_line) || ""
+  ].filter(Boolean).join("\n") || "—";
 
-      confidence_pct: Number.isFinite(conf) ? conf : null,
-      comment: fixUtf8(ui.headline || structureLine || ""),
-    };
+  const commentEN = [
+    ui.headline || "",
+    ui.structure_line || "",
+    ui.tactical_line || "",
+    ui.pullback_line || ""
+  ].filter(Boolean).join("\n") || "—";
 
+  const trade = {
+    // ✅ updateTradeCard() lê estas chaves:
+    status_text_pt: `Responder | ${namePT} | ${Number.isFinite(conf) ? conf + "%" : "—"}`,
+    status_text_en: `Responder | ${nameEN} | ${Number.isFinite(conf) ? conf + "%" : "—"}`,
 
-    updateTradeCard(trade);
+    pulse_line_pt: pulse,
+    pulse_line_en: pulse,
 
-  } catch (e) {
-    console.warn("Trade Card adapter error:", e);
-  }
+    symbol: panel.symbol || symbol,
+    timeframe: panel.timeframe || "1m",
+
+    stats_text_pt: statsPT,
+    stats_text_en: statsEN,
+
+    mode_pt: modePT,
+    mode_en: modeEN,
+
+    against_pt: `SR: ${srLine}`,
+    against_en: `SR: ${srLine}`,
+
+    direction_pt: dirPT,
+    direction_en: dirEN,
+
+    entry: (priceNow != null) ? priceNow.toFixed(2) : "—",
+    stop: (typeof stop === "number") ? stop.toFixed(2) : stop,
+    tp1: (typeof tp1 === "number") ? tp1.toFixed(2) : tp1,
+    tp2: "—",
+
+    thermo_pt: bias.toUpperCase(),
+    thermo_en: bias.toUpperCase(),
+
+    comment_pt: commentPT,
+    comment_en: commentEN,
+
+    side: side,
+  };
+
+  updateTradeCard(trade);
+
+} catch (e) {
+  console.warn("Trade Card adapter error:", e);
 }
+
 
 
 
@@ -3757,15 +3795,15 @@ window.addEventListener("aaron:symbolSelected", (ev) => {
   const symbol = String(ev?.detail?.symbol || '').toUpperCase().trim();
   if (!symbol) return;
 
-  // 0) AutoPilot amarrado ao símbolo atual (evita “vazar” trade entre ativos)
   if (typeof apOnSymbolChange === 'function') apOnSymbolChange(symbol);
 
-  // 1) chama o matcher
-  requestMatcher(symbol);
-
-  // 2) atualiza o painel JSON imediatamente
+  // 1) primeiro atualiza o painel
   loadPanel(true);
+
+  // 2) por último chama o matcher, assim ele NÃO é sobrescrito no Trade Card
+  requestMatcher(symbol);
 });
+
 
 
 
