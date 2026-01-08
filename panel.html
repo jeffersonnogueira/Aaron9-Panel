@@ -2122,94 +2122,138 @@
    ========================= */
 .resp-snap{
   margin-top: 10px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.02);
-  border-radius: 16px;
-  padding: 10px 12px;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(80,120,200,.35);
+  background: rgba(15,20,40,.55);
+  box-shadow: 0 10px 28px rgba(0,0,0,.28);
 }
 
 .resp-snap-title{
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: rgba(220,235,255,.85);
+  font-size: 11px;
+  letter-spacing: .22em;
+  opacity: .8;
+  margin-bottom: 8px;
+}
+
+/* KPI row */
+.resp-kpis{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(120,170,255,.18);
+  background: rgba(10,14,28,.55);
   margin-bottom: 10px;
 }
 
+.resp-kpi{
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(120,170,255,.12);
+  background: rgba(8,10,22,.55);
+}
+
+.resp-kpi-label{
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  opacity: .75;
+  margin-bottom: 4px;
+}
+
+.resp-kpi-value{
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+/* 3 col output */
 .resp-snap-grid{
   display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 
 .resp-snap-col{
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(0,0,0,.12);
-  border-radius: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(120,170,255,.12);
+  background: rgba(8,10,22,.45);
   overflow: hidden;
 }
 
 .resp-snap-head{
   padding: 8px 10px;
-  font-weight: 800;
   font-size: 11px;
-  letter-spacing: .10em;
+  font-weight: 700;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.75);
-  border-bottom: 1px solid rgba(255,255,255,.08);
   background: rgba(255,255,255,.03);
+  border-bottom: 1px solid rgba(120,170,255,.12);
 }
 
 .resp-snap-body{
-  padding: 8px 10px;
-  max-height: 260px;         /* sempre visível + scroll */
+  padding: 10px;
+  max-height: 340px; /* mais alto p/ ficar “na cara” */
   overflow: auto;
 }
 
 .resp-snap-row{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
   gap: 10px;
   padding: 6px 0;
-  border-bottom: 1px dashed rgba(255,255,255,.10);
+  border-bottom: 1px dashed rgba(255,255,255,.07);
 }
 
-.resp-snap-row:last-child{ border-bottom:none; }
+.resp-snap-row:last-child{ border-bottom: none; }
 
 .resp-snap-key{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 11px;
-  color: rgba(200,215,235,.78);
-  white-space: nowrap;
+  opacity: .85;
 }
 
 .resp-snap-val{
-  font-size: 12px;
-  color: rgba(255,255,255,.92);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 11px;
   text-align: right;
-  white-space: pre-wrap;
+  opacity: .95;
   word-break: break-word;
-  max-width: 68%;
 }
 
-.resp-snap-null{ opacity: .55; }
-.resp-snap-strong .resp-snap-key{ color: rgba(140,200,255,.95); }
-.resp-snap-strong .resp-snap-val{ font-weight: 800; }
+.resp-snap-null{ opacity: .55; font-style: italic; }
 
+.resp-snap-strong .resp-snap-key{ opacity: 1; font-weight: 800; }
+.resp-snap-strong .resp-snap-val{ opacity: 1; font-weight: 700; }
+
+.resp-bool{
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: 11px;
+}
+.resp-bool-true{ background: rgba(60,190,120,.16); }
+.resp-bool-false{ background: rgba(220,80,90,.14); }
+
+/* flash quando muda */
 .resp-snap-flash{
-  animation: respSnapFlash 1.0s ease;
+  animation: respSnapFlash .55s ease-out;
 }
 @keyframes respSnapFlash{
-  0% { background: rgba(120,180,255,.16); }
-  60%{ background: rgba(120,180,255,.06); }
-  100%{ background: transparent; }
+  from { background: rgba(80,160,255,.18); }
+  to   { background: transparent; }
 }
 
-@media (max-width: 1100px){
+@media (max-width: 980px){
+  .resp-kpis{ grid-template-columns: repeat(2,1fr); }
   .resp-snap-grid{ grid-template-columns: 1fr; }
+  .resp-snap-row{ grid-template-columns: 1fr; }
+  .resp-snap-val{ text-align: left; }
 }
+
+
 
   </style>
 </head>
@@ -3098,28 +3142,62 @@
           </span>
         </div>
                 <!-- ✅ NOVO: RESPONDER OUTPUT (panel / ui / digest) — sempre visível -->
-        <hr class="trade-divider" />
+<hr class="trade-divider" />
 
-        <div class="resp-snap" id="resp-snap">
-          <div class="resp-snap-title">RESPONDER OUTPUT</div>
+<div class="resp-snap" id="resp-snap">
+  <div class="resp-snap-title">RESPONDER OUTPUT</div>
 
-          <div class="resp-snap-grid">
-            <div class="resp-snap-col">
-              <div class="resp-snap-head">panel</div>
-              <div class="resp-snap-body" id="resp-snap-panel">—</div>
-            </div>
+  <!-- KPI ROW (na cara, estilo "wow") -->
+  <div class="resp-kpis">
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Pattern</div>
+      <div class="resp-kpi-value" id="resp-kpi-pattern">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Confidence</div>
+      <div class="resp-kpi-value" id="resp-kpi-conf">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Bias</div>
+      <div class="resp-kpi-value" id="resp-kpi-bias">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Direction</div>
+      <div class="resp-kpi-value" id="resp-kpi-dir">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">SR (L—H)</div>
+      <div class="resp-kpi-value" id="resp-kpi-sr">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Bars</div>
+      <div class="resp-kpi-value" id="resp-kpi-bars">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Price</div>
+      <div class="resp-kpi-value" id="resp-kpi-price">—</div>
+    </div>
+  </div>
 
-            <div class="resp-snap-col">
-              <div class="resp-snap-head">ui</div>
-              <div class="resp-snap-body" id="resp-snap-ui">—</div>
-            </div>
+  <div class="resp-snap-grid">
+    <div class="resp-snap-col">
+      <div class="resp-snap-head">panel</div>
+      <div class="resp-snap-body" id="resp-snap-panel">—</div>
+    </div>
 
-            <div class="resp-snap-col">
-              <div class="resp-snap-head">digest</div>
-              <div class="resp-snap-body" id="resp-snap-digest">—</div>
-            </div>
-          </div>
-        </div>
+    <div class="resp-snap-col">
+      <div class="resp-snap-head">ui</div>
+      <div class="resp-snap-body" id="resp-snap-ui">—</div>
+    </div>
+
+    <div class="resp-snap-col">
+      <div class="resp-snap-head">digest</div>
+      <div class="resp-snap-body" id="resp-snap-digest">—</div>
+    </div>
+  </div>
+</div>
+
+
 
       </div>
     </div>
@@ -3404,6 +3482,27 @@ const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_m
 // ==========================
 // TRADE CARD • RESPONDER OUTPUT renderer
 // ==========================
+// chama o n8n e atualiza o painel com o retorno
+// ==========================
+// RESPONDER OUTPUT helpers
+// ==========================
+function setRespSnapMessage(msg){
+  const html = `<div class="resp-snap-null">${String(msg || "—")}</div>`;
+  ["resp-snap-panel","resp-snap-ui","resp-snap-digest"].forEach((id)=>{
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+  // KPIs (se existirem)
+  ["resp-kpi-pattern","resp-kpi-conf","resp-kpi-bias","resp-kpi-dir","resp-kpi-sr","resp-kpi-bars","resp-kpi-price"]
+    .forEach((id)=>{
+      const el = document.getElementById(id);
+      if (el) el.textContent = "—";
+    });
+}
+
+// ==========================
+// TRADE CARD • RESPONDER OUTPUT renderer
+// ==========================
 function renderTradeResponderOutput(data){
   const elPanel  = document.getElementById("resp-snap-panel");
   const elUI     = document.getElementById("resp-snap-ui");
@@ -3414,6 +3513,25 @@ function renderTradeResponderOutput(data){
   const ui     = data?.ui     || {};
   const digest = data?.digest || {};
 
+  // ====== KPI row (WOW "na cara") ======
+  const sf = digest?.shape_focus || {};
+  const sr = digest?.sr_proxy || {};
+
+  const setK = (id, v) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const out = (v === undefined || v === null || v === "") ? "—" : String(v);
+    el.textContent = out;
+  };
+
+  setK("resp-kpi-pattern", sf.label || ui.structure_line || "—");
+  setK("resp-kpi-conf", ui.confidence_label || (sf.confidence_pct != null ? `${sf.confidence_pct}%` : "—"));
+  setK("resp-kpi-bias", sf.bias || "—");
+  setK("resp-kpi-dir",  sf.direction || sr.direction || "—");
+  setK("resp-kpi-sr",   (sr.recent_low != null || sr.recent_high != null) ? `${sr.recent_low ?? "—"} — ${sr.recent_high ?? "—"}` : "—");
+  setK("resp-kpi-bars", digest.intraday_bars ?? "—");
+  setK("resp-kpi-price", (panel.price_now ?? ui.price_now ?? digest.price_now) ?? "—");
+
   const esc = (s) => String(s ?? "")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
@@ -3423,28 +3541,27 @@ function renderTradeResponderOutput(data){
 
   const fmt = (v) => {
     if (v === null || v === undefined) return { html:`<span class="resp-snap-null">null</span>`, plain:"null" };
-    if (typeof v === "boolean") return { html: esc(String(v)), plain: String(v) };
-    if (typeof v === "number")  return { html: esc(String(v)), plain: String(v) };
+    if (typeof v === "boolean") {
+      return {
+        html: `<span class="resp-bool ${v ? "resp-bool-true" : "resp-bool-false"}">${v}</span>`,
+        plain: String(v)
+      };
+    }
     if (Array.isArray(v)) {
-      if (!v.length) return { html:`<span class="resp-snap-null">[empty]</span>`, plain:"[empty]" };
-      const preview = v.slice(0,5).map(x => (typeof x === "object" ? "{…}" : String(x))).join(", ");
-      const txt = `[${v.length}] ${preview}${v.length>5 ? ", …" : ""}`;
-      return { html: esc(txt), plain: txt };
+      const p = v.map(x => (x === null || x === undefined) ? "null" : String(x));
+      const plain = p.join(", ");
+      return { html: esc(plain), plain };
     }
     if (typeof v === "object") {
-      const keys = Object.keys(v);
-      const txt = `{ ${keys.slice(0,6).join(", ")}${keys.length>6 ? ", …" : ""} }`;
-      return { html: esc(txt), plain: txt };
+      const plain = JSON.stringify(v);
+      return { html: `<span class="resp-snap-null">${esc(plain)}</span>`, plain };
     }
-    // string
-    let s = String(v);
-    try { if (/[ÃÂ]/.test(s)) s = decodeURIComponent(escape(s)); } catch(e){}
-    return { html: esc(s), plain: s };
+    const plain = String(v);
+    return { html: esc(plain), plain };
   };
 
-  const flatten = (obj, prefix="", out=[], depth=0) => {
-    if (obj === null || obj === undefined) { out.push([prefix || "value", obj]); return out; }
-    if (typeof obj !== "object" || Array.isArray(obj)) { out.push([prefix || "value", obj]); return out; }
+  const flatten = (obj, prefix = "", out = [], depth = 0) => {
+    if (!obj || typeof obj !== "object") return out;
     for (const [k,v] of Object.entries(obj)){
       const key = prefix ? `${prefix}.${k}` : k;
       const isObj = v && typeof v === "object" && !Array.isArray(v);
@@ -3458,7 +3575,8 @@ function renderTradeResponderOutput(data){
   const P_PANEL  = ["symbol","timeframe","session","flow_label","status.label","updated_at","price_now","last_price","reference_price"];
   const P_UI     = ["confidence_pct","confidence_label","headline","structure_line","tactical_line","market_structure_line","pullback_line","detector_key","price_now"];
   const P_DIGEST = [
-    "shape_focus.pattern_id","shape_focus.label","shape_focus.family_en","shape_focus.bias","shape_focus.direction","shape_focus.confidence_pct",
+    "shape_focus.pattern_id","shape_focus.label","shape_focus.name_pt","shape_focus.family_en",
+    "shape_focus.bias","shape_focus.direction","shape_focus.confidence_pct",
     "sr_proxy.recent_high","sr_proxy.recent_low","intraday_bars","features_true","price_now"
   ];
 
@@ -3499,7 +3617,6 @@ function renderTradeResponderOutput(data){
       `;
     }
 
-    // salva prev global
     window.__RESP_SNAP_PREV__ = { ...prev, ...next };
     el.innerHTML = html || "—";
   };
@@ -3517,24 +3634,40 @@ async function requestMatcher(symbol) {
   const exeEl = document.getElementById("execution-text");
   if (ctxEl) ctxEl.textContent = `Carregando matcher para ${symbol}...`;
   if (exeEl) exeEl.textContent = "—";
+  setRespSnapMessage(`Carregando ${symbol}...`);
 
-  const res = await fetch(MATCHER_WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ symbol })
-  });
+  let res;
+  try {
+    res = await fetch(MATCHER_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ symbol })
+    });
+  } catch (err) {
+    const msg = `Matcher fetch falhou: ${err?.message || err}`;
+    if (ctxEl) ctxEl.textContent = msg;
+    if (exeEl) exeEl.textContent = "—";
+    setRespSnapMessage(msg);
+    return;
+  }
 
   if (!res.ok) {
     const msg = `Matcher erro HTTP ${res.status}`;
     if (ctxEl) ctxEl.textContent = msg;
     if (exeEl) exeEl.textContent = "—";
+    setRespSnapMessage(msg);
     return;
   }
 
   // n8n pode devolver objeto OU array -> normaliza
   const raw = await res.json().catch(() => ({}));
   const data = Array.isArray(raw) ? (raw[0] || {}) : (raw || {});
+  if (!data || (typeof data === "object" && !Object.keys(data).length)) {
+    setRespSnapMessage("Responder vazio (sem dados).");
+  }
+
   window.__AARON_MATCHER_LAST__ = data; // debug
+  renderTradeResponderOutput(data); // ✅ sempre preenche o Trade Card Output
 
   // Esperado (fase final): data.ui.structure_line / data.ui.tactical_line
   const structureLine = data?.ui?.structure_line ?? data?.structure_line ?? "—";
@@ -3555,20 +3688,6 @@ async function requestMatcher(symbol) {
     const sf    = dig?.shape_focus || {};
     const sr    = dig?.sr_proxy || {};
 
-    const fmt = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n.toFixed(2) : "—";
-    };
-
-    const fixUtf8 = (s) => {
-      if (!s || typeof s !== "string") return s;
-      try {
-        // corrige strings tipo "3Âº Toque..."
-        if (/[ÃÂ]/.test(s)) return decodeURIComponent(escape(s));
-      } catch (e) {}
-      return s;
-    };
-
     const conf = Number(ui.confidence_pct ?? sf.confidence_pct);
     const dirRaw = String(sf.direction || "").toLowerCase();
 
@@ -3584,84 +3703,50 @@ async function requestMatcher(symbol) {
 
     const status_text_pt = hasSetup
       ? `✅ Setup válido | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
-      : `⏳ Aguardando | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
+      : `⏳ Sem trade | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
 
     const status_text_en = hasSetup
       ? `✅ Valid setup | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
-      : `⏳ Waiting | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
+      : `⏳ No trade | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
 
-    const pulse_line_pt =
-      `${panel.session || "—"} • ${panel.flow_label || "—"} • atualizado: ${panel.updated_at || "—"}`;
+    const recentHigh = (sr.recent_high ?? null);
+    const recentLow  = (sr.recent_low  ?? null);
 
-    const pulse_line_en =
-      `${panel.session || "—"} • ${panel.flow_label || "—"} • updated: ${panel.updated_at || "—"}`;
-
-    // Entrada/Stop/TPs (sem inventar): usa níveis SR como referência
-    let entry_text = "—";
-    if (sr && (sr.recent_high != null || sr.recent_low != null || sr.breakout_level != null)) {
-      const bh = (sr.breakout_level != null) ? `Breakout: ${fmt(sr.breakout_level)}` : null;
-      const hl = `H:${fmt(sr.recent_high)} L:${fmt(sr.recent_low)}`;
-      entry_text = bh ? `${bh} | ${hl}` : hl;
-    }
-
-    let stop = "—";
-    if (dirInfo.cls === "status-buy"  && sr?.recent_low  != null) stop = fmt(sr.recent_low);
-    if (dirInfo.cls === "status-sell" && sr?.recent_high != null) stop = fmt(sr.recent_high);
-
-    const comment_pt =
-`Contexto: ${ui.market_structure_line || "—"}
-Pullback: ${ui.pullback_line || "—"}
-Execução: ${ui.tactical_line || "—"}
-Detector: ${ui.detector_key || "—"} | Arquivo: ${ui.image_file || "—"}`;
-
-    const comment_en =
-`Context: ${ui.market_structure_line || "—"}
-Pullback: ${ui.pullback_line || "—"}
-Execution: ${ui.tactical_line || "—"}
-Detector: ${ui.detector_key || "—"} | File: ${ui.image_file || "—"}`;
+    const priceNow = Number(panel.price_now ?? ui.price_now ?? dig.price_now ?? NaN);
 
     const trade = {
-      symbol: String(panel.symbol || symbol || "").toUpperCase(),
-      timeframe: String(panel.timeframe || "").trim() || "—",
+      status_label_pt: status_text_pt,
+      status_label_en: status_text_en,
+      status_class: hasSetup ? dirInfo.cls : "status-wait",
 
-      status_text_pt,
-      status_text_en,
+      symbol: panel.symbol || symbol,
+      timeframe: panel.timeframe || "1m",
+      updated_at: panel.updated_at || "",
+      pulse: panel.status?.label || panel.session || "",
 
-      pulse_line_pt,
-      pulse_line_en,
+      direction_pt: hasSetup ? dirInfo.pt : "—",
+      direction_en: hasSetup ? dirInfo.en : "—",
 
-      mode_pt: ptName,
-      mode_en: enName,
-
-      against_pt: `Confiança: ${Number.isFinite(conf) ? conf + "%" : "—"} | Score: ${sf.score ?? "—"}`,
-      against_en: `Confidence: ${Number.isFinite(conf) ? conf + "%" : "—"} | Score: ${sf.score ?? "—"}`,
-
-      direction_pt: dirInfo.pt,
-      direction_en: dirInfo.en,
-
-      entry_text,
-      stop,
+      // placeholders (futuro): entrada/stop/tps reais
+      entry: (Number.isFinite(priceNow) ? priceNow : "—"),
+      stop: "—",
       tp1: "—",
       tp2: "—",
 
-      size_text: "—",
-      risk_text: "—",
+      recent_high: recentHigh,
+      recent_low: recentLow,
 
-      thermo_pt: hasSetup ? "Agressivo moderado" : "Neutro",
-      thermo_en: hasSetup ? "Moderately aggressive" : "Neutral",
-
-      comment_pt,
-      comment_en,
-
-      status_class: hasSetup ? dirInfo.cls : "status-wait",
+      confidence_pct: Number.isFinite(conf) ? conf : null,
+      comment: fixUtf8(ui.headline || structureLine || ""),
     };
 
     updateTradeCard(trade);
-    renderTradeResponderOutput(data);
+
   } catch (e) {
-    console.warn("TradeCard from matcher failed:", e);
+    console.warn("Trade Card adapter error:", e);
   }
 }
+
 
 
 // ✅ Isso aqui é a “conversa”: o seu dropdown já dispara esse evento.
