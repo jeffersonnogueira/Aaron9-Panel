@@ -3692,64 +3692,61 @@ function renderResponderInline(data){
 
 let __AARON_MATCHER_REQ_ID = 0;
 
-async function requestMatcher(symbol) {
+async function requestMatcher(symbol){
   if (!symbol) return;
-
-  const reqId = ++__AARON_MATCHER_REQ_ID;
 
   // feedback visual rápido
   const ctxEl = document.getElementById("context-text");
   const exeEl = document.getElementById("execution-text");
   if (ctxEl) ctxEl.textContent = `Carregando matcher para ${symbol}...`;
   if (exeEl) exeEl.textContent = "—";
+  setRespSnapMessage(`Carregando ${symbol}...`);
+
+  // anti-race: se o usuário trocar o ticker rápido, só vale a última chamada
+  window.__AARON_MATCHER_REQ_ID__ = (window.__AARON_MATCHER_REQ_ID__ || 0) + 1;
+  const reqId = window.__AARON_MATCHER_REQ_ID__;
+
+  // manda o símbolo no query (mais “à prova de n8n parse”)
+  const url = `${MATCHER_WEBHOOK_URL}?symbol=${encodeURIComponent(symbol)}`;
 
   let res;
   try {
-    // ✅ manda o símbolo na QUERY (o seu workflow lê SEM FALHA)
-    // ✅ POST simples (sem JSON) = menos chance de CORS / “Failed to fetch”
-    const url = `${MATCHER_WEBHOOK_URL}?symbol=${encodeURIComponent(symbol)}&_=${Date.now()}`;
     res = await fetch(url, { method: "POST", cache: "no-store" });
   } catch (err) {
-    const msg = `Matcher fetch falhou: ${err?.message || err}`;
+    if (reqId !== window.__AARON_MATCHER_REQ_ID__) return;
+    const msg = `Matcher fetch falhou: ${err?.message || err || "Failed to fetch"}`;
     if (ctxEl) ctxEl.textContent = msg;
-    if (exeEl) exeEl.textContent = "—";
-    if (typeof setRespSnapMessage === "function") setRespSnapMessage(msg);
+    setRespSnapMessage(msg);
     return;
   }
+
+  if (reqId !== window.__AARON_MATCHER_REQ_ID__) return;
 
   if (!res.ok) {
-    const msg = `Matcher erro HTTP ${res.status}`;
+    const t = await res.text().catch(()=> "");
+    const msg = `Matcher erro HTTP ${res.status}${t ? ` • ${t.slice(0,160)}` : ""}`;
     if (ctxEl) ctxEl.textContent = msg;
-    if (exeEl) exeEl.textContent = "—";
-    if (typeof setRespSnapMessage === "function") setRespSnapMessage(msg);
+    setRespSnapMessage(msg);
     return;
   }
 
-  let raw;
+  let data;
   try {
-    raw = await res.json();
+    data = await res.json();
   } catch (err) {
-    const msg = "Matcher JSON inválido";
+    const msg = `Matcher respondeu mas NÃO veio JSON válido: ${err?.message || err}`;
     if (ctxEl) ctxEl.textContent = msg;
-    if (exeEl) exeEl.textContent = "—";
-    if (typeof setRespSnapMessage === "function") setRespSnapMessage(msg);
+    setRespSnapMessage(msg);
     return;
   }
 
-  // ignora resposta velha se o usuário trocou o ativo rápido
-  if (reqId !== __AARON_MATCHER_REQ_ID) return;
+  // n8n às vezes responde [{...}] — garante objeto
+  data = Array.isArray(data) ? (data[0] ?? {}) : (data ?? {});
 
-  // ✅ normaliza (n8n costuma devolver [ { ... } ])
-  const data = Array.isArray(raw) ? (raw[0] ?? {}) : (raw ?? {});
-
-  // ✅ isso aqui é o que alimenta o “RESPONDER OUTPUT” do Trade Card
-  if (typeof renderTradeResponderOutput === "function") {
-    renderTradeResponderOutput(data);
-  }
-
-  // opcional: limpa status visual se você usa isso
-  if (typeof setRespSnapMessage === "function") setRespSnapMessage("");
+  // ✅ PREENCHE o “RESPONDER OUTPUT” do Trade Card
+  renderTradeResponderOutput(data);
 }
+
 
 
 
