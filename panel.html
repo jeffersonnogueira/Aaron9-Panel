@@ -3475,7 +3475,9 @@ const REFRESH_MS = 60000; // 1 minuto
 // COLE ESTE BLOCO LOGO ABAIXO DO: const REFRESH_MS = 60000;
 
 // OPÇÃO 2 (direto)
-const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_matcher_request";
+const MATCHER_WEBHOOK_URL_PROD = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_matcher_request";
+const MATCHER_WEBHOOK_URL_TEST = "https://jjjnogueira.app.n8n.cloud/webhook-test/aaron10_matcher_request";
+const MATCHER_WEBHOOK_URL = MATCHER_WEBHOOK_URL_PROD; // default
 // (pra testar no editor do n8n, use webhook-test):
 // const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook-test/aaron10_matcher_request"; 
 // Exemplo (prod): https://SEU_WORKSPACE.app.n8n.cloud/webhook/aaron10_matcher_request
@@ -3692,60 +3694,121 @@ function renderResponderInline(data){
 
 let __AARON_MATCHER_REQ_ID = 0;
 
-async function requestMatcher(symbol){
+function applyResponderIntoTradeCard(data){
+  data = Array.isArray(data) ? (data[0] ?? {}) : (data ?? {});
+  const panel  = data?.panel  || {};
+  const ui     = data?.ui     || {};
+  const digest = data?.digest || {};
+  const sf = digest?.shape_focus || {};
+  const sr = digest?.sr_proxy || {};
+
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const v = (val === null || val === undefined || val === "") ? "—" : String(val);
+    el.textContent = v;
+  };
+
+  const fmt2 = (n) => (typeof n === "number" && isFinite(n)) ? n.toFixed(2) : (n ?? "—");
+
+  // Estatística “na cara”
+  const stats = ui.headline || ui.structure_line || sf.label || "—";
+  set("trade-stats", stats);
+  set("trade-stats-top", stats);
+
+  // Direção (só pra exibir o output do responder)
+  const dirRaw = String(sf.direction || "").toLowerCase();
+  const dirPT  = (dirRaw === "up") ? "COMPRA" : (dirRaw === "down") ? "VENDA" : "NEUTRO";
+  set("trade-direction", dirPT);
+
+  // Modo / contexto (pra aparecer dentro do Trade Card)
+  const mode = ui.pullback_line || ui.market_structure_line || ui.tactical_line || "—";
+  set("trade-mode", mode);
+
+  // Contra (resumo do digest)
+  const against = [
+    sf.family_en || sf.family || "",
+    sf.bias ? `bias:${sf.bias}` : "",
+    (Array.isArray(digest.features_true) && digest.features_true.length)
+      ? `feat:${digest.features_true.join(", ")}`
+      : ""
+  ].filter(Boolean).join(" • ") || "—";
+  set("trade-against", against);
+
+  // Entrada: usa o range SR proxy (se existir)
+  if (sr.recent_low != null || sr.recent_high != null) {
+    set("trade-entry", `${fmt2(sr.recent_low)} – ${fmt2(sr.recent_high)}`);
+  }
+
+  // Comentário do AARON (mostra as linhas do ui)
+  const comment = [
+    ui.structure_line ? `Estrutura: ${ui.structure_line}` : "",
+    ui.tactical_line ? `Tático: ${ui.tactical_line}` : "",
+    ui.market_structure_line ? `MS: ${ui.market_structure_line}` : "",
+    ui.pullback_line ? `Pullback: ${ui.pullback_line}` : "",
+  ].filter(Boolean).join(" | ");
+
+  if (comment) set("trade-comment", comment);
+}
+
+async function requestMatcher(symbol) {
+  symbol = String(symbol || "").trim().toUpperCase();
   if (!symbol) return;
 
-  // feedback visual rápido
+  const reqId = ++__AARON_MATCHER_REQ_ID;
+
   const ctxEl = document.getElementById("context-text");
   const exeEl = document.getElementById("execution-text");
   if (ctxEl) ctxEl.textContent = `Carregando matcher para ${symbol}...`;
   if (exeEl) exeEl.textContent = "—";
-  setRespSnapMessage(`Carregando ${symbol}...`);
+  if (typeof setRespSnapMessage === "function") setRespSnapMessage(`Carregando ${symbol}...`);
 
-  // anti-race: se o usuário trocar o ticker rápido, só vale a última chamada
-  window.__AARON_MATCHER_REQ_ID__ = (window.__AARON_MATCHER_REQ_ID__ || 0) + 1;
-  const reqId = window.__AARON_MATCHER_REQ_ID__;
+  async function fetchOne(baseUrl){
+    const url = `${baseUrl}?symbol=${encodeURIComponent(symbol)}&_=${Date.now()}`;
+    const res = await fetch(url, { method: "GET", cache: "no-store" }); // ✅ GET
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status}${t ? ` • ${t.slice(0,160)}` : ""}`);
+    }
+    return await res.json();
+  }
 
-  // manda o símbolo no query (mais “à prova de n8n parse”)
-  const url = `${MATCHER_WEBHOOK_URL}?symbol=${encodeURIComponent(symbol)}`;
-
-  let res;
+  let raw;
   try {
-    res = await fetch(url, { method: "POST", cache: "no-store" });
-  } catch (err) {
-    if (reqId !== window.__AARON_MATCHER_REQ_ID__) return;
-    const msg = `Matcher fetch falhou: ${err?.message || err || "Failed to fetch"}`;
-    if (ctxEl) ctxEl.textContent = msg;
-    setRespSnapMessage(msg);
-    return;
+    // 1) tenta PROD
+    raw = await fetchOne(MATCHER_WEBHOOK_URL);
+  } catch (errProd) {
+    // 2) fallback TEST (quando workflow não está Active ou você está no editor)
+    try {
+      raw = await fetchOne(MATCHER_WEBHOOK_URL_TEST);
+    } catch (errTest) {
+      if (reqId !== __AARON_MATCHER_REQ_ID) return;
+      const msg = `Matcher fetch falhou: ${errTest?.message || errTest || "Failed to fetch"}`;
+      if (ctxEl) ctxEl.textContent = msg;
+      if (exeEl) exeEl.textContent = "—";
+      if (typeof setRespSnapMessage === "function") setRespSnapMessage(msg);
+      return;
+    }
   }
 
-  if (reqId !== window.__AARON_MATCHER_REQ_ID__) return;
+  if (reqId !== __AARON_MATCHER_REQ_ID) return;
 
-  if (!res.ok) {
-    const t = await res.text().catch(()=> "");
-    const msg = `Matcher erro HTTP ${res.status}${t ? ` • ${t.slice(0,160)}` : ""}`;
-    if (ctxEl) ctxEl.textContent = msg;
-    setRespSnapMessage(msg);
-    return;
+  const data = Array.isArray(raw) ? (raw[0] ?? {}) : (raw ?? {});
+  window.__AARON_MATCHER_LAST__ = data; // debug
+
+  // ✅ preenche o bloco “RESPONDER OUTPUT” de baixo
+  if (typeof renderTradeResponderOutput === "function") {
+    renderTradeResponderOutput(data);
   }
 
-  let data;
-  try {
-    data = await res.json();
-  } catch (err) {
-    const msg = `Matcher respondeu mas NÃO veio JSON válido: ${err?.message || err}`;
-    if (ctxEl) ctxEl.textContent = msg;
-    setRespSnapMessage(msg);
-    return;
-  }
+  // ✅ e também injeta o output dentro do Trade Card (em cima)
+  applyResponderIntoTradeCard(data);
 
-  // n8n às vezes responde [{...}] — garante objeto
-  data = Array.isArray(data) ? (data[0] ?? {}) : (data ?? {});
-
-  // ✅ PREENCHE o “RESPONDER OUTPUT” do Trade Card
-  renderTradeResponderOutput(data);
+  if (ctxEl) ctxEl.textContent = `Matcher OK: ${symbol}`;
+  if (exeEl) exeEl.textContent = data?.panel?.updated_at || "—";
+  if (typeof setRespSnapMessage === "function") setRespSnapMessage("");
 }
+
 
 
 
