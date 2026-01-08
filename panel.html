@@ -5869,6 +5869,148 @@ function updatePatternReference(panel, patterns) {
   }
 }
 
+// ===============================
+// ADAPTER: panel_json -> trade card model (Citadel)
+// (não mexe no dropdown, não mexe no autopilot)
+// ===============================
+function adaptPanelToTradeCard(panel, raw, fallbackSymbol){
+  if (!panel || typeof panel !== "object") return null;
+
+  const statusGeral = panel.status_geral || {};
+  const ai = panel.ai_advisor || panel.aiAdvisor || {};
+  const meta = panel.meta || {};
+
+  const sym = String(panel.symbol || raw?.symbol || fallbackSymbol || "").toUpperCase().trim() || "—";
+  const tf  = String(panel.timeframe || raw?.timeframe || panel.timeframe_label || "").trim() || "—";
+
+  const parseBoolish = (v) => {
+    if (typeof v === "boolean") return v;
+    if (typeof v === "number") return v > 0;
+    const s = String(v ?? "").trim().toLowerCase();
+    if (!s) return false;
+    if (/(false|não|nao|no|0)/.test(s)) return false;
+    if (/(true|sim|yes|1|válido|valido|valid)/.test(s)) return true;
+    return false;
+  };
+
+  const setupOk = parseBoolish(statusGeral.setup_valido ?? statusGeral.setupValido ?? statusGeral.setup);
+
+  const actionRaw = String(ai.acao_recomendada || ai.action || ai.recommendation || "").toLowerCase();
+  const dirInfo =
+    (actionRaw.includes("buy") || actionRaw.includes("compra")) ? { pt:"COMPRA", en:"BUY",  cls:"status-buy",  side:"buy" } :
+    (actionRaw.includes("sell")|| actionRaw.includes("venda"))  ? { pt:"VENDA",  en:"SELL", cls:"status-sell", side:"sell"} :
+    (actionRaw.includes("close")|| actionRaw.includes("fechar"))? { pt:"FECHAR", en:"CLOSE",cls:"status-wait", side:"close"} :
+    (actionRaw.includes("wait")|| actionRaw.includes("aguard")) ? { pt:"AGUARDAR",en:"WAIT", cls:"status-wait", side:"wait"} :
+                                                                 { pt:"NEUTRO", en:"NEUTRAL",cls:"status-wait", side:"neutral" };
+
+  const updatedAt =
+    panel.updated_at || panel.updated || meta.panel_ts || meta.timestamp || panel.timestamp || raw?.time || "—";
+  const session = panel.session || raw?.session || "—";
+  const flow =
+    panel.flow_label || panel.flow || statusGeral.tendencia || "—";
+
+  const status_text_pt = setupOk ? `✅ Setup válido | ${dirInfo.pt}` : `⏳ Aguardando | ${dirInfo.pt}`;
+  const status_text_en = setupOk ? `✅ Valid setup | ${dirInfo.en}` : `⏳ Waiting | ${dirInfo.en}`;
+
+  const pulse_line_pt = `${session} • ${flow} • atualizado: ${updatedAt}`;
+  const pulse_line_en = `${session} • ${flow} • updated: ${updatedAt}`;
+
+  const mode_pt =
+    String(ai.modo_pt || ai.modo || ai.motivo || "").trim() || (setupOk ? "Setup identificado" : "Aguardando confirmação");
+  const mode_en =
+    String(ai.modo_en || ai.mode || ai.motivo_en || ai.motivo || "").trim() || (setupOk ? "Setup identified" : "Waiting confirmation");
+
+  const entry_text = ai.gatilho_entrada || ai.entry || ai.entrada || "—";
+
+  const firstNum = (x) => {
+    if (x == null) return null;
+    if (typeof x === "number" && isFinite(x)) return x;
+    const m = String(x).match(/-?\d+(?:\.\d+)?/);
+    return m ? Number(m[0]) : null;
+  };
+
+  const stopRaw = (ai.stop_loss_plano ?? ai.stop_loss ?? ai.stop);
+  const stopNum = firstNum(stopRaw);
+  const stop = (stopNum != null) ? stopNum.toFixed(2) : (stopRaw || "—");
+
+  const tpPlan = (ai.take_profit_plano ?? ai.take_profit ?? ai.tp);
+  let tp1 = "—", tp2 = "—";
+  if (tpPlan != null) {
+    const s = String(tpPlan);
+    const m1 = s.match(/TP1\s*[:=]?\s*(-?\d+(?:\.\d+)?)/i);
+    const m2 = s.match(/TP2\s*[:=]?\s*(-?\d+(?:\.\d+)?)/i);
+    if (m1) tp1 = Number(m1[1]).toFixed(2);
+    if (m2) tp2 = Number(m2[1]).toFixed(2);
+
+    if (!m1 && !m2) {
+      const nums = s.match(/-?\d+(?:\.\d+)?/g);
+      if (nums && nums.length) tp1 = Number(nums[0]).toFixed(2);
+      if (nums && nums.length > 1) tp2 = Number(nums[1]).toFixed(2);
+      if (!nums || !nums.length) tp1 = s; // mantém texto se não tiver número
+    }
+  }
+
+  const size_text = ai.size_text || "—";
+  const risk_text = ai.risk_text || "—";
+
+  const comment_pt = [
+    ai.motivo ? `Motivo: ${ai.motivo}` : null,
+    ai.gatilho_entrada ? `Entrada: ${ai.gatilho_entrada}` : null,
+    ai.stop_loss_plano ? `Stop: ${ai.stop_loss_plano}` : null,
+    ai.take_profit_plano ? `TP: ${ai.take_profit_plano}` : null,
+    ai.manejo_posicao ? `Manejo: ${ai.manejo_posicao}` : null,
+  ].filter(Boolean).join("\n") || "—";
+
+  const comment_en = [
+    ai.motivo_en ? `Reason: ${ai.motivo_en}` : (ai.motivo ? `Reason: ${ai.motivo}` : null),
+    ai.gatilho_entrada_en ? `Entry: ${ai.gatilho_entrada_en}` : (ai.gatilho_entrada ? `Entry: ${ai.gatilho_entrada}` : null),
+    ai.stop_loss_plano_en ? `Stop: ${ai.stop_loss_plano_en}` : (ai.stop_loss_plano ? `Stop: ${ai.stop_loss_plano}` : null),
+    ai.take_profit_plano_en ? `TP: ${ai.take_profit_plano_en}` : (ai.take_profit_plano ? `TP: ${ai.take_profit_plano}` : null),
+    ai.manejo_posicao_en ? `Management: ${ai.manejo_posicao_en}` : (ai.manejo_posicao ? `Management: ${ai.manejo_posicao}` : null),
+  ].filter(Boolean).join("\n") || "—";
+
+  return {
+    symbol: sym,
+    timeframe: tf,
+
+    status_text_pt,
+    status_text_en,
+
+    pulse_line_pt,
+    pulse_line_en,
+
+    mode_pt,
+    mode_en,
+
+    against_pt: "—",
+    against_en: "—",
+
+    direction_pt: dirInfo.pt,
+    direction_en: dirInfo.en,
+
+    // garante cor do card
+    side: dirInfo.side,
+    direction: dirInfo.side,
+
+    entry_text,
+    stop,
+    tp1,
+    tp2,
+
+    size_text,
+    risk_text,
+
+    thermo_pt: setupOk ? "Agressivo moderado" : "Neutro",
+    thermo_en: setupOk ? "Moderately aggressive" : "Neutral",
+
+    comment_pt,
+    comment_en,
+
+    badge: setupOk ? "WAIT" : "NO TRADE",
+    status_class: dirInfo.cls,
+    trade_state: String(ai.trade_state || "").toUpperCase() || undefined,
+  };
+}
 
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
@@ -5962,14 +6104,17 @@ const tradeCard =
   panel.trade ||
   null;
 
-// ✅ só atualiza se o PANEL realmente trouxe algo.
-// (senão, mantém o cartão que veio do matcher)
+// 1) Se o backend já trouxe um cartão pronto, usa ele
 if (tradeCard && typeof tradeCard === "object" && Object.keys(tradeCard).length) {
   updateTradeCard(tradeCard);
+} else {
+  // 2) Senão, ADAPTA do panel.ai_advisor + panel.status_geral (sem inventar)
+  const adapted = adaptPanelToTradeCard(panel, raw, sym);
+  if (adapted) {
+    window.__AARON_TRADE_FROM_PANEL__ = adapted; // debug (opcional)
+    updateTradeCard(adapted);
+  }
 }
-
-
-
 
 
     // Cabeçalho
