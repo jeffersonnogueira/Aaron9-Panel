@@ -3613,6 +3613,49 @@ function apSave(state) {
 let autopilot = apLoad();
 let apMarketPrice = null;
 
+function apExtractPriceFromPayload(payload){
+  if (!payload) return null;
+
+  const panel  = payload.panel  || payload || {};
+  const ui     = payload.ui     || {};
+  const digest = payload.digest || {};
+  const raw    = payload.raw || payload.raw_eye || payload.data || {};
+
+  const candidates = [
+    // painel
+    panel.price_now, panel.last_price, panel.price, panel.current_price,
+    // ui
+    ui.price, ui.last_price, ui.current_price,
+    // raw/candle (quando existir)
+    raw?.candle?.close, raw?.candle?.c, raw?.last?.close,
+    // digest (se você decidir mandar preço pra cá no futuro)
+    digest.price, digest.last_price
+  ];
+
+  for (const c of candidates){
+    const n = apParseNumber(c);
+    if (typeof n === "number") return n;
+  }
+  return null;
+}
+
+function apUpdateMarketPriceFromPayload(payload){
+  const px = apExtractPriceFromPayload(payload);
+
+  if (typeof px === "number") {
+    apMarketPrice = px;
+    autopilot.priceNow = px;
+    autopilot.current_price = px;
+  } else {
+    apMarketPrice = null;
+    autopilot.priceNow = null;
+    autopilot.current_price = null;
+  }
+
+  apRenderSizing();
+}
+
+
 function apOnSymbolChange(symbol){
   try {
     symbol = String(symbol || '').toUpperCase().trim();
@@ -3624,17 +3667,28 @@ function apOnSymbolChange(symbol){
     // remove panel antigo do contexto (pra UI não mostrar símbolo velho)
     if (window.apCtx) window.apCtx.panel = null;
 
-    // se estiver em trade de OUTRO símbolo, reseta contrato (sem reload duplo)
+    // carrega estado atual
     autopilot = apLoad();
 
-    const snapSym = autopilot?.snapshot?.symbol
-      ? String(autopilot.snapshot.symbol).toUpperCase()
-      : null;
+    // ✅ fallback de símbolo (porque snapshot.symbol pode vir vazio)
+    const prevSymRaw =
+      (autopilot?.snapshot?.symbol) ??
+      (autopilot?.lastSymbol) ??
+      (localStorage.getItem("aaron_selected_symbol")) ??
+      null;
+
+    const prevSym = prevSymRaw ? String(prevSymRaw).toUpperCase().trim() : null;
 
     const inTrade = !!autopilot?.snapshot && autopilot?.state && autopilot.state !== 'FLAT';
 
-    if (inTrade && snapSym && snapSym !== symbol) {
-      // reset “limpo” (igual Close), mas sem chamar loadPanel() aqui
+    // ✅ se mudou símbolo, zera preço cacheado pra não “vazar”
+    if (prevSym && prevSym !== symbol) {
+      autopilot.priceNow = null;
+      autopilot.current_price = null;
+    }
+
+    // ✅ se estiver em trade e mudar símbolo, reseta contrato
+    if (inTrade && prevSym && prevSym !== symbol) {
       autopilot.enabled = false;
       autopilot.active = false;
       autopilot.side = null;
@@ -3646,6 +3700,7 @@ function apOnSymbolChange(symbol){
       autopilot.exitPending = false;
 
       autopilot.marketNow = 'wait';
+      autopilot.priceNow = null;
       autopilot.current_price = null;
       autopilot.pnl = null;
       autopilot.rMultiple = null;
@@ -3655,12 +3710,17 @@ function apOnSymbolChange(symbol){
       if (els?.apToggle) els.apToggle.checked = false;
     }
 
+    // ✅ sempre salva qual é o símbolo “atual” pro próximo ciclo (fallback)
+    autopilot.lastSymbol = symbol;
+    apSave(autopilot);
+
     // atualiza UI imediatamente (mesmo antes do loadPanel terminar)
     if (typeof apSyncUI === 'function') apSyncUI();
   } catch (e) {
     console.error('[AARON][AP] apOnSymbolChange error', e);
   }
 }
+
 
 // ======================== AUTOPILOT CONTRACT ENGINE (state + snapshot + conflict) ========================
 const AP_STATES = {
@@ -5725,6 +5785,23 @@ if (pxNow != null && isFinite(Number(pxNow))) {
   apMarketPrice = Number(pxNow);
 }
 apRenderSizing();
+
+// ✅ SYNC do dropdown PREÇO (Matcher Picker) + fonte de quote
+try {
+  const pxNum = (pxNow != null && isFinite(Number(pxNow))) ? Number(pxNow) : null;
+
+  // alimenta o getQuote() do dropdown
+  window.__AARON_LAST_PANEL_JSON__ = {
+    symbol: panel?.symbol || raw?.symbol || sym,
+    price: pxNum,
+    last_price: pxNum,
+  };
+
+  // atualiza o campo "PREÇO" do dropdown
+  const mpEl = document.getElementById("mp-price");
+  if (mpEl) mpEl.value = (pxNum != null) ? pxNum.toFixed(2) : "—";
+} catch (e) {}
+
 
 
     updateGarimpoTodayCard(panel?.garimpo_today || null);
