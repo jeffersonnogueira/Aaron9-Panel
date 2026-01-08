@@ -3640,10 +3640,10 @@ async function requestMatcher(symbol) {
   let res;
   try {
     res = await fetch(MATCHER_WEBHOOK_URL, {
-  method: "POST",
-  body: new URLSearchParams({ symbol })
-});
-
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ symbol })
+    });
   } catch (err) {
     const msg = `Matcher fetch falhou: ${err?.message || err}`;
     if (ctxEl) ctxEl.textContent = msg;
@@ -3715,34 +3715,63 @@ async function requestMatcher(symbol) {
 
     const priceNow = Number(panel.price_now ?? ui.price_now ?? dig.price_now ?? NaN);
 
-    const trade = {
-      status_label_pt: status_text_pt,
-      status_label_en: status_text_en,
-      status_class: hasSetup ? dirInfo.cls : "status-wait",
+    const biasRaw = String(sf.bias || "neutral").toLowerCase();
+const bars = dig.intraday_bars ?? "—";
+const srLow = (sr.recent_low ?? null);
+const srHigh = (sr.recent_high ?? null);
 
-      symbol: panel.symbol || symbol,
-      timeframe: panel.timeframe || "1m",
-      updated_at: panel.updated_at || "",
-      pulse: panel.status?.label || panel.session || "",
+const fmt = (v) => (v == null || !isFinite(Number(v))) ? "—" : Number(v).toFixed(2);
 
-      direction_pt: hasSetup ? dirInfo.pt : "—",
-      direction_en: hasSetup ? dirInfo.en : "—",
+const pulseLine = `${panel.status?.label || panel.session || "ONLINE"} - ${panel.flow_label || "BIAS NEUTRAL"} - atualizado: ${panel.updated_at || "—"}`;
 
-      // placeholders (futuro): entrada/stop/tps reais
-      entry: (Number.isFinite(priceNow) ? priceNow : "—"),
-      stop: "—",
-      tp1: "—",
-      tp2: "—",
+// stop/tp simples usando SR (sem inventar)
+const stopVal = (dirRaw === "up") ? srLow : (dirRaw === "down") ? srHigh : null;
+const tp1Val  = (dirRaw === "up") ? srHigh : (dirRaw === "down") ? srLow  : null;
 
-      recent_high: recentHigh,
-      recent_low: recentLow,
+const trade = {
+  // ✅ updateTradeCard lê essas chaves:
+  status_text_pt: status_text_pt,
+  status_text_en: status_text_en,
+  status_class: hasSetup ? dirInfo.cls : "status-wait",
 
-      confidence_pct: Number.isFinite(conf) ? conf : null,
-      comment: fixUtf8(ui.headline || structureLine || ""),
-    };
+  symbol: panel.symbol || symbol,
+  timeframe: panel.timeframe || "1m",
 
+  pulse_line_pt: pulseLine,
+  pulse_line_en: pulseLine,
 
-    updateTradeCard(trade);
+  stats_text_pt: `${ptName} | conf: ${Number.isFinite(conf) ? conf + "%" : "—"} | bias: ${biasRaw} | dir: ${dirRaw || "—"} | bars: ${bars}`,
+  stats_text_en: `${enName} | conf: ${Number.isFinite(conf) ? conf + "%" : "—"} | bias: ${biasRaw} | dir: ${dirRaw || "—"} | bars: ${bars}`,
+
+  mode_pt: fixUtf8(ui.market_structure_line || ui.pullback_line || ui.structure_line || structureLine || "—"),
+  mode_en: (ui.market_structure_line || ui.pullback_line || ui.structure_line || structureLine || "—"),
+
+  against_pt: (srLow != null || srHigh != null) ? `SR: ${fmt(srLow)} — ${fmt(srHigh)}` : "—",
+  against_en: (srLow != null || srHigh != null) ? `SR: ${fmt(srLow)} — ${fmt(srHigh)}` : "—",
+
+  direction_pt: hasSetup ? dirInfo.pt : "—",
+  direction_en: hasSetup ? dirInfo.en : "—",
+
+  entry_text: Number.isFinite(priceNow) ? priceNow.toFixed(2) : "—",
+  stop: fmt(stopVal),
+  tp1: fmt(tp1Val),
+  tp2: "—",
+
+  thermo_pt: biasRaw ? biasRaw.toUpperCase() : "NEUTRO",
+  thermo_en: biasRaw ? biasRaw.toUpperCase() : "NEUTRAL",
+
+  comment_pt: fixUtf8([ui.headline, ui.tactical_line, ui.pullback_line].filter(Boolean).join("\n")) || "—",
+  comment_en: [ui.headline, ui.tactical_line, ui.pullback_line].filter(Boolean).join("\n") || "—",
+
+  side: (dirRaw === "up") ? "buy" : (dirRaw === "down") ? "sell" : "wait"
+};
+
+// salva patch pra não perder depois
+window.__AARON_TRADE_PATCH__ = trade;
+
+// merge com o que já estava no card (evita apagar autopilot/size etc)
+updateTradeCard({ ...(window.lastTradeCard || {}), ...trade });
+
 
   } catch (e) {
     console.warn("Trade Card adapter error:", e);
