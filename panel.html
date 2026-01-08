@@ -3475,7 +3475,9 @@ const REFRESH_MS = 60000; // 1 minuto
 // COLE ESTE BLOCO LOGO ABAIXO DO: const REFRESH_MS = 60000;
 
 // OPÇÃO 2 (direto)
-const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json"; 
+const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_matcher_request";
+// (pra testar no editor do n8n, use webhook-test):
+// const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook-test/aaron10_matcher_request"; 
 // Exemplo (prod): https://SEU_WORKSPACE.app.n8n.cloud/webhook/aaron10_matcher_request
 // (não use a test url depois de publicar; use a url de produção)
 
@@ -3618,13 +3620,73 @@ function renderTradeResponderOutput(data){
       `;
     }
 
-    window.__RESP_SNAP_PREV__ = { ...prev, ...next };
+    window.__RESP_SNAP_PREV__ = { prev, next };
     el.innerHTML = html || "—";
   };
 
   renderCol("panel",  panel,  P_PANEL,  elPanel);
   renderCol("ui",     ui,     P_UI,     elUI);
   renderCol("digest", digest, P_DIGEST, elDigest);
+}
+
+function escapeHtml(v){
+  const s = (v===null || v===undefined) ? "" : String(v);
+  return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function safe(v, fallback="—"){
+  return (v===null || v===undefined || v==="") ? fallback : String(v);
+}
+function mapDir(dir){
+  const d = String(dir||"").toLowerCase();
+  if (d==="up" || d==="bull" || d==="long") return "COMPRA";
+  if (d==="down" || d==="bear" || d==="short") return "VENDA";
+  if (!d) return "—";
+  return d.toUpperCase();
+}
+
+// <<< isso cria um “resumo” DENTRO do trade card (sem aquele grid de cards)
+function ensureRespInlineSlot(){
+  const anchor = document.getElementById("resp-snap-msg") || document.getElementById("resp-out-panel");
+  if (!anchor || !anchor.parentElement) return null;
+
+  let box = document.getElementById("resp-inline");
+  if (box) return box;
+
+  box = document.createElement("div");
+  box.id = "resp-inline";
+  box.style.margin = "10px 0 6px 0";
+  box.style.padding = "10px 12px";
+  box.style.border = "1px solid rgba(255,255,255,.08)";
+  box.style.borderRadius = "12px";
+  box.style.background = "rgba(10,14,22,.35)";
+
+  anchor.parentElement.insertBefore(box, anchor);
+  return box;
+}
+
+function renderResponderInline(data){
+  const box = ensureRespInlineSlot();
+  if (!box) return;
+
+  const ui = data?.ui || {};
+  const digest = data?.digest || {};
+  const sf = digest?.shape_focus || {};
+  const sr = digest?.sr_proxy || {};
+
+  const conf = safe(ui.confidence_label || (sf.confidence_pct!=null ? `${sf.confidence_pct}%` : ""), "—");
+
+  box.innerHTML = `
+    <div style="font-weight:700; letter-spacing:.14em; font-size:10px; opacity:.85; margin-bottom:6px;">
+      RESPONDER
+    </div>
+    <div style="font-size:12px; line-height:1.35;">
+      <div><span style="opacity:.7;">Pattern:</span> ${escapeHtml(safe(ui.headline || sf.label))}</div>
+      <div><span style="opacity:.7;">Bias:</span> ${escapeHtml(safe(sf.bias))} · <span style="opacity:.7;">Dir:</span> ${escapeHtml(mapDir(sf.direction))} · <span style="opacity:.7;">Conf:</span> ${escapeHtml(conf)}</div>
+      <div><span style="opacity:.7;">Estrutura:</span> ${escapeHtml(safe(ui.market_structure_line))}</div>
+      <div><span style="opacity:.7;">Pullback:</span> ${escapeHtml(safe(ui.pullback_line))}</div>
+      <div><span style="opacity:.7;">SR:</span> H ${escapeHtml(safe(sr.recent_high))} · L ${escapeHtml(safe(sr.recent_low))} · <span style="opacity:.7;">Bars:</span> ${escapeHtml(safe(digest.intraday_bars || ""))}</div>
+    </div>
+  `;
 }
 
 async function requestMatcher(symbol) {
@@ -3637,146 +3699,36 @@ async function requestMatcher(symbol) {
   if (exeEl) exeEl.textContent = "—";
   setRespSnapMessage(`Carregando ${symbol}...`);
 
-  let res;
   try {
-    res = await fetch(MATCHER_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ symbol })
-    });
+    // GET com querystring -> evita preflight/CORS (o “Failed to fetch”)
+    const url = `${MATCHER_WEBHOOK_URL}?symbol=${encodeURIComponent(symbol)}`;
+    const res = await fetch(url, { method: "GET", cache: "no-store" });
+
+    if (!res.ok) {
+      const msg = `Matcher erro HTTP ${res.status}`;
+      if (ctxEl) ctxEl.textContent = msg;
+      if (exeEl) exeEl.textContent = "—";
+      setRespSnapMessage(msg);
+      return;
+    }
+
+    const raw = await res.json();
+    const data = Array.isArray(raw) ? raw[0] : raw;
+
+    // >>> AQUI: joga as infos DENTRO do trade card (sem aquele quadro)
+    renderResponderInline(data);
+
+    if (ctxEl) ctxEl.textContent = `Matcher OK: ${symbol}`;
+    if (exeEl) exeEl.textContent = safe(data?.panel?.updated_at, "—");
+    setRespSnapMessage("OK");
   } catch (err) {
     const msg = `Matcher fetch falhou: ${err?.message || err}`;
     if (ctxEl) ctxEl.textContent = msg;
     if (exeEl) exeEl.textContent = "—";
     setRespSnapMessage(msg);
-    return;
-  }
-
-  if (!res.ok) {
-    const msg = `Matcher erro HTTP ${res.status}`;
-    if (ctxEl) ctxEl.textContent = msg;
-    if (exeEl) exeEl.textContent = "—";
-    setRespSnapMessage(msg);
-    return;
-  }
-
-  // n8n pode devolver objeto OU array -> normaliza
-  const raw = await res.json().catch(() => ({}));
-  const data = Array.isArray(raw) ? (raw[0] || {}) : (raw || {});
-  if (!data || (typeof data === "object" && !Object.keys(data).length)) {
-    setRespSnapMessage("Responder vazio (sem dados).");
-  }
-
-  window.__AARON_MATCHER_LAST__ = data; // debug
-  renderTradeResponderOutput(data); // ✅ sempre preenche o Trade Card Output
-
-  // Esperado (fase final): data.ui.structure_line / data.ui.tactical_line
-  const structureLine = data?.ui?.structure_line ?? data?.structure_line ?? "—";
-  const tacticalLine  = data?.ui?.tactical_line  ?? data?.tactical_line  ?? "—";
-
-  if (ctxEl) ctxEl.textContent = structureLine;
-  if (exeEl) exeEl.textContent = tacticalLine;
-
-  // ==========================
-  // ✅ NOVO: preencher CARTÃO DE TRADE com o RESPONDER (ui + digest)
-  // ==========================
-  try {
-    if (typeof updateTradeCard !== "function") return;
-
-    const panel = data?.panel || {};
-    const ui    = data?.ui || {};
-    const dig   = data?.digest || {};
-    const sf    = dig?.shape_focus || {};
-    const sr    = dig?.sr_proxy || {};
-
-    const conf = Number(ui.confidence_pct ?? sf.confidence_pct);
-    const dirRaw = String(sf.direction || "").toLowerCase();
-
-    const dirInfo =
-      (dirRaw === "up")   ? { pt: "COMPRA", en: "BUY",  cls: "status-buy"  } :
-      (dirRaw === "down") ? { pt: "VENDA",  en: "SELL", cls: "status-sell" } :
-                            { pt: "NEUTRO", en: "NEUTRAL", cls: "status-wait" };
-
-    const hasSetup = Number.isFinite(conf) ? conf >= 80 : false;
-
-    const ptName = fixUtf8(sf.name_pt) || sf.label || structureLine || "—";
-    const enName = sf.label || structureLine || "—";
-
-    const status_text_pt = hasSetup
-      ? `✅ Setup válido | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
-      : `⏳ Sem trade | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
-
-    const status_text_en = hasSetup
-      ? `✅ Valid setup | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
-      : `⏳ No trade | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
-
-    const recentHigh = (sr.recent_high ?? null);
-    const recentLow  = (sr.recent_low  ?? null);
-
-    const priceNow = Number(panel.price_now ?? ui.price_now ?? dig.price_now ?? NaN);
-
-    const biasRaw = String(sf.bias || "neutral").toLowerCase();
-const bars = dig.intraday_bars ?? "—";
-const srLow = (sr.recent_low ?? null);
-const srHigh = (sr.recent_high ?? null);
-
-const fmt = (v) => (v == null || !isFinite(Number(v))) ? "—" : Number(v).toFixed(2);
-
-const pulseLine = `${panel.status?.label || panel.session || "ONLINE"} - ${panel.flow_label || "BIAS NEUTRAL"} - atualizado: ${panel.updated_at || "—"}`;
-
-// stop/tp simples usando SR (sem inventar)
-const stopVal = (dirRaw === "up") ? srLow : (dirRaw === "down") ? srHigh : null;
-const tp1Val  = (dirRaw === "up") ? srHigh : (dirRaw === "down") ? srLow  : null;
-
-const trade = {
-  // ✅ updateTradeCard lê essas chaves:
-  status_text_pt: status_text_pt,
-  status_text_en: status_text_en,
-  status_class: hasSetup ? dirInfo.cls : "status-wait",
-
-  symbol: panel.symbol || symbol,
-  timeframe: panel.timeframe || "1m",
-
-  pulse_line_pt: pulseLine,
-  pulse_line_en: pulseLine,
-
-  stats_text_pt: `${ptName} | conf: ${Number.isFinite(conf) ? conf + "%" : "—"} | bias: ${biasRaw} | dir: ${dirRaw || "—"} | bars: ${bars}`,
-  stats_text_en: `${enName} | conf: ${Number.isFinite(conf) ? conf + "%" : "—"} | bias: ${biasRaw} | dir: ${dirRaw || "—"} | bars: ${bars}`,
-
-  mode_pt: fixUtf8(ui.market_structure_line || ui.pullback_line || ui.structure_line || structureLine || "—"),
-  mode_en: (ui.market_structure_line || ui.pullback_line || ui.structure_line || structureLine || "—"),
-
-  against_pt: (srLow != null || srHigh != null) ? `SR: ${fmt(srLow)} — ${fmt(srHigh)}` : "—",
-  against_en: (srLow != null || srHigh != null) ? `SR: ${fmt(srLow)} — ${fmt(srHigh)}` : "—",
-
-  direction_pt: hasSetup ? dirInfo.pt : "—",
-  direction_en: hasSetup ? dirInfo.en : "—",
-
-  entry_text: Number.isFinite(priceNow) ? priceNow.toFixed(2) : "—",
-  stop: fmt(stopVal),
-  tp1: fmt(tp1Val),
-  tp2: "—",
-
-  thermo_pt: biasRaw ? biasRaw.toUpperCase() : "NEUTRO",
-  thermo_en: biasRaw ? biasRaw.toUpperCase() : "NEUTRAL",
-
-  comment_pt: fixUtf8([ui.headline, ui.tactical_line, ui.pullback_line].filter(Boolean).join("\n")) || "—",
-  comment_en: [ui.headline, ui.tactical_line, ui.pullback_line].filter(Boolean).join("\n") || "—",
-
-  side: (dirRaw === "up") ? "buy" : (dirRaw === "down") ? "sell" : "wait"
-};
-
-// salva patch pra não perder depois
-window.__AARON_TRADE_PATCH__ = trade;
-
-// merge com o que já estava no card (evita apagar autopilot/size etc)
-updateTradeCard({ ...(window.lastTradeCard || {}), ...trade });
-
-
-  } catch (e) {
-    console.warn("Trade Card adapter error:", e);
   }
 }
+
 
 
 
