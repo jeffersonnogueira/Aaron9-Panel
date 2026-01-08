@@ -3621,7 +3621,7 @@ function renderTradeResponderOutput(data){
       `;
     }
 
-    window.__RESP_SNAP_PREV__ = { prev, next };
+    window.__RESP_SNAP_PREV__ = { ...prev, ...next };
     el.innerHTML = html || "—";
   };
 
