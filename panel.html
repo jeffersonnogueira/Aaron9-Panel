@@ -3640,10 +3640,10 @@ async function requestMatcher(symbol) {
   let res;
   try {
     res = await fetch(MATCHER_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ symbol })
-    });
+  method: "POST",
+  body: new URLSearchParams({ symbol })
+});
+
   } catch (err) {
     const msg = `Matcher fetch falhou: ${err?.message || err}`;
     if (ctxEl) ctxEl.textContent = msg;
