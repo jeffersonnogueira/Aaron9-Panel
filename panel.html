@@ -3741,37 +3741,6 @@ async function requestMatcher(symbol) {
       comment: fixUtf8(ui.headline || structureLine || ""),
     };
 
-    // ====== preencher linhas do Trade Card com responder ======
-const bars = dig?.intraday_bars ?? "—";
-const bias = (sf?.bias ?? "—");
-const dir  = (sf?.direction ?? "—");
-const confTxt = Number.isFinite(conf) ? `${conf}%` : "—";
-
-const srTxt =
-  (sr?.recent_low != null && sr?.recent_high != null)
-    ? `SR: ${sr.recent_low} → ${sr.recent_high}`
-    : "SR: —";
-
-trade.stats_text_pt = `Pattern: ${ptName} | Conf: ${confTxt} | Bias: ${bias} | Dir: ${dir} | Bars: ${bars}`;
-trade.stats_text_en = `Pattern: ${enName} | Conf: ${confTxt} | Bias: ${bias} | Dir: ${dir} | Bars: ${bars}`;
-trade.stats_text    = trade.stats_text_pt;   // fallback
-
-trade.mode_pt = fixUtf8(ui.market_structure_line) || fixUtf8(ui.structure_line) || "—";
-trade.mode_en = ui.market_structure_line || ui.structure_line || "—";
-
-trade.contra_pt = srTxt;
-trade.contra_en = srTxt;
-
-trade.thermo_text = ui.confidence_label || confTxt;
-
-const headline = fixUtf8(ui.headline) || "—";
-const execLine = fixUtf8(ui.tactical_line) || "—";
-const pullback = fixUtf8(ui.pullback_line) || "—";
-
-trade.comment_pt = `${headline}\n${execLine}\n${pullback}`;
-trade.comment_en = `${ui.headline || "—"}\n${ui.tactical_line || "—"}\n${ui.pullback_line || "—"}`;
-trade.comment    = trade.comment_pt; // fallback
-
 
     updateTradeCard(trade);
 
