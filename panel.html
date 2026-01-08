@@ -3306,7 +3306,10 @@ async function requestMatcher(symbol) {
     return;
   }
 
-  const data = await res.json().catch(() => ({}));
+  const raw = await res.json().catch(() => ({}));
+
+  // n8n pode devolver objeto OU array -> normaliza
+  const data = Array.isArray(raw) ? (raw[0] || {}) : (raw || {});
   window.__AARON_MATCHER_LAST__ = data; // debug
 
   // Esperado (fase final): data.ui.structure_line / data.ui.tactical_line
@@ -3315,7 +3318,128 @@ async function requestMatcher(symbol) {
 
   if (ctxEl) ctxEl.textContent = structureLine;
   if (exeEl) exeEl.textContent = tacticalLine;
+
+  // ==========================
+  // ✅ NOVO: preencher CARTÃO DE TRADE com o RESPONDER (ui + digest)
+  // ==========================
+  try {
+    if (typeof updateTradeCard !== "function") return;
+
+    const panel = data?.panel || {};
+    const ui    = data?.ui || {};
+    const dig   = data?.digest || {};
+    const sf    = dig?.shape_focus || {};
+    const sr    = dig?.sr_proxy || {};
+
+    // helpers locais (não mexe em nada fora)
+    const fmt = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n.toFixed(2) : "—";
+    };
+    const fixUtf8 = (s) => {
+      if (!s || typeof s !== "string") return s;
+      try {
+        // tenta corrigir strings tipo "3Âº Toque..."
+        if (/[ÃÂ]/.test(s)) return decodeURIComponent(escape(s));
+      } catch (e) {}
+      return s;
+    };
+
+    const conf = Number(ui.confidence_pct ?? sf.confidence_pct);
+    const dirRaw = String(sf.direction || "").toLowerCase();
+
+    const dirInfo =
+      (dirRaw === "up")   ? { pt: "COMPRA", en: "BUY",  cls: "status-buy"  } :
+      (dirRaw === "down") ? { pt: "VENDA",  en: "SELL", cls: "status-sell" } :
+                            { pt: "—",      en: "—",    cls: "status-wait" };
+
+    const hasSetup = Number.isFinite(conf) ? conf >= 80 : false;
+
+    const ptName = fixUtf8(sf.name_pt) || sf.label || structureLine || "—";
+    const enName = sf.label || structureLine || "—";
+
+    const status_text_pt = hasSetup
+      ? `✅ Setup válido | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
+      : `⏳ Aguardando | ${ptName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
+
+    const status_text_en = hasSetup
+      ? `✅ Valid setup | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`
+      : `⏳ Waiting | ${enName} | ${Number.isFinite(conf) ? conf + "%" : "—"}`;
+
+    const pulse_line_pt = `${panel.session || "—"} • ${panel.flow_label || "—"} • atualizado: ${panel.updated_at || "—"}`;
+    const pulse_line_en = `${panel.session || "—"} • ${panel.flow_label || "—"} • updated: ${panel.updated_at || "—"}`;
+
+    const stats_line_pt = ui.headline || structureLine || "—";
+    const stats_line_en = ui.headline || structureLine || "—";
+
+    // “Entrada/Stop/TPs” por enquanto = níveis (não inventa trade)
+    let entry_text = "—";
+    if (sr && (sr.recent_high != null || sr.recent_low != null || sr.breakout_level != null)) {
+      const bh = (sr.breakout_level != null) ? `Breakout: ${fmt(sr.breakout_level)}` : null;
+      const hl = `H:${fmt(sr.recent_high)} L:${fmt(sr.recent_low)}`;
+      entry_text = bh ? `${bh} | ${hl}` : hl;
+    }
+
+    let stop = "—";
+    if (dirInfo.cls === "status-buy"  && sr?.recent_low  != null) stop = fmt(sr.recent_low);
+    if (dirInfo.cls === "status-sell" && sr?.recent_high != null) stop = fmt(sr.recent_high);
+
+    const comment_pt =
+`Contexto: ${ui.market_structure_line || "—"}
+Pullback: ${ui.pullback_line || "—"}
+Execução: ${ui.tactical_line || "—"}
+Detector: ${ui.detector_key || "—"} | Arquivo: ${ui.image_file || "—"}`;
+
+    const comment_en =
+`Context: ${ui.market_structure_line || "—"}
+Pullback: ${ui.pullback_line || "—"}
+Execution: ${ui.tactical_line || "—"}
+Detector: ${ui.detector_key || "—"} | File: ${ui.image_file || "—"}`;
+
+    const trade = {
+      symbol: String(panel.symbol || symbol || "").toUpperCase(),
+      timeframe: String(panel.timeframe || "").trim() || "—",
+
+      status_text_pt,
+      status_text_en,
+      pulse_line_pt,
+      pulse_line_en,
+      stats_line_pt,
+      stats_line_en,
+
+      mode_pt: ptName,
+      mode_en: enName,
+
+      against_pt: `Confiança: ${Number.isFinite(conf) ? conf + "%" : "—"} | Score: ${sf.score ?? "—"}`,
+      against_en: `Confidence: ${Number.isFinite(conf) ? conf + "%" : "—"} | Score: ${sf.score ?? "—"}`,
+
+      direction_pt: dirInfo.pt,
+      direction_en: dirInfo.en,
+
+      entry_text,
+      stop,
+      tp1: "—",
+      tp2: "—",
+
+      size_text: "—",
+      risk_text: "—",
+
+      thermo_pt: hasSetup ? "Agressivo moderado" : "Neutro",
+      thermo_en: hasSetup ? "Moderately aggressive" : "Neutral",
+
+      comment_pt,
+      comment_en,
+
+      // importante: se setup ainda não é “forte”, não pisca buy/sell
+      status_class: hasSetup ? dirInfo.cls : "status-wait",
+    };
+
+    updateTradeCard(trade);
+  } catch (e) {
+    console.warn("TradeCard from matcher failed:", e);
+  }
 }
+
 
 // ✅ Isso aqui é a “conversa”: o seu dropdown já dispara esse evento.
 // Quando trocar o ativo, ele chama o n8n automaticamente.
@@ -5833,14 +5957,19 @@ try {
     updateSizingBrain(sizingBrain);
 
             // Cartão de trade (Citadel / cartão atual)
-    const tradeCard =
-      panel.trade_card ||
-      panel.current_trade ||
-      panel.citadel_card ||
-      panel.trade ||
-      {};
+const tradeCard =
+  panel.trade_card ||
+  panel.current_trade ||
+  panel.citadel_card ||
+  panel.trade ||
+  null;
 
-    updateTradeCard(tradeCard);
+// ✅ só atualiza se o PANEL realmente trouxe algo.
+// (senão, mantém o cartão que veio do matcher)
+if (tradeCard && typeof tradeCard === "object" && Object.keys(tradeCard).length) {
+  updateTradeCard(tradeCard);
+}
+
 
 
 
