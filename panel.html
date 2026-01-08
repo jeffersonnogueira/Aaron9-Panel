@@ -2117,6 +2117,99 @@
   text-decoration: none;
 }
 /* ====== /PATTERN REFERENCE ====== */
+/* =========================
+   TRADE CARD • RESPONDER OUTPUT (panel/ui/digest)
+   ========================= */
+.resp-snap{
+  margin-top: 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.02);
+  border-radius: 16px;
+  padding: 10px 12px;
+}
+
+.resp-snap-title{
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(220,235,255,.85);
+  margin-bottom: 10px;
+}
+
+.resp-snap-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 10px;
+}
+
+.resp-snap-col{
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.12);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.resp-snap-head{
+  padding: 8px 10px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.75);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+}
+
+.resp-snap-body{
+  padding: 8px 10px;
+  max-height: 260px;         /* sempre visível + scroll */
+  overflow: auto;
+}
+
+.resp-snap-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(255,255,255,.10);
+}
+
+.resp-snap-row:last-child{ border-bottom:none; }
+
+.resp-snap-key{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 11px;
+  color: rgba(200,215,235,.78);
+  white-space: nowrap;
+}
+
+.resp-snap-val{
+  font-size: 12px;
+  color: rgba(255,255,255,.92);
+  text-align: right;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 68%;
+}
+
+.resp-snap-null{ opacity: .55; }
+.resp-snap-strong .resp-snap-key{ color: rgba(140,200,255,.95); }
+.resp-snap-strong .resp-snap-val{ font-weight: 800; }
+
+.resp-snap-flash{
+  animation: respSnapFlash 1.0s ease;
+}
+@keyframes respSnapFlash{
+  0% { background: rgba(120,180,255,.16); }
+  60%{ background: rgba(120,180,255,.06); }
+  100%{ background: transparent; }
+}
+
+@media (max-width: 1100px){
+  .resp-snap-grid{ grid-template-columns: 1fr; }
+}
 
   </style>
 </head>
@@ -3004,6 +3097,30 @@
             Se executar, não mova stop contra a posição.”
           </span>
         </div>
+                <!-- ✅ NOVO: RESPONDER OUTPUT (panel / ui / digest) — sempre visível -->
+        <hr class="trade-divider" />
+
+        <div class="resp-snap" id="resp-snap">
+          <div class="resp-snap-title">RESPONDER OUTPUT</div>
+
+          <div class="resp-snap-grid">
+            <div class="resp-snap-col">
+              <div class="resp-snap-head">panel</div>
+              <div class="resp-snap-body" id="resp-snap-panel">—</div>
+            </div>
+
+            <div class="resp-snap-col">
+              <div class="resp-snap-head">ui</div>
+              <div class="resp-snap-body" id="resp-snap-ui">—</div>
+            </div>
+
+            <div class="resp-snap-col">
+              <div class="resp-snap-head">digest</div>
+              <div class="resp-snap-body" id="resp-snap-digest">—</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -3284,6 +3401,113 @@ const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_m
 // (não use a test url depois de publicar; use a url de produção)
 
 // chama o n8n e atualiza o painel com o retorno
+// ==========================
+// TRADE CARD • RESPONDER OUTPUT renderer
+// ==========================
+function renderTradeResponderOutput(data){
+  const elPanel  = document.getElementById("resp-snap-panel");
+  const elUI     = document.getElementById("resp-snap-ui");
+  const elDigest = document.getElementById("resp-snap-digest");
+  if (!elPanel || !elUI || !elDigest) return;
+
+  const panel  = data?.panel  || {};
+  const ui     = data?.ui     || {};
+  const digest = data?.digest || {};
+
+  const esc = (s) => String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+  const fmt = (v) => {
+    if (v === null || v === undefined) return { html:`<span class="resp-snap-null">null</span>`, plain:"null" };
+    if (typeof v === "boolean") return { html: esc(String(v)), plain: String(v) };
+    if (typeof v === "number")  return { html: esc(String(v)), plain: String(v) };
+    if (Array.isArray(v)) {
+      if (!v.length) return { html:`<span class="resp-snap-null">[empty]</span>`, plain:"[empty]" };
+      const preview = v.slice(0,5).map(x => (typeof x === "object" ? "{…}" : String(x))).join(", ");
+      const txt = `[${v.length}] ${preview}${v.length>5 ? ", …" : ""}`;
+      return { html: esc(txt), plain: txt };
+    }
+    if (typeof v === "object") {
+      const keys = Object.keys(v);
+      const txt = `{ ${keys.slice(0,6).join(", ")}${keys.length>6 ? ", …" : ""} }`;
+      return { html: esc(txt), plain: txt };
+    }
+    // string
+    let s = String(v);
+    try { if (/[ÃÂ]/.test(s)) s = decodeURIComponent(escape(s)); } catch(e){}
+    return { html: esc(s), plain: s };
+  };
+
+  const flatten = (obj, prefix="", out=[], depth=0) => {
+    if (obj === null || obj === undefined) { out.push([prefix || "value", obj]); return out; }
+    if (typeof obj !== "object" || Array.isArray(obj)) { out.push([prefix || "value", obj]); return out; }
+    for (const [k,v] of Object.entries(obj)){
+      const key = prefix ? `${prefix}.${k}` : k;
+      const isObj = v && typeof v === "object" && !Array.isArray(v);
+      if (isObj && depth < 2) flatten(v, key, out, depth+1);
+      else out.push([key, v]);
+    }
+    return out;
+  };
+
+  // prioridades p/ ficar "na cara" primeiro
+  const P_PANEL  = ["symbol","timeframe","session","flow_label","status.label","updated_at","price_now","last_price","reference_price"];
+  const P_UI     = ["confidence_pct","confidence_label","headline","structure_line","tactical_line","market_structure_line","pullback_line","detector_key","price_now"];
+  const P_DIGEST = [
+    "shape_focus.pattern_id","shape_focus.label","shape_focus.family_en","shape_focus.bias","shape_focus.direction","shape_focus.confidence_pct",
+    "sr_proxy.recent_high","sr_proxy.recent_low","intraday_bars","features_true","price_now"
+  ];
+
+  const renderCol = (title, obj, priorities, el) => {
+    const rows = flatten(obj);
+
+    // mapa p/ ordenar prioridades
+    const idx = new Map();
+    priorities.forEach((k,i)=> idx.set(k, i));
+
+    rows.sort((a,b)=>{
+      const ak = a[0], bk = b[0];
+      const ai = idx.has(ak) ? idx.get(ak) : 9999;
+      const bi = idx.has(bk) ? idx.get(bk) : 9999;
+      if (ai !== bi) return ai - bi;
+      return ak.localeCompare(bk);
+    });
+
+    const prev = window.__RESP_SNAP_PREV__ || {};
+    const next = {};
+
+    let html = "";
+    for (const [k,v] of rows){
+      const { html:vh, plain:vp } = fmt(v);
+      const keyFull = `${title}.${k}`;
+      const was = prev[keyFull];
+      const changed = (was !== undefined && was !== vp);
+      next[keyFull] = vp;
+
+      const strong = idx.has(k) ? "resp-snap-strong" : "";
+      const flash  = changed ? "resp-snap-flash" : "";
+
+      html += `
+        <div class="resp-snap-row ${strong} ${flash}">
+          <div class="resp-snap-key">${esc(k)}</div>
+          <div class="resp-snap-val">${vh}</div>
+        </div>
+      `;
+    }
+
+    // salva prev global
+    window.__RESP_SNAP_PREV__ = { ...prev, ...next };
+    el.innerHTML = html || "—";
+  };
+
+  renderCol("panel",  panel,  P_PANEL,  elPanel);
+  renderCol("ui",     ui,     P_UI,     elUI);
+  renderCol("digest", digest, P_DIGEST, elDigest);
+}
 
 async function requestMatcher(symbol) {
   if (!symbol) return;
@@ -3433,6 +3657,7 @@ Detector: ${ui.detector_key || "—"} | File: ${ui.image_file || "—"}`;
     };
 
     updateTradeCard(trade);
+    renderTradeResponderOutput(data);
   } catch (e) {
     console.warn("TradeCard from matcher failed:", e);
   }
