@@ -6403,6 +6403,10 @@ const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
     const data = await res.json();
+    window.__AARON_LAST_PAYLOAD__ = data;
+aaronRenderResponderIntoTradeCard(data);
+window.dispatchEvent(new Event("aaron:panelUpdated"));
+
 
 // n8n pode devolver: {panel, raw}  OU  [ { json: {panel, raw} } ]  OU  [ {panel, raw} ]
 const root = Array.isArray(data) ? (data[0] || {}) : (data || {});
