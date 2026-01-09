@@ -6402,18 +6402,36 @@ const res = await fetch(url, { cache: 'no-store' });
 
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
-    const data = await res.json();
-    window.__AARON_LAST_PAYLOAD__ = data;
-aaronRenderResponderIntoTradeCard(data);
-window.dispatchEvent(new Event("aaron:panelUpdated"));
+const data = await res.json();
 
-
-// n8n pode devolver: {panel, raw}  OU  [ { json: {panel, raw} } ]  OU  [ {panel, raw} ]
+// n8n pode devolver: {panel, raw, ui, digest}  OU  [ { json: {...} } ]  OU  [ {...} ]
 const root = Array.isArray(data) ? (data[0] || {}) : (data || {});
 const payload =
   (root && typeof root === 'object' && root.json && typeof root.json === 'object')
     ? root.json
     : root;
+
+// salva debug
+window.__AARON_LAST_PAYLOAD__ = payload;
+
+// ✅ 1) Preenche o bloco “RESPONDER OUTPUT” (KPI + colunas panel/ui/digest)
+if (typeof renderTradeResponderOutput === "function") {
+  renderTradeResponderOutput(payload);
+}
+
+// ✅ 2) Injeta dentro do Trade Card (campos “na sua cara”)
+if (typeof applyResponderIntoTradeCard === "function") {
+  applyResponderIntoTradeCard(payload);
+}
+
+// ✅ 3) Mini-resumo dentro do Trade Card (se o anchor existir)
+if (typeof renderResponderInline === "function") {
+  renderResponderInline(payload);
+}
+
+window.dispatchEvent(new Event("aaron:panelUpdated"));
+
+// segue o fluxo normal do seu loadPanel
 
 const panel = payload.panel || payload;
 const raw = payload.raw || payload.raw_eye || {};
@@ -6495,6 +6513,17 @@ if (tradeCard && typeof tradeCard === "object" && Object.keys(tradeCard).length)
     updateTradeCard(adapted);
   }
 }
+
+// ✅ GARANTIA: depois que o loadPanel atualizar o cartão, re-aplica o output do RESPONDER
+try {
+  if (typeof applyResponderIntoTradeCard === "function") {
+    applyResponderIntoTradeCard(payload);
+  }
+  if (typeof renderResponderInline === "function") {
+    renderResponderInline(payload);
+  }
+} catch (e) {}
+
 
 
     // Cabeçalho
