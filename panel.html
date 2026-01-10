@@ -7060,19 +7060,21 @@ function a10InitChart() {
     return;
   }
 
-  a10Chart = LightweightCharts.createChart(el, {
-    layout: {
-      background: { type: 'solid', color: '#020617' },
-      textColor: '#e5e7eb',
-    },
-    grid: {
-      vertLines: { color: 'rgba(148,163,184,0.08)' },
-      horzLines: { color: 'rgba(148,163,184,0.08)' },
-    },
-    rightPriceScale: { borderColor: 'rgba(148,163,184,0.22)' },
-    timeScale: { timeVisible: true, secondsVisible: false },
-    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-  });
+     a10Chart = LightweightCharts.createChart(el, {
+     layout: {
+       attributionLogo: false, // <<< REMOVE o "TV" do canto
+       background: { type: 'solid', color: '#020617' },
+       textColor: '#e5e7eb',
+     },
+     grid: {
+       vertLines: { color: 'rgba(148,163,184,0.08)' },
+       horzLines: { color: 'rgba(148,163,184,0.08)' },
+     },
+     rightPriceScale: { borderColor: 'rgba(148,163,184,0.22)' },
+     timeScale: { timeVisible: true, secondsVisible: false },
+     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+   });
+
 
   a10CandleSeries = a10Chart.addCandlestickSeries({
     upColor: '#4ade80',
