@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>AARON 9 – Painel Institucional em Tempo Real </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 
   <style>
     :root {
@@ -435,6 +435,91 @@
       letter-spacing: 0.14em;
       color: var(--text-soft);
     }
+/* ====== AARON CHART + STUDIES (ALPACA) ====== */
+.aaron-studies{
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(2, 6, 23, 0.55);
+}
+
+.aaron-studies-title{
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+
+.aaron-studies-pills{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill-toggle{
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pill-toggle input{
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pill-toggle span{
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.75);
+  color: var(--text-soft);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.pill-toggle span:hover{
+  transform: translateY(-1px);
+  border-color: rgba(34, 211, 238, 0.55);
+  color: var(--text-main);
+}
+
+.pill-toggle input:checked + span{
+  border-color: rgba(34, 211, 238, 0.85);
+  background: rgba(34, 211, 238, 0.12);
+  color: #e0f2fe;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.22);
+}
+
+/* shell do chart */
+.aaron10-chart-shell{
+  position: relative;
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.9);
+  min-height: 420px;
+  background: #020617;
+}
+
+.aaron10-chart{
+  width: 100%;
+  height: 430px;
+}
+
+.aaron10-chart-overlay{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  pointer-events: none;
+  opacity: 0.95;
+}
 
     .pill {
       display: inline-flex;
@@ -2516,12 +2601,9 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title" data-i18n="card.tv_title">
-  Painel de Preço em Tempo Real
-</div>
-<div class="card-subtitle" data-i18n="card.tv_sub">
-  TradingView + Estrutura do Dia
-</div>
+              <div class="card-title" data-i18n="card.tv_title">Painel de Preço em Tempo Real</div>
+<div class="card-subtitle" data-i18n="card.tv_sub">Alpaca PRO + Estrutura do Dia</div>
+
 
             </div>
             <div class="badge-outline green">
@@ -2533,21 +2615,58 @@
 
          
 
-          <!-- TRADINGVIEW -->
-          <div class="panel-section">
-            <div class="panel-section-header">
-              <div class="panel-section-title">Gráfico em Tempo Real</div>
-              <div class="pill-soft pill-soft-accent">
-                Fonte: TradingView
-              </div>
-            </div>
-            <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(15,23,42,0.9); min-height: 420px;">
-             <div class="tradingview-widget-container" style="height: 430px;">
-  <div id="aaron9-tv-chart" style="height: 430px;"></div>
+
+
+
+          <!-- AARON CHART (ALPACA) -->
+<div class="panel-section">
+  <div class="panel-section-header">
+    <div class="panel-section-title">Gráfico em Tempo Real</div>
+    <div class="pill-soft pill-soft-accent">Fonte: Alpaca PRO</div>
+  </div>
+
+  <!-- AARON Studies (módulos) -->
+  <div class="aaron-studies">
+    <div class="aaron-studies-title">AARON Studies</div>
+
+    <div class="aaron-studies-pills">
+      <label class="pill-toggle">
+        <input id="st-session-hl" type="checkbox" checked />
+        <span>Session H/L</span>
+      </label>
+
+      <label class="pill-toggle">
+        <input id="st-prevday" type="checkbox" checked />
+        <span>Prev Day</span>
+      </label>
+
+      <label class="pill-toggle">
+        <input id="st-orb" type="checkbox" />
+        <span>ORB 5m</span>
+      </label>
+
+      <label class="pill-toggle">
+        <input id="st-vwap" type="checkbox" checked />
+        <span>VWAP</span>
+      </label>
+
+      <label class="pill-toggle">
+        <input id="st-ema21" type="checkbox" checked />
+        <span>EMA 21</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="aaron10-chart-shell">
+    <div id="aaron10-chart" class="aaron10-chart"></div>
+
+    <!-- overlay discreto (meta do chart) -->
+    <div class="aaron10-chart-overlay">
+      <div class="pill-small" id="chart-meta">—</div>
+    </div>
+  </div>
 </div>
 
-            </div>
-          </div>
         </div>
                   <div class="resp-snap" id="resp-snap">
   <div class="resp-snap-title">RESPONDER OUTPUT</div>
@@ -6769,76 +6888,308 @@ applyInstitutionalDecision(panel, executionPlan, riskLevel);
 }
 
 // ====== INICIALIZAÇÃO ======
-// ========= TRADINGVIEW – CHART HELPER =========
-function createTradingViewChart() {
-  // se o container não existe, não faz nada
-  const container = document.getElementById('aaron9-tv-chart');
-  if (!container) return;
+// ========= AARON 10 – ALPACA CHART + STUDIES =========
+let a10Chart = null;
+let a10CandleSeries = null;
+let a10Ema21Series = null;
+let a10VwapSeries = null;
+let a10PriceLines = {};
+let a10LastPayloadKey = '';
 
-  // evita criar o gráfico duas vezes
-  if (window.__aaronTvCreated) return;
-  if (!window.TradingView) return;
+function a10UnixSec(t) {
+  if (typeof t === 'number') {
+    if (t > 1e12) return Math.floor(t / 1000); // ms
+    if (t > 1e10) return Math.floor(t / 1000); // ms (só garantia)
+    return Math.floor(t); // sec
+  }
+  if (typeof t === 'string') {
+    const ms = Date.parse(t);
+    if (!Number.isNaN(ms)) return Math.floor(ms / 1000);
+  }
+  return null;
+}
 
-  window.__aaronTvCreated = true;
+function a10ExtractCandles(payload) {
+  const raw = payload?.raw || payload?.data || payload || {};
+  const panel = payload?.panel || raw?.panel || {};
 
-  new TradingView.widget({
-    container_id: 'aaron9-tv-chart',
-    symbol: 'NASDAQ:NVDA',
-    interval: '1',
-    timezone: 'America/New_York',
-    theme: 'dark',
-    style: '1',
-    locale: 'en',
-    hide_side_toolbar: false,
-    allow_symbol_change: true,
-    autosize: true,
+  const candidates = [
+    raw?.intraday?.candles,
+    raw?.intraday?.bars,
+    raw?.candles,
+    raw?.bars,
+    panel?.intraday?.candles,
+    panel?.candles,
+    panel?.recent_candles,
+    payload?.candles,
+    payload?.bars,
+  ];
+
+  const arr = candidates.find((x) => Array.isArray(x)) || [];
+  const out = [];
+
+  for (const c of arr) {
+    const time = a10UnixSec(c?.t ?? c?.time ?? c?.timestamp ?? c?.datetime);
+    const open = Number(c?.o ?? c?.open);
+    const high = Number(c?.h ?? c?.high);
+    const low  = Number(c?.l ?? c?.low);
+    const close= Number(c?.c ?? c?.close);
+    const volume = Number(c?.v ?? c?.volume ?? 0);
+
+    if (!time || !Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
+
+    out.push({ time, open, high, low, close, volume });
+  }
+
+  out.sort((a, b) => a.time - b.time);
+  return out;
+}
+
+function a10ComputeEMA(candles, period) {
+  const alpha = 2 / (period + 1);
+  let ema = null;
+  const out = [];
+  for (const c of candles) {
+    ema = (ema == null) ? c.close : (c.close - ema) * alpha + ema;
+    out.push({ time: c.time, value: ema });
+  }
+  return out;
+}
+
+function a10ComputeVWAP(candles) {
+  let cumPV = 0;
+  let cumV = 0;
+  const out = [];
+
+  for (const c of candles) {
+    const v = c.volume || 0;
+    if (!v) continue;
+
+    const tp = (c.high + c.low + c.close) / 3;
+    cumPV += tp * v;
+    cumV += v;
+
+    if (cumV > 0) out.push({ time: c.time, value: cumPV / cumV });
+  }
+
+  return out;
+}
+
+function a10IsETAfterOpen(unixSec) {
+  // 09:30 ET (aprox via Intl)
+  const d = new Date(unixSec * 1000);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(d);
+
+  const hh = Number(parts.find(p => p.type === 'hour')?.value || 0);
+  const mm = Number(parts.find(p => p.type === 'minute')?.value || 0);
+  return (hh > 9) || (hh === 9 && mm >= 30);
+}
+
+function a10ComputeSessionHL(candles) {
+  const sessionCandles = candles.filter(c => a10IsETAfterOpen(c.time));
+  if (!sessionCandles.length) return null;
+
+  let hi = -Infinity, lo = Infinity;
+  for (const c of sessionCandles) {
+    if (c.high > hi) hi = c.high;
+    if (c.low  < lo) lo = c.low;
+  }
+  if (!Number.isFinite(hi) || !Number.isFinite(lo)) return null;
+  return { hi, lo };
+}
+
+function a10ComputeORB(candles, minutes = 5) {
+  // ORB: primeiros X minutos após 09:30 ET (assumindo 1m candles)
+  const afterOpen = candles.filter(c => a10IsETAfterOpen(c.time));
+  if (afterOpen.length < minutes) return null;
+
+  const slice = afterOpen.slice(0, minutes);
+  let hi = -Infinity, lo = Infinity;
+  for (const c of slice) {
+    if (c.high > hi) hi = c.high;
+    if (c.low  < lo) lo = c.low;
+  }
+  if (!Number.isFinite(hi) || !Number.isFinite(lo)) return null;
+  return { hi, lo };
+}
+
+function a10ToggleState() {
+  return {
+    sessionHL: !!document.getElementById('st-session-hl')?.checked,
+    prevDay:   !!document.getElementById('st-prevday')?.checked,
+    orb:       !!document.getElementById('st-orb')?.checked,
+    vwap:      !!document.getElementById('st-vwap')?.checked,
+    ema21:     !!document.getElementById('st-ema21')?.checked,
+  };
+}
+
+function a10ClearPriceLine(key) {
+  try {
+    if (a10PriceLines[key] && a10CandleSeries) {
+      a10CandleSeries.removePriceLine(a10PriceLines[key]);
+    }
+  } catch (e) {}
+  a10PriceLines[key] = null;
+}
+
+function a10SetPriceLine(key, price, title, color, style) {
+  a10ClearPriceLine(key);
+  if (!a10CandleSeries || !Number.isFinite(price)) return;
+
+  a10PriceLines[key] = a10CandleSeries.createPriceLine({
+    price,
+    title,
+    color,
+    lineWidth: 1,
+    lineStyle: style, // 0 solid | 1 dotted | 2 dashed | 3 large dashed
+    axisLabelVisible: true,
   });
 }
 
-// ====== TRADINGVIEW – GRÁFICO ======
-let tvChartCreated = false;
+function a10InitChart() {
+  const el = document.getElementById('aaron10-chart');
+  if (!el) return;
+  if (a10Chart) return;
+  if (!window.LightweightCharts) {
+    console.warn('[A10] LightweightCharts não carregou.');
+    return;
+  }
 
-function createTVChart() {
-  const container = document.getElementById('aaron9-tv-chart');
-  if (!container) return;              // se não tiver o container, sai
-  if (tvChartCreated) return;          // evita criar duas vezes
-  if (!window.TradingView) return;     // tv.js ainda não carregou
+  a10Chart = LightweightCharts.createChart(el, {
+    layout: {
+      background: { type: 'solid', color: '#020617' },
+      textColor: '#e5e7eb',
+    },
+    grid: {
+      vertLines: { color: 'rgba(148,163,184,0.08)' },
+      horzLines: { color: 'rgba(148,163,184,0.08)' },
+    },
+    rightPriceScale: { borderColor: 'rgba(148,163,184,0.22)' },
+    timeScale: { timeVisible: true, secondsVisible: false },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  });
 
-  tvChartCreated = true;
+  a10CandleSeries = a10Chart.addCandlestickSeries({
+    upColor: '#4ade80',
+    downColor: '#f97373',
+    borderUpColor: '#4ade80',
+    borderDownColor: '#f97373',
+    wickUpColor: '#4ade80',
+    wickDownColor: '#f97373',
+  });
 
-  new TradingView.widget({
-    container_id: 'aaron9-tv-chart',
+  a10Ema21Series = a10Chart.addLineSeries({ lineWidth: 2 });
+  a10VwapSeries  = a10Chart.addLineSeries({ lineWidth: 2 });
 
-    // padrão inicial (pode ser NVDA na NASDAQ)
-    symbol: 'NASDAQ:NVDA',
-    interval: '1',               // começa em 1m
-    timezone: 'America/Denver',  // horário de Utah
-    theme: 'dark',
-    style: '1',
-    autosize: true,
-    locale: 'en',
+  // Resize automático
+  const ro = new ResizeObserver(() => {
+    try {
+      a10Chart.applyOptions({ width: el.clientWidth, height: el.clientHeight });
+    } catch (e) {}
+  });
+  ro.observe(el);
+}
 
-    withdateranges: false,
-    hide_top_toolbar: false,
-    hide_side_toolbar: false,
-    allow_symbol_change: true,
+function a10UpdateChartFromPayload(payload) {
+  try {
+    if (!payload) return;
+    a10InitChart();
+    if (!a10Chart || !a10CandleSeries) return;
 
-    disabled_features: [],
-    enabled_features: [],
+    const panel = payload.panel || payload.raw?.panel || {};
+    const symbol = panel.symbol || panel.ticker || payload.symbol || '—';
+    const tf = panel.timeframe || panel.tf || panel.interval || '1m';
+    const metaEl = document.getElementById('chart-meta');
+    if (metaEl) metaEl.textContent = `${symbol} · ${tf} · Alpaca`;
+
+    const candles = a10ExtractCandles(payload);
+    if (!candles.length) return;
+
+    // evita reprocessar sem necessidade
+    const payloadKey = `${symbol}|${tf}|${candles[candles.length - 1].time}|${candles.length}`;
+    if (payloadKey === a10LastPayloadKey) return;
+    a10LastPayloadKey = payloadKey;
+
+    a10CandleSeries.setData(candles);
+
+    const t = a10ToggleState();
+
+    // EMA 21
+    if (a10Ema21Series) {
+      a10Ema21Series.applyOptions({ visible: t.ema21 });
+      if (t.ema21) a10Ema21Series.setData(a10ComputeEMA(candles, 21));
+    }
+
+    // VWAP
+    if (a10VwapSeries) {
+      a10VwapSeries.applyOptions({ visible: t.vwap });
+      if (t.vwap) a10VwapSeries.setData(a10ComputeVWAP(candles));
+    }
+
+    // Session High / Low
+    if (t.sessionHL) {
+      const hl = a10ComputeSessionHL(candles);
+      if (hl) {
+        a10SetPriceLine('sessionHi', hl.hi, 'Session High', 'rgba(74,222,128,0.85)', 2);
+        a10SetPriceLine('sessionLo', hl.lo, 'Session Low',  'rgba(248,113,113,0.85)', 2);
+      }
+    } else {
+      a10ClearPriceLine('sessionHi');
+      a10ClearPriceLine('sessionLo');
+    }
+
+    // ORB 5m
+    if (t.orb) {
+      const orb = a10ComputeORB(candles, 5);
+      if (orb) {
+        a10SetPriceLine('orbHi', orb.hi, 'ORB High', 'rgba(34,211,238,0.85)', 1);
+        a10SetPriceLine('orbLo', orb.lo, 'ORB Low',  'rgba(34,211,238,0.85)', 1);
+      }
+    } else {
+      a10ClearPriceLine('orbHi');
+      a10ClearPriceLine('orbLo');
+    }
+
+    // Prev Day levels (se vier no payload; se não vier, só ignora)
+    if (t.prevDay) {
+      const pd = panel.prev_day || panel.prevDay || payload.prev_day || payload.prevDay || null;
+      const pdHigh = Number(pd?.high ?? pd?.h ?? panel.prev_day_high ?? panel.pd_high);
+      const pdLow  = Number(pd?.low  ?? pd?.l ?? panel.prev_day_low  ?? panel.pd_low);
+      if (Number.isFinite(pdHigh)) a10SetPriceLine('pdHigh', pdHigh, 'PD High', 'rgba(59,130,246,0.85)', 3);
+      if (Number.isFinite(pdLow))  a10SetPriceLine('pdLow',  pdLow,  'PD Low',  'rgba(59,130,246,0.85)', 3);
+    } else {
+      a10ClearPriceLine('pdHigh');
+      a10ClearPriceLine('pdLow');
+    }
+  } catch (e) {
+    console.warn('[A10] updateChart falhou (mas o painel continua):', e);
+  }
+}
+
+function a10BindStudiesUI() {
+  document.querySelectorAll('.pill-toggle input').forEach((el) => {
+    el.addEventListener('change', () => {
+      a10LastPayloadKey = ''; // força redraw
+      a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
+    });
   });
 }
 
 // ====== INICIALIZAÇÃO ======
 function initAaron9() {
-  // garante que o gráfico aparece mesmo se tv.js carregar depois
-  const tvBoot = setInterval(() => {
-    try {
-      if (window.TradingView) createTVChart();
-      if (tvChartCreated) clearInterval(tvBoot);
-    } catch (e) {
-      // não deixa travar o resto
-    }
-  }, 300);
+  // liga chart + estudos
+  a10InitChart();
+  a10BindStudiesUI();
+
+  // sempre que o painel atualizar, atualiza o chart
+  window.addEventListener('aaron:panelUpdated', () => {
+    a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
+  });
 
   // botão ATUALIZAR
   if (els.btnRefresh) {
@@ -6850,6 +7201,7 @@ function initAaron9() {
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
 }
+
 
 
 
@@ -6995,7 +7347,8 @@ const I18N = {
 
     // CARD TRADINGVIEW
     'card.tv_title': 'Painel de Preço em Tempo Real',
-    'card.tv_sub': 'TradingView + Estrutura do Dia',
+    'card.tv_sub': 'Alpaca PRO + Estrutura do Dia',
+
 
     // RESUMO INSTITUCIONAL
     'summary.title': 'Resumo institucional',
@@ -7075,7 +7428,7 @@ const I18N = {
 
     // TRADINGVIEW CARD
     'card.tv_title': 'Real-Time Price Panel',
-    'card.tv_sub': 'TradingView + Daily Structure',
+    'card.tv_sub': 'Alpaca PRO + Daily Structure',
 
     // SUMMARY
     'summary.title': 'Institutional summary',
