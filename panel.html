@@ -2253,46 +2253,6 @@
   .resp-snap-val{ text-align: left; }
 }
 
-/* ====== TRADE CARD (SPLIT) — RESPONDER ESQ / TRADE DIR ====== */
-.trade-card-layout2{
-  display: grid;
-  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
-  grid-template-areas: "left right";
-  gap: 14px;
-  align-items: start;
-}
-
-.trade-card-left{
-  grid-area: left;
-  min-width: 0;
-}
-
-.trade-card-right{
-  grid-area: right;
-  min-width: 0;
-  padding-left: 14px;
-  border-left: 1px solid rgba(148,163,184,0.14);
-}
-
-/* resp-snap não “desce” quando vira coluna da esquerda */
-.trade-card-left .resp-snap{ margin-top: 0; }
-
-/* Mobile: empilha (texto primeiro, responder depois) */
-@media (max-width: 980px){
-  .trade-card-layout2{
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "right"
-      "left";
-  }
-  .trade-card-right{
-    padding-left: 0;
-    border-left: 0;
-    border-top: 1px solid rgba(148,163,184,0.14);
-    padding-top: 14px;
-    margin-top: 10px;
-  }
-}
 
 
   </style>
@@ -3085,159 +3045,157 @@
 
       <!-- BLOCO PRINCIPAL DO CARTÃO -->
       <div class="status-hero-main">
-        <div class="trade-card-layout2">
-
-  <!-- ESQUERDA: RESPONDER OUTPUT -->
-  <div class="trade-card-left">
-    <div class="resp-snap" id="resp-snap">
-      <div class="resp-snap-title">RESPONDER OUTPUT</div>
-
-      <!-- KPI ROW (na cara, estilo "wow") -->
-      <div class="resp-kpis">
-        <div class="resp-kpi">
-          <div class="resp-kpi-label">Pattern</div>
-          <div class="resp-kpi-value" id="resp-kpi-pattern">—</div>
-        </div>
-        <div class="resp-kpi">
-          <div class="resp-kpi-label">Confidence</div>
-          <div class="resp-kpi-value" id="resp-kpi-conf">—</div>
-        </div>
-        <div class="resp-kpi">
-          <div class="resp-kpi-label">Bias</div>
-          <div class="resp-kpi-value" id="resp-kpi-bias">—</div>
-        </div>
-        <div class="resp-kpi">
-          <div class="resp-kpi-label">Direction</div>
-          <div class="resp-kpi-value" id="resp-kpi-dir">—</div>
-        </div>
-        <div class="resp-kpi">
-          <div class="resp-kpi-label">SR (L—H)</div>
-          <div class="resp-kpi-value" id="resp-kpi-sr">—</div>
-        </div>
-        <div class="resp-kpi">
-          <div class="resp-kpi-label">Bars</div>
-          <div class="resp-kpi-value" id="resp-kpi-bars">—</div>
-        </div>
-        <div class="resp-kpi">
-          <div class="resp-kpi-label">Price</div>
-          <div class="resp-kpi-value" id="resp-kpi-price">—</div>
-        </div>
-      </div>
-
-      <div class="resp-snap-grid">
-        <div class="resp-snap-col">
-          <div class="resp-snap-head">panel</div>
-          <div class="resp-snap-body" id="resp-snap-panel">—</div>
+        <div class="trade-line">
+          <strong data-i18n="trade_card.status_label">Status:</strong>
+          <span id="trade-status-text">✅ Setup válido | ❌ Sem trade</span>
         </div>
 
-        <div class="resp-snap-col">
-          <div class="resp-snap-head">ui</div>
-          <div class="resp-snap-body" id="resp-snap-ui">—</div>
-        </div>
-
-        <div class="resp-snap-col">
-          <div class="resp-snap-head">digest</div>
-          <div class="resp-snap-body" id="resp-snap-digest">—</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- DIREITA: TEXTO DO TRADE CARD -->
-  <div class="trade-card-right">
-    <div class="trade-line">
-      <strong data-i18n="trade_card.status_label">Status:</strong>
-      <span id="trade-status-text">✅ Setup válido | ❌ Sem trade</span>
-    </div>
-
-    <div class="trade-line">
-      <strong>Pulse:</strong>
-      <span id="pulseLine">—</span>
-    </div>
-
-    <div class="trade-line" id="trade-stats-top-line" style="display:none;">
-      <strong data-i18n="trade_card.stats_label">Estatística:</strong>
-      <span id="trade-stats-top">—</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.asset_label">Ativo:</strong>
-      <span id="trade-symbol">NVDA</span>
-      <span class="trade-sep">|</span>
-      <strong data-i18n="trade_card.timeframe_label">Timeframe:</strong>
-      <span id="trade-timeframe">1m</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.stats_label">Estatística:</strong>
-      <span id="trade-stats">—</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.mode_label">Modo:</strong>
-      <span id="trade-mode">Reversão em Resistência</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.against_label">Contra:</strong>
-      <span id="trade-against">57% (base 7 anos)</span>
-    </div>
-
-    <hr class="trade-divider" />
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.dir_label">Direção sugerida:</strong>
-      <span id="trade-direction">VENDA</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.entry_label">Entrada:</strong>
-      <span id="trade-entry">492.80 – 493.10</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.stop_label">Stop:</strong>
-      <span id="trade-stop">494.20</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.tp_label">TP1:</strong>
-      <span id="trade-tp1">490.00</span>
-      <span class="trade-sep">|</span>
-      <strong>TP2:</strong>
-      <span id="trade-tp2">487.50</span>
-    </div>
-
-    <hr class="trade-divider" />
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.size_label">Tamanho:</strong>
-      <span id="trade-size">227 shares</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.risk_label">Risco:</strong>
-      <span id="trade-risk">US$ 250 (1% do risk budget)</span>
-    </div>
-
-    <div class="trade-line">
-      <strong data-i18n="trade_card.thermo_label">Termômetro:</strong>
-      <span id="trade-thermo">Agressivo moderado</span>
-    </div>
-
-    <hr class="trade-divider" />
-
-    <div class="trade-line trade-comment">
-      <strong data-i18n="trade_card.comment_label">Comentário do AARON:</strong>
-      <span id="trade-comment">
-        “Reversão estatisticamente forte após falso rompimento.
-        Se executar, não mova stop contra a posição.”
-      </span>
-    </div>
-  </div>
-
+<div class="trade-line">
+  <strong>Pulse:</strong>
+  <span id="pulseLine">—</span>
 </div>
 
+
+        <div class="trade-line" id="trade-stats-top-line" style="display:none;">
+  <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+  <span id="trade-stats-top">—</span>
+</div>
+
+
+
+
+        <!-- NOVO: Estatística (7y) no topo -->
+      
+        <div class="trade-line">
+          <strong data-i18n="trade_card.asset_label">Ativo:</strong>
+          <span id="trade-symbol">NVDA</span>
+          <span class="trade-sep">|</span>
+          <strong data-i18n="trade_card.timeframe_label">Timeframe:</strong>
+          <span id="trade-timeframe">1m</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+          <span id="trade-stats">—</span>
+        </div>
+
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.mode_label">Modo:</strong>
+          <span id="trade-mode">Reversão em Resistência</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.against_label">Contra:</strong>
+          <span id="trade-against">57% (base 7 anos)</span>
+        </div>
+
+        <hr class="trade-divider" />
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.dir_label">Direção sugerida:</strong>
+          <span id="trade-direction">VENDA</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.entry_label">Entrada:</strong>
+          <span id="trade-entry">492.80 – 493.10</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.stop_label">Stop:</strong>
+          <span id="trade-stop">494.20</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.tp_label">TP1:</strong>
+          <span id="trade-tp1">490.00</span>
+          <span class="trade-sep">|</span>
+          <strong>TP2:</strong>
+          <span id="trade-tp2">487.50</span>
+        </div>
+
+        <hr class="trade-divider" />
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.size_label">Tamanho:</strong>
+          <span id="trade-size">227 shares</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.risk_label">Risco:</strong>
+          <span id="trade-risk">US$ 250 (1% do risk budget)</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.thermo_label">Termômetro:</strong>
+          <span id="trade-thermo">Agressivo moderado</span>
+        </div>
+
+        <hr class="trade-divider" />
+
+        <div class="trade-line trade-comment">
+          <strong data-i18n="trade_card.comment_label">Comentário do AARON:</strong>
+          <span id="trade-comment">
+            “Reversão estatisticamente forte após falso rompimento.
+            Se executar, não mova stop contra a posição.”
+          </span>
+        </div>
+                <!-- ✅ NOVO: RESPONDER OUTPUT (panel / ui / digest) — sempre visível -->
+<hr class="trade-divider" />
+
+<div class="resp-snap" id="resp-snap">
+  <div class="resp-snap-title">RESPONDER OUTPUT</div>
+
+  <!-- KPI ROW (na cara, estilo "wow") -->
+  <div class="resp-kpis">
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Pattern</div>
+      <div class="resp-kpi-value" id="resp-kpi-pattern">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Confidence</div>
+      <div class="resp-kpi-value" id="resp-kpi-conf">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Bias</div>
+      <div class="resp-kpi-value" id="resp-kpi-bias">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Direction</div>
+      <div class="resp-kpi-value" id="resp-kpi-dir">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">SR (L—H)</div>
+      <div class="resp-kpi-value" id="resp-kpi-sr">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Bars</div>
+      <div class="resp-kpi-value" id="resp-kpi-bars">—</div>
+    </div>
+    <div class="resp-kpi">
+      <div class="resp-kpi-label">Price</div>
+      <div class="resp-kpi-value" id="resp-kpi-price">—</div>
+    </div>
+  </div>
+
+  <div class="resp-snap-grid">
+    <div class="resp-snap-col">
+      <div class="resp-snap-head">panel</div>
+      <div class="resp-snap-body" id="resp-snap-panel">—</div>
+    </div>
+
+    <div class="resp-snap-col">
+      <div class="resp-snap-head">ui</div>
+      <div class="resp-snap-body" id="resp-snap-ui">—</div>
+    </div>
+
+    <div class="resp-snap-col">
+      <div class="resp-snap-head">digest</div>
+      <div class="resp-snap-body" id="resp-snap-digest">—</div>
+    </div>
+  </div>
+</div>
 
 
 
