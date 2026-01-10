@@ -2614,110 +2614,6 @@
             </div>
           </div>
           <!-- ===== /Estrutura recente ===== -->
-<!-- CARTÃO CITADEL · CARTÃO DE TRADE ATUAL (MOVIDO PARA COLUNA ESQUERDA) -->
-<section id="trade-card" class="status-hero status-sell blink-hero">
-  <div>
-    <div class="status-hero-label" data-i18n="trade_card.title">
-      AARON – Cartão de Trade Atual
-    </div>
-
-    <div class="status-hero-main">
-      <div class="trade-line">
-        <strong data-i18n="trade_card.status_label">Status:</strong>
-        <span id="trade-status-text">✅ Setup válido | ❌ Sem trade</span>
-      </div>
-
-      <div class="trade-line">
-        <strong>Pulse:</strong>
-        <span id="pulseLine">—</span>
-      </div>
-
-      <div class="trade-line" id="trade-stats-top-line" style="display:none;">
-        <strong data-i18n="trade_card.stats_label">Estatística:</strong>
-        <span id="trade-stats-top">—</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.asset_label">Ativo:</strong>
-        <span id="trade-symbol">NVDA</span>
-        <span class="trade-sep">|</span>
-        <strong data-i18n="trade_card.timeframe_label">Timeframe:</strong>
-        <span id="trade-timeframe">1m</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.stats_label">Estatística:</strong>
-        <span id="trade-stats">—</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.mode_label">Modo:</strong>
-        <span id="trade-mode">Reversão em Resistência</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.against_label">Contra:</strong>
-        <span id="trade-against">57% (base 7 anos)</span>
-      </div>
-
-      <hr class="trade-divider" />
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.dir_label">Direção sugerida:</strong>
-        <span id="trade-direction">VENDA</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.entry_label">Entrada:</strong>
-        <span id="trade-entry">492.80 – 493.10</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.stop_label">Stop:</strong>
-        <span id="trade-stop">494.20</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.tp_label">TP1:</strong>
-        <span id="trade-tp1">490.00</span>
-        <span class="trade-sep">|</span>
-        <strong>TP2:</strong>
-        <span id="trade-tp2">487.50</span>
-      </div>
-
-      <hr class="trade-divider" />
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.size_label">Tamanho:</strong>
-        <span id="trade-size">227 shares</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.risk_label">Risco:</strong>
-        <span id="trade-risk">US$ 250 (1% do risk budget)</span>
-      </div>
-
-      <div class="trade-line">
-        <strong data-i18n="trade_card.thermo_label">Termômetro:</strong>
-        <span id="trade-thermo">Agressivo moderado</span>
-      </div>
-
-      <hr class="trade-divider" />
-
-      <div class="trade-line trade-comment">
-        <strong data-i18n="trade_card.comment_label">Comentário do AARON:</strong>
-        <span id="trade-comment">
-          “Reversão estatisticamente forte após falso rompimento.
-          Se executar, não mova stop contra a posição.”
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div id="trade-badge" class="status-hero-badge sell">
-    GO FULL
-  </div>
-</section>
 
        <!-- ===== SIZING BRAIN – ABAIXO DO TRADEVIEW ===== -->
 
@@ -3139,10 +3035,119 @@
 
 
 
-  <!-- RESPONDER OUTPUT (panel / ui / digest) — fica na COLUNA DIREITA -->
+  <!-- CARTÃO CITADEL · CARTÃO DE TRADE ATUAL -->
+  <section id="trade-card" class="status-hero status-sell blink-hero">
+    <div>
+      <!-- TÍTULO -->
+      <div class="status-hero-label" data-i18n="trade_card.title">
+        AARON – Cartão de Trade Atual
+      </div>
+
+      <!-- BLOCO PRINCIPAL DO CARTÃO -->
+      <div class="status-hero-main">
+        <div class="trade-line">
+          <strong data-i18n="trade_card.status_label">Status:</strong>
+          <span id="trade-status-text">✅ Setup válido | ❌ Sem trade</span>
+        </div>
+
+<div class="trade-line">
+  <strong>Pulse:</strong>
+  <span id="pulseLine">—</span>
+</div>
+
+
+        <div class="trade-line" id="trade-stats-top-line" style="display:none;">
+  <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+  <span id="trade-stats-top">—</span>
+</div>
+
+
+
+
+        <!-- NOVO: Estatística (7y) no topo -->
+      
+        <div class="trade-line">
+          <strong data-i18n="trade_card.asset_label">Ativo:</strong>
+          <span id="trade-symbol">NVDA</span>
+          <span class="trade-sep">|</span>
+          <strong data-i18n="trade_card.timeframe_label">Timeframe:</strong>
+          <span id="trade-timeframe">1m</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.stats_label">Estatística:</strong>
+          <span id="trade-stats">—</span>
+        </div>
+
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.mode_label">Modo:</strong>
+          <span id="trade-mode">Reversão em Resistência</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.against_label">Contra:</strong>
+          <span id="trade-against">57% (base 7 anos)</span>
+        </div>
+
+        <hr class="trade-divider" />
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.dir_label">Direção sugerida:</strong>
+          <span id="trade-direction">VENDA</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.entry_label">Entrada:</strong>
+          <span id="trade-entry">492.80 – 493.10</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.stop_label">Stop:</strong>
+          <span id="trade-stop">494.20</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.tp_label">TP1:</strong>
+          <span id="trade-tp1">490.00</span>
+          <span class="trade-sep">|</span>
+          <strong>TP2:</strong>
+          <span id="trade-tp2">487.50</span>
+        </div>
+
+        <hr class="trade-divider" />
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.size_label">Tamanho:</strong>
+          <span id="trade-size">227 shares</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.risk_label">Risco:</strong>
+          <span id="trade-risk">US$ 250 (1% do risk budget)</span>
+        </div>
+
+        <div class="trade-line">
+          <strong data-i18n="trade_card.thermo_label">Termômetro:</strong>
+          <span id="trade-thermo">Agressivo moderado</span>
+        </div>
+
+        <hr class="trade-divider" />
+
+        <div class="trade-line trade-comment">
+          <strong data-i18n="trade_card.comment_label">Comentário do AARON:</strong>
+          <span id="trade-comment">
+            “Reversão estatisticamente forte após falso rompimento.
+            Se executar, não mova stop contra a posição.”
+          </span>
+        </div>
+                <!-- ✅ NOVO: RESPONDER OUTPUT (panel / ui / digest) — sempre visível -->
+<hr class="trade-divider" />
+
 <div class="resp-snap" id="resp-snap">
   <div class="resp-snap-title">RESPONDER OUTPUT</div>
 
+  <!-- KPI ROW (na cara, estilo "wow") -->
   <div class="resp-kpis">
     <div class="resp-kpi">
       <div class="resp-kpi-label">Pattern</div>
@@ -3191,6 +3196,17 @@
     </div>
   </div>
 </div>
+
+
+
+      </div>
+    </div>
+
+    <!-- BADGE LATERAL IGUAL AO COMPRA EM CONTINUAÇÃO -->
+    <div id="trade-badge" class="status-hero-badge sell">
+      GO FULL
+    </div>
+  </section>
 
 
 
