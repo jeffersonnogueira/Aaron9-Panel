@@ -8,21 +8,18 @@
 
   <style>
     :root {
-  --bg: #020617;
-  --bg-elevated: #020617;
-  --card: #020617;
-  --card-border: #1f2937;
-  --accent: #22d3ee;
-  --accent-soft: rgba(34, 211, 238, 0.12);
-  --danger: #f97373;
-  --success: #4ade80;
-  --text-soft: #9ca3af;
-  --text-main: #e5e7eb;
-  --error: #f97373;
-
-  --ui-zoom: 1; /* <<< NOVO: escala automática do painel */
-}
-
+      --bg: #020617;
+      --bg-elevated: #020617;
+      --card: #020617;
+      --card-border: #1f2937;
+      --accent: #22d3ee;
+      --accent-soft: rgba(34, 211, 238, 0.12);
+      --danger: #f97373;
+      --success: #4ade80;
+      --text-soft: #9ca3af;
+      --text-main: #e5e7eb;
+      --error: #f97373;
+    }
 
     * {
       box-sizing: border-box;
@@ -58,10 +55,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-
-  zoom: var(--ui-zoom);       /* <<< NOVO: escala TUDO (inclui fontes) */
 }
-
 
 
 
@@ -3470,27 +3464,6 @@
 // ======= CONFIG PAINEL (JSON) =======
 const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json';
 const REFRESH_MS = 60000; // 1 minuto
-// ==========================
-// AUTO SCALE (responsivo real, incluindo fontes)
-// ==========================
-(function aaronAutoScale(){
-  const BASE_W = 1480;     // tem que bater com .page max-width
-  const SIDE_PAD = 60;     // folga p/ não encostar nas bordas (ajuste se quiser)
-  const MIN_Z = 0.78;      // limite mínimo (pra não ficar ilegível)
-
-  function apply(){
-    const vw = window.innerWidth || document.documentElement.clientWidth || BASE_W;
-    const avail = Math.max(320, vw - SIDE_PAD);
-    let z = avail / BASE_W;
-    if (z > 1) z = 1;
-    if (z < MIN_Z) z = MIN_Z;
-    document.documentElement.style.setProperty("--ui-zoom", z.toFixed(3));
-  }
-
-  window.addEventListener("resize", apply, { passive: true });
-  window.addEventListener("orientationchange", apply);
-  apply();
-})();
 
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
 // COLE ESTE BLOCO LOGO ABAIXO DO: const REFRESH_MS = 60000;
