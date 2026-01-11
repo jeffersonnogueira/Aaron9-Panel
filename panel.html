@@ -188,6 +188,43 @@
       font-weight: 500;
       margin-left: 3px;
     }
+/* === TIMEFRAME PICKER (AARON10) === */
+.tf-picker{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:2px 6px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.35);
+  background: rgba(2, 6, 23, 0.6);
+}
+
+.tf-btn{
+  appearance:none;
+  border:0;
+  cursor:pointer;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--text-soft);
+  background: transparent;
+  transition: transform .12s ease, background .12s ease, color .12s ease, box-shadow .12s ease;
+}
+
+.tf-btn:hover{
+  transform: translateY(-1px);
+  background: rgba(148,163,184,0.12);
+  color: var(--text-main);
+}
+
+.tf-btn.active{
+  background: rgba(34,211,238,0.22);
+  border:1px solid rgba(34,211,238,0.55);
+  color:#e0f2fe;
+  box-shadow: 0 0 0 1px rgba(34,211,238,0.15), 0 10px 24px rgba(34,211,238,0.12);
+}
 
     .pill-state {
       display: inline-flex;
@@ -2385,6 +2422,14 @@
       <span data-i18n="top.timeframe">Timeframe</span>
       <strong id="timeframe-label">—</strong>
     </div>
+<div class="tf-picker" id="tf-picker" title="Timeframe">
+  <button class="tf-btn" type="button" data-tf="1m">1m</button>
+  <button class="tf-btn" type="button" data-tf="5m">5m</button>
+  <button class="tf-btn" type="button" data-tf="15m">15m</button>
+  <button class="tf-btn" type="button" data-tf="1h">1h</button>
+  <button class="tf-btn" type="button" data-tf="4h">4h</button>
+  <button class="tf-btn" type="button" data-tf="1d">1D</button>
+</div>
 
     <div class="pill-small">
       <span data-i18n="top.session">Sessão</span>
@@ -3599,6 +3644,76 @@ const MATCHER_WEBHOOK_URL = MATCHER_WEBHOOK_URL_PROD; // default
 // const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook-test/aaron10_matcher_request"; 
 // Exemplo (prod): https://SEU_WORKSPACE.app.n8n.cloud/webhook/aaron10_matcher_request
 // (não use a test url depois de publicar; use a url de produção)
+// ======= AARON10 (FASE 2) — Timeframe picker (UI) + query param =======
+const AARON_TF_KEY = "aaron_selected_timeframe";
+
+function getSelectedTimeframe(){
+  const tf = (window.AARON_SELECTED_TIMEFRAME || localStorage.getItem(AARON_TF_KEY) || "1m").toString().trim();
+  return tf || "1m";
+}
+
+function setSelectedTimeframe(tf, opts = {}){
+  const { dispatch = true } = opts;
+  tf = String(tf || "").trim();
+  if (!tf) return;
+
+  window.AARON_SELECTED_TIMEFRAME = tf;
+  try { localStorage.setItem(AARON_TF_KEY, tf); } catch(e){}
+
+  // UI active state
+  const picker = document.getElementById("tf-picker");
+  if (picker) {
+    picker.querySelectorAll(".tf-btn").forEach(btn => {
+      const isOn = String(btn.dataset.tf || "") === tf;
+      btn.classList.toggle("active", isOn);
+    });
+  }
+
+  // labels
+  const tfLabel = document.getElementById("timeframe-label");
+  if (tfLabel) tfLabel.textContent = tf.toUpperCase();
+
+  const tradeTf = document.getElementById("trade-timeframe");
+  if (tradeTf) tradeTf.textContent = tf.toUpperCase();
+
+  if (dispatch) {
+    window.dispatchEvent(new CustomEvent("aaron:timeframeSelected", { detail: { timeframe: tf } }));
+  }
+}
+
+function installTimeframePicker(){
+  const picker = document.getElementById("tf-picker");
+  if (!picker) return;
+
+  if (picker.__installed) return;
+  picker.__installed = true;
+
+  picker.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tf-btn");
+    if (!btn) return;
+    const tf = String(btn.dataset.tf || "").trim();
+    if (!tf) return;
+    setSelectedTimeframe(tf, { dispatch: true });
+  });
+
+  // init from storage
+  const initTf = getSelectedTimeframe();
+  setSelectedTimeframe(initTf, { dispatch: false });
+}
+
+// instala agora (script está no fim do body)
+installTimeframePicker();
+
+// Se mudar o timeframe, recarrega painel + matcher (mesmo símbolo)
+window.addEventListener("aaron:timeframeSelected", () => {
+  const symbol =
+    window.AARON_SELECTED_SYMBOL ||
+    localStorage.getItem("aaron_selected_symbol") ||
+    "NVDA";
+
+  requestMatcher(symbol);
+  loadPanel(true);
+});
 
 // chama o n8n e atualiza o painel com o retorno
 // ==========================
@@ -3872,16 +3987,21 @@ async function requestMatcher(symbol) {
   symbol = String(symbol || "").trim().toUpperCase();
   if (!symbol) return;
 
+  const tf =
+    (typeof getSelectedTimeframe === "function")
+      ? getSelectedTimeframe()
+      : (localStorage.getItem("aaron_selected_timeframe") || "1m");
+
   const reqId = ++__AARON_MATCHER_REQ_ID;
 
   const ctxEl = document.getElementById("context-text");
   const exeEl = document.getElementById("execution-text");
-  if (ctxEl) ctxEl.textContent = `Carregando matcher para ${symbol}...`;
+  if (ctxEl) ctxEl.textContent = `Carregando matcher para ${symbol} (${tf})...`;
   if (exeEl) exeEl.textContent = "—";
-  if (typeof setRespSnapMessage === "function") setRespSnapMessage(`Carregando ${symbol}...`);
+  if (typeof setRespSnapMessage === "function") setRespSnapMessage(`Carregando ${symbol} (${tf})...`);
 
   async function fetchOne(baseUrl){
-    const url = `${baseUrl}?symbol=${encodeURIComponent(symbol)}&_=${Date.now()}`;
+    const url = `${baseUrl}?symbol=${encodeURIComponent(symbol)}&timeframe=${encodeURIComponent(tf)}&_=${Date.now()}`;
     const res = await fetch(url, { method: "GET", cache: "no-store" }); // ✅ GET
     if (!res.ok) {
       const t = await res.text().catch(() => "");
@@ -3895,7 +4015,7 @@ async function requestMatcher(symbol) {
     // 1) tenta PROD
     raw = await fetchOne(MATCHER_WEBHOOK_URL);
   } catch (errProd) {
-    // 2) fallback TEST (quando workflow não está Active ou você está no editor)
+    // 2) fallback TEST
     try {
       raw = await fetchOne(MATCHER_WEBHOOK_URL_TEST);
     } catch (errTest) {
@@ -3913,18 +4033,19 @@ async function requestMatcher(symbol) {
   const data = Array.isArray(raw) ? (raw[0] ?? {}) : (raw ?? {});
   window.__AARON_MATCHER_LAST__ = data; // debug
 
-  // ✅ preenche o bloco “RESPONDER OUTPUT” de baixo
+  // ✅ bloco “RESPONDER OUTPUT”
   if (typeof renderTradeResponderOutput === "function") {
     renderTradeResponderOutput(data);
   }
 
-  // ✅ e também injeta o output dentro do Trade Card (em cima)
+  // ✅ injeta dentro do Trade Card
   applyResponderIntoTradeCard(data);
 
-  if (ctxEl) ctxEl.textContent = `Matcher OK: ${symbol}`;
+  if (ctxEl) ctxEl.textContent = `Matcher OK: ${symbol} (${tf})`;
   if (exeEl) exeEl.textContent = data?.panel?.updated_at || "—";
   if (typeof setRespSnapMessage === "function") setRespSnapMessage("");
 }
+
 
 
 
@@ -3957,8 +4078,14 @@ setTimeout(() => {
     localStorage.getItem("aaron_selected_symbol") ||
     "NVDA";
 
+  // garante timeframe aplicado antes do primeiro load
+  if (typeof setSelectedTimeframe === "function") {
+    setSelectedTimeframe(getSelectedTimeframe(), { dispatch: false });
+  }
+
   window.dispatchEvent(new CustomEvent("aaron:symbolSelected", { detail: { symbol } }));
 }, 200);
+
 
 
 // ======= LANG GLOBAL (precisa vir ANTES do AutoPilot / loadPanel) =======
@@ -6513,9 +6640,11 @@ async function loadPanel(showSpinner) {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
 
-    const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
-const url = `${PANEL_URL}${PANEL_URL.includes('?') ? '&' : '?'}symbol=${encodeURIComponent(sym)}&t=${Date.now()}`;
-const res = await fetch(url, { cache: 'no-store' });
+        const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
+    const tf  = (typeof getSelectedTimeframe === "function") ? getSelectedTimeframe() : "1m";
+    const url = `${PANEL_URL}${PANEL_URL.includes('?') ? '&' : '?'}symbol=${encodeURIComponent(sym)}&timeframe=${encodeURIComponent(tf)}&t=${Date.now()}`;
+    const res = await fetch(url, { cache: 'no-store' });
+
 
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
