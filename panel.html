@@ -496,6 +496,46 @@
   color: #e0f2fe;
   box-shadow: 0 0 18px rgba(34, 211, 238, 0.22);
 }
+/* ===== A10 TIMEFRAMES (chart header) ===== */
+.a10-chart-head-right{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.a10-tf{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.a10-tf-btn{
+  appearance:none;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.75);
+  color: var(--text-soft);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor:pointer;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.a10-tf-btn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(34, 211, 238, 0.55);
+  color: var(--text-main);
+}
+
+.a10-tf-btn.active{
+  border-color: rgba(34, 211, 238, 0.85);
+  background: rgba(34, 211, 238, 0.12);
+  color: #e0f2fe;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.22);
+}
 
 /* shell do chart */
 .aaron10-chart-shell{
@@ -2621,9 +2661,21 @@
           <!-- AARON CHART (ALPACA) -->
 <div class="panel-section">
   <div class="panel-section-header">
-    <div class="panel-section-title">Gráfico em Tempo Real</div>
-    <div class="pill-soft pill-soft-accent">Fonte: Alpaca PRO</div>
+  <div class="panel-section-title">Gráfico em Tempo Real</div>
+
+  <div class="a10-chart-head-right">
+    <div class="a10-tf" id="a10-tf" aria-label="Timeframes">
+      <button type="button" class="a10-tf-btn" data-tf="1m">1m</button>
+      <button type="button" class="a10-tf-btn" data-tf="5m">5m</button>
+      <button type="button" class="a10-tf-btn" data-tf="15m">15m</button>
+      <button type="button" class="a10-tf-btn" data-tf="1h">1h</button>
+      <button type="button" class="a10-tf-btn" data-tf="4h">4h</button>
+    </div>
+
+    <div class="pill-soft pill-soft-accent" id="a10-feed-pill">Fonte: Alpaca PRO (SIP)</div>
   </div>
+</div>
+
 
   <!-- AARON Studies (módulos) -->
   <div class="aaron-studies">
@@ -3586,19 +3638,23 @@
   <script>
 // ======= CONFIG PAINEL (JSON) =======
 const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json';
-const REFRESH_MS = 60000; // 1 minuto
+const REFRESH_MS = 60000; // painel (cards) a cada 1 minuto
+
+// ======= CONFIG A10 REALTIME (WEBSOCKET RELAY) =======
+// ⚠️ Não conecte direto no WebSocket do Alpaca no browser (exporia sua API KEY).
+// Você vai rodar um RELAY (Alpaca WS -> seu WS) e apontar o painel para ele.
+const A10_FEED = 'sip'; // 'sip' (PRO) ou 'iex'
+const A10_RELAY_WS_URL = 'wss://SEU-RELAY-DOMINIO/ws'; // <<< TROQUE AQUI (quando o relay estiver online)
+
+// Timeframe padrão do chart
+const A10_DEFAULT_TF = '1m';
 
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
-// COLE ESTE BLOCO LOGO ABAIXO DO: const REFRESH_MS = 60000;
-
 // OPÇÃO 2 (direto)
 const MATCHER_WEBHOOK_URL_PROD = "https://jjjnogueira.app.n8n.cloud/webhook/aaron10_matcher_request";
 const MATCHER_WEBHOOK_URL_TEST = "https://jjjnogueira.app.n8n.cloud/webhook-test/aaron10_matcher_request";
 const MATCHER_WEBHOOK_URL = MATCHER_WEBHOOK_URL_PROD; // default
-// (pra testar no editor do n8n, use webhook-test):
-// const MATCHER_WEBHOOK_URL = "https://jjjnogueira.app.n8n.cloud/webhook-test/aaron10_matcher_request"; 
-// Exemplo (prod): https://SEU_WORKSPACE.app.n8n.cloud/webhook/aaron10_matcher_request
-// (não use a test url depois de publicar; use a url de produção)
+
 
 // chama o n8n e atualiza o painel com o retorno
 // ==========================
@@ -3933,12 +3989,16 @@ async function requestMatcher(symbol) {
 
 
 // ✅ Isso aqui é a “conversa”: o seu dropdown já dispara esse evento.
-// Quando trocar o ativo, ele chama o n8n automaticamente.
 window.addEventListener("aaron:symbolSelected", (ev) => {
   const symbol = String(ev?.detail?.symbol || '').toUpperCase().trim();
   if (!symbol) return;
 
-  // 0) AutoPilot amarrado ao símbolo atual (evita “vazar” trade entre ativos)
+  // garante timeframe default 1x
+  if (!localStorage.getItem("aaron_selected_tf")) {
+    localStorage.setItem("aaron_selected_tf", (typeof A10_DEFAULT_TF === "string" ? A10_DEFAULT_TF : "1m"));
+  }
+
+  // 0) AutoPilot amarrado ao símbolo atual
   if (typeof apOnSymbolChange === 'function') apOnSymbolChange(symbol);
 
   // 1) chama o matcher
@@ -3946,11 +4006,21 @@ window.addEventListener("aaron:symbolSelected", (ev) => {
 
   // 2) atualiza o painel JSON imediatamente
   loadPanel(true);
+
+  // 3) chart em tempo real (relay WS)
+  if (typeof a10StartStream === "function") a10StartStream(true);
 });
 
+// ✅ Timeframe mudou
+window.addEventListener("aaron:timeframeSelected", (ev) => {
+  const tf = String(ev?.detail?.timeframe || '').trim();
+  if (!tf) return;
 
+  loadPanel(true);
+  if (typeof a10StartStream === "function") a10StartStream(true);
+});
 
-// ✅ Ao abrir a página, dispara 1x com o último símbolo salvo (pra já mostrar algo)
+// ✅ Ao abrir a página, dispara 1x com o último símbolo salvo
 setTimeout(() => {
   const symbol =
     window.AARON_SELECTED_SYMBOL ||
@@ -3959,6 +4029,7 @@ setTimeout(() => {
 
   window.dispatchEvent(new CustomEvent("aaron:symbolSelected", { detail: { symbol } }));
 }, 200);
+
 
 
 // ======= LANG GLOBAL (precisa vir ANTES do AutoPilot / loadPanel) =======
@@ -6513,9 +6584,14 @@ async function loadPanel(showSpinner) {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
 
-    const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
-const url = `${PANEL_URL}${PANEL_URL.includes('?') ? '&' : '?'}symbol=${encodeURIComponent(sym)}&t=${Date.now()}`;
+   const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
+const tfSel =
+  (localStorage.getItem('aaron_selected_tf') || '').trim() ||
+  (typeof A10_DEFAULT_TF === 'string' ? A10_DEFAULT_TF : '1m');
+
+const url = `${PANEL_URL}${PANEL_URL.includes('?') ? '&' : '?'}symbol=${encodeURIComponent(sym)}&tf=${encodeURIComponent(tfSel)}&t=${Date.now()}`;
 const res = await fetch(url, { cache: 'no-store' });
+
 
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
@@ -6644,14 +6720,20 @@ try {
 
 
     // Cabeçalho
-    safeText(els.symbol, panel.symbol || raw.symbol || '—');
-    safeText(
-      els.timeframe,
-      panel.timeframe ||
-        raw.timeframe ||
-        panel.timeframe_label ||
-        '—'
-    );
+const tfSel =
+  (localStorage.getItem('aaron_selected_tf') || '').trim() ||
+  (typeof A10_DEFAULT_TF === 'string' ? A10_DEFAULT_TF : '1m');
+
+safeText(els.symbol, panel.symbol || raw.symbol || '—');
+safeText(
+  els.timeframe,
+  panel.timeframe ||
+    raw.timeframe ||
+    panel.timeframe_label ||
+    tfSel ||
+    '—'
+);
+
     safeText(
       els.session,
       panel.session || raw.session || panel.session_label || '—'
@@ -6895,6 +6977,159 @@ let a10Ema21Series = null;
 let a10VwapSeries = null;
 let a10PriceLines = {};
 let a10LastPayloadKey = '';
+// ========= A10 REALTIME STREAM (RELAY) =========
+let a10Ws = null;
+let a10WsRetryTimer = null;
+let a10StreamSource = "payload"; // "payload" | "stream"
+let a10LiveCandles = [];
+let a10LastStudyRedrawMs = 0;
+
+function a10GetSelSymbol(){
+  return (localStorage.getItem('aaron_selected_symbol') || 'NVDA').toUpperCase().trim() || 'NVDA';
+}
+function a10GetSelTF(){
+  return (localStorage.getItem('aaron_selected_tf') || A10_DEFAULT_TF || '1m').trim() || '1m';
+}
+
+function a10SetChartMeta(symbol, tf, extra){
+  const metaEl = document.getElementById('chart-meta');
+  const pill = document.getElementById('a10-feed-pill');
+  if (pill) pill.textContent = `Fonte: Alpaca PRO (${String(A10_FEED || 'sip').toUpperCase()})`;
+  if (metaEl) metaEl.textContent = `${symbol} · ${tf} · Alpaca ${String(extra||'').trim()}`.trim();
+}
+
+function a10ApplyCandlesSnapshot(candles, symbol, tf){
+  a10InitChart();
+  if (!a10Chart || !a10CandleSeries) return;
+
+  a10StreamSource = "stream";
+  a10LiveCandles = Array.isArray(candles) ? candles : [];
+  a10CandleSeries.setData(a10LiveCandles);
+  a10SetChartMeta(symbol, tf, "(live)");
+  a10RedrawStudiesFromLive();
+}
+
+function a10UpsertCandle(bar){
+  if (!bar || !Number.isFinite(bar.time)) return;
+
+  const last = a10LiveCandles.length ? a10LiveCandles[a10LiveCandles.length-1] : null;
+  if (!last || bar.time > last.time){
+    a10LiveCandles.push(bar);
+  } else if (bar.time === last.time){
+    a10LiveCandles[a10LiveCandles.length-1] = bar;
+  } else {
+    return; // fora de ordem
+  }
+
+  if (a10CandleSeries) a10CandleSeries.update(bar);
+
+  // redraw leve (no máx 1x por ~0.9s)
+  const now = Date.now();
+  if (now - a10LastStudyRedrawMs >= 900){
+    a10LastStudyRedrawMs = now;
+    a10RedrawStudiesFromLive();
+  }
+}
+
+function a10RedrawStudiesFromLive(){
+  try{
+    if (!a10LiveCandles || !a10LiveCandles.length) return;
+    const candles = a10LiveCandles;
+    const t = a10ToggleState();
+
+    if (a10Ema21Series){
+      a10Ema21Series.applyOptions({ visible: t.ema21 });
+      if (t.ema21) a10Ema21Series.setData(a10ComputeEMA(candles, 21));
+    }
+
+    if (a10VwapSeries){
+      a10VwapSeries.applyOptions({ visible: t.vwap });
+      if (t.vwap) a10VwapSeries.setData(a10ComputeVWAP(candles));
+    }
+
+    if (t.sessionHL){
+      const hl = a10ComputeSessionHL(candles);
+      if (hl){
+        a10SetPriceLine('sessionHi', hl.hi, 'Session High', 'rgba(74,222,128,0.85)', 2);
+        a10SetPriceLine('sessionLo', hl.lo, 'Session Low',  'rgba(248,113,113,0.85)', 2);
+      }
+    } else {
+      a10ClearPriceLine('sessionHi');
+      a10ClearPriceLine('sessionLo');
+    }
+
+    if (t.orb){
+      const orb = a10ComputeORB(candles, 5);
+      if (orb){
+        a10SetPriceLine('orbHi', orb.hi, 'ORB High', 'rgba(34,211,238,0.85)', 1);
+        a10SetPriceLine('orbLo', orb.lo, 'ORB Low',  'rgba(34,211,238,0.85)', 1);
+      }
+    } else {
+      a10ClearPriceLine('orbHi');
+      a10ClearPriceLine('orbLo');
+    }
+  }catch(e){}
+}
+
+function a10StopStream(){
+  if (a10Ws){ try{ a10Ws.close(); }catch(e){} }
+  a10Ws = null;
+  if (a10WsRetryTimer){ clearTimeout(a10WsRetryTimer); a10WsRetryTimer = null; }
+}
+
+function a10StartStream(force){
+  const symbol = a10GetSelSymbol();
+  const tf = a10GetSelTF();
+
+  // se ainda não tem relay online, não quebra o painel
+  if (!A10_RELAY_WS_URL || A10_RELAY_WS_URL.includes('SEU-RELAY-DOMINIO')){
+    a10SetChartMeta(symbol, tf, "(relay pendente)");
+    return;
+  }
+
+  const url = `${A10_RELAY_WS_URL}?symbol=${encodeURIComponent(symbol)}&tf=${encodeURIComponent(tf)}&feed=${encodeURIComponent(A10_FEED || 'sip')}`;
+
+  if (!force && a10Ws && a10Ws.readyState === 1) return;
+
+  a10StopStream();
+  a10SetChartMeta(symbol, tf, "conectando…");
+
+  try{
+    a10Ws = new WebSocket(url);
+  }catch(e){
+    a10SetChartMeta(symbol, tf, "WS inválido");
+    return;
+  }
+
+  a10Ws.addEventListener('open', () => {
+    a10SetChartMeta(symbol, tf, "(live)");
+  });
+
+  a10Ws.addEventListener('message', (ev) => {
+    try{
+      const msg = JSON.parse(ev.data);
+
+      if (msg?.type === 'snapshot' && Array.isArray(msg.candles)){
+        a10ApplyCandlesSnapshot(msg.candles, symbol, tf);
+        return;
+      }
+
+      if (msg?.type === 'bar' && msg.bar){
+        a10UpsertCandle(msg.bar);
+        return;
+      }
+    }catch(e){}
+  });
+
+  a10Ws.addEventListener('close', () => {
+    a10SetChartMeta(symbol, tf, "reconectando…");
+    a10WsRetryTimer = setTimeout(() => a10StartStream(true), 1200);
+  });
+
+  a10Ws.addEventListener('error', () => {
+    try{ a10Ws.close(); }catch(e){}
+  });
+}
 
 function a10UnixSec(t) {
   if (typeof t === 'number') {
@@ -7099,41 +7334,46 @@ function a10InitChart() {
 
 function a10UpdateChartFromPayload(payload) {
   try {
+    // se o stream já está mandando candle live, não sobrescreve
+    if (typeof a10StreamSource !== 'undefined' && a10StreamSource === 'stream') return;
+
     if (!payload) return;
     a10InitChart();
     if (!a10Chart || !a10CandleSeries) return;
 
     const panel = payload.panel || payload.raw?.panel || {};
     const symbol = panel.symbol || panel.ticker || payload.symbol || '—';
-    const tf = panel.timeframe || panel.tf || panel.interval || '1m';
+    const tfSel =
+      (localStorage.getItem('aaron_selected_tf') || '').trim() ||
+      panel.timeframe || panel.tf || panel.interval ||
+      (typeof A10_DEFAULT_TF === 'string' ? A10_DEFAULT_TF : '1m');
+
     const metaEl = document.getElementById('chart-meta');
-    if (metaEl) metaEl.textContent = `${symbol} · ${tf} · Alpaca`;
+    if (metaEl) metaEl.textContent = `${symbol} · ${tfSel} · Alpaca`;
 
     const candles = a10ExtractCandles(payload);
     if (!candles.length) return;
 
     // evita reprocessar sem necessidade
-    const payloadKey = `${symbol}|${tf}|${candles[candles.length - 1].time}|${candles.length}`;
-    if (payloadKey === a10LastPayloadKey) return;
-    a10LastPayloadKey = payloadKey;
+    const last = candles[candles.length - 1];
+    const key = `${symbol}|${tfSel}|${last?.time}|${last?.close}`;
+    if (key === a10LastPayloadKey) return;
+    a10LastPayloadKey = key;
 
     a10CandleSeries.setData(candles);
 
     const t = a10ToggleState();
 
-    // EMA 21
     if (a10Ema21Series) {
       a10Ema21Series.applyOptions({ visible: t.ema21 });
       if (t.ema21) a10Ema21Series.setData(a10ComputeEMA(candles, 21));
     }
 
-    // VWAP
     if (a10VwapSeries) {
       a10VwapSeries.applyOptions({ visible: t.vwap });
       if (t.vwap) a10VwapSeries.setData(a10ComputeVWAP(candles));
     }
 
-    // Session High / Low
     if (t.sessionHL) {
       const hl = a10ComputeSessionHL(candles);
       if (hl) {
@@ -7145,7 +7385,6 @@ function a10UpdateChartFromPayload(payload) {
       a10ClearPriceLine('sessionLo');
     }
 
-    // ORB 5m
     if (t.orb) {
       const orb = a10ComputeORB(candles, 5);
       if (orb) {
@@ -7156,37 +7395,57 @@ function a10UpdateChartFromPayload(payload) {
       a10ClearPriceLine('orbHi');
       a10ClearPriceLine('orbLo');
     }
-
-    // Prev Day levels (se vier no payload; se não vier, só ignora)
-    if (t.prevDay) {
-      const pd = panel.prev_day || panel.prevDay || payload.prev_day || payload.prevDay || null;
-      const pdHigh = Number(pd?.high ?? pd?.h ?? panel.prev_day_high ?? panel.pd_high);
-      const pdLow  = Number(pd?.low  ?? pd?.l ?? panel.prev_day_low  ?? panel.pd_low);
-      if (Number.isFinite(pdHigh)) a10SetPriceLine('pdHigh', pdHigh, 'PD High', 'rgba(59,130,246,0.85)', 3);
-      if (Number.isFinite(pdLow))  a10SetPriceLine('pdLow',  pdLow,  'PD Low',  'rgba(59,130,246,0.85)', 3);
-    } else {
-      a10ClearPriceLine('pdHigh');
-      a10ClearPriceLine('pdLow');
-    }
   } catch (e) {
     console.warn('[A10] updateChart falhou (mas o painel continua):', e);
   }
 }
 
+
+function a10RefreshChart() {
+  if (typeof a10StreamSource !== 'undefined' && a10StreamSource === 'stream') {
+    a10RedrawStudiesFromLive();
+    return;
+  }
+  a10LastPayloadKey = '';
+  a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
+}
+
 function a10BindStudiesUI() {
   document.querySelectorAll('.pill-toggle input').forEach((el) => {
-    el.addEventListener('change', () => {
-      a10LastPayloadKey = ''; // força redraw
-      a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
+    el.addEventListener('change', () => a10RefreshChart());
+  });
+}
+
+function a10BindTimeframesUI() {
+  const wrap = document.getElementById('a10-tf');
+  if (!wrap) return;
+
+  const btns = Array.from(wrap.querySelectorAll('.a10-tf-btn'));
+  const current =
+    (localStorage.getItem('aaron_selected_tf') || A10_DEFAULT_TF || '1m').trim() || '1m';
+
+  localStorage.setItem('aaron_selected_tf', current);
+  btns.forEach(b => b.classList.toggle('active', b.dataset.tf === current));
+
+  btns.forEach((b) => {
+    b.addEventListener('click', () => {
+      const tf = String(b.dataset.tf || '').trim();
+      if (!tf) return;
+
+      localStorage.setItem('aaron_selected_tf', tf);
+      btns.forEach(x => x.classList.toggle('active', x.dataset.tf === tf));
+      window.dispatchEvent(new CustomEvent('aaron:timeframeSelected', { detail: { timeframe: tf } }));
     });
   });
 }
+
 
 // ====== INICIALIZAÇÃO ======
 function initAaron9() {
   // liga chart + estudos
   a10InitChart();
   a10BindStudiesUI();
+  a10BindTimeframesUI();
 
   // sempre que o painel atualizar, atualiza o chart
   window.addEventListener('aaron:panelUpdated', () => {
