@@ -6911,22 +6911,59 @@ function a10UnixSec(t) {
 
 function a10ExtractCandles(payload) {
   const raw = payload?.raw || payload?.data || payload || {};
-  const panel = payload?.panel || raw?.panel || {};
+  const panel = payload?.panel || raw?.panel || raw || {};
+  const symbol = String(panel.symbol || panel.ticker || payload.symbol || '')
+    .toUpperCase()
+    .trim();
 
   const candidates = [
     raw?.intraday?.candles,
     raw?.intraday?.bars,
     raw?.candles,
     raw?.bars,
+
+    // alguns fluxos devolvem objeto por símbolo
+    raw?.intraday?.bars_by_symbol,
+    raw?.bars_by_symbol,
+
     panel?.intraday?.candles,
+    panel?.intraday?.bars,
     panel?.candles,
+    panel?.bars,
     panel?.recent_candles,
+
     payload?.candles,
     payload?.bars,
   ];
 
-  const arr = candidates.find((x) => Array.isArray(x)) || [];
-  const out = [];
+  function pickArray(x) {
+    if (!x) return null;
+
+    // já é array
+    if (Array.isArray(x)) return x;
+
+    // Alpaca multi-symbol: { bars: { "NVDA":[...] } }
+    if (typeof x === 'object') {
+      if (x.bars && typeof x.bars === 'object') {
+        if (symbol && Array.isArray(x.bars[symbol])) return x.bars[symbol];
+      }
+
+      // objeto direto: { "NVDA":[...] }
+      if (symbol && Array.isArray(x[symbol])) return x[symbol];
+
+      // fallback: se existir só 1 array dentro do objeto, usa ele
+      for (const k of Object.keys(x)) {
+        if (Array.isArray(x[k])) return x[k];
+      }
+    }
+
+    return null;
+  }
+
+  const arr = candidates.map(pickArray).find((a) => Array.isArray(a)) || [];
+
+  // ✅ dedupe por time: se vier repetido, o “último ganha”
+  const map = new Map();
 
   for (const c of arr) {
     const time = a10UnixSec(c?.t ?? c?.time ?? c?.timestamp ?? c?.datetime);
@@ -6936,14 +6973,26 @@ function a10ExtractCandles(payload) {
     const close= Number(c?.c ?? c?.close);
     const volume = Number(c?.v ?? c?.volume ?? 0);
 
-    if (!time || !Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
+    if (!time) continue;
+    if (!Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
 
-    out.push({ time, open, high, low, close, volume });
+    // sanidade: garante high/low consistentes mesmo se vierem estranhos
+    const hi = Math.max(high, open, close, low);
+    const lo = Math.min(low, open, close, high);
+
+    map.set(time, {
+      time,
+      open,
+      high: hi,
+      low: lo,
+      close,
+      volume: Number.isFinite(volume) ? volume : 0
+    });
   }
 
-  out.sort((a, b) => a.time - b.time);
-  return out;
+  return Array.from(map.values()).sort((a, b) => a.time - b.time);
 }
+
 
 function a10ComputeEMA(candles, period) {
   const alpha = 2 / (period + 1);
@@ -7112,10 +7161,14 @@ function a10UpdateChartFromPayload(payload) {
     const candles = a10ExtractCandles(payload);
     if (!candles.length) return;
 
-    // evita reprocessar sem necessidade
-    const payloadKey = `${symbol}|${tf}|${candles[candles.length - 1].time}|${candles.length}`;
-    if (payloadKey === a10LastPayloadKey) return;
-    a10LastPayloadKey = payloadKey;
+    // evita reprocessar sem necessidade (mas deixa atualizar o candle “em formação”)
+const last = candles[candles.length - 1];
+const payloadKey =
+  `${symbol}|${tf}|len:${candles.length}|t:${last.time}|o:${last.open}|h:${last.high}|l:${last.low}|c:${last.close}|v:${last.volume}`;
+
+if (payloadKey === a10LastPayloadKey) return;
+a10LastPayloadKey = payloadKey;
+
 
     a10CandleSeries.setData(candles);
 
