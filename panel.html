@@ -3658,12 +3658,14 @@ const A10_LIVE_WS_URL_PROD = "wss://SEU_CLOUD_RUN_URL/ws";
 const A10_LIVE_WS_URL_TEST = "ws://localhost:8080/ws";
 
 // auto-select: local (file://, localhost, 127.0.0.1) -> TEST, senão -> PROD
-const __A10_IS_LOCAL = (location.hostname === "" || location.hostname === "localhost" || location.hostname === "127.0.0.1");
+const __A10_IS_LOCAL =
+  (location.protocol === "file:" ||
+   location.hostname === "" ||
+   location.hostname === "localhost" ||
+   location.hostname === "127.0.0.1");
+
 const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_PROD;
 
-
-let a10LiveWS = null;
-let a10LiveReconnectTimer = null;
 let a10LiveWanted = { symbol: null, timeframe: null };
 
 function a10LiveSetStatus(text){
