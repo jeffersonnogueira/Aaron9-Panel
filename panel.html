@@ -4188,7 +4188,16 @@ window.addEventListener("aaron:symbolSelected", (ev) => {
 
   // 2) atualiza o painel JSON imediatamente
   loadPanel(true);
+
+  // 3) (opcional) Live Candles via Cloud Run (NÃO muda nada enquanto A10_USE_LIVE_CANDLES=false)
+  if (typeof a10LiveConnect === "function") {
+    const tf = (typeof getSelectedTimeframe === "function")
+      ? getSelectedTimeframe()
+      : (window.AARON_SELECTED_TIMEFRAME || "1m");
+    a10LiveConnect(symbol, tf);
+  }
 });
+
 
 
 
