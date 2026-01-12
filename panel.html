@@ -2330,7 +2330,7 @@
   display: grid;
   grid-template-columns: 1fr 1.25fr;
   gap: 10px;
-  padding: 6px 0;
+  padding: 6px 8px; /* <-- antes era 6px 0 (sem espaço nas laterais) */
   border-bottom: 1px dashed rgba(255,255,255,.07);
 }
 
@@ -2339,12 +2339,14 @@
 .resp-snap-key{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 11px;
+  line-height: 1.35; /* <-- respiro entre linhas */
   opacity: .85;
 }
 
 .resp-snap-val{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 11px;
+  line-height: 1.35; /* <-- respiro entre linhas */
   text-align: right;
   opacity: .95;
   word-break: break-word;
