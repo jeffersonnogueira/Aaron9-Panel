@@ -4108,6 +4108,10 @@ async function requestMatcher(symbol) {
       ? getSelectedTimeframe()
       : (localStorage.getItem("aaron_selected_timeframe") || "1m");
 
+  // ✅ LIVE candles (Cloud Run WS): conecta/assina para este símbolo/timeframe
+  // (não muda nada enquanto A10_USE_LIVE_CANDLES = false)
+  if (typeof a10LiveConnect === "function") a10LiveConnect(symbol, tf);
+
   const reqId = ++__AARON_MATCHER_REQ_ID;
 
   const ctxEl = document.getElementById("context-text");
@@ -4126,12 +4130,12 @@ async function requestMatcher(symbol) {
     return await res.json();
   }
 
-  let raw;
+  let raw = null;
+
   try {
-    // 1) tenta PROD
     raw = await fetchOne(MATCHER_WEBHOOK_URL);
   } catch (errProd) {
-    // 2) fallback TEST
+    // fallback para webhook-test (ajuda MUITO quando o n8n tá no editor)
     try {
       raw = await fetchOne(MATCHER_WEBHOOK_URL_TEST);
     } catch (errTest) {
@@ -4161,6 +4165,7 @@ async function requestMatcher(symbol) {
   if (exeEl) exeEl.textContent = data?.panel?.updated_at || "—";
   if (typeof setRespSnapMessage === "function") setRespSnapMessage("");
 }
+
 
 
 
