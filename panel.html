@@ -2319,10 +2319,11 @@
   border-bottom: 1px solid rgba(120,170,255,.12);
 }
 
-.resp-snap-body{
-  padding: 10px;
-  max-height: 340px; /* mais alto p/ ficar “na cara” */
-  overflow: auto;
+/* === OVERRIDE: UI + DIGEST sem rolagem (cresce a altura do card) === */
+#resp-snap-ui,
+#resp-snap-digest{
+  max-height: none;
+  overflow: visible;
 }
 
 .resp-snap-row{
