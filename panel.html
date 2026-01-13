@@ -3650,14 +3650,14 @@ const MATCHER_WEBHOOK_URL = MATCHER_WEBHOOK_URL_PROD; // default
 
 
 // ======= AARON10 LIVE CANDLES (Alpaca PRO → Cloud Run → UI) =======
-// (Passo 1) Só adiciona o módulo. AGORA vamos ligar para teste local.
 const A10_USE_LIVE_CANDLES = true;
 
-// Cloud Run WebSocket (PROD)  ✅ (Vercel usa isso)
+// Cloud Run service URL (da sua tela): https://aaron10-panel-api-888402066046.us-central1.run.app
 const A10_LIVE_WS_URL_PROD = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
 
-// ✅ Recomendo deixar o TEST igual ao PROD, assim até o preview 127.0.0.1 funciona sem relay local
-const A10_LIVE_WS_URL_TEST = A10_LIVE_WS_URL_PROD;
+// (opcional) se você quiser que o preview local (127.0.0.1) também veja live sem rodar relay local:
+const A10_LIVE_WS_URL_TEST = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
+
 
 // auto-select: local (file://, localhost, 127.0.0.1) -> TEST, senão -> PROD
 const __A10_IS_LOCAL =
