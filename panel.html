@@ -3648,14 +3648,15 @@ const MATCHER_WEBHOOK_URL = MATCHER_WEBHOOK_URL_PROD; // default
 // Exemplo (prod): https://SEU_WORKSPACE.app.n8n.cloud/webhook/aaron10_matcher_request
 // (não use a test url depois de publicar; use a url de produção)
 
-
 // ======= AARON10 LIVE CANDLES (Alpaca PRO → Cloud Run → UI) =======
 // (Passo 1) Só adiciona o módulo. AGORA vamos ligar para teste local.
 const A10_USE_LIVE_CANDLES = true;
 
-// Coloque aqui o WS do Cloud Run (ex: wss://aaron-live-xxxxx-uc.a.run.app/ws)
-const A10_LIVE_WS_URL_PROD = "wss://SEU_CLOUD_RUN_URL/ws";
-const A10_LIVE_WS_URL_TEST = "ws://localhost:8080/ws";
+// Cloud Run WebSocket (PROD)  ✅ (Vercel usa isso)
+const A10_LIVE_WS_URL_PROD = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
+
+// ✅ Recomendo deixar o TEST igual ao PROD, assim até o preview 127.0.0.1 funciona sem relay local
+const A10_LIVE_WS_URL_TEST = A10_LIVE_WS_URL_PROD;
 
 // auto-select: local (file://, localhost, 127.0.0.1) -> TEST, senão -> PROD
 const __A10_IS_LOCAL =
@@ -3665,6 +3666,17 @@ const __A10_IS_LOCAL =
    location.hostname === "127.0.0.1");
 
 const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_PROD;
+
+
+let a10LiveWanted = { symbol: null, timeframe: null };
+
+// (faltava declarar — ajuda a não quebrar nada)
+let a10LiveWS = null;
+let a10LiveReconnectTimer = null;
+
+
+const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_PROD;
+
 
 let a10LiveWanted = { symbol: null, timeframe: null };
 
@@ -3684,58 +3696,269 @@ function a10LiveSubscribe(symbol, timeframe){
   a10LiveWanted = { symbol, timeframe };
   if (!a10LiveWS || a10LiveWS.readyState !== WebSocket.OPEN) return;
 
-  const msg = { type: "subscribe", symbol, timeframe };
+  // normaliza timeframe (caso o relay mande/espere formatos diferentes)
+  const tf = String(timeframe || "1m").trim();
+  const tfLower = tf.toLowerCase();
+  const tfAlpaca = ({
+    "1m":"1Min","5m":"5Min","15m":"15Min","30m":"30Min",
+    "1h":"1Hour","4h":"4Hour","1d":"1Day"
+  })[tfLower] || tf;
+
+  // manda um pacote “compatível” (seu relay pode ler type, ou action, ou bars[])
+  const msg = {
+    type: "subscribe",
+    action: "subscribe",
+    symbol,
+    timeframe: tf,
+    tf: tf,
+    timeframe_alpaca: tfAlpaca,
+    bars: [symbol],
+    quotes: [symbol],
+    trades: [symbol],
+  };
+
   try { a10LiveWS.send(JSON.stringify(msg)); } catch(e){}
 }
 
 function a10LiveHandleMessage(data){
-  let msg = null;
-  try { msg = JSON.parse(data); } catch(e){ return; }
-  if (!msg || typeof msg !== "object") return;
+  let parsed = null;
+  try { parsed = JSON.parse(data); } catch(e){ return; }
 
-  // Esperado do Cloud Run:
-  // snapshot: {type:"snapshot", symbol, timeframe, candles:[{t,o,h,l,c,v}...] }
-  // update:   {type:"candle_update", symbol, timeframe, candle:{t,o,h,l,c,v} }
-  // status:   {type:"status", status:"connected|reconnecting|stale", info:"..."}
+  const looksLikeCandle = (x) => {
+    if (!x || typeof x !== "object") return false;
+    const o = (x.o ?? x.open ?? x.O);
+    const h = (x.h ?? x.high ?? x.H);
+    const l = (x.l ?? x.low  ?? x.L);
+    const c = (x.c ?? x.close?? x.C);
+    return (o != null && h != null && l != null && c != null);
+  };
 
-  if (msg.type === "status") {
-    a10LiveSetStatus(msg.status || msg.info || "LIVE");
+  const normalizeOne = (x) => {
+    const tRaw = (x.t ?? x.time ?? x.timestamp ?? x.datetime ?? x.start ?? x.end);
+    const time = a10UnixSec(tRaw);
+    const open = Number(x.o ?? x.open ?? x.O);
+    const high = Number(x.h ?? x.high ?? x.H);
+    const low  = Number(x.l ?? x.low  ?? x.L);
+    const close= Number(x.c ?? x.close?? x.C);
+    const volume = Number(x.v ?? x.volume ?? x.V ?? 0);
+
+    if (!Number.isFinite(time) || !Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) {
+      return null;
+    }
+    return { time, open, high, low, close, volume };
+  };
+
+  const handleSnapshotList = (list, symbolGuess, tfGuess) => {
+    const out = [];
+    for (const it of list) {
+      const n = normalizeOne(it);
+      if (n) out.push(n);
+    }
+    if (!out.length) return;
+
+    out.sort((a,b) => a.time - b.time);
+
+    // atualiza o "last payload" pra manter seus toggles (EMA/VWAP/etc) funcionando
+    const payload = {
+      panel: { symbol: symbolGuess || a10LiveWanted.symbol || "—", timeframe: tfGuess || a10LiveWanted.timeframe || "1m" },
+      candles: out.map(c => ({ t: c.time * 1000, o:c.open, h:c.high, l:c.low, c:c.close, v:c.volume }))
+    };
+    window.__AARON_LAST_PAYLOAD__ = payload;
+
+    a10UpdateChartFromPayload(payload);
+  };
+
+  const handleUpdateOne = (barLike, symbolGuess, tfGuess) => {
+    const n = normalizeOne(barLike);
+    if (!n) return;
+
+    a10InitChart();
+    if (!a10CandleSeries) return;
+
+    a10CandleSeries.update(n);
+
+    // mantém o meta bonitinho
+    const metaEl = document.getElementById("chart-meta");
+    if (metaEl) metaEl.textContent = `${symbolGuess || a10LiveWanted.symbol || "—"} · ${(tfGuess || a10LiveWanted.timeframe || "1m")} · Alpaca`;
+  };
+
+  const handleOneMsg = (msg) => {
+    if (!msg || typeof msg !== "object") return;
+
+    // status (vários formatos)
+    if (msg.type === "status" || msg.status || msg.info) {
+      a10LiveSetStatus(msg.status || msg.info || "LIVE");
+      return;
+    }
+
+    // snapshot em objeto
+    const snapList =
+      msg.candles || msg.bars ||
+      msg.data?.candles || msg.data?.bars ||
+      msg.payload?.candles || msg.payload?.bars;
+
+    if (Array.isArray(snapList)) {
+      const sym = (msg.symbol || msg.S || snapList?.[0]?.S || a10LiveWanted.symbol);
+      const tf  = (msg.timeframe || msg.tf || a10LiveWanted.timeframe);
+      // se vier um lote grande, trata como snapshot
+      handleSnapshotList(snapList, sym, tf);
+      return;
+    }
+
+    // update em objeto (vários formatos)
+    const upd =
+      msg.candle || msg.bar ||
+      msg.data?.candle || msg.data?.bar ||
+      msg.payload?.candle || msg.payload?.bar;
+
+    if (upd && looksLikeCandle(upd)) {
+      const sym = (msg.symbol || msg.S || upd.S || a10LiveWanted.symbol);
+      const tf  = (msg.timeframe || msg.tf || a10LiveWanted.timeframe);
+      handleUpdateOne(upd, sym, tf);
+      return;
+    }
+
+    // Alpaca RAW bar (ex: {T:"b", S:"NVDA", t:"...", o,h,l,c,v})
+    if (looksLikeCandle(msg) && (msg.T === "b" || msg.t === "b" || msg.type === "bar")) {
+      const sym = (msg.symbol || msg.S || a10LiveWanted.symbol);
+      const tf  = (msg.timeframe || msg.tf || a10LiveWanted.timeframe);
+      handleUpdateOne(msg, sym, tf);
+      return;
+    }
+  };
+
+  // se vier array:
+  if (Array.isArray(parsed)) {
+    // array grande de candles → snapshot
+    if (parsed.length > 5 && parsed.every(looksLikeCandle)) {
+      const sym = (parsed?.[0]?.S || a10LiveWanted.symbol);
+      const tf  = a10LiveWanted.timeframe;
+      handleSnapshotList(parsed, sym, tf);
+      return;
+    }
+    // senão, trata como updates unitários
+    for (const it of parsed) handleOneMsg(it);
     return;
   }
 
-  if (msg.type === "snapshot" && Array.isArray(msg.candles)) {
-    try {
-      // Reusa seu extrator existente (a10ExtractCandles já aceita payload.candles)
-      a10UpdateChartFromPayload({
-        panel: { symbol: msg.symbol, timeframe: msg.timeframe },
-        candles: msg.candles
-      });
-    } catch(e){}
-    return;
-  }
+  handleOneMsg(parsed);
+}
 
-  if (msg.type === "candle_update" && msg.candle) {
+  const applyUpdate = (candleObj) => {
+    if (!candleObj) return;
     try {
       a10InitChart();
       if (!a10CandleSeries) return;
 
-      const t = Number(msg.candle.t);
+      const tRaw = candleObj.t ?? candleObj.time ?? candleObj.timestamp;
+      let tNum = Number(tRaw);
+      if (!Number.isFinite(tNum) && typeof tRaw === "string") tNum = Date.parse(tRaw);
+
+      // se vier em ms, converte; se já vier em segundos, mantém
+      const time =
+        Number.isFinite(tNum)
+          ? (tNum > 1e11 ? Math.floor(tNum / 1000) : Math.floor(tNum))
+          : undefined;
+
       const candle = {
-        time: Number.isFinite(t) ? Math.floor(t / 1000) : undefined, // ms -> sec
-        open: Number(msg.candle.o),
-        high: Number(msg.candle.h),
-        low:  Number(msg.candle.l),
-        close:Number(msg.candle.c),
-        volume:Number(msg.candle.v),
+        time,
+        open: Number(candleObj.o ?? candleObj.open),
+        high: Number(candleObj.h ?? candleObj.high),
+        low:  Number(candleObj.l ?? candleObj.low),
+        close:Number(candleObj.c ?? candleObj.close),
+        volume:Number(candleObj.v ?? candleObj.volume ?? 0),
       };
 
       if (Number.isFinite(candle.time) && Number.isFinite(candle.open)) {
         a10CandleSeries.update(candle);
       }
     } catch(e){}
+  };
+
+  const handleOne = (msg) => {
+    if (!msg) return;
+
+    // 1) Status
+    const type = msg.type || msg.event || msg.kind || msg.T;
+    if (type === "status") {
+      a10LiveSetStatus(msg.status || msg.info || "LIVE");
+      return;
+    }
+
+    // 2) Snapshot (vários formatos possíveis)
+if (type === "snapshot" || type === "history" || type === "bars") {
+  const candlesAny =
+    msg.candles ||
+    msg.bars ||
+    msg.data?.candles ||
+    msg.data?.bars ||
+    msg.payload?.candles ||
+    msg.payload?.bars;
+
+  const sym = msg.symbol || msg.S || a10LiveWanted.symbol;
+  const tf  = msg.timeframe || msg.tf || msg.interval || a10LiveWanted.timeframe || "1m";
+
+  // a) veio array direto
+  if (Array.isArray(candlesAny)) {
+    applySnapshot(candlesAny, sym, tf);
+    return;
+  }
+
+  // b) veio objeto por símbolo (ex: { "NVDA":[...] } ou { bars:{ "NVDA":[...] } })
+  if (candlesAny && typeof candlesAny === "object") {
+    try {
+      a10UpdateChartFromPayload({
+        panel: { symbol: sym || "—", timeframe: tf },
+        raw: { bars_by_symbol: candlesAny },
+        bars_by_symbol: candlesAny,
+        bars: candlesAny
+      });
+    } catch(e){}
     return;
   }
 }
+
+
+    // 3) Update (vários formatos possíveis)
+    if (type === "candle_update" || type === "bar" || type === "update") {
+      const candle = msg.candle || msg.bar || msg.data?.candle || msg.data?.bar || msg;
+      applyUpdate(candle);
+      return;
+    }
+
+    // 4) Alpaca RAW (Bars: {T:"b", S:"NVDA", t:"...", o,h,l,c,v})
+    if (msg.T === "b" || msg.T === "bar") {
+      applyUpdate(msg);
+      return;
+    }
+
+    // 5) Snapshot “nu” (servidor manda só a lista)
+    if (Array.isArray(msg)) {
+      // se for 1 item e parecer update, trata como update
+      if (msg.length === 1) {
+        const one = msg[0];
+        if (one && (one.T === "b" || one.T === "bar" || one.type === "candle_update" || one.type === "bar")) {
+          handleOne(one);
+          return;
+        }
+      }
+
+      const looksLikeCandle = (x) =>
+        x && (x.o!=null || x.open!=null) && (x.h!=null || x.high!=null) && (x.l!=null || x.low!=null) && (x.c!=null || x.close!=null);
+
+      if (msg.length && looksLikeCandle(msg[0])) {
+        applySnapshot(msg, a10LiveWanted.symbol, a10LiveWanted.timeframe);
+      } else {
+        msg.forEach(handleOne);
+      }
+      return;
+    }
+  };
+
+  // topo pode vir array ou objeto
+  handleOne(parsed);
+}
+
 
 function a10LiveConnect(symbol, timeframe){
   if (!A10_USE_LIVE_CANDLES) return; // NÃO altera nada até você ligar
@@ -3744,6 +3967,7 @@ function a10LiveConnect(symbol, timeframe){
   a10LiveSetStatus("LIVE: conectando...");
 
   const ws = new WebSocket(A10_LIVE_WS_URL);
+  try { ws.binaryType = "arraybuffer"; } catch(e){} // ajuda quando o servidor manda Buffer/binary
   a10LiveWS = ws;
 
   ws.addEventListener("open", () => {
@@ -3763,6 +3987,7 @@ function a10LiveConnect(symbol, timeframe){
     }, 1200);
   });
 }
+
 
 
 // ======= AARON10 (FASE 2) — Timeframe picker (UI) + query param =======
