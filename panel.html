@@ -3653,9 +3653,11 @@ const MATCHER_WEBHOOK_URL = MATCHER_WEBHOOK_URL_PROD; // default
 // (Passo 1) Só adiciona o módulo. AGORA vamos ligar para teste local.
 const A10_USE_LIVE_CANDLES = true;
 
-// Coloque aqui o WS do Cloud Run (ex: wss://aaron-live-xxxxx-uc.a.run.app/ws)
-const A10_LIVE_WS_URL_PROD = "wss://SEU_CLOUD_RUN_URL/ws";
-const A10_LIVE_WS_URL_TEST = "ws://localhost:8080/ws";
+// Cloud Run WebSocket (PROD)  ✅ (Vercel usa isso)
+const A10_LIVE_WS_URL_PROD = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
+
+// ✅ Recomendo deixar o TEST igual ao PROD, assim até o preview 127.0.0.1 funciona sem relay local
+const A10_LIVE_WS_URL_TEST = A10_LIVE_WS_URL_PROD;
 
 // auto-select: local (file://, localhost, 127.0.0.1) -> TEST, senão -> PROD
 const __A10_IS_LOCAL =
