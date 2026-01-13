@@ -3633,7 +3633,7 @@
 
   <script>
 // ======= CONFIG PAINEL (JSON) =======
-const PANEL_URL = 'https://aaron10-panel-api-888402066046.us-central1.run.app/panel';
+const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json';
 const REFRESH_MS = 60000; // 1 minuto
 
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
@@ -6776,23 +6776,10 @@ async function loadPanel(showSpinner) {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
 
-            const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
-
-    const tfRaw = (typeof getSelectedTimeframe === "function") ? getSelectedTimeframe() : "1m";
-    const tfMap = {
-      "1m": "1Min",
-      "5m": "5Min",
-      "15m": "15Min",
-      "1h": "1Hour",
-      "4h": "4Hour",
-      "1d": "1Day",
-    };
-    const tfKey = String(tfRaw || "").trim();
-    const tf = tfMap[tfKey] || tfMap[tfKey.toLowerCase()] || tfKey || "1Min";
-
-    const url = `${PANEL_URL}?symbol=${encodeURIComponent(sym)}&tf=${encodeURIComponent(tf)}&limit=200&feed=sip&t=${Date.now()}`;
+        const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
+    const tf  = (typeof getSelectedTimeframe === "function") ? getSelectedTimeframe() : "1m";
+    const url = `${PANEL_URL}${PANEL_URL.includes('?') ? '&' : '?'}symbol=${encodeURIComponent(sym)}&timeframe=${encodeURIComponent(tf)}&t=${Date.now()}`;
     const res = await fetch(url, { cache: 'no-store' });
-
 
 
     if (!res.ok) throw new Error('HTTP ' + res.status);
