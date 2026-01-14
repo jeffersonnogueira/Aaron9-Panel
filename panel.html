@@ -3845,82 +3845,72 @@ function a10LiveHandleMessage(data){
 }
 
 
-function a10LiveConnect(symbol, timeframe){
+function a10LiveConnect(symbol, timeframe) {
   if (!A10_USE_LIVE_CANDLES) return;
 
   a10LiveWanted = { symbol, timeframe };
 
-  // evita ficar abrindo 10 sockets
-  if (a10LiveWS && (a10LiveWS.readyState === WebSocket.OPEN || a10LiveWS.readyState === WebSocket.CONNECTING)) {
-    // se já está aberto, só re-assina
-    if (a10LiveWS.readyState === WebSocket.OPEN) a10LiveSubscribe(symbol, timeframe);
-    return;
-  }
-
-  if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
-  a10LiveReconnectTimer = null;
-
-  a10LiveSetStatus("LIVE: conectando");
-
-      const primary = A10_LIVE_WS_URL;
-  const url = primary.endsWith("/ws")
-    ? primary
-    : (primary.replace(/\/+$/, "") + "/ws");
-
-  let ws;
+  // cleanup (não deixa websocket “fantasma”)
   try {
-    ws = new WebSocket(url);
-  } catch (e) {
-    a10LiveSetStatus("LIVE: erro (WS ctor)");
-    return;
+    if (a10LiveWs) {
+      a10LiveWs.onopen = null;
+      a10LiveWs.onmessage = null;
+      a10LiveWs.onerror = null;
+      a10LiveWs.onclose = null;
+      a10LiveWs.close();
+    }
+  } catch (e) {}
+  a10LiveWs = null;
+
+  if (a10LiveReconnectTimer) {
+    clearTimeout(a10LiveReconnectTimer);
+    a10LiveReconnectTimer = null;
   }
 
-  a10LiveWS = ws;
+  // GARANTE que sempre conecta no /ws (não tenta fallback pra raiz)
+  const base = String(A10_LIVE_WS_URL || "").replace(/\/+$/, "");
+  const url = base.endsWith("/ws") ? base : (base + "/ws");
 
-  ws.addEventListener("open", () => {
-    a10LiveSetStatus(`LIVE: conectado (${useFallback ? "fallback" : "primary"})`);
-    a10LiveSubscribe(symbol, timeframe);
-window.__A10_LIVE_FALLBACK_TRIED__ = false;
-    // heartbeat pra não cair por idle
-    if (window.__A10_LIVE_HEARTBEAT__) clearInterval(window.__A10_LIVE_HEARTBEAT__);
-    window.__A10_LIVE_HEARTBEAT__ = setInterval(() => {
-      try {
-        if (a10LiveWS && a10LiveWS.readyState === WebSocket.OPEN) {
-          a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() }));
-        }
-      } catch(e){}
-    }, 25000);
-  });
+  a10LiveSetStatus("LIVE: conectando...");
 
-  ws.addEventListener("message", (ev) => a10LiveHandleMessage(ev.data));
+  const ws = new WebSocket(url);
+  a10LiveWs = ws;
 
-  ws.addEventListener("error", () => {
-    a10LiveSetStatus("LIVE: erro (ws.onerror)");
-  });
-
-  ws.addEventListener("close", (ev) => {
-    const code = ev?.code;
-    const reason = ev?.reason ? ` ${ev.reason}` : "";
-    a10LiveSetStatus(`LIVE: close ${code}${reason}`);
-
-    if (window.__A10_LIVE_HEARTBEAT__) clearInterval(window.__A10_LIVE_HEARTBEAT__);
-    window.__A10_LIVE_HEARTBEAT__ = null;
-
-    // tenta fallback 1x se cair rápido
-    if (!window.__A10_LIVE_FALLBACK_TRIED__) {
-      window.__A10_LIVE_FALLBACK_TRIED__ = true;
-      a10LiveReconnectTimer = setTimeout(() => a10LiveConnect(a10LiveWanted.symbol || symbol, a10LiveWanted.timeframe || timeframe), 400);
-      return;
+  ws.onopen = () => {
+    try {
+      a10LiveSetStatus("ALPACA: CONNECTED");
+      // envia subscribe (isso é o que mantém o relay streamando)
+      a10LiveSubscribe(ws, symbol, timeframe);
+    } catch (e) {
+      console.error("WS onopen error:", e);
     }
+  };
 
-    // reconecta normal
+  ws.onmessage = (ev) => {
+    try {
+      a10LiveHandleMessage(ev.data);
+    } catch (e) {
+      console.error("WS onmessage error:", e);
+    }
+  };
+
+  ws.onerror = (e) => {
+    console.log("WS ERROR", e);
+  };
+
+  ws.onclose = (e) => {
+    console.log("WS CLOSE:", e.code, e.reason);
+    a10LiveSetStatus(`ALPACA: DISCONNECTED (close ${e.code || "?"})`);
+
+    // reconecta sempre no mesmo endpoint correto
     a10LiveReconnectTimer = setTimeout(() => {
-      const s = a10LiveWanted.symbol || symbol;
-      const tf = a10LiveWanted.timeframe || timeframe;
+      const s = (a10LiveWanted && a10LiveWanted.symbol) ? a10LiveWanted.symbol : symbol;
+      const tf = (a10LiveWanted && a10LiveWanted.timeframe) ? a10LiveWanted.timeframe : timeframe;
       a10LiveConnect(s, tf);
-    }, 1200);
-  });
+    }, 1500);
+  };
 }
+
 
 
 
