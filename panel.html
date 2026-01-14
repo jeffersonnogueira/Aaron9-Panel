@@ -3669,11 +3669,11 @@ const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_
 
 let a10LiveWanted = { symbol: null, timeframe: null };
 
-// ✅ estado do WS (ERAM as coisas que estavam faltando / inconsistentes)
+// timers/estado (pra não dar ReferenceError)
 let a10LiveWS = null;
 let a10LiveReconnectTimer = null;
-let a10LiveHeartbeatTimer = null; // <-- faltava (ReferenceError)
-let a10LastMsgAt = 0;             // <-- faltava (ReferenceError)
+let a10LiveHeartbeatTimer = null;
+let a10LastMsgAt = 0;
 
 function a10LiveSetStatus(text){
   const msg = text || "—";
@@ -3698,7 +3698,10 @@ function a10LiveClose(){
 
   if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
   a10LiveHeartbeatTimer = null;
+
+  window.__A10_LIVE_FALLBACK_TRIED__ = false;
 }
+
 
 function a10LiveSubscribe(symbol, timeframe){
   a10LiveWanted = { symbol, timeframe };
@@ -3807,6 +3810,7 @@ function a10LiveHandleMessage(raw) {
 function a10LiveConnect(symbol, timeframe) {
   if (!A10_USE_LIVE_CANDLES) return;
 
+  // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
 
   // fecha WS anterior (se existir)
@@ -3819,13 +3823,15 @@ function a10LiveConnect(symbol, timeframe) {
   a10LiveSetStatus("ALPACA: CONNECTING");
 
   try {
-    a10LiveWS = new WebSocket(url);
+    const ws = new WebSocket(url);
+    a10LiveWS = ws;
 
-    a10LiveWS.addEventListener("open", () => {
+    ws.addEventListener("open", () => {
+      if (ws !== a10LiveWS) return; // ignora socket velho
       a10LastMsgAt = Date.now();
       a10LiveSetStatus("ALPACA: CONNECTED");
 
-      // heartbeat (mantém vivo + evita idle drop)
+      // heartbeat
       if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
       a10LiveHeartbeatTimer = setInterval(() => {
         if (a10LiveWS && a10LiveWS.readyState === 1) {
@@ -3833,14 +3839,20 @@ function a10LiveConnect(symbol, timeframe) {
         }
       }, 15000);
 
-      // ✅ subscribe assim que conectar
+      // subscribe assim que conectar
       a10LiveSubscribe(symbol, timeframe);
     });
 
-    // ✅ ERRO CRÍTICO ANTES: precisa passar ev.data, não o evento inteiro
-    a10LiveWS.addEventListener("message", (ev) => a10LiveHandleMessage(ev.data));
+    // ✅ CRÍTICO: passar ev.data
+    ws.addEventListener("message", (ev) => {
+      if (ws !== a10LiveWS) return;
+      a10LastMsgAt = Date.now();
+      a10LiveHandleMessage(ev.data);
+    });
 
-    a10LiveWS.addEventListener("close", (e) => {
+    ws.addEventListener("close", (e) => {
+      if (ws !== a10LiveWS) return; // close de socket velho: ignora
+
       a10LiveSetStatus(`ALPACA: DISCONNECTED (${e.code || "close"})`);
 
       if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
@@ -3850,10 +3862,11 @@ function a10LiveConnect(symbol, timeframe) {
       a10LiveReconnectTimer = setTimeout(() => {
         const w = a10LiveWanted || {};
         if (w.symbol) a10LiveConnect(w.symbol, w.timeframe);
-      }, 1200);
+      }, 1500);
     });
 
-    a10LiveWS.addEventListener("error", () => {
+    ws.addEventListener("error", () => {
+      if (ws !== a10LiveWS) return;
       a10LiveSetStatus("ALPACA: WS ERROR");
     });
 
@@ -3862,6 +3875,7 @@ function a10LiveConnect(symbol, timeframe) {
     a10LiveSetStatus("ALPACA: CONNECT FAIL");
   }
 }
+
 
 
 
