@@ -3863,7 +3863,7 @@ function a10LiveConnect(symbol, timeframe){
   a10LiveSetStatus("LIVE: conectando");
 
   const primary = A10_LIVE_WS_URL;
-  const fallback = primary.endsWith("/ws") ? primary.replace(/\/ws$/, "") : (primary + "/ws");
+  const fallback = primary.endsWith("/ws") ? primary : (primary.replace(/\/+$/, "") + "/ws");
   const useFallback = !!window.__A10_LIVE_FALLBACK_TRIED__;
   const url = useFallback ? fallback : primary;
 
@@ -3880,7 +3880,7 @@ function a10LiveConnect(symbol, timeframe){
   ws.addEventListener("open", () => {
     a10LiveSetStatus(`LIVE: conectado (${useFallback ? "fallback" : "primary"})`);
     a10LiveSubscribe(symbol, timeframe);
-
+window.__A10_LIVE_FALLBACK_TRIED__ = false;
     // heartbeat pra não cair por idle
     if (window.__A10_LIVE_HEARTBEAT__) clearInterval(window.__A10_LIVE_HEARTBEAT__);
     window.__A10_LIVE_HEARTBEAT__ = setInterval(() => {
