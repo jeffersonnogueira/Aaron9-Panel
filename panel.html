@@ -3670,7 +3670,12 @@ const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_
 
 let a10LiveWanted = { symbol: null, timeframe: null };
 
+// ✅ FALTAVA ISSO (senão dá ReferenceError e mata o live candles)
+let a10LiveWS = null;
+let a10LiveReconnectTimer = null;
+
 function a10LiveSetStatus(text){
+
   const msg = text || "—";
 
   // 1) label do topo (Sessão)
