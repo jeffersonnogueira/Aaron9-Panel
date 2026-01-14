@@ -3652,11 +3652,11 @@ const MATCHER_WEBHOOK_URL = MATCHER_WEBHOOK_URL_PROD; // default
 // ======= AARON10 LIVE CANDLES (Alpaca PRO → Cloud Run → UI) =======
 const A10_USE_LIVE_CANDLES = true;
 
-// Cloud Run service URL (da sua tela): https://aaron10-panel-api-888402066046.us-central1.run.app
-const A10_LIVE_WS_URL_PROD = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
+// Cloud Run (SEU serviço atual)
+const A10_LIVE_WS_URL_PROD = "wss://aaron10-panel-api-5jnyguanpayq-uc.a.run.app/ws";
 
-// (opcional) se você quiser que o preview local (127.0.0.1) também veja live sem rodar relay local:
-const A10_LIVE_WS_URL_TEST = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
+// (opcional) preview local também usar o mesmo
+const A10_LIVE_WS_URL_TEST = "wss://aaron10-panel-api-5jnyguanpayq-uc.a.run.app/ws";
 
 
 // auto-select: local (file://, localhost, 127.0.0.1) -> TEST, senão -> PROD
