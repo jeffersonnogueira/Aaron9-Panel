@@ -3671,93 +3671,244 @@ const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_
 let a10LiveWanted = { symbol: null, timeframe: null };
 
 function a10LiveSetStatus(text){
-  const el = document.getElementById("session-label"); // existe no topo
-  if (el) el.textContent = text || "—";
+  const msg = text || "—";
+
+  // 1) label do topo (Sessão)
+  const el = document.getElementById("session-label");
+  if (el) el.textContent = msg;
+
+  // 2) Mostra também no “LIVE FEED” (pra ficar impossível não ver)
+  const liveEl = document.querySelector(".status-dot-live");
+  if (liveEl) liveEl.textContent = msg;
+
+  // debug simples (se quiser ver no console)
+  window.__A10_LIVE_STATUS__ = msg;
 }
+
 
 function a10LiveClose(){
   try { if (a10LiveWS) a10LiveWS.close(); } catch(e){}
   a10LiveWS = null;
+
   if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
   a10LiveReconnectTimer = null;
+
+  if (window.__A10_LIVE_HEARTBEAT__) clearInterval(window.__A10_LIVE_HEARTBEAT__);
+  window.__A10_LIVE_HEARTBEAT__ = null;
+
+  window.__A10_LIVE_FALLBACK_TRIED__ = false;
 }
+
 
 function a10LiveSubscribe(symbol, timeframe){
   a10LiveWanted = { symbol, timeframe };
   if (!a10LiveWS || a10LiveWS.readyState !== WebSocket.OPEN) return;
 
-  const msg = { type: "subscribe", symbol, timeframe };
-  try { a10LiveWS.send(JSON.stringify(msg)); } catch(e){}
+  const sym = String(symbol || "").trim().toUpperCase();
+
+  const tfRaw = String(timeframe || "1m").trim().toLowerCase();
+  const tf =
+    (tfRaw === "1" || tfRaw === "1min" || tfRaw === "1m") ? "1m" :
+    (tfRaw === "5" || tfRaw === "5min" || tfRaw === "5m") ? "5m" :
+    (tfRaw === "15" || tfRaw === "15min" || tfRaw === "15m") ? "15m" :
+    (tfRaw === "60" || tfRaw === "60m" || tfRaw === "1h" || tfRaw === "1hr") ? "1h" :
+    (tfRaw === "240" || tfRaw === "240m" || tfRaw === "4h" || tfRaw === "4hr") ? "4h" :
+    (tfRaw === "d" || tfRaw === "day" || tfRaw === "1d") ? "1d" :
+    tfRaw;
+
+  // manda “vários jeitos” porque seu Cloud Run pode estar esperando outro shape
+  const payloads = [
+    { type: "subscribe", symbol: sym, timeframe: tf },
+    { action: "subscribe", symbol: sym, timeframe: tf },
+    { type: "subscribe", symbols: [sym], timeframe: tf },
+    { action: "subscribe", symbols: [sym], timeframe: tf },
+    { type: "subscribe", bars: [sym], tf, timeframe: tf },
+  ];
+
+  for (const p of payloads) {
+    try { a10LiveWS.send(JSON.stringify(p)); } catch(e){}
+  }
+
+  a10LiveSetStatus(`LIVE: subscribed ${sym} ${tf}`);
 }
+
 
 function a10LiveHandleMessage(data){
   let msg = null;
   try { msg = JSON.parse(data); } catch(e){ return; }
-  if (!msg || typeof msg !== "object") return;
 
-  // Esperado do Cloud Run:
-  // snapshot: {type:"snapshot", symbol, timeframe, candles:[{t,o,h,l,c,v}...] }
-  // update:   {type:"candle_update", symbol, timeframe, candle:{t,o,h,l,c,v} }
-  // status:   {type:"status", status:"connected|reconnecting|stale", info:"..."}
+  const handleOne = (m) => {
+    if (!m) return;
 
-  if (msg.type === "status") {
-    a10LiveSetStatus(msg.status || msg.info || "LIVE");
-    return;
-  }
+    // unwrap (às vezes vem dentro de payload/data)
+    const obj =
+      (m && typeof m === "object" && m.payload && typeof m.payload === "object") ? m.payload :
+      (m && typeof m === "object" && m.data && typeof m.data === "object") ? m.data :
+      m;
 
-  if (msg.type === "snapshot" && Array.isArray(msg.candles)) {
-    try {
-      // Reusa seu extrator existente (a10ExtractCandles já aceita payload.candles)
-      a10UpdateChartFromPayload({
-        panel: { symbol: msg.symbol, timeframe: msg.timeframe },
-        candles: msg.candles
-      });
-    } catch(e){}
-    return;
-  }
+    // status
+    if (obj?.type === "status" || obj?.event === "status") {
+      a10LiveSetStatus(obj.status || obj.state || obj.message || "LIVE");
+      return;
+    }
 
-  if (msg.type === "candle_update" && msg.candle) {
+    // snapshot (muitos shapes)
+    const candles =
+      obj?.candles || obj?.bars ||
+      obj?.intraday?.candles || obj?.intraday?.bars ||
+      obj?.payload?.candles || obj?.payload?.bars ||
+      obj?.data?.candles || obj?.data?.bars;
+
+    if (Array.isArray(candles) && candles.length) {
+      try {
+        a10UpdateChartFromPayload({
+          panel: {
+            symbol: String(obj.symbol || obj.S || a10LiveWanted.symbol || "").toUpperCase(),
+            timeframe: obj.timeframe || obj.tf || a10LiveWanted.timeframe || "1m"
+          },
+          candles
+        });
+        a10LiveSetStatus("LIVE: snapshot");
+      } catch(e){}
+      return;
+    }
+
+    // update (raw Alpaca bars também)
+    const isAlpacaBar = (obj?.T === "b" || obj?.T === "bar") && (obj?.S || obj?.symbol);
+    const cObj =
+      obj?.candle || obj?.bar ||
+      obj?.payload?.candle || obj?.payload?.bar ||
+      obj?.data?.candle || obj?.data?.bar ||
+      (isAlpacaBar ? obj : obj);
+
+    const t = cObj?.t ?? cObj?.time ?? cObj?.timestamp ?? cObj?.datetime;
+    const o = cObj?.o ?? cObj?.open;
+    const h = cObj?.h ?? cObj?.high;
+    const l = cObj?.l ?? cObj?.low;
+    const c = cObj?.c ?? cObj?.close;
+    const v = cObj?.v ?? cObj?.volume ?? 0;
+
+    if (t == null || o == null || h == null || l == null || c == null) return;
+
+    // time -> unix seconds (aceita number em ms/sec ou ISO string)
+    let tNum = null;
+    if (typeof t === "number") {
+      tNum = t;
+    } else {
+      const parsed = Date.parse(String(t));
+      tNum = Number.isFinite(parsed) ? parsed : null;
+    }
+    if (tNum == null) return;
+
+    const sec = (tNum > 1e12) ? Math.floor(tNum / 1000) : Math.floor(tNum);
+
     try {
       a10InitChart();
       if (!a10CandleSeries) return;
 
-      const t = Number(msg.candle.t);
-      const candle = {
-        time: Number.isFinite(t) ? Math.floor(t / 1000) : undefined, // ms -> sec
-        open: Number(msg.candle.o),
-        high: Number(msg.candle.h),
-        low:  Number(msg.candle.l),
-        close:Number(msg.candle.c),
-        volume:Number(msg.candle.v),
-      };
+      a10CandleSeries.update({
+        time: sec,
+        open: Number(o),
+        high: Number(h),
+        low:  Number(l),
+        close:Number(c),
+        volume: Number(v) || 0
+      });
 
-      if (Number.isFinite(candle.time) && Number.isFinite(candle.open)) {
-        a10CandleSeries.update(candle);
-      }
+      a10LiveSetStatus("LIVE: tick");
     } catch(e){}
+  };
+
+  // array pode ser snapshot direto OU batch de mensagens
+  if (Array.isArray(msg)) {
+    const looksLikeCandles = msg.length && (msg[0]?.o != null || msg[0]?.open != null || msg[0]?.t != null || msg[0]?.time != null);
+    if (looksLikeCandles) {
+      try {
+        a10UpdateChartFromPayload({
+          panel: { symbol: a10LiveWanted.symbol || "", timeframe: a10LiveWanted.timeframe || "1m" },
+          candles: msg
+        });
+        a10LiveSetStatus("LIVE: snapshot");
+      } catch(e){}
+    } else {
+      msg.forEach(handleOne);
+    }
     return;
   }
+
+  handleOne(msg);
 }
 
+
 function a10LiveConnect(symbol, timeframe){
-  if (!A10_USE_LIVE_CANDLES) return; // NÃO altera nada até você ligar
-  a10LiveClose();
+  if (!A10_USE_LIVE_CANDLES) return;
 
-  a10LiveSetStatus("LIVE: conectando...");
+  a10LiveWanted = { symbol, timeframe };
 
-  const ws = new WebSocket(A10_LIVE_WS_URL);
+  // evita ficar abrindo 10 sockets
+  if (a10LiveWS && (a10LiveWS.readyState === WebSocket.OPEN || a10LiveWS.readyState === WebSocket.CONNECTING)) {
+    // se já está aberto, só re-assina
+    if (a10LiveWS.readyState === WebSocket.OPEN) a10LiveSubscribe(symbol, timeframe);
+    return;
+  }
+
+  if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
+  a10LiveReconnectTimer = null;
+
+  a10LiveSetStatus("LIVE: conectando");
+
+  const primary = A10_LIVE_WS_URL;
+  const fallback = primary.endsWith("/ws") ? primary.replace(/\/ws$/, "") : (primary + "/ws");
+  const useFallback = !!window.__A10_LIVE_FALLBACK_TRIED__;
+  const url = useFallback ? fallback : primary;
+
+  let ws;
+  try {
+    ws = new WebSocket(url);
+  } catch (e) {
+    a10LiveSetStatus("LIVE: erro (WS ctor)");
+    return;
+  }
+
   a10LiveWS = ws;
 
   ws.addEventListener("open", () => {
-    a10LiveSetStatus("LIVE: conectado");
+    a10LiveSetStatus(`LIVE: conectado (${useFallback ? "fallback" : "primary"})`);
     a10LiveSubscribe(symbol, timeframe);
+
+    // heartbeat pra não cair por idle
+    if (window.__A10_LIVE_HEARTBEAT__) clearInterval(window.__A10_LIVE_HEARTBEAT__);
+    window.__A10_LIVE_HEARTBEAT__ = setInterval(() => {
+      try {
+        if (a10LiveWS && a10LiveWS.readyState === WebSocket.OPEN) {
+          a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() }));
+        }
+      } catch(e){}
+    }, 25000);
   });
 
   ws.addEventListener("message", (ev) => a10LiveHandleMessage(ev.data));
-  ws.addEventListener("error", () => a10LiveSetStatus("LIVE: erro"));
 
-  ws.addEventListener("close", () => {
-    a10LiveSetStatus("LIVE: desconectado (reconectando)");
+  ws.addEventListener("error", () => {
+    a10LiveSetStatus("LIVE: erro (ws.onerror)");
+  });
+
+  ws.addEventListener("close", (ev) => {
+    const code = ev?.code;
+    const reason = ev?.reason ? ` ${ev.reason}` : "";
+    a10LiveSetStatus(`LIVE: close ${code}${reason}`);
+
+    if (window.__A10_LIVE_HEARTBEAT__) clearInterval(window.__A10_LIVE_HEARTBEAT__);
+    window.__A10_LIVE_HEARTBEAT__ = null;
+
+    // tenta fallback 1x se cair rápido
+    if (!window.__A10_LIVE_FALLBACK_TRIED__) {
+      window.__A10_LIVE_FALLBACK_TRIED__ = true;
+      a10LiveReconnectTimer = setTimeout(() => a10LiveConnect(a10LiveWanted.symbol || symbol, a10LiveWanted.timeframe || timeframe), 400);
+      return;
+    }
+
+    // reconecta normal
     a10LiveReconnectTimer = setTimeout(() => {
       const s = a10LiveWanted.symbol || symbol;
       const tf = a10LiveWanted.timeframe || timeframe;
@@ -3765,6 +3916,7 @@ function a10LiveConnect(symbol, timeframe){
     }, 1200);
   });
 }
+
 
 
 // ======= AARON10 (FASE 2) — Timeframe picker (UI) + query param =======
@@ -3828,16 +3980,24 @@ function installTimeframePicker(){
 // instala agora (script está no fim do body)
 installTimeframePicker();
 
-// Se mudar o timeframe, recarrega painel + matcher (mesmo símbolo)
 window.addEventListener("aaron:timeframeSelected", () => {
   const symbol =
     window.AARON_SELECTED_SYMBOL ||
     localStorage.getItem("aaron_selected_symbol") ||
     "NVDA";
 
+  const tf =
+    (typeof getSelectedTimeframe === "function")
+      ? getSelectedTimeframe()
+      : (localStorage.getItem("aaron_selected_timeframe") || "1m");
+
+  // ✅ re-assina live candles no novo TF
+  if (typeof a10LiveConnect === "function") a10LiveConnect(symbol, tf);
+
   requestMatcher(symbol);
   loadPanel(true);
 });
+
 
 // chama o n8n e atualiza o painel com o retorno
 // ==========================
