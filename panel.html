@@ -3667,13 +3667,14 @@ const __A10_IS_LOCAL =
 
 const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_PROD;
 
-let a10LiveWanted = { symbol: null, timeframe: null };
+let a10LiveSubscribed = { symbol: null, timeframe: null };
 
-// timers/estado (pra não dar ReferenceError)
-let a10LiveWS = null;
-let a10LiveReconnectTimer = null;
-let a10LiveHeartbeatTimer = null;
-let a10LastMsgAt = 0;
+// debug globals (pra você ver sempre algo, mesmo antes de chegar bar)
+window.__A10_LIVE_HAS_BARS__ = false;
+window.__A10_LIVE_LAST_RAW__ = "";
+window.__A10_LIVE_LAST_TEXT__ = "";
+window.__A10_LIVE_LAST_OBJ__ = null;
+
 
 function a10LiveSetStatus(text){
   const msg = text || "—";
@@ -3704,8 +3705,152 @@ function a10LiveClose(){
 
 
 function a10LiveSubscribe(symbol, timeframe){
-  a10LiveWanted = { symbol, timeframe };
+  const sym = String(symbol || "").trim().toUpperCase();
+
+  const tfRaw = String(timeframe || "1m").trim().toLowerCase();
+  const tf =
+    (tfRaw === "1" || tfRaw === "1min" || tfRaw === "1m") ? "1m" :
+    (tfRaw === "5" || tfRaw === "5min" || tfRaw === "5m") ? "5m" :
+    (tfRaw === "15" || tfRaw === "15min" || tfRaw === "15m") ? "15m" :
+    (tfRaw === "60" || tfRaw === "60m" || tfRaw === "1h" || tfRaw === "1hr") ? "1h" :
+    (tfRaw === "240" || tfRaw === "240m" || tfRaw === "4h" || tfRaw === "4hr") ? "4h" :
+    (tfRaw === "d" || tfRaw === "day" || tfRaw === "1d") ? "1d" :
+    tfRaw;
+
+  a10LiveWanted = { symbol: sym, timeframe: tf };
+
   if (!a10LiveWS || a10LiveWS.readyState !== WebSocket.OPEN) return;
+
+  // reset “bars flag” quando pedir novo subscribe
+  window.__A10_LIVE_HAS_BARS__ = false;
+
+  // ✅ manda mais de 1 shape (compat com servidor que não usa "type")
+  const payloads = [
+    { type: "subscribe", symbol: sym, timeframe: tf },
+    { symbol: sym, timeframe: tf },
+    { action: "subscribe", symbol: sym, timeframe: tf }
+  ];
+
+  for (const p of payloads) {
+    try { a10LiveWS.send(JSON.stringify(p)); } catch(e){}
+  }
+
+  a10LiveSubscribed = { symbol: sym, timeframe: tf };
+  a10LiveSetStatus(`LIVE: subscribed ${sym} ${tf}`);
+}
+
+
+function a10LiveHandleMessage(raw) {
+  // ✅ se alguém chamar errado com MessageEvent, ainda funciona
+  const data0 = (raw && typeof raw === "object" && "data" in raw) ? raw.data : raw;
+
+  // suporta Blob/ArrayBuffer também
+  if (typeof data0 !== "string") {
+    if (data0 instanceof Blob) {
+      data0.text().then(a10LiveHandleMessage);
+      return;
+    }
+    if (data0 instanceof ArrayBuffer) {
+      a10LiveHandleMessage(new TextDecoder().decode(data0));
+      return;
+    }
+    return;
+  }
+
+  a10LastMsgAt = Date.now();
+  window.__A10_LIVE_LAST_RAW__ = data0;
+
+  if (!a10Chart) a10InitChart();
+
+  const processObj = (obj) => {
+    const handleOne = (msg) => {
+      if (!msg) return;
+
+      // se vier string JSON dentro de JSON
+      if (typeof msg === "string") {
+        try { msg = JSON.parse(msg); } catch { return; }
+      }
+
+      // ✅ envelopes comuns
+      if (msg.bar)   { handleOne(msg.bar); return; }
+      if (msg.bars)  { handleOne(msg.bars); return; }
+      if (msg.candles){ handleOne(msg.candles); return; }
+      if (msg.data)  { handleOne(msg.data); return; }
+
+      // ✅ 1) BAR “OBJETO ÚNICO”
+      const looksLikeSingleBar =
+        msg && typeof msg === "object" && !Array.isArray(msg) &&
+        (msg.o != null || msg.open != null || msg.O != null) &&
+        (msg.h != null || msg.high != null || msg.H != null) &&
+        (msg.l != null || msg.low  != null || msg.L != null) &&
+        (msg.c != null || msg.close != null || msg.C != null) &&
+        (msg.t != null || msg.time != null || msg.timestamp != null || msg.T != null);
+
+      if (looksLikeSingleBar) {
+        window.__A10_LIVE_HAS_BARS__ = true;
+        const sym = msg.S || msg.symbol || a10LiveWanted.symbol;
+        a10UpdateChartFromPayload({ bars: [msg], symbol: sym, timeframe: a10LiveWanted.timeframe });
+        return;
+      }
+
+      // ✅ 2) ARRAY de bars
+      const isBarLike = Array.isArray(msg) && msg.length &&
+        (
+          (msg[0]?.o ?? msg[0]?.open ?? msg[0]?.O) != null ||
+          (msg[0]?.h ?? msg[0]?.high ?? msg[0]?.H) != null ||
+          (msg[0]?.l ?? msg[0]?.low  ?? msg[0]?.L) != null ||
+          (msg[0]?.c ?? msg[0]?.close?? msg[0]?.C) != null
+        ) &&
+        (msg[0]?.t != null || msg[0]?.time != null || msg[0]?.timestamp != null || msg[0]?.T != null);
+
+      if (isBarLike) {
+        window.__A10_LIVE_HAS_BARS__ = true;
+        const sym = msg[0]?.S || msg[0]?.symbol || a10LiveWanted.symbol;
+        a10UpdateChartFromPayload({ bars: msg, symbol: sym, timeframe: a10LiveWanted.timeframe });
+        return;
+      }
+
+      // erros/avisos do server (pra ficar visível no topo)
+      if (msg && typeof msg === "object" && (msg.error || msg.type === "error")) {
+        window.__A10_LIVE_LAST_OBJ__ = msg;
+        a10LiveSetStatus("ALPACA: ERROR (ver __A10_LIVE_LAST_OBJ__)");
+        return;
+      }
+
+      window.__A10_LIVE_LAST_OBJ__ = msg;
+    };
+
+    if (Array.isArray(obj)) obj.forEach(handleOne);
+    else handleOne(obj);
+  };
+
+  // 1) JSON normal
+  try {
+    processObj(JSON.parse(data0));
+    return;
+  } catch (e) {}
+
+  // 2) NDJSON / múltiplos JSON por mensagem (separado por \n)
+  const parts = data0.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+  let any = false;
+
+  for (let p of parts) {
+    if (p.startsWith("data:")) p = p.slice(5).trim();
+    try {
+      processObj(JSON.parse(p));
+      any = true;
+    } catch (e) {}
+  }
+
+  // 3) texto puro ("pong", etc.)
+  if (!any) {
+    window.__A10_LIVE_LAST_TEXT__ = data0;
+  }
+}
+
+
+function a10LiveConnect(symbol, timeframe) {
+  if (!A10_USE_LIVE_CANDLES) return;
 
   const sym = String(symbol || "").trim().toUpperCase();
 
@@ -3719,99 +3864,16 @@ function a10LiveSubscribe(symbol, timeframe){
     (tfRaw === "d" || tfRaw === "day" || tfRaw === "1d") ? "1d" :
     tfRaw;
 
-  // ✅ manda UM shape consistente (menos chance de quebrar o server)
-  const payload = { type: "subscribe", symbol: sym, timeframe: tf };
+  // guarda o "desejado"
+  a10LiveWanted = { symbol: sym, timeframe: tf };
 
-  try { a10LiveWS.send(JSON.stringify(payload)); } catch(e){}
-
-  a10LiveSetStatus(`LIVE: subscribed ${sym} ${tf}`);
-}
-
-function a10LiveHandleMessage(raw) {
-  // ✅ se alguém chamar errado com MessageEvent, ainda funciona
-  const data = (raw && typeof raw === "object" && "data" in raw) ? raw.data : raw;
-  if (typeof data !== "string") return;
-
-  a10LastMsgAt = Date.now();
-  window.__A10_LIVE_LAST_RAW__ = data;
-
-  let obj = null;
-  try {
-    obj = JSON.parse(data);
-  } catch (e) {
-    // se vier texto puro (ex: "pong"), ignora
+  // ✅ se já está conectado, NÃO fecha (isso tira o glitch)
+  if (a10LiveWS && a10LiveWS.readyState === WebSocket.OPEN) {
+    if (a10LiveSubscribed?.symbol === sym && a10LiveSubscribed?.timeframe === tf) return;
+    a10LiveSetStatus("ALPACA: CONNECTED");
+    a10LiveSubscribe(sym, tf);
     return;
   }
-
-  if (!a10Chart) a10InitChart();
-
-  const handleOne = (msg) => {
-    if (!msg) return;
-
-    // se vier string JSON dentro de JSON
-    if (typeof msg === "string") {
-      try { msg = JSON.parse(msg); } catch { return; }
-    }
-
-    // ✅ 1) BAR “OBJETO ÚNICO”
-    const looksLikeSingleBar =
-      msg && typeof msg === "object" && !Array.isArray(msg) &&
-      (msg.o != null || msg.open != null || msg.O != null) &&
-      (msg.h != null || msg.high != null || msg.H != null) &&
-      (msg.l != null || msg.low  != null || msg.L != null) &&
-      (msg.c != null || msg.close != null || msg.C != null) &&
-      (msg.t != null || msg.time != null || msg.timestamp != null);
-
-    if (looksLikeSingleBar) {
-      window.__A10_LIVE_HAS_BARS__ = true;
-      const sym = msg.S || msg.symbol || a10LiveWanted.symbol;
-      a10UpdateChartFromPayload({ bars: [msg], symbol: sym, timeframe: a10LiveWanted.timeframe });
-      return;
-    }
-
-    // ✅ 2) ARRAY de bars/trades
-    const isBarLike = Array.isArray(msg) && msg.length &&
-      (msg[0]?.o != null || msg[0]?.open != null || msg[0]?.t != null || msg[0]?.time != null);
-
-    const isTradeLike = Array.isArray(msg) && msg.length &&
-      (msg[0]?.p != null || msg[0]?.price != null || msg[0]?.t != null || msg[0]?.time != null);
-
-    if (isBarLike || isTradeLike) {
-      window.__A10_LIVE_HAS_BARS__ = true;
-      a10UpdateChartFromPayload({ bars: msg, symbol: a10LiveWanted.symbol, timeframe: a10LiveWanted.timeframe });
-      return;
-    }
-
-    // ✅ 3) ENVELOPE com bars/candles
-    if (msg && typeof msg === "object") {
-      if (msg.bar && typeof msg.bar === "object") {
-        return handleOne(msg.bar);
-      }
-
-      if (Array.isArray(msg.bars) || Array.isArray(msg.candles)) {
-        window.__A10_LIVE_HAS_BARS__ = true;
-        a10UpdateChartFromPayload(msg);
-        return;
-      }
-
-      if (msg.data) {
-        handleOne(msg.data);
-        return;
-      }
-    }
-
-    window.__A10_LIVE_LAST_OBJ__ = msg;
-  };
-
-  if (Array.isArray(obj)) obj.forEach(handleOne);
-  else handleOne(obj);
-}
-
-function a10LiveConnect(symbol, timeframe) {
-  if (!A10_USE_LIVE_CANDLES) return;
-
-  // guarda o "desejado" (pra reconectar certo)
-  a10LiveWanted = { symbol, timeframe };
 
   // fecha WS anterior (se existir)
   try { a10LiveClose(); } catch (e) {}
@@ -3824,10 +3886,11 @@ function a10LiveConnect(symbol, timeframe) {
 
   try {
     const ws = new WebSocket(url);
+    ws.binaryType = "arraybuffer";
     a10LiveWS = ws;
 
     ws.addEventListener("open", () => {
-      if (ws !== a10LiveWS) return; // ignora socket velho
+      if (ws !== a10LiveWS) return;
       a10LastMsgAt = Date.now();
       a10LiveSetStatus("ALPACA: CONNECTED");
 
@@ -3840,10 +3903,9 @@ function a10LiveConnect(symbol, timeframe) {
       }, 15000);
 
       // subscribe assim que conectar
-      a10LiveSubscribe(symbol, timeframe);
+      a10LiveSubscribe(sym, tf);
     });
 
-    // ✅ CRÍTICO: passar ev.data
     ws.addEventListener("message", (ev) => {
       if (ws !== a10LiveWS) return;
       a10LastMsgAt = Date.now();
@@ -3851,7 +3913,7 @@ function a10LiveConnect(symbol, timeframe) {
     });
 
     ws.addEventListener("close", (e) => {
-      if (ws !== a10LiveWS) return; // close de socket velho: ignora
+      if (ws !== a10LiveWS) return;
 
       a10LiveSetStatus(`ALPACA: DISCONNECTED (${e.code || "close"})`);
 
@@ -3875,6 +3937,7 @@ function a10LiveConnect(symbol, timeframe) {
     a10LiveSetStatus("ALPACA: CONNECT FAIL");
   }
 }
+
 
 
 
@@ -7306,14 +7369,24 @@ let a10LastPayloadKey = '';
 
 function a10UnixSec(t) {
   if (typeof t === 'number') {
-    if (t > 1e12) return Math.floor(t / 1000); // ms
-    if (t > 1e10) return Math.floor(t / 1000); // ms (só garantia)
+    // ns (ex: 1700000000000000000)
+    if (t > 1e16) return Math.floor(t / 1e9);
+    // us (ex: 1700000000000000)
+    if (t > 1e14) return Math.floor(t / 1e6);
+    // ms
+    if (t > 1e12) return Math.floor(t / 1000);
+    if (t > 1e10) return Math.floor(t / 1000);
     return Math.floor(t); // sec
   }
+
   if (typeof t === 'string') {
-    const ms = Date.parse(t);
+    const s = t.trim();
+    if (/^\d+$/.test(s)) return a10UnixSec(Number(s));
+
+    const ms = Date.parse(s);
     if (!Number.isNaN(ms)) return Math.floor(ms / 1000);
   }
+
   return null;
 }
 
@@ -7374,12 +7447,12 @@ function a10ExtractCandles(payload) {
   const map = new Map();
 
   for (const c of arr) {
-    const time = a10UnixSec(c?.t ?? c?.time ?? c?.timestamp ?? c?.datetime);
-    const open = Number(c?.o ?? c?.open);
-    const high = Number(c?.h ?? c?.high);
-    const low  = Number(c?.l ?? c?.low);
-    const close= Number(c?.c ?? c?.close);
-    const volume = Number(c?.v ?? c?.volume ?? 0);
+        const time = a10UnixSec(c?.t ?? c?.time ?? c?.timestamp ?? c?.datetime ?? c?.T ?? c?.ts);
+    const open = Number(c?.o ?? c?.open ?? c?.O);
+    const high = Number(c?.h ?? c?.high ?? c?.H);
+    const low  = Number(c?.l ?? c?.low  ?? c?.L);
+    const close= Number(c?.c ?? c?.close?? c?.C);
+    const volume = Number(c?.v ?? c?.volume ?? c?.V ?? 0);
 
     if (!time) continue;
     if (!Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
@@ -7610,7 +7683,7 @@ function a10UpdateChartFromPayload(payload) {
 
     const panel = payload.panel || payload.raw?.panel || {};
     const symbol = panel.symbol || panel.ticker || payload.symbol || '—';
-    const tf = panel.timeframe || panel.tf || panel.interval || '1m';
+    const tf = panel.timeframe || panel.tf || panel.interval || payload.timeframe || '1m';
     const metaEl = document.getElementById('chart-meta');
     if (metaEl) metaEl.textContent = `${symbol} · ${tf} · Alpaca`;
 
