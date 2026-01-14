@@ -3670,9 +3670,12 @@ const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_
 
 let a10LiveWanted = { symbol: null, timeframe: null };
 
-// ✅ FALTAVA ISSO (senão dá ReferenceError e mata o live candles)
+// timers/estado (pra não dar ReferenceError)
 let a10LiveWS = null;
 let a10LiveReconnectTimer = null;
+let a10LiveHeartbeatTimer = null;
+let a10LastMsgAt = 0;
+
 
 function a10LiveSetStatus(text){
 
@@ -3698,8 +3701,8 @@ function a10LiveClose(){
   if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
   a10LiveReconnectTimer = null;
 
-  if (window.__A10_LIVE_HEARTBEAT__) clearInterval(window.__A10_LIVE_HEARTBEAT__);
-  window.__A10_LIVE_HEARTBEAT__ = null;
+  if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
+  a10LiveHeartbeatTimer = null;
 
   window.__A10_LIVE_FALLBACK_TRIED__ = false;
 }
