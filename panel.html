@@ -7553,21 +7553,67 @@ function a10InitChart() {
     return;
   }
 
-     a10Chart = LightweightCharts.createChart(el, {
-     layout: {
-       attributionLogo: false, // <<< REMOVE o "TV" do canto
-       background: { type: 'solid', color: '#020617' },
-       textColor: '#e5e7eb',
-     },
-     grid: {
-       vertLines: { color: 'rgba(148,163,184,0.08)' },
-       horzLines: { color: 'rgba(148,163,184,0.08)' },
-     },
-     rightPriceScale: { borderColor: 'rgba(148,163,184,0.22)' },
-     timeScale: { timeVisible: true, secondsVisible: false },
-     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-   });
+  // Utah (Mountain Time) - labels do eixo X + crosshair
+  const A10_TZ = 'America/Denver';
 
+  const fmtTime = new Intl.DateTimeFormat('en-US', {
+    timeZone: A10_TZ,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  const fmtDate = new Intl.DateTimeFormat('en-US', {
+    timeZone: A10_TZ,
+    month: '2-digit',
+    day: '2-digit',
+  });
+
+  function a10FmtUtah(time, wantDate) {
+    // suporte caso venha BusinessDay (por segurança)
+    if (time && typeof time === 'object' && 'year' in time) {
+      const d = new Date(Date.UTC(time.year, (time.month || 1) - 1, time.day || 1));
+      return fmtDate.format(d);
+    }
+    const sec = Number(time);
+    if (!Number.isFinite(sec)) return '';
+    const d = new Date(sec * 1000);
+    return wantDate ? fmtDate.format(d) : fmtTime.format(d);
+  }
+
+  a10Chart = LightweightCharts.createChart(el, {
+    layout: {
+      attributionLogo: false, // <<< REMOVE o "TV" do canto
+      background: { type: 'solid', color: '#020617' },
+      textColor: '#e5e7eb',
+    },
+    grid: {
+      vertLines: { color: 'rgba(148,163,184,0.08)' },
+      horzLines: { color: 'rgba(148,163,184,0.08)' },
+    },
+    rightPriceScale: { borderColor: 'rgba(148,163,184,0.22)' },
+
+    localization: {
+      // label de tempo do crosshair (tooltip)
+      timeFormatter: (time) => a10FmtUtah(time, false),
+    },
+
+    timeScale: {
+      timeVisible: true,
+      secondsVisible: false,
+      // labels do eixo X
+      tickMarkFormatter: (time, tickMarkType) => {
+        const tmt = LightweightCharts.TickMarkType || {};
+        const isDate =
+          tickMarkType === tmt.DayOfMonth ||
+          tickMarkType === tmt.Month ||
+          tickMarkType === tmt.Year;
+        return a10FmtUtah(time, isDate);
+      },
+    },
+
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  });
 
   a10CandleSeries = a10Chart.addCandlestickSeries({
     upColor: '#4ade80',
@@ -7575,6 +7621,7 @@ function a10InitChart() {
     borderUpColor: '#4ade80',
     borderDownColor: '#f97373',
     wickUpColor: '#4ade80',
+    wickDownColor: '#f97373',
     wickDownColor: '#f97373',
   });
 
@@ -7589,6 +7636,7 @@ function a10InitChart() {
   });
   ro.observe(el);
 }
+
 
 function a10UpdateChartFromPayload(payload) {
   try {
