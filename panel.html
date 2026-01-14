@@ -3655,9 +3655,8 @@ const A10_USE_LIVE_CANDLES = true;
 // Cloud Run (SEU serviço atual)
 const A10_LIVE_WS_URL_PROD = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
 
-// (opcional) preview local também usar o mesmo
+// (opcional) preview/local (se quiser depois trocar pra ws://localhost:8080/ws)
 const A10_LIVE_WS_URL_TEST = "wss://aaron10-panel-api-888402066046.us-central1.run.app/ws";
-
 
 // auto-select: local (file://, localhost, 127.0.0.1) -> TEST, senão -> PROD
 const __A10_IS_LOCAL =
@@ -3670,29 +3669,25 @@ const A10_LIVE_WS_URL = __A10_IS_LOCAL ? A10_LIVE_WS_URL_TEST : A10_LIVE_WS_URL_
 
 let a10LiveWanted = { symbol: null, timeframe: null };
 
-// timers/estado (pra não dar ReferenceError)
+// ✅ estado do WS (ERAM as coisas que estavam faltando / inconsistentes)
 let a10LiveWS = null;
 let a10LiveReconnectTimer = null;
-let a10LiveHeartbeatTimer = null;
-let a10LastMsgAt = 0;
-
+let a10LiveHeartbeatTimer = null; // <-- faltava (ReferenceError)
+let a10LastMsgAt = 0;             // <-- faltava (ReferenceError)
 
 function a10LiveSetStatus(text){
-
   const msg = text || "—";
 
   // 1) label do topo (Sessão)
   const el = document.getElementById("session-label");
   if (el) el.textContent = msg;
 
-  // 2) Mostra também no “LIVE FEED” (pra ficar impossível não ver)
+  // 2) Mostra também no “LIVE FEED”
   const liveEl = document.querySelector(".status-dot-live");
   if (liveEl) liveEl.textContent = msg;
 
-  // debug simples (se quiser ver no console)
   window.__A10_LIVE_STATUS__ = msg;
 }
-
 
 function a10LiveClose(){
   try { if (a10LiveWS) a10LiveWS.close(); } catch(e){}
@@ -3703,10 +3698,7 @@ function a10LiveClose(){
 
   if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
   a10LiveHeartbeatTimer = null;
-
-  window.__A10_LIVE_FALLBACK_TRIED__ = false;
 }
-
 
 function a10LiveSubscribe(symbol, timeframe){
   a10LiveWanted = { symbol, timeframe };
@@ -3724,25 +3716,19 @@ function a10LiveSubscribe(symbol, timeframe){
     (tfRaw === "d" || tfRaw === "day" || tfRaw === "1d") ? "1d" :
     tfRaw;
 
-  // manda “vários jeitos” porque seu Cloud Run pode estar esperando outro shape
-  const payloads = [
-    { type: "subscribe", symbol: sym, timeframe: tf },
-    { action: "subscribe", symbol: sym, timeframe: tf },
-    { type: "subscribe", symbols: [sym], timeframe: tf },
-    { action: "subscribe", symbols: [sym], timeframe: tf },
-    { type: "subscribe", bars: [sym], tf, timeframe: tf },
-  ];
+  // ✅ manda UM shape consistente (menos chance de quebrar o server)
+  const payload = { type: "subscribe", symbol: sym, timeframe: tf };
 
-  for (const p of payloads) {
-    try { a10LiveWS.send(JSON.stringify(p)); } catch(e){}
-  }
+  try { a10LiveWS.send(JSON.stringify(payload)); } catch(e){}
 
   a10LiveSetStatus(`LIVE: subscribed ${sym} ${tf}`);
 }
 
+function a10LiveHandleMessage(raw) {
+  // ✅ se alguém chamar errado com MessageEvent, ainda funciona
+  const data = (raw && typeof raw === "object" && "data" in raw) ? raw.data : raw;
+  if (typeof data !== "string") return;
 
-function a10LiveHandleMessage(data) {
-  // marca que chegou alguma mensagem
   a10LastMsgAt = Date.now();
   window.__A10_LIVE_LAST_RAW__ = data;
 
@@ -3750,7 +3736,7 @@ function a10LiveHandleMessage(data) {
   try {
     obj = JSON.parse(data);
   } catch (e) {
-    // se vier texto puro (ex: "pong"), só ignora
+    // se vier texto puro (ex: "pong"), ignora
     return;
   }
 
@@ -3764,7 +3750,7 @@ function a10LiveHandleMessage(data) {
       try { msg = JSON.parse(msg); } catch { return; }
     }
 
-    // ✅ 1) BAR “OBJETO ÚNICO” (muito comum em stream)
+    // ✅ 1) BAR “OBJETO ÚNICO”
     const looksLikeSingleBar =
       msg && typeof msg === "object" && !Array.isArray(msg) &&
       (msg.o != null || msg.open != null || msg.O != null) &&
@@ -3780,7 +3766,7 @@ function a10LiveHandleMessage(data) {
       return;
     }
 
-    // ✅ 2) ARRAY de bars (já existia)
+    // ✅ 2) ARRAY de bars/trades
     const isBarLike = Array.isArray(msg) && msg.length &&
       (msg[0]?.o != null || msg[0]?.open != null || msg[0]?.t != null || msg[0]?.time != null);
 
@@ -3793,9 +3779,8 @@ function a10LiveHandleMessage(data) {
       return;
     }
 
-    // ✅ 3) ENVELOPE com bars/candles (já existia)
+    // ✅ 3) ENVELOPE com bars/candles
     if (msg && typeof msg === "object") {
-      // alguns servidores mandam { bar: {...} }
       if (msg.bar && typeof msg.bar === "object") {
         return handleOne(msg.bar);
       }
@@ -3812,7 +3797,6 @@ function a10LiveHandleMessage(data) {
       }
     }
 
-    // se quiser debug rápido do que está vindo:
     window.__A10_LIVE_LAST_OBJ__ = msg;
   };
 
@@ -3820,9 +3804,9 @@ function a10LiveHandleMessage(data) {
   else handleOne(obj);
 }
 
-
 function a10LiveConnect(symbol, timeframe) {
-  // guarda o "desejado" (pra reconectar certo)
+  if (!A10_USE_LIVE_CANDLES) return;
+
   a10LiveWanted = { symbol, timeframe };
 
   // fecha WS anterior (se existir)
@@ -3841,27 +3825,28 @@ function a10LiveConnect(symbol, timeframe) {
       a10LastMsgAt = Date.now();
       a10LiveSetStatus("ALPACA: CONNECTED");
 
-      // heartbeat (mantém Cloud Run acordado e detecta queda)
-      clearInterval(a10LiveHeartbeatTimer);
+      // heartbeat (mantém vivo + evita idle drop)
+      if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
       a10LiveHeartbeatTimer = setInterval(() => {
         if (a10LiveWS && a10LiveWS.readyState === 1) {
           try { a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() })); } catch (e) {}
         }
       }, 15000);
 
-      // ✅ ESSENCIAL: subscribe assim que conectar
+      // ✅ subscribe assim que conectar
       a10LiveSubscribe(symbol, timeframe);
     });
 
-    a10LiveWS.addEventListener("message", a10LiveHandleMessage);
+    // ✅ ERRO CRÍTICO ANTES: precisa passar ev.data, não o evento inteiro
+    a10LiveWS.addEventListener("message", (ev) => a10LiveHandleMessage(ev.data));
 
     a10LiveWS.addEventListener("close", (e) => {
       a10LiveSetStatus(`ALPACA: DISCONNECTED (${e.code || "close"})`);
 
-      clearInterval(a10LiveHeartbeatTimer);
+      if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
       a10LiveHeartbeatTimer = null;
 
-      clearTimeout(a10LiveReconnectTimer);
+      if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
       a10LiveReconnectTimer = setTimeout(() => {
         const w = a10LiveWanted || {};
         if (w.symbol) a10LiveConnect(w.symbol, w.timeframe);
@@ -3877,6 +3862,7 @@ function a10LiveConnect(symbol, timeframe) {
     a10LiveSetStatus("ALPACA: CONNECT FAIL");
   }
 }
+
 
 
 
@@ -7069,7 +7055,13 @@ try {
       'ONLINE';
     safeText(els.state, stateText);
 
-    const ts = meta.panel_ts || meta.timestamp || panel.timestamp || raw.time;
+    const ts =
+  meta.panel_ts ||
+  meta.timestamp ||
+  panel.timestamp ||
+  panel.updated_at || panel.updatedAt || panel.updated_at_ms ||
+  raw.time;
+
     if (els.lastUpdate) {
       if (!ts) {
         els.lastUpdate.textContent = 'sem timestamp';
