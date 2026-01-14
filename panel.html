@@ -3714,102 +3714,186 @@ function a10LiveSubscribe(symbol, timeframe){
   if (!sym) return;
   if (!a10LiveWS || a10LiveWS.readyState !== 1) return;
 
-  // normaliza timeframe (aceita "1m", "1Min", etc.)
-  const tf =
+  // normaliza timeframe “desejado” (UI)
+  const desiredTf =
     (/^\d+m(in)?$/i.test(tfRaw) || /^\d+m$/i.test(tfRaw)) ? tfRaw.replace(/in$/i, '') :
     (/^\d+min$/i.test(tfRaw)) ? tfRaw :
     tfRaw;
 
-  // ✅ payload compatível (type + action) pra não depender do nome do campo no server
-  const payload = { type: "subscribe", action: "subscribe", symbol: sym, timeframe: tf };
+  // 🔥 IMPORTANTE:
+  // A maioria dos relays/streams só entrega BAR em 1m (ou trades).
+  // Então a gente SEMPRE pede 1m no wire e agrega localmente pro timeframe desejado.
+  const wireTf = "1m";
+
+  // payload compatível (type + action) pra não depender do nome do campo no server
+  const payload = {
+    type: "subscribe",
+    action: "subscribe",
+    symbol: sym,
+    timeframe: wireTf,           // ✅ sempre 1m
+    target_timeframe: desiredTf  // (debug) timeframe real da UI
+  };
 
   // debug global
   window.__A10_LIVE_LAST_SUB__ = payload;
 
   try { a10LiveWS.send(JSON.stringify(payload)); } catch(e){}
 
-  a10LiveSetStatus(`LIVE: subscribed ${sym} ${tf}`);
+  a10LiveSetStatus(`LIVE: subscribed ${sym} ${desiredTf} (wire ${wireTf})`);
 }
 
-function a10LiveHandleMessage(raw) {
-  // ✅ se alguém chamar errado com MessageEvent, ainda funciona
-  const data = (raw && typeof raw === "object" && "data" in raw) ? raw.data : raw;
-  if (typeof data !== "string") return;
 
-  a10LastMsgAt = Date.now();
-  window.__A10_LIVE_LAST_RAW__ = data;
+function a10LiveHandleMessage(ev) {
+  if (!ev || !ev.data) return;
 
-  let obj = null;
-  try {
-    obj = JSON.parse(data);
-  } catch (e) {
-    // se vier texto puro (ex: "pong"), ignora
-    return;
+  // debug raw
+  window.__A10_LIVE_LAST_RAW__ = ev.data;
+
+  // garante chart
+  a10InitChart();
+
+  // parse
+  let obj = ev.data;
+  if (typeof ev.data === "string") {
+    try { obj = JSON.parse(ev.data); } catch (e) {}
   }
 
-  if (!a10Chart) a10InitChart();
+  const wanted = a10LiveWanted || {};
+  const symWanted = String(wanted.symbol || "").trim().toUpperCase();
+  const tfWanted = String(wanted.timeframe || "1m").trim();
 
-  const handleOne = (msg) => {
+  function tfToSec(tf){
+    const s = String(tf || "1m").trim().toLowerCase();
+    if (/^\d+m$/.test(s)) return Math.max(1, parseInt(s, 10)) * 60;
+    if (/^\d+h$/.test(s)) return Math.max(1, parseInt(s, 10)) * 3600;
+    if (s === "1d" || s === "d") return 86400;
+    return 60;
+  }
+
+  const bucketSec = tfToSec(tfWanted);
+
+  function normOHLC(x){
+    if (!x || typeof x !== "object") return null;
+
+    const tSec = a10UnixSec(x?.t ?? x?.time ?? x?.timestamp ?? x?.datetime);
+    const o = Number(x?.o ?? x?.open);
+    const h = Number(x?.h ?? x?.high);
+    const l = Number(x?.l ?? x?.low);
+    const c = Number(x?.c ?? x?.close);
+    const v = Number(x?.v ?? x?.volume ?? 0);
+
+    if (!tSec) return null;
+    if (!Number.isFinite(o) || !Number.isFinite(h) || !Number.isFinite(l) || !Number.isFinite(c)) return null;
+
+    return { tSec, open:o, high:h, low:l, close:c, volume: Number.isFinite(v) ? v : 0 };
+  }
+
+  function normTrade(x){
+    if (!x || typeof x !== "object") return null;
+
+    const tSec = a10UnixSec(x?.t ?? x?.time ?? x?.timestamp ?? x?.datetime);
+    const p = Number(x?.p ?? x?.price);
+    const s = Number(x?.s ?? x?.size ?? x?.q ?? x?.qty ?? x?.volume ?? 0);
+
+    if (!tSec) return null;
+    if (!Number.isFinite(p)) return null;
+
+    return { tSec, open:p, high:p, low:p, close:p, volume: Number.isFinite(s) ? s : 0 };
+  }
+
+  function buildAggBar(norm){
+    if (!norm) return null;
+
+    const bucketTime = Math.floor(norm.tSec / bucketSec) * bucketSec;
+
+    // usa o candle que já está na tela como “estado” (open fixa, high/low expandem)
+    const hasBase = Array.isArray(a10ChartCandles) && a10ChartCandles.length > 0;
+    const last = hasBase ? a10ChartCandles[a10ChartCandles.length - 1] : null;
+
+    let o, h, l, c, v;
+
+    if (last && last.time === bucketTime) {
+      o = last.open;
+      h = Math.max(last.high, norm.high);
+      l = Math.min(last.low,  norm.low);
+      c = norm.close;
+      v = (Number(last.volume) || 0) + (Number(norm.volume) || 0);
+    } else if (last && bucketTime > last.time) {
+      o = norm.open;
+      h = norm.high;
+      l = norm.low;
+      c = norm.close;
+      v = Number(norm.volume) || 0;
+    } else if (!last) {
+      o = norm.open;
+      h = norm.high;
+      l = norm.low;
+      c = norm.close;
+      v = Number(norm.volume) || 0;
+    } else {
+      // out-of-order/antigo: manda o “norm” bucketizado mesmo
+      o = norm.open;
+      h = norm.high;
+      l = norm.low;
+      c = norm.close;
+      v = Number(norm.volume) || 0;
+    }
+
+    return { t: bucketTime, o, h, l, c, v };
+  }
+
+  function pushAggBar(bar){
+    if (!bar) return;
+
+    window.__A10_LIVE_HAS_BARS__ = true;
+
+    // manda como bars[] pro pipeline normal (extract -> merge incremental)
+    a10UpdateChartFromPayload({
+      bars: [bar],
+      symbol: symWanted,
+      timeframe: tfWanted,
+      __live: true
+    });
+  }
+
+  function handleOne(msg) {
     if (!msg) return;
 
-    // se vier string JSON dentro de JSON
-    if (typeof msg === "string") {
-      try { msg = JSON.parse(msg); } catch { return; }
-    }
+    // lista
+    if (Array.isArray(msg)) { msg.forEach(handleOne); return; }
 
-    // ✅ 1) BAR “OBJETO ÚNICO”
-    const looksLikeSingleBar =
-      msg && typeof msg === "object" && !Array.isArray(msg) &&
-      (msg.o != null || msg.open != null || msg.O != null) &&
-      (msg.h != null || msg.high != null || msg.H != null) &&
-      (msg.l != null || msg.low  != null || msg.L != null) &&
-      (msg.c != null || msg.close != null || msg.C != null) &&
-      (msg.t != null || msg.time != null || msg.timestamp != null);
-
-    if (looksLikeSingleBar) {
-      window.__A10_LIVE_HAS_BARS__ = true;
-      const sym = msg.S || msg.symbol || a10LiveWanted.symbol;
-      a10UpdateChartFromPayload({ bars: [msg], symbol: sym, timeframe: a10LiveWanted.timeframe });
-      return;
-    }
-
-    // ✅ 2) ARRAY de bars/trades
-    const isBarLike = Array.isArray(msg) && msg.length &&
-      (msg[0]?.o != null || msg[0]?.open != null || msg[0]?.t != null || msg[0]?.time != null);
-
-    const isTradeLike = Array.isArray(msg) && msg.length &&
-      (msg[0]?.p != null || msg[0]?.price != null || msg[0]?.t != null || msg[0]?.time != null);
-
-    if (isBarLike || isTradeLike) {
-      window.__A10_LIVE_HAS_BARS__ = true;
-      a10UpdateChartFromPayload({ bars: msg, symbol: a10LiveWanted.symbol, timeframe: a10LiveWanted.timeframe });
-      return;
-    }
-
-    // ✅ 3) ENVELOPE com bars/candles
+    // envelope com bar / bars / candles / data
     if (msg && typeof msg === "object") {
-      if (msg.bar && typeof msg.bar === "object") {
-        return handleOne(msg.bar);
-      }
-
-      if (Array.isArray(msg.bars) || Array.isArray(msg.candles)) {
-        window.__A10_LIVE_HAS_BARS__ = true;
-        a10UpdateChartFromPayload(msg);
-        return;
-      }
-
-      if (msg.data) {
-        handleOne(msg.data);
-        return;
-      }
+      if (msg.bar && typeof msg.bar === "object") { handleOne(msg.bar); return; }
+      if (Array.isArray(msg.bars) || Array.isArray(msg.candles)) { handleOne(msg.bars || msg.candles); return; }
+      if (msg.data) { handleOne(msg.data); return; }
     }
 
-    window.__A10_LIVE_LAST_OBJ__ = msg;
-  };
+    // 1) BAR OHLC
+    const ohlc = normOHLC(msg);
+    if (ohlc) {
+      window.__A10_LIVE_LAST_45__ = ohlc;
+      const bar = buildAggBar(ohlc);
+      pushAggBar(bar);
+      return;
+    }
 
-  if (Array.isArray(obj)) obj.forEach(handleOne);
-  else handleOne(obj);
+    // 2) TRADE tick (p/t)
+    const tr = normTrade(msg);
+    if (tr) {
+      window.__A10_LIVE_LAST_45__ = tr;
+      const bar = buildAggBar(tr);
+      pushAggBar(bar);
+      return;
+    }
+
+    // fallback debug
+    window.__A10_LIVE_LAST_OBJ__ = msg;
+  }
+
+  handleOne(obj);
 }
+
 
 function a10LiveConnect(symbol, timeframe) {
   if (!A10_USE_LIVE_CANDLES) return;
@@ -7308,7 +7392,13 @@ let a10CandleSeries = null;
 let a10Ema21Series = null;
 let a10VwapSeries = null;
 let a10PriceLines = {};
+
+// 🔥 fonte da verdade do gráfico (para live incremental)
+let a10ChartCandles = [];              // candles que estão na tela
 let a10LastPayloadKey = '';
+let a10LastStudyUpdateAt = 0;
+const A10_STUDY_THROTTLE_MS = 1500;
+
 
 function a10UnixSec(t) {
   if (typeof t === 'number') {
@@ -7615,24 +7705,90 @@ function a10UpdateChartFromPayload(payload) {
     if (!a10Chart || !a10CandleSeries) return;
 
     const panel = payload.panel || payload.raw?.panel || {};
-    const symbol = panel.symbol || panel.ticker || payload.symbol || '—';
-    const tf = panel.timeframe || panel.tf || panel.interval || '1m';
+    const symbol =
+      panel.symbol ||
+      panel.ticker ||
+      payload.symbol ||
+      (a10LiveWanted && a10LiveWanted.symbol) ||
+      '—';
+
+    const tf =
+      panel.timeframe ||
+      panel.tf ||
+      panel.interval ||
+      payload.timeframe ||
+      payload.tf ||
+      (a10LiveWanted && a10LiveWanted.timeframe) ||
+      '1m';
+
     const metaEl = document.getElementById('chart-meta');
     if (metaEl) metaEl.textContent = `${symbol} · ${tf} · Alpaca`;
 
-    const candles = a10ExtractCandles(payload);
-    if (!candles.length) return;
+    const incoming = a10ExtractCandles(payload);
+    if (!incoming.length) return;
 
-    // evita reprocessar sem necessidade (mas deixa atualizar o candle “em formação”)
-const last = candles[candles.length - 1];
-const payloadKey =
-  `${symbol}|${tf}|len:${candles.length}|t:${last.time}|o:${last.open}|h:${last.high}|l:${last.low}|c:${last.close}|v:${last.volume}`;
+    const hasBase = Array.isArray(a10ChartCandles) && a10ChartCandles.length > 0;
+    const isIncremental = hasBase && incoming.length <= 3;
 
-if (payloadKey === a10LastPayloadKey) return;
-a10LastPayloadKey = payloadKey;
+    function mergeOne(c){
+      if (!c || !c.time) return false;
 
+      if (!Array.isArray(a10ChartCandles) || a10ChartCandles.length === 0) {
+        a10ChartCandles = [c];
+        a10CandleSeries.setData(a10ChartCandles);
+        return true;
+      }
 
-    a10CandleSeries.setData(candles);
+      const last = a10ChartCandles[a10ChartCandles.length - 1];
+
+      if (c.time === last.time) {
+        a10ChartCandles[a10ChartCandles.length - 1] = c;
+        a10CandleSeries.update(c);
+        return true;
+      }
+
+      if (c.time > last.time) {
+        a10ChartCandles.push(c);
+        a10CandleSeries.update(c);
+        return true;
+      }
+
+      // raro: out-of-order — tenta achar e substitui; depois setData pra garantir
+      for (let i = a10ChartCandles.length - 1; i >= 0; i--) {
+        if (a10ChartCandles[i].time === c.time) {
+          a10ChartCandles[i] = c;
+          a10CandleSeries.setData(a10ChartCandles);
+          return true;
+        }
+        if (a10ChartCandles[i].time < c.time) break;
+      }
+
+      return false;
+    }
+
+    if (!isIncremental) {
+      // FULL SNAPSHOT
+      const last = incoming[incoming.length - 1];
+      const payloadKey = `${symbol}|${tf}|len:${incoming.length}|t:${last.time}|h:${last.high}|l:${last.low}|c:${last.close}|v:${last.volume}`;
+      if (payloadKey === a10LastPayloadKey) return;
+      a10LastPayloadKey = payloadKey;
+
+      a10ChartCandles = incoming;
+      a10CandleSeries.setData(a10ChartCandles);
+    } else {
+      // LIVE INCREMENTAL
+      let changed = false;
+      for (const c of incoming) changed = mergeOne(c) || changed;
+      if (!changed) return;
+
+      // throttle estudos (candles continuam live mesmo se pular aqui)
+      const now = Date.now();
+      if (now - a10LastStudyUpdateAt < A10_STUDY_THROTTLE_MS) return;
+      a10LastStudyUpdateAt = now;
+    }
+
+    const candles = a10ChartCandles;
+    if (!candles || !candles.length) return;
 
     const t = a10ToggleState();
 
@@ -7687,6 +7843,7 @@ a10LastPayloadKey = payloadKey;
     console.warn('[A10] updateChart falhou (mas o painel continua):', e);
   }
 }
+
 
 function a10BindStudiesUI() {
   document.querySelectorAll('.pill-toggle input').forEach((el) => {
