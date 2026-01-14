@@ -3738,110 +3738,83 @@ function a10LiveSubscribe(symbol, timeframe){
 }
 
 
-function a10LiveHandleMessage(data){
-  let msg = null;
-  try { msg = JSON.parse(data); } catch(e){ return; }
+function a10LiveHandleMessage(data) {
+  // marca que chegou alguma mensagem
+  a10LastMsgAt = Date.now();
+  window.__A10_LIVE_LAST_RAW__ = data;
 
-  const handleOne = (m) => {
-    if (!m) return;
-
-    // unwrap (às vezes vem dentro de payload/data)
-    const obj =
-      (m && typeof m === "object" && m.payload && typeof m.payload === "object") ? m.payload :
-      (m && typeof m === "object" && m.data && typeof m.data === "object") ? m.data :
-      m;
-
-    // status
-    if (obj?.type === "status" || obj?.event === "status") {
-      a10LiveSetStatus(obj.status || obj.state || obj.message || "LIVE");
-      return;
-    }
-
-    // snapshot (muitos shapes)
-    const candles =
-      obj?.candles || obj?.bars ||
-      obj?.intraday?.candles || obj?.intraday?.bars ||
-      obj?.payload?.candles || obj?.payload?.bars ||
-      obj?.data?.candles || obj?.data?.bars;
-
-    if (Array.isArray(candles) && candles.length) {
-      try {
-        a10UpdateChartFromPayload({
-          panel: {
-            symbol: String(obj.symbol || obj.S || a10LiveWanted.symbol || "").toUpperCase(),
-            timeframe: obj.timeframe || obj.tf || a10LiveWanted.timeframe || "1m"
-          },
-          candles
-        });
-        a10LiveSetStatus("LIVE: snapshot");
-      } catch(e){}
-      return;
-    }
-
-    // update (raw Alpaca bars também)
-    const isAlpacaBar = (obj?.T === "b" || obj?.T === "bar") && (obj?.S || obj?.symbol);
-    const cObj =
-      obj?.candle || obj?.bar ||
-      obj?.payload?.candle || obj?.payload?.bar ||
-      obj?.data?.candle || obj?.data?.bar ||
-      (isAlpacaBar ? obj : obj);
-
-    const t = cObj?.t ?? cObj?.time ?? cObj?.timestamp ?? cObj?.datetime;
-    const o = cObj?.o ?? cObj?.open;
-    const h = cObj?.h ?? cObj?.high;
-    const l = cObj?.l ?? cObj?.low;
-    const c = cObj?.c ?? cObj?.close;
-    const v = cObj?.v ?? cObj?.volume ?? 0;
-
-    if (t == null || o == null || h == null || l == null || c == null) return;
-
-    // time -> unix seconds (aceita number em ms/sec ou ISO string)
-    let tNum = null;
-    if (typeof t === "number") {
-      tNum = t;
-    } else {
-      const parsed = Date.parse(String(t));
-      tNum = Number.isFinite(parsed) ? parsed : null;
-    }
-    if (tNum == null) return;
-
-    const sec = (tNum > 1e12) ? Math.floor(tNum / 1000) : Math.floor(tNum);
-
-    try {
-      a10InitChart();
-      if (!a10CandleSeries) return;
-
-      a10CandleSeries.update({
-        time: sec,
-        open: Number(o),
-        high: Number(h),
-        low:  Number(l),
-        close:Number(c),
-        volume: Number(v) || 0
-      });
-
-      a10LiveSetStatus("LIVE: tick");
-    } catch(e){}
-  };
-
-  // array pode ser snapshot direto OU batch de mensagens
-  if (Array.isArray(msg)) {
-    const looksLikeCandles = msg.length && (msg[0]?.o != null || msg[0]?.open != null || msg[0]?.t != null || msg[0]?.time != null);
-    if (looksLikeCandles) {
-      try {
-        a10UpdateChartFromPayload({
-          panel: { symbol: a10LiveWanted.symbol || "", timeframe: a10LiveWanted.timeframe || "1m" },
-          candles: msg
-        });
-        a10LiveSetStatus("LIVE: snapshot");
-      } catch(e){}
-    } else {
-      msg.forEach(handleOne);
-    }
+  let obj = null;
+  try {
+    obj = JSON.parse(data);
+  } catch (e) {
+    // se vier texto puro (ex: "pong"), só ignora
     return;
   }
 
-  handleOne(msg);
+  if (!a10Chart) a10InitChart();
+
+  const handleOne = (msg) => {
+    if (!msg) return;
+
+    // se vier string JSON dentro de JSON
+    if (typeof msg === "string") {
+      try { msg = JSON.parse(msg); } catch { return; }
+    }
+
+    // ✅ 1) BAR “OBJETO ÚNICO” (muito comum em stream)
+    const looksLikeSingleBar =
+      msg && typeof msg === "object" && !Array.isArray(msg) &&
+      (msg.o != null || msg.open != null || msg.O != null) &&
+      (msg.h != null || msg.high != null || msg.H != null) &&
+      (msg.l != null || msg.low  != null || msg.L != null) &&
+      (msg.c != null || msg.close != null || msg.C != null) &&
+      (msg.t != null || msg.time != null || msg.timestamp != null);
+
+    if (looksLikeSingleBar) {
+      window.__A10_LIVE_HAS_BARS__ = true;
+      const sym = msg.S || msg.symbol || a10LiveWanted.symbol;
+      a10UpdateChartFromPayload({ bars: [msg], symbol: sym, timeframe: a10LiveWanted.timeframe });
+      return;
+    }
+
+    // ✅ 2) ARRAY de bars (já existia)
+    const isBarLike = Array.isArray(msg) && msg.length &&
+      (msg[0]?.o != null || msg[0]?.open != null || msg[0]?.t != null || msg[0]?.time != null);
+
+    const isTradeLike = Array.isArray(msg) && msg.length &&
+      (msg[0]?.p != null || msg[0]?.price != null || msg[0]?.t != null || msg[0]?.time != null);
+
+    if (isBarLike || isTradeLike) {
+      window.__A10_LIVE_HAS_BARS__ = true;
+      a10UpdateChartFromPayload({ bars: msg, symbol: a10LiveWanted.symbol, timeframe: a10LiveWanted.timeframe });
+      return;
+    }
+
+    // ✅ 3) ENVELOPE com bars/candles (já existia)
+    if (msg && typeof msg === "object") {
+      // alguns servidores mandam { bar: {...} }
+      if (msg.bar && typeof msg.bar === "object") {
+        return handleOne(msg.bar);
+      }
+
+      if (Array.isArray(msg.bars) || Array.isArray(msg.candles)) {
+        window.__A10_LIVE_HAS_BARS__ = true;
+        a10UpdateChartFromPayload(msg);
+        return;
+      }
+
+      if (msg.data) {
+        handleOne(msg.data);
+        return;
+      }
+    }
+
+    // se quiser debug rápido do que está vindo:
+    window.__A10_LIVE_LAST_OBJ__ = msg;
+  };
+
+  if (Array.isArray(obj)) obj.forEach(handleOne);
+  else handleOne(obj);
 }
 
 
