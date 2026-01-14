@@ -3693,6 +3693,9 @@ function a10LiveClose(){
   try { if (a10LiveWS) a10LiveWS.close(); } catch(e){}
   a10LiveWS = null;
 
+  // (1B) zera também no window pra console refletir na hora
+  window.a10LiveWS = null;
+
   if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
   a10LiveReconnectTimer = null;
 
@@ -3701,6 +3704,7 @@ function a10LiveClose(){
 
   window.__A10_LIVE_FALLBACK_TRIED__ = false;
 }
+
 
 
 function a10LiveSubscribe(symbol, timeframe){
@@ -3824,7 +3828,9 @@ function a10LiveConnect(symbol, timeframe) {
 
   try {
     const ws = new WebSocket(url);
-    a10LiveWS = ws;
+a10LiveWS = ws;
+window.a10LiveWS = ws; // (1B) aparece no console
+
 
     ws.addEventListener("open", () => {
       if (ws !== a10LiveWS) return; // ignora socket velho
