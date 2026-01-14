@@ -4305,21 +4305,33 @@ async function requestMatcher(symbol) {
 
   let raw = null;
 
-  try {
+    try {
     raw = await fetchOne(MATCHER_WEBHOOK_URL);
   } catch (errProd) {
-    // fallback para webhook-test (ajuda MUITO quando o n8n tá no editor)
-    try {
-      raw = await fetchOne(MATCHER_WEBHOOK_URL_TEST);
-    } catch (errTest) {
+
+    // ✅ Só tenta webhook-test quando estiver rodando LOCAL (localhost/127.0.0.1)
+    if (__A10_IS_LOCAL) {
+      try {
+        raw = await fetchOne(MATCHER_WEBHOOK_URL_TEST);
+      } catch (errTest) {
+        if (reqId !== __AARON_MATCHER_REQ_ID) return;
+        const msg = `Matcher fetch falhou: ${errTest?.message || errTest || "Failed to fetch"}`;
+        if (ctxEl) ctxEl.textContent = msg;
+        if (exeEl) exeEl.textContent = "—";
+        if (typeof setRespSnapMessage === "function") setRespSnapMessage(msg);
+        return;
+      }
+    } else {
+      // ✅ Em produção: NÃO tenta webhook-test (ele sempre quebra)
       if (reqId !== __AARON_MATCHER_REQ_ID) return;
-      const msg = `Matcher fetch falhou: ${errTest?.message || errTest || "Failed to fetch"}`;
+      const msg = `Matcher (PROD) falhou: ${errProd?.message || errProd || "Failed to fetch"}`;
       if (ctxEl) ctxEl.textContent = msg;
       if (exeEl) exeEl.textContent = "—";
       if (typeof setRespSnapMessage === "function") setRespSnapMessage(msg);
       return;
     }
   }
+
 
   if (reqId !== __AARON_MATCHER_REQ_ID) return;
 
