@@ -3743,19 +3743,24 @@ function a10LiveSubscribe(symbol, timeframe){
 }
 
 
-function a10LiveHandleMessage(ev) {
-  if (!ev || !ev.data) return;
+function a10LiveHandleMessage(payloadOrEvent) {
+  // aceita tanto o Event do WS quanto o "data" puro (string/obj)
+  const data = (payloadOrEvent && typeof payloadOrEvent === "object" && "data" in payloadOrEvent)
+    ? payloadOrEvent.data
+    : payloadOrEvent;
+
+  if (!data) return;
 
   // debug raw
-  window.__A10_LIVE_LAST_RAW__ = ev.data;
+  window.__A10_LIVE_LAST_RAW__ = data;
 
   // garante chart
   a10InitChart();
 
   // parse
-  let obj = ev.data;
-  if (typeof ev.data === "string") {
-    try { obj = JSON.parse(ev.data); } catch (e) {}
+  let obj = data;
+  if (typeof data === "string") {
+    try { obj = JSON.parse(data); } catch (e) {}
   }
 
   const wanted = a10LiveWanted || {};
@@ -3895,6 +3900,7 @@ function a10LiveHandleMessage(ev) {
 }
 
 
+
 function a10LiveConnect(symbol, timeframe) {
   if (!A10_USE_LIVE_CANDLES) return;
 
@@ -3933,12 +3939,13 @@ window.a10LiveWS = ws; // (1B) aparece no console
       a10LiveSubscribe(symbol, timeframe);
     });
 
-    // ✅ CRÍTICO: passar ev.data
-    ws.addEventListener("message", (ev) => {
-      if (ws !== a10LiveWS) return;
-      a10LastMsgAt = Date.now();
-      a10LiveHandleMessage(ev.data);
-    });
+    // ✅ CRÍTICO: passar o Event (o handler aceita Event ou data)
+ws.addEventListener("message", (ev) => {
+  if (ws !== a10LiveWS) return;
+  a10LastMsgAt = Date.now();
+  a10LiveHandleMessage(ev);
+});
+
 
     ws.addEventListener("close", (e) => {
       if (ws !== a10LiveWS) return; // close de socket velho: ignora
