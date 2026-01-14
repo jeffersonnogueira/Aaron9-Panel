@@ -3846,67 +3846,62 @@ function a10LiveHandleMessage(data){
 
 
 function a10LiveConnect(symbol, timeframe) {
-  try { a10LiveClose(); } catch (e) {}
-
-  // normaliza URL: garante /ws
-  const primary = String(A10_LIVE_WS_URL || "").trim();
-  const url = primary.endsWith("/ws")
-    ? primary
-    : (primary.replace(/\/+$/, "") + "/ws");
-
+  // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
 
-  try {
-    a10LiveSetStatus("LIVE: connecting...");
-    const ws = new WebSocket(url);
-    a10LiveWS = ws;
+  // fecha WS anterior (se existir)
+  try { a10LiveClose(); } catch (e) {}
 
-    ws.onopen = () => {
-      // ✅ NÃO pode ter useFallback aqui (isso estava matando os candles)
+  // garante /ws
+  const base = String(A10_LIVE_WS_URL || "").trim();
+  const url = base.endsWith("/ws") ? base : (base.replace(/\/+$/, "") + "/ws");
+
+  a10LiveSetStatus("ALPACA: CONNECTING");
+
+  try {
+    a10LiveWS = new WebSocket(url);
+
+    a10LiveWS.addEventListener("open", () => {
+      a10LastMsgAt = Date.now();
       a10LiveSetStatus("ALPACA: CONNECTED");
 
-      // subscribe (isso é o que faz o servidor começar a mandar candles)
+      // heartbeat (mantém Cloud Run acordado e detecta queda)
+      clearInterval(a10LiveHeartbeatTimer);
+      a10LiveHeartbeatTimer = setInterval(() => {
+        if (a10LiveWS && a10LiveWS.readyState === 1) {
+          try { a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() })); } catch (e) {}
+        }
+      }, 15000);
+
+      // ✅ ESSENCIAL: subscribe assim que conectar
       a10LiveSubscribe(symbol, timeframe);
+    });
 
-      // heartbeat (mantém conexão viva)
-      try { clearInterval(window.__A10_LIVE_HEARTBEAT__); } catch (e) {}
-      window.__A10_LIVE_HEARTBEAT__ = setInterval(() => {
-        try {
-          if (a10LiveWS && a10LiveWS.readyState === 1) {
-            a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() }));
-          }
-        } catch (e) {}
-      }, 25000);
-    };
+    a10LiveWS.addEventListener("message", a10LiveHandleMessage);
 
-    ws.onmessage = (ev) => {
-      a10LiveHandleMessage(ev.data);
-    };
+    a10LiveWS.addEventListener("close", (e) => {
+      a10LiveSetStatus(`ALPACA: DISCONNECTED (${e.code || "close"})`);
 
-    ws.onerror = () => {
-      a10LiveSetStatus("LIVE: ws error");
-    };
+      clearInterval(a10LiveHeartbeatTimer);
+      a10LiveHeartbeatTimer = null;
 
-    ws.onclose = (ev) => {
-      const code = (ev && typeof ev.code === "number") ? ev.code : 0;
-      const clean = !!(ev && ev.wasClean);
+      clearTimeout(a10LiveReconnectTimer);
+      a10LiveReconnectTimer = setTimeout(() => {
+        const w = a10LiveWanted || {};
+        if (w.symbol) a10LiveConnect(w.symbol, w.timeframe);
+      }, 1200);
+    });
 
-      a10LiveSetStatus(`LIVE: closed code=${code} clean=${clean}`);
+    a10LiveWS.addEventListener("error", () => {
+      a10LiveSetStatus("ALPACA: WS ERROR");
+    });
 
-      try { clearInterval(window.__A10_LIVE_HEARTBEAT__); } catch (e) {}
-      a10LiveWS = null;
-
-      // auto-reconnect se ainda tiver símbolo selecionado
-      const want = a10LiveWanted;
-      if (want && want.symbol) {
-        setTimeout(() => a10LiveConnect(want.symbol, want.timeframe), 1200);
-      }
-    };
-  } catch (e) {
-    a10LiveSetStatus("LIVE: connect exception");
-    console.error("a10LiveConnect exception:", e);
+  } catch (err) {
+    console.error(err);
+    a10LiveSetStatus("ALPACA: CONNECT FAIL");
   }
 }
+
 
 
 
