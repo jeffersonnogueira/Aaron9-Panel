@@ -3862,10 +3862,10 @@ function a10LiveConnect(symbol, timeframe){
 
   a10LiveSetStatus("LIVE: conectando");
 
-  const primary = A10_LIVE_WS_URL;
-  const fallback = primary.endsWith("/ws") ? primary : (primary.replace(/\/+$/, "") + "/ws");
-  const useFallback = !!window.__A10_LIVE_FALLBACK_TRIED__;
-  const url = useFallback ? fallback : primary;
+      const primary = A10_LIVE_WS_URL;
+  const url = primary.endsWith("/ws")
+    ? primary
+    : (primary.replace(/\/+$/, "") + "/ws");
 
   let ws;
   try {
