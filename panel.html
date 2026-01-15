@@ -3870,10 +3870,12 @@ function a10LiveHandleMessage(payloadOrEvent) {
     return { t: bucketTime, o, h, l, c, v };
   }
 
-  function pushAggBar(bar){
+    function pushAggBar(bar){
     if (!bar) return;
 
     window.__A10_LIVE_HAS_BARS__ = true;
+    window.__A10_LIVE_LAST_BAR_AT__ = Date.now(); // ✅ só atualiza quando chega BAR/TRADE
+    window.__A10_LIVE_LAST_BAR_T__  = bar.t;
 
     // manda como bars[] pro pipeline normal (extract -> merge incremental)
     a10UpdateChartFromPayload({
@@ -3883,6 +3885,7 @@ function a10LiveHandleMessage(payloadOrEvent) {
       __live: true
     });
   }
+
 
   function handleOne(msg) {
     if (!msg) return;
@@ -3929,6 +3932,11 @@ function a10LiveConnect(symbol, timeframe) {
 
   // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
+    window.__A10_LIVE_HAS_BARS__ = false;
+  window.__A10_LIVE_LAST_BAR_AT__ = 0;
+  window.__A10_LIVE_LAST_BAR_T__ = 0;
+  window.__A10_LIVE_LAST_45__ = null;
+
 
   // fecha WS anterior (se existir)
   try { a10LiveClose(); } catch (e) {}
@@ -7925,18 +7933,16 @@ function initAaron9() {
   a10BindStudiesUI();
 
   // sempre que o painel atualizar, atualiza o chart
-    window.addEventListener('aaron:panelUpdated', () => {
-  const liveOk =
-    !!A10_USE_LIVE_CANDLES &&
-    !!window.__A10_LIVE_HAS_BARS__ &&
-    !!a10LiveWS && a10LiveWS.readyState === 1 &&
-    (Date.now() - (a10LastMsgAt || 0) < 45000);
+      window.addEventListener('aaron:panelUpdated', () => {
+    // Só “protege” o chart contra snapshot do polling se estiver chegando BAR de verdade
+    const lastBarAt = window.__A10_LIVE_LAST_BAR_AT__ || 0;
+    const liveBarFresh = A10_USE_LIVE_CANDLES && lastBarAt && (Date.now() - lastBarAt) < 120000; // 2 min
 
-  // Se o live está saudável, NÃO deixa o payload “polled” sobrescrever o chart
-  if (liveOk) return;
+    if (liveBarFresh) return; // live de verdade -> não sobrescreve com polling
 
-  a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
-});
+    a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__); // sem BAR -> deixa polling atualizar
+  });
+
 
 
 
