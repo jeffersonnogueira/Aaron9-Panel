@@ -7406,6 +7406,34 @@ let a10LastPayloadKey = '';
 let a10LastStudyUpdateAt = 0;
 const A10_STUDY_THROTTLE_MS = 1500;
 
+function a10ResetLiveChart(reason = '') {
+  try {
+    // zera base local
+    a10ChartCandles = [];
+
+    // limpa séries (se já existirem)
+    if (a10CandleSeries) a10CandleSeries.setData([]);
+    if (a10Ema21Series) a10Ema21Series.setData([]);
+    if (a10VwapSeries)  a10VwapSeries.setData([]);
+
+    // remove price lines antigas (prev day / session hi/lo / orb etc)
+    if (a10CandleSeries && Array.isArray(a10PriceLines) && a10PriceLines.length) {
+      for (const pl of a10PriceLines) {
+        try { a10CandleSeries.removePriceLine(pl); } catch (_) {}
+      }
+    }
+    a10PriceLines = [];
+
+    // debug globals (opcional, mas ajuda MUITO)
+    window.__A10_LIVE_HAS_BARS__ = false;
+    window.__A10_LIVE_LAST_45__ = null;
+    window.__A10_LIVE_LAST_RAW__ = null;
+
+    console.log('[A10] reset live chart', reason);
+  } catch (e) {
+    console.warn('[A10] reset live chart failed', e);
+  }
+}
 
 function a10UnixSec(t) {
   if (typeof t === 'number') {
