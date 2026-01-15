@@ -3634,7 +3634,7 @@
   <script>
 // ======= CONFIG PAINEL (JSON) =======
 const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json';
-const REFRESH_MS = 60000; // 1 minuto
+const REFRESH_MS = 30000; // 1 minuto
 
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
 // COLE ESTE BLOCO LOGO ABAIXO DO: const REFRESH_MS = 60000;
@@ -3932,7 +3932,7 @@ function a10LiveConnect(symbol, timeframe) {
 
   // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
-  window.__A10_LIVE_HAS_BARS__ = false;
+    window.__A10_LIVE_HAS_BARS__ = false;
   window.__A10_LIVE_LAST_BAR_AT__ = 0;
   window.__A10_LIVE_LAST_BAR_T__ = 0;
   window.__A10_LIVE_LAST_45__ = null;
@@ -7937,7 +7937,8 @@ function initAaron9() {
       window.addEventListener('aaron:panelUpdated', () => {
     // Só “protege” o chart contra snapshot do polling se estiver chegando BAR de verdade
     const lastBarAt = window.__A10_LIVE_LAST_BAR_AT__ || 0;
-    const liveBarFresh = A10_USE_LIVE_CANDLES && lastBarAt && (Date.now() - lastBarAt) < 120000; // 2 min
+    const liveBarFresh = A10_USE_LIVE_CANDLES && lastBarAt && (Date.now() - lastBarAt) < 90000; // 90s
+
 
     if (liveBarFresh) return; // live de verdade -> não sobrescreve com polling
 
@@ -7947,16 +7948,22 @@ function initAaron9() {
 
 
 
-  // botão ATUALIZAR
+    // botão ATUALIZAR
   if (els.btnRefresh) {
     els.btnRefresh.addEventListener('click', function () {
       loadPanel(true);
     });
   }
 
+  // evita leak de conexões WS ao fechar/recarregar a aba
+  window.addEventListener('beforeunload', () => {
+    try { a10LiveClose(); } catch(e) {}
+  });
+
   loadPanel(false);
   setInterval(() => loadPanel(false), REFRESH_MS);
 }
+
 
 
 
