@@ -3870,14 +3870,13 @@ function a10LiveHandleMessage(payloadOrEvent) {
     return { t: bucketTime, o, h, l, c, v };
   }
 
-    function pushAggBar(bar){
+      function pushAggBar(bar){
     if (!bar) return;
 
     window.__A10_LIVE_HAS_BARS__ = true;
-    window.__A10_LIVE_LAST_BAR_AT__ = Date.now(); // ✅ só atualiza quando chega BAR/TRADE
+    window.__A10_LIVE_LAST_BAR_AT__ = Date.now(); // ✅ só quando chega BAR/TRADE
     window.__A10_LIVE_LAST_BAR_T__  = bar.t;
 
-    // manda como bars[] pro pipeline normal (extract -> merge incremental)
     a10UpdateChartFromPayload({
       bars: [bar],
       symbol: symWanted,
@@ -3885,6 +3884,7 @@ function a10LiveHandleMessage(payloadOrEvent) {
       __live: true
     });
   }
+
 
 
   function handleOne(msg) {
@@ -3932,7 +3932,7 @@ function a10LiveConnect(symbol, timeframe) {
 
   // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
-    window.__A10_LIVE_HAS_BARS__ = false;
+  window.__A10_LIVE_HAS_BARS__ = false;
   window.__A10_LIVE_LAST_BAR_AT__ = 0;
   window.__A10_LIVE_LAST_BAR_T__ = 0;
   window.__A10_LIVE_LAST_45__ = null;
@@ -3962,10 +3962,11 @@ window.a10LiveWS = ws; // (1B) aparece no console
 
   // heartbeat (UI): NÃO envia ping pro relay
   // (se o relay repassar pro WS da Alpaca, isso pode derrubar a Alpaca)
-  if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
-  a10LiveHeartbeatTimer = setInterval(() => {
-    window.__A10_UI_HEARTBEAT__ = Date.now();
-  }, 15000);
+        // heartbeat (UI): NÃO envia ping pro relay
+      if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
+      a10LiveHeartbeatTimer = setInterval(() => {
+        window.__A10_UI_HEARTBEAT__ = Date.now();
+      }, 15000);
 
   // subscribe assim que conectar
   a10LiveSubscribe(symbol, timeframe);
