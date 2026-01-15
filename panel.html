@@ -3673,8 +3673,6 @@ let a10LiveWanted = { symbol: null, timeframe: null };
 let a10LiveWS = null;
 let a10LiveReconnectTimer = null;
 let a10LiveHeartbeatTimer = null;
-let a10LastBarAt = 0;    // Date.now() do último OHLC válido
-let a10LastBarTSec = 0;  // tSec do último OHLC
 let a10LastMsgAt = 0;
 
 function a10LiveSetStatus(text){
@@ -3875,32 +3873,11 @@ function a10LiveHandleMessage(payloadOrEvent) {
       if (Array.isArray(msg.bars) || Array.isArray(msg.candles)) { handleOne(msg.bars || msg.candles); return; }
       if (msg.data) { handleOne(msg.data); return; }
     }
-    // 0) STATUS / CONTROL messages (do relay)
-    const msgType = String(msg?.type || msg?.event || msg?.t || "").toLowerCase();
-    if (msgType === "status") {
-      const st = String(msg.status || msg.message || "").trim();
-      if (st) a10LiveSetStatus(st);
-      window.__A10_LIVE_STATUS__ = st || msg;
-
-      // se o relay avisar que o Alpaca caiu, força reconectar
-      if (/disconn|error|stale/i.test(st)) {
-        try { a10LiveWS?.close(4000, st.slice(0, 120)); } catch (e) {}
-      }
-      return;
-    }
-
-    // mensagens “controle” (subscribe/ping/pong) — só guarda p/ debug
-    if (msgType === "pong" || msgType === "ping" || msgType === "subscribed" || msgType === "subscribe") {
-      window.__A10_LIVE_LAST_SUB__ = msg;
-      return;
-    }
 
     // 1) BAR OHLC
     const ohlc = normOHLC(msg);
     if (ohlc) {
       window.__A10_LIVE_LAST_45__ = ohlc;
-      a10LastBarAt = Date.now();
-      a10LastBarTSec = ohlc.tSec || 0;
       const bar = buildAggBar(ohlc);
       pushAggBar(bar);
       return;
@@ -3953,28 +3930,10 @@ window.a10LiveWS = ws; // (1B) aparece no console
       // heartbeat
       if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
       a10LiveHeartbeatTimer = setInterval(() => {
-  if (!a10LiveWS || a10LiveWS.readyState !== 1) return;
-
-  // 1) Se o WS tá vivo (ping/status), mas NÃO chega OHLC novo → reconecta
-  const barSilentMs = Date.now() - (a10LastBarAt || 0);
-  if (a10LastBarAt && barSilentMs > 90000) {
-    try { a10LiveSetStatus(`ALPACA: NO BARS (${Math.round(barSilentMs / 1000)}s) → reconnect`); } catch (e) {}
-    try { a10LiveWS.close(4002, "no-bars"); } catch (e) {}
-    return;
-  }
-
-  // 2) Se não chega mensagem nenhuma → reconecta (seu comportamento atual)
-  const silentMs = Date.now() - (a10LastMsgAt || 0);
-  if (silentMs > 45000) {
-    try { a10LiveSetStatus(`ALPACA: STALE (${Math.round(silentMs / 1000)}s) → reconnect`); } catch (e) {}
-    try { a10LiveWS.close(4001, "stale"); } catch (e) {}
-    return;
-  }
-
-  try { a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() })); } catch (e) {}
-}, 15000);
-
-
+        if (a10LiveWS && a10LiveWS.readyState === 1) {
+          try { a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() })); } catch (e) {}
+        }
+      }, 15000);
 
       // subscribe assim que conectar
       a10LiveSubscribe(symbol, timeframe);
