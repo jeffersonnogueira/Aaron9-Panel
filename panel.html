@@ -3887,7 +3887,7 @@ function a10LiveHandleMessage(payloadOrEvent) {
 
 
 
-  function handleOne(msg) {
+    function handleOne(msg) {
     if (!msg) return;
 
     // lista
@@ -3896,9 +3896,14 @@ function a10LiveHandleMessage(payloadOrEvent) {
     // envelope com bar / bars / candles / data
     if (msg && typeof msg === "object") {
       if (msg.bar && typeof msg.bar === "object") { handleOne(msg.bar); return; }
+
+      // ✅ PATCH: suporta { type:"candle_update", candle:{...} }
+      if (msg.candle && typeof msg.candle === "object") { handleOne(msg.candle); return; }
+
       if (Array.isArray(msg.bars) || Array.isArray(msg.candles)) { handleOne(msg.bars || msg.candles); return; }
       if (msg.data) { handleOne(msg.data); return; }
     }
+
 
     // 1) BAR OHLC
     const ohlc = normOHLC(msg);
