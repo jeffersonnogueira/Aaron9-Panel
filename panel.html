@@ -3671,13 +3671,14 @@ let a10LiveWanted = { symbol: null, timeframe: null };
 
 // timers/estado (pra não dar ReferenceError)
 let a10LiveWS = null;
-let a10LiveReconnectTimer = null;
-let a10LiveHeartbeatTimer = null;
+let a10HeartbeatTimer = null;
 let a10LastMsgAt = 0;
-
+let a10LiveWanted = { symbol: null, timeframe: null };
+let a10LiveWatchdogTimer = null; // <<< PATCH: watchdog
 function a10LiveSetStatus(text){
   const msg = text || "—";
 
+  
   // 1) label do topo (Sessão)
   const el = document.getElementById("session-label");
   if (el) el.textContent = msg;
@@ -3922,22 +3923,36 @@ a10LiveWS = ws;
 window.a10LiveWS = ws; // (1B) aparece no console
 
 
-    ws.addEventListener("open", () => {
-      if (ws !== a10LiveWS) return; // ignora socket velho
+        ws.addEventListener("open", () => {
       a10LastMsgAt = Date.now();
-      a10LiveSetStatus("ALPACA: CONNECTED");
+      window.__A10_LIVE_STATUS__ = `LIVE: connected → subscribe ${symbol} ${desiredTf} (wire ${wireTf})`;
+      a10SetLivePill(window.__A10_LIVE_STATUS__);
+      a10LiveSubscribe(symbol, desiredTf);
 
-      // heartbeat
-      if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
-      a10LiveHeartbeatTimer = setInterval(() => {
-        if (a10LiveWS && a10LiveWS.readyState === 1) {
-          try { a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() })); } catch (e) {}
-        }
+      // heartbeat (ping)
+      if (a10HeartbeatTimer) clearInterval(a10HeartbeatTimer);
+      a10HeartbeatTimer = setInterval(() => {
+        if (!a10LiveWS || a10LiveWS.readyState !== 1) return;
+        try { a10LiveWS.send(JSON.stringify({ type:"ping", ts: Date.now() })); } catch {}
       }, 15000);
 
-      // subscribe assim que conectar
-      a10LiveSubscribe(symbol, timeframe);
+      // <<< PATCH: WATCHDOG (se ficar sem mensagens, força reconnect)
+      if (a10LiveWatchdogTimer) clearInterval(a10LiveWatchdogTimer);
+      a10LiveWatchdogTimer = setInterval(() => {
+        try {
+          if (!a10LiveWS || a10LiveWS.readyState !== 1) return;
+          const idleMs = Date.now() - (a10LastMsgAt || 0);
+
+          // 45s sem receber NADA = feed morreu (fica travado em 7:13)
+          if (idleMs > 45000) {
+            window.__A10_LIVE_STATUS__ = `LIVE: stale (${Math.round(idleMs/1000)}s) → reconnecting…`;
+            a10SetLivePill(window.__A10_LIVE_STATUS__);
+            try { a10LiveWS.close(4000, "stale"); } catch {}
+          }
+        } catch {}
+      }, 5000);
     });
+
 
     // ✅ CRÍTICO: passar o Event (o handler aceita Event ou data)
 ws.addEventListener("message", (ev) => {
@@ -3947,20 +3962,20 @@ ws.addEventListener("message", (ev) => {
 });
 
 
-    ws.addEventListener("close", (e) => {
-      if (ws !== a10LiveWS) return; // close de socket velho: ignora
+        ws.addEventListener("close", () => {
+      if (ws !== a10LiveWS) return;
 
-      a10LiveSetStatus(`ALPACA: DISCONNECTED (${e.code || "close"})`);
+      if (a10HeartbeatTimer) clearInterval(a10HeartbeatTimer);
+      a10HeartbeatTimer = null;
 
-      if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
-      a10LiveHeartbeatTimer = null;
+      // <<< PATCH: limpar watchdog
+      if (a10LiveWatchdogTimer) clearInterval(a10LiveWatchdogTimer);
+      a10LiveWatchdogTimer = null;
 
-      if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
-      a10LiveReconnectTimer = setTimeout(() => {
-        const w = a10LiveWanted || {};
-        if (w.symbol) a10LiveConnect(w.symbol, w.timeframe);
-      }, 1500);
+      a10SetLivePill("LIVE: disconnected");
+      setTimeout(() => a10LiveConnect(symbol, desiredTf), 1500);
     });
+
 
     ws.addEventListener("error", () => {
       if (ws !== a10LiveWS) return;
