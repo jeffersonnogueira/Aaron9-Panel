@@ -3714,33 +3714,30 @@ function a10LiveSubscribe(symbol, timeframe){
   if (!sym) return;
   if (!a10LiveWS || a10LiveWS.readyState !== 1) return;
 
-  // normaliza timeframe “desejado” (UI)
+  // timeframe desejado (UI)
   const desiredTf =
     (/^\d+m(in)?$/i.test(tfRaw) || /^\d+m$/i.test(tfRaw)) ? tfRaw.replace(/in$/i, '') :
     (/^\d+min$/i.test(tfRaw)) ? tfRaw :
     tfRaw;
 
-  // 🔥 IMPORTANTE:
-  // A maioria dos relays/streams só entrega BAR em 1m (ou trades).
-  // Então a gente SEMPRE pede 1m no wire e agrega localmente pro timeframe desejado.
+  // ✅ wire sempre 1m (mais confiável) + agregamos no client se precisar
   const wireTf = "1m";
 
-  // payload compatível (type + action) pra não depender do nome do campo no server
   const payload = {
     type: "subscribe",
     action: "subscribe",
     symbol: sym,
-    timeframe: wireTf,           // ✅ sempre 1m
-    target_timeframe: desiredTf  // (debug) timeframe real da UI
+    timeframe: wireTf,
+    target_timeframe: desiredTf
   };
 
-  // debug global
   window.__A10_LIVE_LAST_SUB__ = payload;
 
   try { a10LiveWS.send(JSON.stringify(payload)); } catch(e){}
 
   a10LiveSetStatus(`LIVE: subscribed ${sym} ${desiredTf} (wire ${wireTf})`);
 }
+
 
 
 function a10LiveHandleMessage(payloadOrEvent) {
@@ -7392,13 +7389,14 @@ applyInstitutionalDecision(panel, executionPlan, riskLevel);
   }
 }
 
-// ====== INICIALIZAÇÃO ======
 // ========= AARON 10 – ALPACA CHART + STUDIES =========
 let a10Chart = null;
 let a10CandleSeries = null;
 let a10Ema21Series = null;
 let a10VwapSeries = null;
 let a10PriceLines = {};
+let a10LastPayloadKey = '';
+let a10ChartCandles = []; // ✅ buffer atual do gráfico (necessário pro LIVE)
 
 // 🔥 fonte da verdade do gráfico (para live incremental)
 let a10ChartCandles = [];              // candles que estão na tela
