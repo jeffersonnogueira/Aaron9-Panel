@@ -3674,6 +3674,7 @@ let a10LiveWS = null;
 let a10LiveReconnectTimer = null;
 let a10LiveHeartbeatTimer = null;
 let a10LastMsgAt = 0;
+window.a10LastMsgAt = 0;
 
 function a10LiveSetStatus(text){
   const msg = text || "—";
@@ -3695,6 +3696,8 @@ function a10LiveClose(){
 
   // (1B) zera também no window pra console refletir na hora
   window.a10LiveWS = null;
+
+  window.a10LastMsgAt = 0;
 
   if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
   a10LiveReconnectTimer = null;
@@ -3762,6 +3765,26 @@ function a10LiveHandleMessage(payloadOrEvent) {
   if (typeof data === "string") {
     try { obj = JSON.parse(data); } catch (e) {}
   }
+    // Se o relay mandar status (ex.: "ALPACA: disconnected"), mostra e tenta resetar
+  if (obj && typeof obj === "object" && String(obj.type || "").toLowerCase() === "status" && obj.status) {
+    window.__A10_LIVE_LAST_OBJ__ = obj;
+
+    const s = String(obj.status);
+    a10LiveSetStatus(s);
+
+    // Se o bridge Alpaca caiu mas o WS UI ainda está aberto, força reset (throttle 5s)
+    if (/alpaca/i.test(s) && /disconnected|down|error/i.test(s)) {
+      const now = Date.now();
+      if (!window.__A10_RELAY_RESET_AT__ || (now - window.__A10_RELAY_RESET_AT__) > 5000) {
+        window.__A10_RELAY_RESET_AT__ = now;
+        try { a10LiveClose(); } catch(e) {}
+        const w = a10LiveWanted || {};
+        if (w.symbol) setTimeout(() => a10LiveConnect(w.symbol, w.timeframe), 250);
+      }
+    }
+    return;
+  }
+
 
   const wanted = a10LiveWanted || {};
   const symWanted = String(wanted.symbol || "").trim().toUpperCase();
@@ -3923,28 +3946,32 @@ window.a10LiveWS = ws; // (1B) aparece no console
 
 
     ws.addEventListener("open", () => {
-      if (ws !== a10LiveWS) return; // ignora socket velho
-      a10LastMsgAt = Date.now();
-      a10LiveSetStatus("ALPACA: CONNECTED");
+  if (ws !== a10LiveWS) return; // ignora socket velho
+  a10LastMsgAt = Date.now();
+  window.a10LastMsgAt = a10LastMsgAt; // debug no console
 
-      // heartbeat
-      if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
-      a10LiveHeartbeatTimer = setInterval(() => {
-        if (a10LiveWS && a10LiveWS.readyState === 1) {
-          try { a10LiveWS.send(JSON.stringify({ type: "ping", t: Date.now() })); } catch (e) {}
-        }
-      }, 15000);
+  a10LiveSetStatus("ALPACA: CONNECTED");
 
-      // subscribe assim que conectar
-      a10LiveSubscribe(symbol, timeframe);
-    });
+  // heartbeat (UI): NÃO envia ping pro relay
+  // (se o relay repassar pro WS da Alpaca, isso pode derrubar a Alpaca)
+  if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
+  a10LiveHeartbeatTimer = setInterval(() => {
+    window.__A10_UI_HEARTBEAT__ = Date.now();
+  }, 15000);
+
+  // subscribe assim que conectar
+  a10LiveSubscribe(symbol, timeframe);
+});
+
 
     // ✅ CRÍTICO: passar o Event (o handler aceita Event ou data)
 ws.addEventListener("message", (ev) => {
   if (ws !== a10LiveWS) return;
   a10LastMsgAt = Date.now();
+  window.a10LastMsgAt = a10LastMsgAt; // debug no console
   a10LiveHandleMessage(ev);
 });
+
 
 
     ws.addEventListener("close", (e) => {
@@ -7822,6 +7849,8 @@ function a10UpdateChartFromPayload(payload) {
       a10LastStudyUpdateAt = now;
     }
 
+
+    window.a10ChartCandles = a10ChartCandles;
     const candles = a10ChartCandles;
     if (!candles || !candles.length) return;
 
@@ -7897,17 +7926,18 @@ function initAaron9() {
 
   // sempre que o painel atualizar, atualiza o chart
     window.addEventListener('aaron:panelUpdated', () => {
-    // Se o WS live estiver saudável, NÃO sobrescreve o chart com snapshot do polling
-    const liveOk =
-      A10_USE_LIVE_CANDLES &&
-      window.__A10_LIVE_HAS_BARS__ &&
-      a10LiveWS && a10LiveWS.readyState === 1 &&
-      (Date.now() - a10LastMsgAt) < 45000;
+  const liveOk =
+    !!A10_USE_LIVE_CANDLES &&
+    !!window.__A10_LIVE_HAS_BARS__ &&
+    !!a10LiveWS && a10LiveWS.readyState === 1 &&
+    (Date.now() - (a10LastMsgAt || 0) < 45000);
 
-    if (liveOk) return;
+  // Se o live está saudável, NÃO deixa o payload “polled” sobrescrever o chart
+  if (liveOk) return;
 
-    a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
-  });
+  a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
+});
+
 
 
   // botão ATUALIZAR
