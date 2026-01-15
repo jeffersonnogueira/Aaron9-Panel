@@ -7896,9 +7896,19 @@ function initAaron9() {
   a10BindStudiesUI();
 
   // sempre que o painel atualizar, atualiza o chart
-  window.addEventListener('aaron:panelUpdated', () => {
+    window.addEventListener('aaron:panelUpdated', () => {
+    // Se o WS live estiver saudável, NÃO sobrescreve o chart com snapshot do polling
+    const liveOk =
+      A10_USE_LIVE_CANDLES &&
+      window.__A10_LIVE_HAS_BARS__ &&
+      a10LiveWS && a10LiveWS.readyState === 1 &&
+      (Date.now() - a10LastMsgAt) < 45000;
+
+    if (liveOk) return;
+
     a10UpdateChartFromPayload(window.__AARON_LAST_PAYLOAD__);
   });
+
 
   // botão ATUALIZAR
   if (els.btnRefresh) {
