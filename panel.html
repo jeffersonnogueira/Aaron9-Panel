@@ -3675,6 +3675,11 @@ let a10LiveReconnectTimer = null;
 let a10LiveHeartbeatTimer = null;
 let a10LastMsgAt = 0;
 window.a10LastMsgAt = 0;
+// backoff de reconexão (evita spam/429 no Cloud Run)
+const A10_LIVE_RETRY_MIN_MS = 5000;   // 5s
+const A10_LIVE_RETRY_MAX_MS = 60000;  // 60s
+let a10LiveRetryMs = A10_LIVE_RETRY_MIN_MS;
+
 
 function a10LiveSetStatus(text){
   const msg = text || "—";
@@ -3962,6 +3967,7 @@ window.a10LiveWS = ws; // (1B) aparece no console
   if (ws !== a10LiveWS) return; // ignora socket velho
   a10LastMsgAt = Date.now();
   window.a10LastMsgAt = a10LastMsgAt; // debug no console
+  a10LiveRetryMs = A10_LIVE_RETRY_MIN_MS; // resetou porque conectou
 
   a10LiveSetStatus("ALPACA: CONNECTED");
 
@@ -3989,24 +3995,33 @@ ws.addEventListener("message", (ev) => {
 
 
     ws.addEventListener("close", (e) => {
-      if (ws !== a10LiveWS) return; // close de socket velho: ignora
+  if (ws !== a10LiveWS) return; // close de socket velho: ignora
 
-      a10LiveSetStatus(`ALPACA: DISCONNECTED (${e.code || "close"})`);
+  const code = (e && typeof e.code === "number") ? e.code : 0;
+  const waitMs = Math.max(A10_LIVE_RETRY_MIN_MS, a10LiveRetryMs || A10_LIVE_RETRY_MIN_MS);
 
-      if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
-      a10LiveHeartbeatTimer = null;
+  a10LiveSetStatus(`ALPACA: DISCONNECTED (${code || "close"}) — retry em ${Math.round(waitMs/1000)}s`);
 
-      if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
-      a10LiveReconnectTimer = setTimeout(() => {
-        const w = a10LiveWanted || {};
-        if (w.symbol) a10LiveConnect(w.symbol, w.timeframe);
-      }, 1500);
-    });
+  if (a10LiveHeartbeatTimer) clearInterval(a10LiveHeartbeatTimer);
+  a10LiveHeartbeatTimer = null;
+
+  if (a10LiveReconnectTimer) clearTimeout(a10LiveReconnectTimer);
+
+  // aumenta backoff (cap)
+  a10LiveRetryMs = Math.min(A10_LIVE_RETRY_MAX_MS, Math.round(waitMs * 1.8));
+
+  a10LiveReconnectTimer = setTimeout(() => {
+    const w = a10LiveWanted || {};
+    if (w.symbol) a10LiveConnect(w.symbol, w.timeframe);
+  }, waitMs);
+});
+
 
     ws.addEventListener("error", () => {
-      if (ws !== a10LiveWS) return;
-      a10LiveSetStatus("ALPACA: WS ERROR");
-    });
+  if (ws !== a10LiveWS) return;
+  a10LiveSetStatus("ALPACA: WS ERROR");
+  try { ws.close(); } catch(e) {}
+});
 
   } catch (err) {
     console.error(err);
