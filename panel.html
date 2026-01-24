@@ -4664,8 +4664,60 @@ function updatePremonitionPanel(payload){
       ui.premonicao_micro_en, panel.premonicao_micro_en, digest.premonicao_micro_en
     );
 
+        let macroTxt = macro;
+    let microTxt = micro;
+
     // breakout window card (estruturado)
-    const bw = pickFirst(ui.breakout_window_card, panel.breakout_window_card, digest.breakout_window_card);
+        let bw = pickFirst(ui.breakout_window_card, panel.breakout_window_card, digest.breakout_window_card);
+
+            // ✅ DEMO quando não houver dados (sistema OFF / vazio)
+    const A10_PREM_DEMO_WHEN_EMPTY = true;
+
+    if (A10_PREM_DEMO_WHEN_EMPTY) {
+      const hasBW = bw && (
+        bw.prob_until_end_pct != null ||
+        bw.window_end_label ||
+        bw.trigger_price != null
+      );
+
+      if (!hasBW) {
+        const now = new Date();
+
+        const fmtMT = (d) => {
+          try {
+            return d.toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true,
+              timeZone: 'America/Denver'
+            });
+          } catch (_) {
+            return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+          }
+        };
+
+        const end   = new Date(now.getTime() + 2 * 60 * 1000);
+        const start = new Date(now.getTime() - 26 * 60 * 1000);
+
+        bw = {
+          dir: "DOWN",
+          prob_until_end_pct: 81,
+          window_start_label: fmtMT(start),
+          window_end_label: fmtMT(end),
+          median_minutes: 2,
+          miss_line: "Se tentar cair perto das 12:00: Prob. cai para 47%",
+          n_total: 444,
+          confidence: "LOW confidence",
+          source: "DEMO",
+          score: 0.88,
+          trigger_price: 100 // depois o canvas ajusta para o preço atual se precisar
+        };
+
+        if (!macroTxt) macroTxt = "PREMONIÇÃO MACRO (DEMO): tendência de baixa — ETA ~17 min.";
+        if (!microTxt) microTxt = "PREMONIÇÃO MICRO (DEMO): queda rápida — ETA ~2 min.";
+      }
+    }
+
 
     const dir = String(bw?.dir || "").toUpperCase();
     const verbPT = (dir === "DOWN") ? "cair" : (dir === "UP") ? "subir" : "romper";
@@ -4699,10 +4751,10 @@ function updatePremonitionPanel(payload){
     setText("prem-median", mLine);
 
     setText("prem-miss", bw?.miss_line || "—");
-    setText("prem-macro", macro || "—");
-    setText("prem-micro", micro || "—");
+        setText("prem-macro", macroTxt || "—");
+    setText("prem-micro", microTxt || "—");
 
-    const score = payload?.digest?.shape_focus?.score;
+    const score = (payload?.digest?.shape_focus?.score ?? bw?.score);
     const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
     const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
     const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
@@ -4854,12 +4906,16 @@ function updatePremonitionPanel(payload){
       const yMap = (p) => pad + (yMax - p) * (plotH - pad * 2) / (yMax - yMin);
 
       // grid leve (só na área do gráfico)
-      ctx.strokeStyle = "rgba(255,255,255,.06)";
-      ctx.lineWidth = 1;
-      for (let i = 1; i <= 4; i++) {
-        const y = pad + (plotH - pad * 2) * (i / 5);
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      }
+ctx.strokeStyle = "rgba(255,255,255,.06)";
+ctx.lineWidth = 1;
+for (let i = 1; i <= 4; i++) {
+  const y = pad + (plotH - pad * 2) * (i / 5);
+  ctx.beginPath();
+  ctx.moveTo(pad, y);
+  ctx.lineTo(W - pad, y);
+  ctx.stroke();
+}
+
 
       const futureSlots = Math.max(10, Math.round(Number(etaMin) || 0) + 6);
       const stepX = (W - pad * 2) / ((candles.length - 1) + futureSlots);
@@ -4951,15 +5007,17 @@ function updatePremonitionPanel(payload){
         ctx.strokeStyle = "rgba(255,204,102,.95)";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(0, yT);
-        ctx.lineTo(W, yT);
+        ctx.moveTo(pad, yT);
+        ctx.lineTo(W - pad, yT);
         ctx.stroke();
+
 
         // linha X (tempo/ETA)
         ctx.beginPath();
-        ctx.moveTo(xT, 0);
-        ctx.lineTo(xT, plotH);
+        ctx.moveTo(xT, pad);
+        ctx.lineTo(xT, plotH - pad);
         ctx.stroke();
+
 
         // ponto
         ctx.fillStyle = "rgba(255,204,102,.95)";
