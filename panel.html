@@ -5011,6 +5011,44 @@ for (let i = 1; i <= 4; i++) {
         }
       }
 
+      // ✅ Premonição: BOOT DEMO (quando sistema OFF / ninguém chama updatePremonitionPanel)
+// Cole ESTE BLOCO logo após o "}" de updatePremonitionPanel (linha 5111),
+// e ANTES de: let __AARON_MATCHER_REQ_ID = 0; (linha 5113)
+(function(){
+  if (window.__A10_PREM_BOOT_DEMO__) return;
+  window.__A10_PREM_BOOT_DEMO__ = true;
+
+  const boot = () => {
+    try {
+      const canvas = document.getElementById("prem-canvas");
+      if (!canvas) return;
+
+      // se já chegou dado real do matcher, não sobrescreve
+      const last = window.__AARON_MATCHER_LAST__;
+      const hasReal =
+        !!last && (
+          (last.panel && Object.keys(last.panel).length) ||
+          (last.ui && Object.keys(last.ui).length) ||
+          (last.digest && Object.keys(last.digest).length)
+        );
+
+      if (!hasReal && typeof updatePremonitionPanel === "function") {
+        updatePremonitionPanel(null); // cai no seu DEMO/fallback
+      }
+    } catch (e) {}
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => setTimeout(boot, 250));
+  } else {
+    setTimeout(boot, 250);
+  }
+
+  // tenta de novo depois (caso o canvas ainda não exista no primeiro tick)
+  setTimeout(boot, 2000);
+})();
+
+
       // cruz (X/Y) em amarelo
       if (targetPrice != null) {
         const yT = yMap(targetPrice);
