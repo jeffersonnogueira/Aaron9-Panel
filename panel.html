@@ -2149,6 +2149,146 @@
   
 }
 /* ================== FIM GARIMPO DE HOJE ================== */
+/* ================== PREMONIÇÃO (Breakout Window Card) ================== */
+.premonition-banner{
+  margin: 14px 0 12px;
+}
+
+.premonition-container{
+  background:
+    radial-gradient(1200px 320px at 20% 10%, rgba(0,180,255,.16), rgba(0,0,0,0) 55%),
+    linear-gradient(180deg, rgba(10,14,22,.65), rgba(10,14,22,.35));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.premonition-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom: 10px;
+}
+
+.premonition-title{
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  opacity:.92;
+}
+
+.premonition-sub{
+  font-size: 12px;
+  opacity:.70;
+  margin-top: 2px;
+}
+
+.premonition-badge{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity:.9;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  white-space: nowrap;
+}
+
+.premonition-grid{
+  display:grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+@media (max-width: 980px){
+  .premonition-grid{ grid-template-columns: 1fr; }
+}
+
+.premonition-chart{
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  background: rgba(0,0,0,.22);
+  position: relative;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.premonition-canvas{
+  width: 100%;
+  height: 240px;
+  display:block;
+}
+
+.premonition-kpi{
+  margin-top: 10px;
+  display:flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.premonition-kpi .kpi-label{
+  opacity:.7;
+  font-size: 12px;
+}
+
+.premonition-kpi .kpi-time{
+  font-size: 34px;
+  font-weight: 950;
+  letter-spacing: .02em;
+  color: #ffcc66;
+}
+
+.premonition-kpi .kpi-ampm{
+  font-size: 12px;
+  opacity:.85;
+  margin-left: -6px;
+}
+
+.premonition-kpi .kpi-prob{
+  font-size: 26px;
+  font-weight: 950;
+  color: #ffcc66;
+}
+
+.premonition-panel{
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  background: rgba(0,0,0,.18);
+  padding: 12px 12px;
+}
+
+.premonition-panel .row{
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.premonition-panel .row:last-child{
+  border-bottom: none;
+}
+
+.premonition-panel .label{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .75;
+  margin-bottom: 6px;
+}
+
+.premonition-panel .value{
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.premonition-panel .muted{
+  opacity: .70;
+}
+/* ================== FIM PREMONIÇÃO ================== */
 
 /* ====== PATTERN REFERENCE (ABAIXO DO SIZING BRAIN) ====== */
 .ref-card { margin-top: 14px; }
@@ -2533,6 +2673,62 @@
   </div>
 </section>
 <!-- ================== FIM GARIMPO DE HOJE ================== -->
+<section id="premonition-section" class="premonition-banner">
+  <div class="premonition-container">
+    <div class="premonition-head">
+      <div>
+        <div class="premonition-title" id="prem-title">PREMONIÇÃO</div>
+        <div class="premonition-sub" id="prem-sub">Breakout Window (heurístico)</div>
+      </div>
+      <div class="premonition-badge" id="prem-badge">—</div>
+    </div>
+
+    <div class="premonition-grid">
+      <div class="premonition-chart">
+        <canvas id="prem-canvas" class="premonition-canvas" width="900" height="260"></canvas>
+
+        <div class="premonition-kpi">
+          <span class="kpi-label" id="prem-kpi-label">Prob. romper —</span>
+          <span class="kpi-time" id="prem-kpi-time">—</span>
+          <span class="kpi-ampm" id="prem-kpi-ampm"></span>
+          <span class="kpi-prob" id="prem-kpi-prob">—</span>
+        </div>
+      </div>
+
+      <div class="premonition-panel">
+        <div class="row">
+          <div class="label">Janela estimada</div>
+          <div class="value" id="prem-window">—</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Tempo típico</div>
+          <div class="value" id="prem-median">—</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Se não romper...</div>
+          <div class="value muted" id="prem-miss">—</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Premonição Macro</div>
+          <div class="value" id="prem-macro">—</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Premonição Micro</div>
+          <div class="value" id="prem-micro">—</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Base</div>
+          <div class="value muted" id="prem-base">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
     <div id="error-banner" class="error-banner">
@@ -4323,6 +4519,243 @@ function renderResponderInline(data){
     </div>
   `;
 }
+function updatePremonitionPanel(payload){
+  try{
+    const panel  = payload?.panel  || payload || {};
+    const ui     = payload?.ui     || {};
+    const digest = payload?.digest || {};
+
+    const lang = (typeof currentLang !== "undefined" && currentLang === "en") ? "en" : "pt";
+
+    const pickFirst = (...vals) => {
+      for (const v of vals){
+        if (v === null || v === undefined) continue;
+        const s = String(v).trim();
+        if (s) return v;
+      }
+      return null;
+    };
+
+    const splitTimeLabel = (label) => {
+      const s = String(label || "").trim();
+      // aceita "11:56 AM" ou "11:56"
+      const m = s.match(/^(\d{1,2}:\d{2})\s*(AM|PM)?$/i);
+      if (!m) return { hhmm: s || "—", ampm: "" };
+      return { hhmm: m[1], ampm: (m[2] || "").toUpperCase() };
+    };
+
+    const extractMinutes = (txt) => {
+      const s = String(txt || "");
+      const m = s.match(/~\s*(\d+(?:\.\d+)?)\s*(min|mins|minutes|minutos)/i);
+      if (!m) return null;
+      const n = Number(m[1]);
+      return isFinite(n) ? n : null;
+    };
+
+    const setText = (id, v) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = (v === null || v === undefined || v === "") ? "—" : String(v);
+    };
+
+    // pega macro/micro (PT/EN)
+    const macro = pickFirst(
+      (lang === "en") ? ui.premonicao_macro_en : ui.premonicao_macro_pt,
+      (lang === "en") ? panel.premonicao_macro_en : panel.premonicao_macro_pt,
+      (lang === "en") ? digest.premonicao_macro_en : digest.premonicao_macro_pt,
+      ui.premonicao_macro_pt, panel.premonicao_macro_pt, digest.premonicao_macro_pt,
+      ui.premonicao_macro_en, panel.premonicao_macro_en, digest.premonicao_macro_en
+    );
+
+    const micro = pickFirst(
+      (lang === "en") ? ui.premonicao_micro_en : ui.premonicao_micro_pt,
+      (lang === "en") ? panel.premonicao_micro_en : panel.premonicao_micro_pt,
+      (lang === "en") ? digest.premonicao_micro_en : digest.premonicao_micro_pt,
+      ui.premonicao_micro_pt, panel.premonicao_micro_pt, digest.premonicao_micro_pt,
+      ui.premonicao_micro_en, panel.premonicao_micro_en, digest.premonicao_micro_en
+    );
+
+    // breakout window card (estruturado)
+    const bw = pickFirst(ui.breakout_window_card, panel.breakout_window_card, digest.breakout_window_card);
+
+    const dir = String(bw?.dir || "").toUpperCase();
+    const verbPT = (dir === "DOWN") ? "cair" : (dir === "UP") ? "subir" : "romper";
+    const verbEN = (dir === "DOWN") ? "drop" : (dir === "UP") ? "rise" : "break";
+
+    const prob = (bw?.prob_until_end_pct != null) ? `${bw.prob_until_end_pct}%` : "—";
+    const tLab = bw?.window_end_label || "—";
+    const t = splitTimeLabel(tLab);
+
+    setText("prem-kpi-label", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
+    setText("prem-kpi-time", t.hhmm || "—");
+    setText("prem-kpi-ampm", t.ampm || "");
+    setText("prem-kpi-prob", prob);
+
+    const wLine = (bw?.window_start_label || bw?.window_end_label)
+      ? `${bw.window_start_label || "—"} – ${bw.window_end_label || "—"} (MT)`
+      : "—";
+    setText("prem-window", wLine);
+
+    const mLine = (bw?.median_minutes != null && isFinite(Number(bw.median_minutes)))
+      ? `${Math.round(Number(bw.median_minutes))} min (mediana)`
+      : "—";
+    setText("prem-median", mLine);
+
+    setText("prem-miss", bw?.miss_line || "—");
+    setText("prem-macro", macro || "—");
+    setText("prem-micro", micro || "—");
+
+    const score = payload?.digest?.shape_focus?.score;
+    const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
+    const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
+    const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
+    setText("prem-base", `${nTxt} casos similares${scTxt}${confTxt}`);
+
+    const badge = bw?.source ? `${bw.source} · ${dir || "—"}` : (dir || "—");
+    setText("prem-badge", badge);
+
+    // --------- MINI CHART (candles) + cruz X/Y ----------
+    const canvas = document.getElementById("prem-canvas");
+    if (canvas){
+      const parent = canvas.parentElement;
+      const cssW = parent ? Math.max(320, parent.clientWidth - 20) : 720;
+      const cssH = 240;
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.style.width = "100%";
+      canvas.style.height = cssH + "px";
+      canvas.width  = Math.floor(cssW * dpr);
+      canvas.height = Math.floor(cssH * dpr);
+
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(dpr, dpr);
+
+      const W = cssW, H = cssH;
+      const pad = 12;
+
+      // fundo
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = "rgba(0,0,0,.18)";
+      ctx.fillRect(0,0,W,H);
+
+      // pega candles LIVE do seu chart (se existir)
+      const src = (Array.isArray(window.a10ChartCandles) && window.a10ChartCandles.length)
+        ? window.a10ChartCandles
+        : [];
+
+      const N = 60;
+      let candles = src.slice(-N).map(c => ({
+        open: Number(c.open), high: Number(c.high), low: Number(c.low), close: Number(c.close)
+      })).filter(c => [c.open,c.high,c.low,c.close].every(x => isFinite(x)));
+
+      // fallback (se ainda não tiver candles)
+      if (!candles.length){
+        let px = 100;
+        candles = Array.from({length: N}, () => {
+          const o = px;
+          const d = (Math.random() - 0.5) * 1.2;
+          const c = o + d;
+          const h = Math.max(o,c) + Math.random() * 0.6;
+          const l = Math.min(o,c) - Math.random() * 0.6;
+          px = c;
+          return {open:o, high:h, low:l, close:c};
+        });
+      }
+
+      const targetPrice = (bw?.trigger_price != null && isFinite(Number(bw.trigger_price)))
+        ? Number(bw.trigger_price)
+        : null;
+
+      let etaMin = (bw?.median_minutes != null && isFinite(Number(bw.median_minutes))) ? Number(bw.median_minutes) : null;
+      if (etaMin == null) etaMin = extractMinutes(micro) ?? extractMinutes(macro) ?? 0;
+
+      const lows  = candles.map(c => c.low);
+      const highs = candles.map(c => c.high);
+      let yMin = Math.min(...lows);
+      let yMax = Math.max(...highs);
+      if (targetPrice != null){
+        yMin = Math.min(yMin, targetPrice);
+        yMax = Math.max(yMax, targetPrice);
+      }
+      const span = (yMax - yMin) || 1;
+      yMin -= span * 0.08;
+      yMax += span * 0.08;
+
+      const yMap = (p) => pad + (yMax - p) * (H - pad*2) / (yMax - yMin);
+
+      // grid leve
+      ctx.strokeStyle = "rgba(255,255,255,.06)";
+      ctx.lineWidth = 1;
+      for (let i=1;i<=4;i++){
+        const y = pad + (H - pad*2) * (i/5);
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+      }
+
+      const futureSlots = Math.max(10, Math.round(etaMin) + 6);
+      const stepX = (W - pad*2) / ((candles.length - 1) + futureSlots);
+      const bodyW = Math.max(3, Math.min(10, stepX * 0.65));
+
+      // candles
+      for (let i=0;i<candles.length;i++){
+        const c = candles[i];
+        const x = pad + stepX * i;
+
+        const yO = yMap(c.open);
+        const yC = yMap(c.close);
+        const yH = yMap(c.high);
+        const yL = yMap(c.low);
+
+        const up = c.close >= c.open;
+        const col = up ? "rgba(70,220,160,.95)" : "rgba(255,100,90,.95)";
+
+        // wick
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, yH);
+        ctx.lineTo(x, yL);
+        ctx.stroke();
+
+        // body
+        ctx.fillStyle = col;
+        const top = Math.min(yO, yC);
+        const h = Math.max(1, Math.abs(yC - yO));
+        ctx.fillRect(x - bodyW/2, top, bodyW, h);
+      }
+
+      // cruz (X/Y) em amarelo
+      if (targetPrice != null){
+        const yT = yMap(targetPrice);
+
+        // linha Y (preço)
+        ctx.strokeStyle = "rgba(255,204,102,.95)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, yT);
+        ctx.lineTo(W, yT);
+        ctx.stroke();
+
+        // linha X (tempo/ETA)
+        const idx = (candles.length - 1) + Math.max(0, Number(etaMin) || 0);
+        const xT = Math.min(W, pad + stepX * idx);
+
+        ctx.beginPath();
+        ctx.moveTo(xT, 0);
+        ctx.lineTo(xT, H);
+        ctx.stroke();
+
+        // ponto
+        ctx.fillStyle = "rgba(255,204,102,.95)";
+        ctx.beginPath();
+        ctx.arc(xT, yT, 5, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+  }catch(e){
+    // não quebra o painel por causa disso
+  }
+}
 
 let __AARON_MATCHER_REQ_ID = 0;
 
@@ -4453,6 +4886,9 @@ async function requestMatcher(symbol) {
   if (typeof renderTradeResponderOutput === "function") {
     renderTradeResponderOutput(data);
   }
+if (typeof updatePremonitionPanel === "function") {
+  updatePremonitionPanel(data);
+}
 
   // ✅ injeta dentro do Trade Card
   applyResponderIntoTradeCard(data);
@@ -7094,6 +7530,9 @@ if (typeof renderTradeResponderOutput === "function") {
 // ✅ 2) Injeta dentro do Trade Card (campos “na sua cara”)
 if (typeof applyResponderIntoTradeCard === "function") {
   applyResponderIntoTradeCard(payload);
+}
+if (typeof updatePremonitionPanel === "function") {
+  updatePremonitionPanel(payload);
 }
 
 // ✅ 3) Mini-resumo dentro do Trade Card (se o anchor existir)
