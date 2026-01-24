@@ -4718,6 +4718,13 @@ function updatePremonitionPanel(payload){
       }
     }
 
+// ETA (min) — precisa existir ANTES do painel direito usar
+let etaMin = (bw?.median_minutes != null && isFinite(Number(bw.median_minutes)))
+  ? Number(bw.median_minutes)
+  : null;
+
+// fallback: tenta extrair do texto (macro/micro)
+if (etaMin == null) etaMin = extractMinutes(microTxt) ?? extractMinutes(macroTxt);
 
     const dir = String(bw?.dir || "").toUpperCase();
     const verbPT = (dir === "DOWN") ? "cair" : (dir === "UP") ? "subir" : "romper";
@@ -4888,8 +4895,13 @@ function updatePremonitionPanel(payload){
         ? Number(bw.trigger_price)
         : null;
 
-      let etaMin = (bw?.median_minutes != null && isFinite(Number(bw.median_minutes))) ? Number(bw.median_minutes) : null;
-      if (etaMin == null) etaMin = extractMinutes(micro) ?? extractMinutes(macro) ?? 0;
+      // reaproveita o etaMin calculado acima (não redeclara)
+etaMin = (bw?.median_minutes != null && isFinite(Number(bw.median_minutes)))
+  ? Number(bw.median_minutes)
+  : etaMin;
+
+if (etaMin == null) etaMin = extractMinutes(microTxt) ?? extractMinutes(macroTxt) ?? 0;
+
 
       const lows = candles.map(c => c.low);
       const highs = candles.map(c => c.high);
@@ -8732,6 +8744,10 @@ function initAaron9() {
   // liga chart + estudos
   a10InitChart();
   a10BindStudiesUI();
+// Premonição: se o painel estiver OFF (sem URL), ainda mostra o DEMO
+if (!PANEL_URL) {
+  try { updatePremonitionPanel(null); } catch (e) {}
+}
 
   // sempre que o painel atualizar, atualiza o chart
       window.addEventListener('aaron:panelUpdated', () => {
