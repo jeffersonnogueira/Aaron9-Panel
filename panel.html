@@ -4680,6 +4680,14 @@ function updatePremonitionPanel(payload){
     setText("prem-kpi-ampm", t.ampm || "");
     setText("prem-kpi-prob", prob);
 
+    // espelha KPI grande no painel direito (mockup)
+    setText("prem-right-title", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
+    setText("prem-right-time", t.hhmm || "—");
+    setText("prem-right-ampm", t.ampm || "");
+    setText("prem-right-prob", prob);
+    setText("prem-right-eta", (etaMin != null) ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`) : "—");
+
+
     const wLine = (bw?.window_start_label || bw?.window_end_label)
       ? `${bw.window_start_label || "—"} – ${bw.window_end_label || "—"} (MT)`
       : "—";
