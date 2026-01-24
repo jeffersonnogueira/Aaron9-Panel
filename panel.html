@@ -2288,6 +2288,82 @@
 .premonition-panel .muted{
   opacity: .70;
 }
+
+/* ====== PREMONIÇÃO (Mockup upgrade) ====== */
+
+/* deixa o KPI antigo embaixo do chart discreto (ou esconda se quiser) */
+.premonition-kpi { opacity: .18; transform: scale(.95); }
+@media (max-width: 980px){
+  .premonition-kpi { opacity: .10; }
+}
+
+/* KPI grande no painel direito */
+.prem-kpi-right{
+  padding: 10px 10px 14px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.prem-kpi-right-title{
+  font-size: 14px;
+  font-weight: 850;
+  opacity: .85;
+  margin-bottom: 10px;
+}
+
+.prem-kpi-right-main{
+  display:flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.prem-kpi-right-time{
+  font-size: 44px;
+  font-weight: 950;
+  letter-spacing: .02em;
+  color: rgba(255,255,255,.95);
+  text-shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+
+.prem-kpi-right-ampm{
+  font-size: 14px;
+  font-weight: 800;
+  opacity: .85;
+  margin-left: -8px;
+}
+
+.prem-kpi-right-prob{
+  font-size: 36px;
+  font-weight: 950;
+  color: #ffcc66;
+  text-shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+
+.prem-kpi-right-sub{
+  margin-top: 10px;
+  font-size: 16px;
+  opacity: .75;
+}
+
+/* deixa o painel direito mais “TV-like” */
+.premonition-panel .label{
+  font-size: 10px;
+  letter-spacing: .18em;
+  opacity: .62;
+}
+
+.premonition-panel .value{
+  font-size: 14px;
+}
+
+.premonition-panel .value b,
+.premonition-panel .value strong{
+  color:#ffcc66;
+}
+
+/* ====== FIM upgrade ====== */
+
 /* ================== FIM PREMONIÇÃO ================== */
 
 /* ====== PATTERN REFERENCE (ABAIXO DO SIZING BRAIN) ====== */
@@ -2696,6 +2772,19 @@
       </div>
 
       <div class="premonition-panel">
+        <!-- KPI grande (estilo mockup) -->
+<div class="prem-kpi-right">
+  <div class="prem-kpi-right-title" id="prem-right-title">Prob.</div>
+
+  <div class="prem-kpi-right-main">
+    <span class="prem-kpi-right-time" id="prem-right-time">--:--</span>
+    <span class="prem-kpi-right-ampm" id="prem-right-ampm"></span>
+    <span class="prem-kpi-right-prob" id="prem-right-prob">--%</span>
+  </div>
+
+  <div class="prem-kpi-right-sub" id="prem-right-eta">—</div>
+</div>
+
         <div class="row">
           <div class="label">Janela estimada</div>
           <div class="value" id="prem-window">—</div>
