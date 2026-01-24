@@ -2819,6 +2819,33 @@
   </div>
 </section>
 
+  <!-- ================== RESPIRO & REVERSÃO ================== -->
+  <section id="rr-section" class="premonition-banner">
+    <div class="premonition-container">
+      <div class="premonition-head">
+        <div>
+          <div class="premonition-title">RESPIRO & REVERSÃO</div>
+          <div class="premonition-sub" id="rr-sub">Leitura rápida do Pullback Brain</div>
+        </div>
+        <div class="premonition-badge" id="rr-badge">—</div>
+      </div>
+
+      <div class="premonition-panel" style="padding: 12px 14px;">
+        <!-- ORDEM EXATA: RESPIRO -> REVERSÃO -->
+        <div class="row">
+          <div class="label">Respiro</div>
+          <div class="value" id="rr-respiro">—</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Reversão</div>
+          <div class="value" id="rr-reversao">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ================== FIM RESPIRO & REVERSÃO ================== -->
+
 
     <div id="error-banner" class="error-banner">
       <strong>Erro ao carregar painel.</strong> Verifique o n8n / webhook e tente novamente.
@@ -5147,6 +5174,62 @@ for (let i = 1; i <= 4; i++) {
     // não quebra o painel por causa disso
   }
 }
+function updateRespiroReversaoPanel(payload){
+  try{
+    const lang = (typeof currentLang !== "undefined" && currentLang === "en") ? "en" : "pt";
+
+    const panel  = payload?.panel || payload || {};
+    const ui     = payload?.ui || panel?.ui || {};
+    const pb     = panel.pullback_brain || panel.pullbackBrain || panel.pullback || {};
+    const rev    = payload?.reversal_classifier || payload?.reversalClassifier || payload?.reversal || {};
+
+    // tenta pegar a linha “institucional” (quando existir)
+    const line = String(
+      ui.pullback_line || ui.market_structure_line || ui.tactical_line ||
+      panel.pullback_line || panel.market_structure_line || panel.tactical_line ||
+      ""
+    );
+
+    const grab = (re) => {
+      const m = line.match(re);
+      return m ? m[1].trim() : null;
+    };
+
+    const acao = grab(/A[CÇ]AO\s*:\s*([^|]+)/i);
+
+    // ORDEM EXATA: RESPIRO primeiro
+    let respiro  = grab(/RESPIR[O0]\s*:\s*([^|]+)/i);
+    let reversao = grab(/REVERS(?:A|Ã)O\s*:\s*([^|]+)/i);
+
+    // fallback 1: usa o Pullback Brain (texto humano)
+    const stage =
+      (lang === "en")
+        ? (pb.stage_title_en || pb.stage_title || pb.state_title_en || pb.status_en || pb.state_title || pb.status)
+        : (pb.stage_title_pt || pb.stage_title || pb.state_title_pt || pb.status_pt || pb.state_title || pb.status);
+
+    if (!respiro) respiro = stage || "—";
+
+    // fallback 2: usa o Reversal Classifier (veredito)
+    const revTxt =
+      (lang === "en")
+        ? (rev.verdict_en || rev.summary_en || rev.verdict || "")
+        : (rev.verdict_pt || rev.summary_pt || rev.verdict || "");
+
+    if (!reversao) reversao = revTxt || "—";
+
+    const setText = (id, v) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = (v === null || v === undefined || v === "") ? "—" : String(v);
+    };
+
+    setText("rr-badge", acao ? `AÇÃO: ${acao}` : "—");
+    setText("rr-respiro",  respiro);
+    setText("rr-reversao", reversao);
+  }catch(e){
+    // silêncio total (não quebra nada)
+  }
+}
 
 let __AARON_MATCHER_REQ_ID = 0;
 
@@ -5279,6 +5362,9 @@ async function requestMatcher(symbol) {
   }
 if (typeof updatePremonitionPanel === "function") {
   updatePremonitionPanel(data);
+}
+if (typeof updateRespiroReversaoPanel === "function") {
+  updateRespiroReversaoPanel(data);
 }
 
   // ✅ injeta dentro do Trade Card
@@ -7925,6 +8011,9 @@ if (typeof applyResponderIntoTradeCard === "function") {
 if (typeof updatePremonitionPanel === "function") {
   updatePremonitionPanel(payload);
 }
+if (typeof updateRespiroReversaoPanel === "function") {
+  updateRespiroReversaoPanel(payload);
+}
 
 // ✅ 3) Mini-resumo dentro do Trade Card (se o anchor existir)
 if (typeof renderResponderInline === "function") {
@@ -8785,6 +8874,8 @@ function initAaron9() {
 // Premonição: se o painel estiver OFF (sem URL), ainda mostra o DEMO
 if (!PANEL_URL) {
   try { updatePremonitionPanel(null); } catch (e) {}
+  try { updateRespiroReversaoPanel(null); } catch (e) {}
+
 }
 
   // sempre que o painel atualizar, atualiza o chart
