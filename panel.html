@@ -4728,13 +4728,57 @@ function updatePremonitionPanel(payload){
       ctx.setTransform(1,0,0,1,0,0);
       ctx.scale(dpr, dpr);
 
-      const W = cssW, H = cssH;
-      const pad = 12;
+            const W = cssW, H = cssH;
 
-      // fundo
-      ctx.clearRect(0,0,W,H);
-      ctx.fillStyle = "rgba(0,0,0,.18)";
-      ctx.fillRect(0,0,W,H);
+      // ===== TradingView-style bottom time axis + forecast candles (cirúrgico) =====
+      const pad = 12;
+      const axisH = 28;            // espaço reservado para horários
+      const plotH = H - axisH;     // área do gráfico
+      const tz = "America/Denver"; // MT
+
+      const msOf = (v) => {
+        if (v == null) return NaN;
+        if (v instanceof Date) return v.getTime();
+        if (typeof v === "number") {
+          if (!isFinite(v)) return NaN;
+          return (v > 1e12) ? v : (v > 1e9) ? v * 1000 : v;
+        }
+        const s = String(v).trim();
+        if (!s) return NaN;
+        const n = Number(s);
+        if (isFinite(n)) return (n > 1e12) ? n : (n > 1e9) ? n * 1000 : n;
+        const d = new Date(s);
+        const ms = d.getTime();
+        return isFinite(ms) ? ms : NaN;
+      };
+
+      const fmtTimeMT = (ms) => {
+        try {
+          return new Intl.DateTimeFormat("en-US", {
+            timeZone: tz,
+            hour: "numeric",
+            minute: "2-digit"
+          }).format(new Date(ms));
+        } catch (e) {
+          const d = new Date(ms);
+          let hh = d.getHours();
+          const mm = String(d.getMinutes()).padStart(2, "0");
+          const ampm = (hh >= 12) ? "PM" : "AM";
+          hh = hh % 12; if (hh === 0) hh = 12;
+          return `${hh}:${mm} ${ampm}`;
+        }
+      };
+
+      const roundRectPath = (x, y, w, h, r) => {
+        const rr = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.arcTo(x + w, y, x + w, y + h, rr);
+        ctx.arcTo(x + w, y + h, x, y + h, rr);
+        ctx.arcTo(x, y + h, x, y, rr);
+        ctx.arcTo(x, y, x + w, y, rr);
+        ctx.closePath();
+      };
 
       // pega candles LIVE do seu chart (se existir)
       const src = (Array.isArray(window.a10ChartCandles) && window.a10ChartCandles.length)
@@ -4743,22 +4787,50 @@ function updatePremonitionPanel(payload){
 
       const N = 60;
       let candles = src.slice(-N).map(c => ({
-        open: Number(c.open), high: Number(c.high), low: Number(c.low), close: Number(c.close)
-      })).filter(c => [c.open,c.high,c.low,c.close].every(x => isFinite(x)));
+        open:  Number(c.open ?? c.o),
+        high:  Number(c.high ?? c.h),
+        low:   Number(c.low  ?? c.l),
+        close: Number(c.close ?? c.c),
+        t:     msOf(c.t ?? c.time ?? c.timestamp ?? c.ts ?? c.datetime ?? c.date)
+      })).filter(c => [c.open, c.high, c.low, c.close].every(x => isFinite(x)));
 
       // fallback (se ainda não tiver candles)
-      if (!candles.length){
+      if (!candles.length) {
         let px = 100;
-        candles = Array.from({length: N}, () => {
+        const now = Date.now();
+        candles = Array.from({ length: N }, (_, i) => {
           const o = px;
           const d = (Math.random() - 0.5) * 1.2;
           const c = o + d;
-          const h = Math.max(o,c) + Math.random() * 0.6;
-          const l = Math.min(o,c) - Math.random() * 0.6;
+          const h = Math.max(o, c) + Math.random() * 0.6;
+          const l = Math.min(o, c) - Math.random() * 0.6;
           px = c;
-          return {open:o, high:h, low:l, close:c};
+          return { open: o, high: h, low: l, close: c, t: now - (N - 1 - i) * 60000 };
         });
       }
+
+      // garante timestamps (se vier sem tempo)
+      if (!isFinite(candles[0]?.t)) {
+        const now = Date.now();
+        for (let i = 0; i < candles.length; i++) {
+          candles[i].t = now - (candles.length - 1 - i) * 60000;
+        }
+      }
+
+      // infer bar size (ms) via mediana dos deltas
+      const inferBarMs = () => {
+        const ts = candles.map(c => c.t).filter(x => isFinite(x));
+        if (ts.length < 6) return 60000;
+        const diffs = [];
+        for (let i = ts.length - 1; i > 0 && diffs.length < 12; i--) {
+          const d = ts[i] - ts[i - 1];
+          if (d > 0 && d < 60 * 60 * 1000) diffs.push(d);
+        }
+        if (!diffs.length) return 60000;
+        diffs.sort((a, b) => a - b);
+        return diffs[Math.floor(diffs.length / 2)] || 60000;
+      };
+      const barMs = inferBarMs();
 
       const targetPrice = (bw?.trigger_price != null && isFinite(Number(bw.trigger_price)))
         ? Number(bw.trigger_price)
@@ -4767,11 +4839,11 @@ function updatePremonitionPanel(payload){
       let etaMin = (bw?.median_minutes != null && isFinite(Number(bw.median_minutes))) ? Number(bw.median_minutes) : null;
       if (etaMin == null) etaMin = extractMinutes(micro) ?? extractMinutes(macro) ?? 0;
 
-      const lows  = candles.map(c => c.low);
+      const lows = candles.map(c => c.low);
       const highs = candles.map(c => c.high);
       let yMin = Math.min(...lows);
       let yMax = Math.max(...highs);
-      if (targetPrice != null){
+      if (targetPrice != null) {
         yMin = Math.min(yMin, targetPrice);
         yMax = Math.max(yMax, targetPrice);
       }
@@ -4779,22 +4851,34 @@ function updatePremonitionPanel(payload){
       yMin -= span * 0.08;
       yMax += span * 0.08;
 
-      const yMap = (p) => pad + (yMax - p) * (H - pad*2) / (yMax - yMin);
+      const yMap = (p) => pad + (yMax - p) * (plotH - pad * 2) / (yMax - yMin);
 
-      // grid leve
+      // grid leve (só na área do gráfico)
       ctx.strokeStyle = "rgba(255,255,255,.06)";
       ctx.lineWidth = 1;
-      for (let i=1;i<=4;i++){
-        const y = pad + (H - pad*2) * (i/5);
-        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+      for (let i = 1; i <= 4; i++) {
+        const y = pad + (plotH - pad * 2) * (i / 5);
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
       }
 
-      const futureSlots = Math.max(10, Math.round(etaMin) + 6);
-      const stepX = (W - pad*2) / ((candles.length - 1) + futureSlots);
+      const futureSlots = Math.max(10, Math.round(Number(etaMin) || 0) + 6);
+      const stepX = (W - pad * 2) / ((candles.length - 1) + futureSlots);
       const bodyW = Math.max(3, Math.min(10, stepX * 0.65));
 
-      // candles
-      for (let i=0;i<candles.length;i++){
+      const lastMs = isFinite(candles[candles.length - 1]?.t) ? candles[candles.length - 1].t : Date.now();
+
+      // faixa azul suave (janela futura) até o ETA
+      let xT = null;
+      const idxEta = (candles.length - 1) + Math.max(0, Number(etaMin) || 0);
+      xT = Math.min(W, pad + stepX * idxEta);
+      const xNow = pad + stepX * (candles.length - 1);
+      if (xT > xNow) {
+        ctx.fillStyle = "rgba(120,170,255,.08)";
+        ctx.fillRect(xNow, 0, xT - xNow, plotH);
+      }
+
+      // candles reais
+      for (let i = 0; i < candles.length; i++) {
         const c = candles[i];
         const x = pad + stepX * i;
 
@@ -4818,11 +4902,49 @@ function updatePremonitionPanel(payload){
         ctx.fillStyle = col;
         const top = Math.min(yO, yC);
         const h = Math.max(1, Math.abs(yC - yO));
-        ctx.fillRect(x - bodyW/2, top, bodyW, h);
+        ctx.fillRect(x - bodyW / 2, top, bodyW, h);
+      }
+
+      // ===== candles previsão (azuis) — 1 a 3 candles no futuro =====
+      const canForecast = (targetPrice != null) && isFinite(Number(etaMin)) && (Number(etaMin) > 0) && (Number(etaMin) <= 6);
+      if (canForecast) {
+        const nF = Math.min(3, Math.max(1, Math.round(Number(etaMin) / 2))); // 2→1, 4→2, 6→3
+        const lastClose = candles[candles.length - 1].close;
+        let prevClose = lastClose;
+
+        for (let k = 1; k <= nF; k++) {
+          const off = Math.max(1, Math.round((k * Number(etaMin)) / nF)); // último cai em etaMin
+          const frac = k / nF;
+          const close = lastClose + (targetPrice - lastClose) * frac;
+          const open = prevClose;
+
+          const wig = Math.max(span * 0.005, Math.abs(close - open) * 0.35);
+          const high = Math.max(open, close) + wig;
+          const low = Math.min(open, close) - wig;
+
+          const x = pad + stepX * ((candles.length - 1) + off);
+          const yO = yMap(open);
+          const yC = yMap(close);
+          const yH = yMap(high);
+          const yL = yMap(low);
+
+          const col = "rgba(120,170,255,.95)";
+
+          ctx.strokeStyle = col;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(x, yH); ctx.lineTo(x, yL); ctx.stroke();
+
+          ctx.fillStyle = col;
+          const top = Math.min(yO, yC);
+          const h = Math.max(1, Math.abs(yC - yO));
+          ctx.fillRect(x - bodyW / 2, top, bodyW, h);
+
+          prevClose = close;
+        }
       }
 
       // cruz (X/Y) em amarelo
-      if (targetPrice != null){
+      if (targetPrice != null) {
         const yT = yMap(targetPrice);
 
         // linha Y (preço)
@@ -4834,20 +4956,84 @@ function updatePremonitionPanel(payload){
         ctx.stroke();
 
         // linha X (tempo/ETA)
-        const idx = (candles.length - 1) + Math.max(0, Number(etaMin) || 0);
-        const xT = Math.min(W, pad + stepX * idx);
-
         ctx.beginPath();
         ctx.moveTo(xT, 0);
-        ctx.lineTo(xT, H);
+        ctx.lineTo(xT, plotH);
         ctx.stroke();
 
         // ponto
         ctx.fillStyle = "rgba(255,204,102,.95)";
         ctx.beginPath();
-        ctx.arc(xT, yT, 5, 0, Math.PI*2);
+        ctx.arc(xT, yT, 5, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // ===== eixo de horário embaixo (TradingView-ish) =====
+      ctx.strokeStyle = "rgba(255,255,255,.10)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, plotH + 0.5); ctx.lineTo(W, plotH + 0.5); ctx.stroke();
+
+      const startMs = isFinite(candles[0]?.t) ? candles[0].t : (lastMs - (candles.length - 1) * barMs);
+      const endMs = lastMs + futureSlots * barMs;
+      const interval = 15 * 60 * 1000;
+
+      ctx.font = "11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+
+      let tick = Math.ceil(startMs / interval) * interval;
+      const yLbl = H - 8;
+
+      while (tick <= endMs) {
+        const barsFromStart = (tick - startMs) / barMs;
+        const x = pad + stepX * barsFromStart;
+        if (x >= 0 && x <= W) {
+          ctx.fillText(fmtTimeMT(tick), x, yLbl);
+        }
+        tick += interval;
+      }
+
+      // “pílula” do horário do ETA (ex: 11:56 AM MT)
+      if (targetPrice != null && isFinite(xT)) {
+        const pillMs = lastMs + Math.max(0, Number(etaMin) || 0) * barMs;
+        const pillBase =
+          (t && t.hhmm && t.hhmm !== "—")
+            ? `${t.hhmm}${t.ampm ? ` ${t.ampm}` : ""}`
+            : fmtTimeMT(pillMs);
+
+        const pillText = `${pillBase} MT`;
+
+        ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+        const tw = ctx.measureText(pillText).width;
+
+        const pxPad = 10;
+        const ph = 20;
+        const pw = tw + pxPad * 2;
+
+        let px = xT - pw / 2;
+        px = Math.max(10, Math.min(W - pw - 10, px));
+
+        const py = plotH + 6;
+
+        // fundo
+        ctx.fillStyle = "rgba(0,0,0,.55)";
+        roundRectPath(px, py, pw, ph, 10);
+        ctx.fill();
+
+        // borda
+        ctx.strokeStyle = "rgba(255,255,255,.14)";
+        ctx.lineWidth = 1;
+        roundRectPath(px, py, pw, ph, 10);
+        ctx.stroke();
+
+        // texto
+        ctx.fillStyle = "rgba(255,255,255,.85)";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(pillText, px + pw / 2, py + ph / 2);
+      }
+
     }
   }catch(e){
     // não quebra o painel por causa disso
