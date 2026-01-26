@@ -5640,6 +5640,14 @@ function updateRespiroReversaoPanel(payload){
     // Normaliza (se alguém mandar "AÇÃO: VENDER" dentro do valor)
     if (acao) acao = String(acao).replace(/^A(?:Ç|C)(?:A|Ã)O\s*:\s*/i, "").trim();
 
+    // >>> FIX: se o JSON já manda a ação pronta (top_action_*), ela é a fonte da verdade
+const topAcao = (lang === "en")
+  ? (ui.top_action_ui || ui.top_action_en || digest.top_action_ui || digest.top_action_en || panel.top_action_ui || panel.top_action_en)
+  : (ui.top_action_pt || digest.top_action_pt || panel.top_action_pt);
+
+if (topAcao && String(topAcao).trim()) acao = String(topAcao).trim();
+
+
     const stage =
       (lang === "en")
         ? (pb.stage_title_en || pb.stage_title || pb.state_title_en || pb.status_en || pb.state_title || pb.status)
