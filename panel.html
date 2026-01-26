@@ -4836,7 +4836,11 @@ if (etaMin == null) etaMin = extractMinutes(microTxt) ?? extractMinutes(macroTxt
     if (canvas){
       const parent = canvas.parentElement;
       const cssW = parent ? Math.max(320, parent.clientWidth - 20) : 720;
-      const cssH = 240;
+      // deixa o quadro maior (e evita ficar esmagado)
+      const cssH = 380;              // <-- aumenta aqui
+// opcional: se quiser limite
+// const cssH = Math.max(300, Math.min(520, 380));
+
 
       const dpr = window.devicePixelRatio || 1;
       canvas.style.width = "100%";
