@@ -2896,14 +2896,14 @@
         <!-- KPI grande (estilo mockup) -->
 <div class="prem-kpi-right">
   <div class="prem-kpi-right-title" id="prem-right-title">Prob.</div>
-    <div class="rr-readout" id="rr-readout">
-      <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="rr-regime">—</div></div>
-      <div class="rr-row"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="rr-reversao-full">—</div></div>
-      <div class="rr-row"><div class="rr-k">RESPIRO</div><div class="rr-v" id="rr-respiro-full">—</div></div>
-      <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="rr-consolidacao">—</div></div>
-      <div class="rr-row"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="rr-continuacao">—</div></div>
-      <div class="rr-row"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="rr-acao-full">—</div></div>
-    </div>
+    <div class="rr-readout" id="prem-readout">
+  <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="prem-regime">—</div></div>
+  <div class="rr-row"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
+  <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="prem-consolidacao">—</div></div>
+  <div class="rr-row"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
+  <div class="rr-row"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
+</div>
+
 
   <div class="prem-kpi-right-main">
     <span class="prem-kpi-right-time" id="prem-right-time">--:--</span>
@@ -5440,6 +5440,15 @@ function updateRespiroReversaoPanel(payload){
     setText("rr-consolidacao", consolidacao);
     setText("rr-continuacao", continuacao);
     setText("rr-acao", acao);
+    // ===== espelho no bloco de PREMONIÇÃO (SEM RESPIRO) =====
+    setText("prem-regime", regime);
+    setText("prem-reversao-full", reversaoFull);
+    setText("prem-consolidacao", consolidacao);
+    setText("prem-continuacao", continuacao);
+    setText("prem-acao-full", acao);
+
+    const pro = document.getElementById("prem-readout");
+    if (pro) pro.style.display = "block";
 
     const ro = document.getElementById("rr-readout");
     if (ro) ro.style.display = "block";
