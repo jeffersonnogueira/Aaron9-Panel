@@ -3043,6 +3043,7 @@
         <div class="rr-readout" id="prem-readout">
       <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="prem-regime">—</div></div>
       <div class="rr-row rr-primary"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
+      <div class="rr-row rr-primary"><div class="rr-k">RESPIRO</div><div class="rr-v" id="prem-respiro-full">—</div></div>
       <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="prem-consolidacao">—</div></div>
       <div class="rr-row rr-primary"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
       <div class="rr-row rr-primary"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
@@ -5629,7 +5630,7 @@ function updateRespiroReversaoPanel(payload){
     };
 
     // Pega tudo do topo (quando existir)
-    let acao = grab(/A[ÇC]AO\s*:\s*([^|]+)/i);
+    let acao = grab(/A(?:Ç|C)(?:A|Ã)O\s*:\s*([^|]+)/i);
     let respiro = grab(/RESPIR[O0]\s*:\s*([^|]+)/i);
     let reversao = grab(/REVERS(?:A|Ã)O\s*:\s*([^|]+)/i);
     let regime = grab(/REGIME\s*:\s*([^|]+)/i);
@@ -5637,7 +5638,7 @@ function updateRespiroReversaoPanel(payload){
     let continuacao = grab(/CONTINUAC(?:A|Ã)O\s*:\s*([^|]+)/i);
 
     // Normaliza (se alguém mandar "AÇÃO: VENDER" dentro do valor)
-    if (acao) acao = String(acao).replace(/^A[ÇC]AO\s*:\s*/i, "").trim();
+    if (acao) acao = String(acao).replace(/^A(?:Ç|C)(?:A|Ã)O\s*:\s*/i, "").trim();
 
     const stage =
       (lang === "en")
@@ -5696,6 +5697,7 @@ function updateRespiroReversaoPanel(payload){
     // ===== espelho no bloco de PREMONIÇÃO (SEM RESPIRO) =====
     setText("prem-regime", regime);
     setText("prem-reversao-full", reversaoFull);
+    setText("prem-respiro-full", respiroFull);
     setText("prem-consolidacao", consolidacao);
     setText("prem-continuacao", continuacao);
     setText("prem-acao-full", acao);
