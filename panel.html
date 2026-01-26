@@ -2198,19 +2198,63 @@
   white-space: nowrap;
 }
 
-/* ✅ RR: permitir quebrar linha e não sumir texto */
-#rr-panel .premonition-badge{
+/* ✅ RR: overrides locais (ANTES estava #rr-panel, mas o id real é rr-section) */
+#rr-section .premonition-container{
+  overflow: visible; /* evita “corte” quando texto quebra linha */
+}
+
+#rr-section .premonition-badge{
   white-space: normal;
-  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   line-height: 1.15;
 }
 
-/* ✅ RR: permitir value ter 2 linhas se precisar */
-#rr-panel .premonition-value{
+#rr-section .premonition-value{
   white-space: normal;
   overflow-wrap: anywhere;
-  line-height: 1.2;
+  word-break: break-word;
 }
+
+/* ✅ RR: readout completo (lista estilo sua 2ª imagem) */
+#rr-section .rr-readout{
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#rr-section .rr-line{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+}
+
+#rr-section .rr-key{
+  color: rgba(255,255,255,.65);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  flex: 0 0 auto;
+}
+
+#rr-section .rr-val{
+  color: rgba(255,255,255,.92);
+  text-align: right;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  flex: 1 1 auto;
+}
+
+#rr-section .rr-action{
+  font-weight: 800;
+}
+
 
 
 .premonition-grid{
@@ -2873,6 +2917,16 @@
         <div id="rr-reversao" class="premonition-value">—</div>
       </div>
     </div>
+
+          <div class="rr-readout" id="rr-readout">
+        <div class="rr-line"><span class="rr-key">Regime</span><span class="rr-val" id="rr-regime">—</span></div>
+        <div class="rr-line"><span class="rr-key">Reversão</span><span class="rr-val" id="rr-reversao-full">—</span></div>
+        <div class="rr-line"><span class="rr-key">Respiro</span><span class="rr-val" id="rr-respiro-full">—</span></div>
+        <div class="rr-line"><span class="rr-key">Consolidação</span><span class="rr-val" id="rr-consolidacao">—</span></div>
+        <div class="rr-line"><span class="rr-key">Continuação</span><span class="rr-val" id="rr-continuacao">—</span></div>
+        <div class="rr-line rr-action"><span class="rr-key">Ação</span><span class="rr-val" id="rr-acao-full">—</span></div>
+      </div>
+
 
     <div id="rr-badge" class="premonition-badge">—</div>
   </div>
@@ -5238,11 +5292,13 @@ const summary =
   "";
 
 const line = String(
-  summary ||
+  ui.top_summary_pt || ui.top_summary_en || ui.top_summary ||
   ui.pullback_line || ui.market_structure_line || ui.tactical_line ||
+  panel.top_summary_pt || panel.top_summary_en || panel.top_summary ||
   panel.pullback_line || panel.market_structure_line || panel.tactical_line ||
   ""
 );
+
 // <<< END PATCH
 
 
@@ -5256,6 +5312,12 @@ const line = String(
     // ORDEM EXATA: RESPIRO primeiro
     let respiro  = grab(/RESPIR[O0]\s*:\s*([^|]+)/i);
     let reversao = grab(/REVERS(?:A|Ã)O\s*:\s*([^|]+)/i);
+
+    // extras (para o readout completo)
+const regime = grab(/REGIME\s*:\s*([^|]+)/i);
+const consolidacao = grab(/(?:CONSOLID(?:A|Ã)C(?:A|Ã)O|RANGE)\s*:\s*([^|]+)/i);
+const continuacao = grab(/CONTINUAC(?:A|Ã)O\s*:\s*([^|]+)/i);
+
 
     // >>> START PATCH (append classifier verdict_pt)
 const verdictPt = rev?.verdict_pt || rev?.verdictPt;
