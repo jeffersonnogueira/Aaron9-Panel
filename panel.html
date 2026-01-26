@@ -2466,6 +2466,47 @@
   font-size: 16px;
   opacity: .75;
 }
+/* PREMONIÇÃO: readout (REGIME/REVERSÃO/CONSOLIDAÇÃO/...) com hierarquia visual */
+.prem-kpi-right #prem-readout{
+  margin: 10px 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prem-kpi-right #prem-readout .rr-row{
+  display:flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.prem-kpi-right #prem-readout .rr-k{
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  opacity: .70;
+  white-space: nowrap;
+}
+
+.prem-kpi-right #prem-readout .rr-v{
+  font-size: 16px;
+  font-weight: 850;
+  opacity: .95;
+  text-align: right;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.prem-kpi-right #prem-readout .rr-row.rr-primary .rr-k,
+.prem-kpi-right #prem-readout .rr-row.rr-primary .rr-v{
+  color: #ffcc66;
+  font-weight: 950;
+}
+
+.prem-kpi-right #prem-readout .rr-v.rr-strong{
+  font-size: 18px;
+}
 
 /* deixa o painel direito mais “TV-like” */
 .premonition-panel .label{
@@ -2898,10 +2939,10 @@
   <div class="prem-kpi-right-title" id="prem-right-title">Prob.</div>
         <div class="rr-readout" id="prem-readout">
       <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="prem-regime">—</div></div>
-      <div class="rr-row"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
+      <div class="rr-row rr-primary"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
       <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="prem-consolidacao">—</div></div>
-      <div class="rr-row"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
-      <div class="rr-row"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
+      <div class="rr-row rr-primary"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
+      <div class="rr-row rr-primary"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
     </div>
 
 
