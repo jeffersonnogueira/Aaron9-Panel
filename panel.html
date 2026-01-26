@@ -2335,6 +2335,95 @@
   margin: 0 2px;
 }
 
+/* 🔥 RR: hierarquia + highlight amarelo (áreas circuladas) */
+#rr-section .premonition-title{
+  color: rgba(255, 208, 64, 0.95);
+  font-size: 14px;
+  font-weight: 950;
+}
+
+#rr-section .premonition-sub{
+  color: rgba(255, 208, 64, 0.65);
+}
+
+/* layout Respiro/Reversão (lado a lado) */
+#rr-section .rr-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 720px){
+  #rr-section .rr-grid{ grid-template-columns: 1fr; }
+}
+
+#rr-section .rr-label{
+  color: rgba(255, 208, 64, 0.70);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+#rr-section .rr-value{
+  color: rgba(255, 208, 64, 0.95);
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+#rr-section .rr-sub{
+  color: rgba(255, 208, 64, 0.70);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+#rr-section .rr-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 208, 64, 0.20);
+  background: rgba(255, 208, 64, 0.08);
+  color: rgba(255, 208, 64, 0.95);
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+/* barra do meio (readout) mais forte */
+#rr-section .rr-readout{
+  border-color: rgba(255, 208, 64, 0.16);
+  background: rgba(0,0,0,0.32);
+}
+
+#rr-section .rr-line{
+  font-size: 13px;
+  gap: 10px;
+}
+
+#rr-section .rr-k{
+  color: rgba(255, 208, 64, 0.72);
+  opacity: 1;
+  font-size: 11px;
+}
+
+#rr-section .rr-v{
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+#rr-section #rr-acao{
+  color: rgba(255, 208, 64, 0.95);
+}
+
+#rr-section .rr-pipe{
+  color: rgba(255, 208, 64, 0.40);
+  opacity: 1;
+}
+
 
 .premonition-kpi .kpi-label{
   opacity:.7;
