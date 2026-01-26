@@ -2290,6 +2290,51 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+/* RR: NÃO cortar conteúdo */
+#rr-container{ overflow: visible !important; }
+
+/* RR: readout estilo “bloco” (igual sua 2ª imagem) */
+#rr-section .rr-readout{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.28);
+  color: rgba(255,255,255,0.92);
+  display: block !important;
+  overflow: visible;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+}
+
+#rr-section .rr-line{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 6px;
+}
+#rr-section .rr-line:first-child{ margin-top: 0; }
+
+#rr-section .rr-k{
+  opacity: 0.75;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+#rr-section .rr-v{
+  font-weight: 800;
+  opacity: 0.95;
+}
+#rr-section .rr-pipe{
+  opacity: 0.35;
+  font-weight: 700;
+  margin: 0 2px;
+}
+
 
 .premonition-kpi .kpi-label{
   opacity:.7;
@@ -2851,6 +2896,14 @@
         <!-- KPI grande (estilo mockup) -->
 <div class="prem-kpi-right">
   <div class="prem-kpi-right-title" id="prem-right-title">Prob.</div>
+    <div class="rr-readout" id="rr-readout">
+      <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="rr-regime">—</div></div>
+      <div class="rr-row"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="rr-reversao-full">—</div></div>
+      <div class="rr-row"><div class="rr-k">RESPIRO</div><div class="rr-v" id="rr-respiro-full">—</div></div>
+      <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="rr-consolidacao">—</div></div>
+      <div class="rr-row"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="rr-continuacao">—</div></div>
+      <div class="rr-row"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="rr-acao-full">—</div></div>
+    </div>
 
   <div class="prem-kpi-right-main">
     <span class="prem-kpi-right-time" id="prem-right-time">--:--</span>
@@ -2897,40 +2950,47 @@
 
   <!-- ================== RESPIRO & REVERSÃO (abaixo da Premonição) ================== -->
 <section class="premonition-banner" id="rr-section">
-  <div class="premonition-container">
-    <div class="premonition-title">RESPIRO & REVERSÃO</div>
-
-    <div id="rr-sub" class="premonition-sub">
-      Leitura de microestrutura (respiro → reversão)
+  <div class="premonition-container" id="rr-container">
+    <div class="premonition-head">
+      <div class="premonition-title">RESPIRO &amp; REVERSÃO</div>
+      <div class="premonition-sub">Leitura de microestrutura (respiro → reversão)</div>
     </div>
 
-    <div class="premonition-grid">
-      <!-- ORDEM EXATA: RESPIRO primeiro -->
-      <div class="premonition-item">
-        <div class="premonition-label">Respiro</div>
-        <div id="rr-respiro" class="premonition-value">—</div>
+    <div class="rr-grid">
+      <div class="rr-left">
+        <div class="rr-label">Respiro</div>
+        <div class="rr-value" id="rr-respiro">—</div>
       </div>
 
-      <!-- depois: REVERSÃO -->
-      <div class="premonition-item">
-        <div class="premonition-label">Reversão</div>
-        <div id="rr-reversao" class="premonition-value">—</div>
+      <div class="rr-right">
+        <div class="rr-label">Reversão</div>
+        <div class="rr-value" id="rr-reversao">—</div>
+        <div class="rr-sub" id="rr-reversao-sub">—</div>
       </div>
     </div>
 
-          <div class="rr-readout" id="rr-readout">
-        <div class="rr-line"><span class="rr-key">Regime</span><span class="rr-val" id="rr-regime">—</span></div>
-        <div class="rr-line"><span class="rr-key">Reversão</span><span class="rr-val" id="rr-reversao-full">—</span></div>
-        <div class="rr-line"><span class="rr-key">Respiro</span><span class="rr-val" id="rr-respiro-full">—</span></div>
-        <div class="rr-line"><span class="rr-key">Consolidação</span><span class="rr-val" id="rr-consolidacao">—</span></div>
-        <div class="rr-line"><span class="rr-key">Continuação</span><span class="rr-val" id="rr-continuacao">—</span></div>
-        <div class="rr-line rr-action"><span class="rr-key">Ação</span><span class="rr-val" id="rr-acao-full">—</span></div>
+    <div class="rr-badge" id="rr-badge">AÇÃO: —</div>
+
+    <div class="rr-readout" id="rr-readout">
+      <div class="rr-line">
+        <span class="rr-k">REGIME:</span> <span class="rr-v" id="rr-regime">—</span>
+        <span class="rr-pipe">|</span>
+        <span class="rr-k">REVERSÃO:</span> <span class="rr-v" id="rr-reversao-full">—</span>
+        <span class="rr-pipe">|</span>
+        <span class="rr-k">RESPIRO:</span> <span class="rr-v" id="rr-respiro-full">—</span>
       </div>
 
-
-    <div id="rr-badge" class="premonition-badge">—</div>
+      <div class="rr-line">
+        <span class="rr-k">CONSOLIDAÇÃO:</span> <span class="rr-v" id="rr-consolidacao">—</span>
+        <span class="rr-pipe">|</span>
+        <span class="rr-k">CONTINUAÇÃO:</span> <span class="rr-v" id="rr-continuacao">—</span>
+        <span class="rr-pipe">|</span>
+        <span class="rr-k">AÇÃO:</span> <span class="rr-v" id="rr-acao">—</span>
+      </div>
+    </div>
   </div>
 </section>
+
 <!-- ================== FIM RESPIRO & REVERSÃO ================== -->
 
 
@@ -5278,67 +5338,63 @@ function updateRespiroReversaoPanel(payload){
 
     const panel  = payload?.panel || payload || {};
     const ui     = payload?.ui || panel?.ui || {};
-    const pb     = panel.pullback_brain || panel.pullbackBrain || panel.pullback || {};
-    const rev    = payload?.reversal_classifier || payload?.reversalClassifier || payload?.reversal || {};
+    const digest = payload?.digest || panel?.digest || {};
 
-    // tenta pegar a linha “institucional” (quando existir)
+    const pb = panel.pullback_brain || panel.pullbackBrain || panel.pullback || {};
+    const rev = payload?.reversal_classifier || payload?.reversalClassifier || payload?.reversal ||
+                panel?.reversal_classifier || panel?.reversalClassifier || panel?.reversal || {};
 
-// >>> START PATCH (SOURCE = TOP SUMMARY)
-const summary =
-  ui.top_summary_pt_inline ||
-  ui.top_summary_pt ||
-  payload?.digest?.top_summary_pt ||
-  panel?.digest?.top_summary_pt ||
-  "";
+    // Fonte #1 (linha única com REGIME/RESPIRO/REVERSAO/...)
+    const summary =
+      ui.top_summary_pt_inline ||
+      ui.top_summary_pt ||
+      ui.top_summary_en ||
+      ui.top_summary ||
+      digest.top_summary_pt_inline ||
+      digest.top_summary_pt ||
+      digest.top_summary_en ||
+      digest.top_summary ||
+      panel.top_summary_pt_inline ||
+      panel.top_summary_pt ||
+      panel.top_summary_en ||
+      panel.top_summary ||
+      "";
 
-const line = String(
-  ui.top_summary_pt || ui.top_summary_en || ui.top_summary ||
-  ui.pullback_line || ui.market_structure_line || ui.tactical_line ||
-  panel.top_summary_pt || panel.top_summary_en || panel.top_summary ||
-  panel.pullback_line || panel.market_structure_line || panel.tactical_line ||
-  ""
-);
+    // Fonte #2 (linhas antigas)
+    const line = String(
+      ui.pullback_line || ui.market_structure_line || ui.tactical_line ||
+      panel.pullback_line || panel.market_structure_line || panel.tactical_line ||
+      ""
+    );
 
-// <<< END PATCH
-
+    const src = String((summary || line || "")).trim();
 
     const grab = (re) => {
-      const m = line.match(re);
-      return m ? m[1].trim() : null;
+      if (!src) return null;
+      const m = src.match(re);
+      return m ? String(m[1]).trim() : null;
     };
 
-    const acao = grab(/A[CÇ]AO\s*:\s*([^|]+)/i);
-
-    // ORDEM EXATA: RESPIRO primeiro
-    let respiro  = grab(/RESPIR[O0]\s*:\s*([^|]+)/i);
+    // Pega tudo do topo (quando existir)
+    let acao = grab(/A[ÇC]AO\s*:\s*([^|]+)/i);
+    let respiro = grab(/RESPIR[O0]\s*:\s*([^|]+)/i);
     let reversao = grab(/REVERS(?:A|Ã)O\s*:\s*([^|]+)/i);
+    let regime = grab(/REGIME\s*:\s*([^|]+)/i);
+    let consolidacao = grab(/(?:CONSOLIDA(?:C|Ç)(?:A|Ã)O|RANGE)\s*:\s*([^|]+)/i);
+    let continuacao = grab(/CONTINUAC(?:A|Ã)O\s*:\s*([^|]+)/i);
 
-    // extras (para o readout completo)
-const regime = grab(/REGIME\s*:\s*([^|]+)/i);
-const consolidacao = grab(/(?:CONSOLID(?:A|Ã)C(?:A|Ã)O|RANGE)\s*:\s*([^|]+)/i);
-const continuacao = grab(/CONTINUAC(?:A|Ã)O\s*:\s*([^|]+)/i);
+    // Normaliza (se alguém mandar "AÇÃO: VENDER" dentro do valor)
+    if (acao) acao = String(acao).replace(/^A[ÇC]AO\s*:\s*/i, "").trim();
 
-
-    // >>> START PATCH (append classifier verdict_pt)
-const verdictPt = rev?.verdict_pt || rev?.verdictPt;
-if (verdictPt) {
-  if (!reversao) reversao = verdictPt;
-  else if (!reversao.toLowerCase().includes(verdictPt.toLowerCase())) {
-    reversao = `${reversao} • ${verdictPt}`;
-  }
-}
-// <<< END PATCH
-
-
-    // fallback 1: usa o Pullback Brain (texto humano)
     const stage =
       (lang === "en")
         ? (pb.stage_title_en || pb.stage_title || pb.state_title_en || pb.status_en || pb.state_title || pb.status)
         : (pb.stage_title_pt || pb.stage_title || pb.state_title_pt || pb.status_pt || pb.state_title || pb.status);
 
-    if (!respiro) respiro = stage || "—";
+    // Fallbacks
+    if (!regime) regime = pb.regime || pb.mode || pb.context || stage || "—";
+    if (!respiro) respiro = pb.respiro || stage || "—";
 
-    // fallback 2: usa o Reversal Classifier (veredito)
     const revTxt =
       (lang === "en")
         ? (rev.verdict_en || rev.summary_en || rev.verdict || "")
@@ -5346,19 +5402,52 @@ if (verdictPt) {
 
     if (!reversao) reversao = revTxt || "—";
 
+    // subtexto (ex: "Sem setup de breakout")
+    let reversaoSub = rev.sub || rev.note || pb.breakout_note || pb.note || "";
+    if (!reversaoSub) reversaoSub = (revTxt && reversao !== revTxt) ? String(revTxt).trim() : "";
+    if (!reversaoSub) reversaoSub = "—";
+
+    if (!consolidacao) consolidacao = pb.consolidacao || pb.range || "—";
+    if (!continuacao) continuacao = pb.continuacao || "—";
+    if (!acao) acao = pb.acao || pb.action || ui.acao || ui.action || digest.acao || digest.action || "—";
+
+    // versões “full”
+    const verdictPt = rev?.verdict_pt || rev?.verdictPt;
+    let reversaoFull = reversao;
+    if (verdictPt && !String(reversaoFull).toLowerCase().includes(String(verdictPt).toLowerCase())){
+      reversaoFull = (reversaoFull === "—") ? String(verdictPt) : `${reversaoFull} • ${verdictPt}`;
+    }
+    const respiroFull = respiro;
+
     const setText = (id, v) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.textContent = (v === null || v === undefined || v === "") ? "—" : String(v);
     };
 
-    setText("rr-badge", acao ? `AÇÃO: ${acao}` : "—");
-    setText("rr-respiro",  respiro);
+    // topo (grande)
+    setText("rr-respiro", respiro);
     setText("rr-reversao", reversao);
+    setText("rr-reversao-sub", reversaoSub);
+
+    // badge
+    setText("rr-badge", `AÇÃO: ${acao || "—"}`);
+
+    // readout completo (igual sua 2ª imagem)
+    setText("rr-regime", regime);
+    setText("rr-reversao-full", reversaoFull);
+    setText("rr-respiro-full", respiroFull);
+    setText("rr-consolidacao", consolidacao);
+    setText("rr-continuacao", continuacao);
+    setText("rr-acao", acao);
+
+    const ro = document.getElementById("rr-readout");
+    if (ro) ro.style.display = "block";
   }catch(e){
-    // silêncio total (não quebra nada)
+    // não quebra o painel por causa disso
   }
 }
+
 
 let __AARON_MATCHER_REQ_ID = 0;
 
