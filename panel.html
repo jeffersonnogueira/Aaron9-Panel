@@ -2312,6 +2312,23 @@
   .premonition-kpi { opacity: .10; }
 }
 
+/* FIX: Premonição visível (KPI estava quase invisível) */
+.premonition-banner .premonition-kpi{
+  opacity: .78 !important;
+  transform: scale(1) !important;
+}
+
+.premonition-banner .premonition-kpi{
+  background: rgba(0,0,0,.28);
+  border: 1px solid rgba(255,255,255,.14);
+  backdrop-filter: blur(6px);
+}
+
+.premonition-banner .premonition-kpi .kpi-label{ opacity: .85; }
+.premonition-banner .premonition-kpi .kpi-time,
+.premonition-banner .premonition-kpi .kpi-prob{ opacity: 1; font-weight: 700; }
+
+
 /* KPI grande no painel direito */
 .prem-kpi-right{
   padding: 10px 10px 14px;
@@ -4832,6 +4849,12 @@ if (etaMin == null) etaMin = extractMinutes(microTxt) ?? extractMinutes(macroTxt
       ctx.scale(dpr, dpr);
 
             const W = cssW, H = cssH;
+
+            // FIX: dá contraste no canvas (antes estava transparente e “sumia” no fundo)
+ctx.clearRect(0, 0, W, H);
+ctx.fillStyle = "rgba(0,0,0,0.55)";
+ctx.fillRect(0, 0, W, H);
+
 
       // ===== TradingView-style bottom time axis + forecast candles (cirúrgico) =====
       const pad = 12;
