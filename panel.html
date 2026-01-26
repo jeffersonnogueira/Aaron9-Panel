@@ -4933,6 +4933,25 @@ function updatePremonitionPanel(payload){
       }
       return null;
     };
+const fmtMT = (d) => {
+  try {
+    return d.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'America/Denver'
+    });
+  } catch (_) {
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+};
+
+const extractPct = (txt) => {
+  const m = String(txt || "").match(/(\d{1,3})\s*%/);
+  if (!m) return null;
+  const n = Number(m[1]);
+  return (Number.isFinite(n) && n >= 0 && n <= 100) ? n : null;
+};
 
     const splitTimeLabel = (label) => {
       const s = String(label || "").trim();
@@ -5028,20 +5047,29 @@ function updatePremonitionPanel(payload){
     }
 
 // ETA (min) — precisa existir ANTES do painel direito usar
-let etaMin = (bw?.median_minutes != null && isFinite(Number(bw.median_minutes)))
-  ? Number(bw.median_minutes)
-  : null;
+let etaMin = extractMinutes(microTxt);   // MICRO primeiro
+if (etaMin == null && bw?.median_minutes != null && isFinite(Number(bw.median_minutes))) {
+  etaMin = Number(bw.median_minutes);   // fallback
+}
+if (etaMin == null) etaMin = extractMinutes(macroTxt); // último fallback (se quiser)
 
-// fallback: tenta extrair do texto (macro/micro)
-if (etaMin == null) etaMin = extractMinutes(microTxt) ?? extractMinutes(macroTxt);
 
     const dir = String(bw?.dir || "").toUpperCase();
     const verbPT = (dir === "DOWN") ? "cair" : (dir === "UP") ? "subir" : "romper";
     const verbEN = (dir === "DOWN") ? "drop" : (dir === "UP") ? "rise" : "break";
 
-    const prob = (bw?.prob_until_end_pct != null) ? `${bw.prob_until_end_pct}%` : "—";
-    const tLab = bw?.window_end_label || "—";
-    const t = splitTimeLabel(tLab);
+    const microPct = extractPct(microTxt);
+const prob = (microPct != null)
+  ? `${microPct}%`
+  : (bw?.prob_until_end_pct != null ? `${bw.prob_until_end_pct}%` : "—");
+
+// **HORÁRIO DO KPI = AGORA + ETA DO MICRO**
+const tLab = (etaMin != null)
+  ? fmtMT(new Date(Date.now() + Number(etaMin) * 60 * 1000))
+  : "—";
+
+const t = splitTimeLabel(tLab);
+
 
     setText("prem-kpi-label", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
     setText("prem-kpi-time", t.hhmm || "—");
