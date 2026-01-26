@@ -5186,11 +5186,23 @@ function updateRespiroReversaoPanel(payload){
     const rev    = payload?.reversal_classifier || payload?.reversalClassifier || payload?.reversal || {};
 
     // tenta pegar a linha “institucional” (quando existir)
-    const line = String(
-      ui.pullback_line || ui.market_structure_line || ui.tactical_line ||
-      panel.pullback_line || panel.market_structure_line || panel.tactical_line ||
-      ""
-    );
+
+// >>> START PATCH (SOURCE = TOP SUMMARY)
+const summary =
+  ui.top_summary_pt_inline ||
+  ui.top_summary_pt ||
+  payload?.digest?.top_summary_pt ||
+  panel?.digest?.top_summary_pt ||
+  "";
+
+const line = String(
+  summary ||
+  ui.pullback_line || ui.market_structure_line || ui.tactical_line ||
+  panel.pullback_line || panel.market_structure_line || panel.tactical_line ||
+  ""
+);
+// <<< END PATCH
+
 
     const grab = (re) => {
       const m = line.match(re);
@@ -5202,6 +5214,17 @@ function updateRespiroReversaoPanel(payload){
     // ORDEM EXATA: RESPIRO primeiro
     let respiro  = grab(/RESPIR[O0]\s*:\s*([^|]+)/i);
     let reversao = grab(/REVERS(?:A|Ã)O\s*:\s*([^|]+)/i);
+
+    // >>> START PATCH (append classifier verdict_pt)
+const verdictPt = rev?.verdict_pt || rev?.verdictPt;
+if (verdictPt) {
+  if (!reversao) reversao = verdictPt;
+  else if (!reversao.toLowerCase().includes(verdictPt.toLowerCase())) {
+    reversao = `${reversao} • ${verdictPt}`;
+  }
+}
+// <<< END PATCH
+
 
     // fallback 1: usa o Pullback Brain (texto humano)
     const stage =
