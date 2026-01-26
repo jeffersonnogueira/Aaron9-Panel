@@ -2198,6 +2198,21 @@
   white-space: nowrap;
 }
 
+/* ✅ RR: permitir quebrar linha e não sumir texto */
+#rr-panel .premonition-badge{
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.15;
+}
+
+/* ✅ RR: permitir value ter 2 linhas se precisar */
+#rr-panel .premonition-value{
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+}
+
+
 .premonition-grid{
   display:grid;
   grid-template-columns: 1.2fr .8fr;
