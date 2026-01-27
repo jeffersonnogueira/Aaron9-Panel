@@ -2290,6 +2290,73 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+/* ===== PREMONIÇÃO: CTA filtrado (AÇÃO + Micro >= 75%) ===== */
+.prem-signal-wrap{
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prem-signal-btn{
+  width: 100%;
+  border-radius: 999px;
+  padding: 16px 16px;
+  font-size: 44px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.40);
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease, opacity .12s ease;
+}
+
+.prem-signal-btn:disabled{
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.prem-signal-btn:not(:disabled):hover{
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.prem-signal-off{
+  border-color: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.40);
+  box-shadow: none;
+}
+
+.prem-signal-sell{
+  border-color: rgba(255,208,64,.45);
+  background: radial-gradient(800px 120px at 50% 0%, rgba(255,208,64,.28), rgba(0,0,0,0) 70%);
+  color: rgba(255,208,64,.95);
+  box-shadow: 0 0 22px rgba(255,208,64,.14);
+}
+
+.prem-signal-buy{
+  border-color: rgba(56,189,248,.45);
+  background: radial-gradient(800px 120px at 50% 0%, rgba(56,189,248,.26), rgba(0,0,0,0) 70%);
+  color: rgba(200,245,255,.95);
+  box-shadow: 0 0 22px rgba(56,189,248,.14);
+}
+
+.prem-signal-hint{
+  font-size: 11px;
+  opacity: .65;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px){
+  .prem-signal-btn{ font-size: 28px; padding: 14px 14px; }
+}
+
 /* RR: NÃO cortar conteúdo */
 #rr-container{ overflow: visible !important; }
 
@@ -3034,6 +3101,15 @@
           <span class="kpi-ampm" id="prem-kpi-ampm"></span>
           <span class="kpi-prob" id="prem-kpi-prob">—</span>
         </div>
+                <div class="prem-signal-wrap" id="prem-signal-wrap">
+          <button class="prem-signal-btn prem-signal-off" id="prem-signal-btn" type="button" disabled>
+            NÃO FAÇA NADA
+          </button>
+          <div class="prem-signal-hint" id="prem-signal-hint">
+            Filtro: AÇÃO=— • Micro=— (≥75%)
+          </div>
+        </div>
+
       </div>
 
       <div class="premonition-panel">
@@ -4929,6 +5005,59 @@ function renderResponderInline(data){
     </div>
   `;
 }
+// ===== PREMONIÇÃO: CTA filtrado (AÇÃO + Micro >= 75%) =====
+let __A10_PREM_MICRO_PCT = null;
+let __A10_PREM_ACAO = null;
+const A10_PREM_MICRO_GATE_PCT = 75;
+
+function a10UpdatePremSignalCTA(){
+  const btn  = document.getElementById("prem-signal-btn");
+  const hint = document.getElementById("prem-signal-hint");
+  if (!btn) return;
+
+  const micro = (__A10_PREM_MICRO_PCT != null && isFinite(Number(__A10_PREM_MICRO_PCT)))
+    ? Number(__A10_PREM_MICRO_PCT)
+    : null;
+
+  const acao = (__A10_PREM_ACAO != null) ? String(__A10_PREM_ACAO).trim() : "";
+  const up   = acao.toUpperCase();
+
+  const isSell   = /(VEND|SELL)/.test(up);
+  const isBuy    = /(COMPR|BUY)/.test(up);
+  const passMicro = (micro != null && micro >= A10_PREM_MICRO_GATE_PCT);
+
+  let side = "";
+  let label = "NÃO FAÇA NADA";
+  if (passMicro && isSell){ side = "sell"; label = "VENDER"; }
+  else if (passMicro && isBuy){ side = "buy"; label = "COMPRAR"; }
+
+  btn.textContent = label;
+  btn.disabled = !side;
+  btn.dataset.side = side;
+
+  btn.classList.remove("prem-signal-buy","prem-signal-sell","prem-signal-off");
+  btn.classList.add(side === "sell" ? "prem-signal-sell" : side === "buy" ? "prem-signal-buy" : "prem-signal-off");
+
+  if (hint){
+    const microTxt = (micro != null) ? `${Math.round(micro)}%` : "—";
+    hint.textContent = `Filtro: AÇÃO=${acao || "—"} • Micro=${microTxt} (≥${A10_PREM_MICRO_GATE_PCT}%)`;
+  }
+
+  // click -> arma autopilot (se existir)
+  if (!btn.__a10Bound){
+    btn.__a10Bound = true;
+    btn.addEventListener("click", () => {
+      const s = String(btn.dataset.side || "");
+      if (!s) return;
+      try{
+        if (typeof arm === "function") arm(s);
+        else if (typeof apArmFromButton === "function") apArmFromButton(s);
+        else if (typeof apActivate === "function") apActivate(s);
+      }catch(_){}
+    });
+  }
+}
+
 function updatePremonitionPanel(payload){
   try{
     const panel  = payload?.panel  || payload || {};
@@ -5071,7 +5200,19 @@ if (etaMin == null) etaMin = extractMinutes(macroTxt); // último fallback (se q
     const verbEN = (dir === "DOWN") ? "drop" : (dir === "UP") ? "rise" : "break";
 
     const microPct = extractPct(microTxt);
+    // alimenta CTA (micro %)
+const microGatePct = (microPct != null)
+  ? microPct
+  : ((bw?.prob_until_end_pct != null) ? Number(bw.prob_until_end_pct) : null);
+
+__A10_PREM_MICRO_PCT = (microGatePct != null && isFinite(Number(microGatePct)))
+  ? Number(microGatePct)
+  : null;
+
+a10UpdatePremSignalCTA();
+
 const prob = (microPct != null)
+
   ? `${microPct}%`
   : (bw?.prob_until_end_pct != null ? `${bw.prob_until_end_pct}%` : "—");
 
@@ -5722,6 +5863,9 @@ if (topAcao && String(topAcao).trim()) acao = String(topAcao).trim();
     setText("prem-consolidacao", consolidacao);
     setText("prem-continuacao", continuacao);
     setText("prem-acao-full", acao);
+    __A10_PREM_ACAO = acao;
+a10UpdatePremSignalCTA();
+
 
     const pro = document.getElementById("prem-readout");
     if (pro) pro.style.display = "block";
