@@ -2149,6 +2149,57 @@
   
 }
 /* ================== FIM GARIMPO DE HOJE ================== */
+/* ================== COMENTÁRIO DO AARON (entre Garimpo e Premonição) ================== */
+.aaron-commentary-container { padding: 12px 16px; }
+
+.aaron-commentary-badges{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.aaron-badge{ white-space: nowrap; }
+
+.aaron-badge-pattern{
+  max-width: 340px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aaron-commentary-text{
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.22);
+  border: 1px solid rgba(255,255,255,.08);
+  color: #e5e7eb;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.aaron-commentary-text strong{ color: #f8fafc; }
+
+.premonition-badge.aaron-badge.is-up{
+  border-color: rgba(34,197,94,.55);
+  background: rgba(34,197,94,.12);
+  color: rgba(187,247,208,1);
+}
+.premonition-badge.aaron-badge.is-down{
+  border-color: rgba(239,68,68,.55);
+  background: rgba(239,68,68,.12);
+  color: rgba(254,202,202,1);
+}
+.premonition-badge.aaron-badge.is-neutral{
+  border-color: rgba(148,163,184,.35);
+  background: rgba(148,163,184,.12);
+  color: rgba(226,232,240,1);
+}
+
+@media (max-width: 768px){
+  .aaron-commentary-badges{ flex-wrap: wrap; }
+  .aaron-badge-pattern{ max-width: 100%; }
+}
+
 /* ================== PREMONIÇÃO (Breakout Window Card) ================== */
 .premonition-banner{
   margin: 14px 0 12px;
@@ -3081,6 +3132,29 @@
   </div>
 </section>
 <!-- ================== FIM GARIMPO DE HOJE ================== -->
+ <!-- ================== COMENTÁRIO DO AARON (DIREÇÃO + PADRÃO) ================== -->
+<section id="aaron-commentary-section" class="premonition-banner">
+  <div class="premonition-container aaron-commentary-container">
+    <div class="premonition-head">
+      <div>
+        <div class="premonition-title">COMENTÁRIO DO AARON</div>
+        <div class="premonition-sub">Direção do dia + padrão dominante</div>
+      </div>
+
+      <div class="aaron-commentary-badges">
+        <div class="premonition-badge aaron-badge is-neutral" id="aaron-day-badge">DIA: —</div>
+        <div class="premonition-badge aaron-badge aaron-badge-pattern" id="aaron-pattern-badge">PADRÃO: —</div>
+      </div>
+    </div>
+
+    <div class="aaron-commentary-text">
+      <strong>Comentário do AARON:</strong>
+      <span id="aaron-commentary-body">—</span>
+    </div>
+  </div>
+</section>
+<!-- ================== FIM COMENTÁRIO DO AARON ================== -->
+
 <section id="premonition-section" class="premonition-banner">
   <div class="premonition-container">
     <div class="premonition-head">
@@ -5936,6 +6010,73 @@ function applyResponderIntoTradeCard(data){
 
   if (comment) set("trade-comment", comment);
 }
+function updateAaronCommentaryBlock(data){
+  try{
+    data = Array.isArray(data) ? (data[0] ?? {}) : (data ?? {});
+    const ui     = data?.ui     || {};
+    const digest = data?.digest || {};
+    const panel  = data?.panel  || {};
+    const sf = digest?.shape_focus || {};
+
+    const pickFirst = (...vals) => {
+      for (const v of vals){
+        if (v == null) continue;
+        const s = String(v).trim();
+        if (s) return v;
+      }
+      return null;
+    };
+
+    // direção “macro do dia” (tenta várias fontes e cai pro shape_focus.direction)
+    const dayDirRaw = String(pickFirst(
+      ui.day_direction, ui.day_dir, ui.macro_direction, ui.macro_dir,
+      digest.day_direction, digest.day_dir, digest.macro_direction, digest.macro_dir,
+      digest?.breakout_window_hours?.dir, digest?.breakout_window_eod?.dir,
+      digest?.breakout_window_v2?.dir, digest?.breakout_window?.dir,
+      panel.day_direction, panel.day_dir, panel.dir,
+      sf.direction
+    ) || "").toUpperCase();
+
+    const dayDir = (dayDirRaw === "UP") ? "UP" : (dayDirRaw === "DOWN") ? "DOWN" : "NEUTRO";
+
+    // padrão dominante (ex: 2x Top, 3º toque, etc.)
+    const pattern = String(pickFirst(
+      sf.name_pt, sf.label, sf.name_en,
+      ui.pattern_name, ui.shape_name, ui.shape_label
+    ) || "—");
+
+    // comentário estilo “pipe” igual ao da imagem
+    const comment = [
+      ui.structure_line ? `Estrutura: ${ui.structure_line}` : "",
+      ui.tactical_line ? `Tático: ${ui.tactical_line}` : "",
+      ui.market_structure_line ? `MS: ${ui.market_structure_line}` : "",
+      ui.pullback_line ? `Pullback: ${ui.pullback_line}` : "",
+    ].filter(Boolean).join(" | ");
+
+    const finalText = [
+      `Direção do dia: ${dayDir}`,
+      (pattern && pattern !== "—") ? `Padrão: ${pattern}` : "",
+      comment
+    ].filter(Boolean).join(" | ") || "—";
+
+    const bodyEl = document.getElementById("aaron-commentary-body");
+    if (bodyEl) bodyEl.textContent = finalText;
+
+    const dayBadge = document.getElementById("aaron-day-badge");
+    if (dayBadge){
+      dayBadge.textContent = `DIA: ${dayDir}`;
+      dayBadge.classList.remove("is-up","is-down","is-neutral");
+      dayBadge.classList.add(dayDir === "UP" ? "is-up" : dayDir === "DOWN" ? "is-down" : "is-neutral");
+    }
+
+    const patBadge = document.getElementById("aaron-pattern-badge");
+    if (patBadge){
+      const short = pattern.length > 44 ? pattern.slice(0, 41) + "…" : pattern;
+      patBadge.textContent = `PADRÃO: ${short || "—"}`;
+      patBadge.title = pattern || "";
+    }
+  }catch(_){}
+}
 
 async function requestMatcher(symbol) {
   symbol = String(symbol || "").trim().toUpperCase();
@@ -6012,6 +6153,9 @@ if (typeof updatePremonitionPanel === "function") {
 }
 if (typeof updateRespiroReversaoPanel === "function") {
   updateRespiroReversaoPanel(data);
+}
+if (typeof updateAaronCommentaryBlock === "function") {
+  updateAaronCommentaryBlock(data);
 }
 
   // ✅ injeta dentro do Trade Card
@@ -8660,6 +8804,9 @@ if (typeof updatePremonitionPanel === "function") {
 }
 if (typeof updateRespiroReversaoPanel === "function") {
   updateRespiroReversaoPanel(payload);
+}
+if (typeof updateAaronCommentaryBlock === "function") {
+  updateAaronCommentaryBlock(payload);
 }
 
 // ✅ 3) Mini-resumo dentro do Trade Card (se o anchor existir)
