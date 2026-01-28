@@ -2651,6 +2651,19 @@
 .prem-kpi-right-current-price{
   color: #ffcc66; /* mesmo amarelo do KPI */
 }
+/* Current Price no chart (overlay no topo do gráfico) */
+.prem-chart-current-wrap{
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 6;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  pointer-events: none;
+  transform: scale(.78);
+  transform-origin: top left;
+}
 
 .prem-kpi-right-main{
   display:flex;
@@ -3180,6 +3193,12 @@
 
     <div class="premonition-grid">
       <div class="premonition-chart">
+        <!-- Current Price (overlay no topo do gráfico) -->
+<div class="prem-chart-current-wrap">
+  <span class="prem-kpi-right-time prem-kpi-right-current-label">Current Price:</span>
+  <span class="prem-kpi-right-time prem-kpi-right-current-price" id="prem-chart-current-price">—</span>
+</div>
+
         <canvas id="prem-canvas" class="premonition-canvas" width="900" height="260"></canvas>
 
         <div class="premonition-kpi">
@@ -5352,6 +5371,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
       ? Number(currentPxRaw).toFixed(2)
       : "—";
     setText("prem-right-current-price", currentPxTxt);
+    setText("prem-chart-current-price", currentPxTxt);
 
     setText("prem-right-time", t.hhmm || "—");
     setText("prem-right-ampm", t.ampm || "");
