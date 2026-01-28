@@ -2236,6 +2236,11 @@
   opacity:.70;
   margin-top: 2px;
 }
+/* Current Price no header (fora do gráfico) */
+.prem-head-current{
+  margin-top: 8px;
+  margin-bottom: 0;
+}
 
 .premonition-badge{
   font-size: 10px;
@@ -3187,6 +3192,11 @@
       <div>
         <div class="premonition-title" id="prem-title">PREMONIÇÃO</div>
         <div class="premonition-sub" id="prem-sub">Breakout Window (heurístico)</div>
+        <div class="prem-kpi-right-current prem-head-current">
+  <span class="prem-kpi-right-time">Current Price:</span>
+  <span class="prem-kpi-right-time prem-kpi-right-current-price" id="prem-head-current-price">—</span>
+</div>
+
       </div>
       <div class="premonition-badge" id="prem-badge">—</div>
     </div>
@@ -5371,6 +5381,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
       ? Number(currentPxRaw).toFixed(2)
       : "—";
     setText("prem-right-current-price", currentPxTxt);
+    setText("prem-head-current-price", currentPxTxt);
     setText("prem-chart-current-price", currentPxTxt);
 
     setText("prem-right-time", t.hhmm || "—");
