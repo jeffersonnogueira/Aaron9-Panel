@@ -5410,7 +5410,7 @@ const extractPct = (txt) => {
 
     // breakout window card (estruturado)
         let bw = pickFirst(ui.breakout_window_card, panel.breakout_window_card, digest.breakout_window_card);
-a10UpdatePremBreakoutBox(digest);
+
 
             // ✅ DEMO quando não houver dados (sistema OFF / vazio)
     const A10_PREM_DEMO_WHEN_EMPTY = true;
@@ -5484,6 +5484,11 @@ __A10_PREM_MICRO_PCT = (microGatePct != null && isFinite(Number(microGatePct)))
   : null;
 
 a10UpdatePremSignalCTA();
+try{
+  if (typeof a10UpdatePremBreakoutBox === "function"){
+    a10UpdatePremBreakoutBox(digest);
+  }
+}catch(_e){}
 
 const prob = (microPct != null)
 
