@@ -2408,6 +2408,49 @@
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+/* ===== PREMONIÇÃO: Breakout / Retest (abaixo do botão grande) ===== */
+.prem-breakout-wrap{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prem-breakout-title{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+
+.prem-breakout-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 10px;
+}
+
+.pb-k{
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .55;
+}
+
+.pb-v{
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255,208,64,.95);
+}
+
+.prem-breakout-note{
+  font-size: 10px;
+  opacity: .55;
+}
 
 @media (max-width: 720px){
   .prem-signal-btn{ font-size: 28px; padding: 14px 14px; }
@@ -3221,6 +3264,33 @@
             Filtro: AÇÃO=— • Micro=— (≥75%)
           </div>
         </div>
+                <div class="prem-breakout-wrap" id="prem-breakout-wrap">
+                  <div class="prem-breakout-title">ROMPIMENTO • RETEST</div>
+
+                  <div class="prem-breakout-grid">
+                    <div class="pb">
+                      <div class="pb-k">BREAKOUT</div>
+                      <div class="pb-v" id="prem-breakout-status">—</div>
+                    </div>
+
+                    <div class="pb">
+                      <div class="pb-k">RETEST</div>
+                      <div class="pb-v" id="prem-retest-status">—</div>
+                    </div>
+
+                    <div class="pb">
+                      <div class="pb-k">CONFIRM.</div>
+                      <div class="pb-v" id="prem-retest-confirm">—</div>
+                    </div>
+
+                    <div class="pb">
+                      <div class="pb-k">NÍVEL</div>
+                      <div class="pb-v" id="prem-breakout-level">—</div>
+                    </div>
+                  </div>
+
+                  <div class="prem-breakout-note" id="prem-breakout-note">—</div>
+                </div>
 
       </div>
 
@@ -5174,6 +5244,61 @@ function a10UpdatePremSignalCTA(){
     label = "CONTINUAÇÃO COMPRADO";
     if (passMicro) side = "buy";
   }
+function a10UpdatePremBreakoutBox(digest){
+  const wrap = document.getElementById("prem-breakout-wrap");
+  if (!wrap) return;
+
+  const f  = (digest && typeof digest === "object") ? (digest.features || {}) : {};
+  const sr = (digest && typeof digest === "object") ? (digest.sr_proxy  || {}) : {};
+
+  const bUp = !!f.breakout_up;
+  const bDn = !!f.breakout_down;
+
+  const rUp = !!f.breakout_up_with_retest;
+  const rDn = !!f.breakout_down_with_retest;
+
+  const cUp = !!f.breakout_up_with_retest_confirmed;
+  const cDn = !!f.breakout_down_with_retest_confirmed;
+
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = (val === null || val === undefined || val === "") ? "—" : String(val);
+  };
+
+  const fmt2 = (n) => (typeof n === "number" && isFinite(n)) ? n.toFixed(2) : (n ?? "—");
+
+  let dir = "";
+  if (bUp && bDn) dir = "MIX";
+  else if (bUp) dir = "UP";
+  else if (bDn) dir = "DOWN";
+
+  let retDir = "";
+  if (rUp && rDn) retDir = "MIX";
+  else if (rUp) retDir = "UP";
+  else if (rDn) retDir = "DOWN";
+
+  let confDir = "";
+  if (cUp && cDn) confDir = "MIX";
+  else if (cUp) confDir = "UP";
+  else if (cDn) confDir = "DOWN";
+
+  set("prem-breakout-status", dir ? `YES (${dir})` : "NO");
+  set("prem-retest-status",   retDir ? `YES (${retDir})` : "NO");
+  set("prem-retest-confirm",  confDir ? `YES (${confDir})` : "NO");
+
+  const lvl = (sr.breakout_level != null && isFinite(Number(sr.breakout_level))) ? Number(sr.breakout_level) : null;
+  set("prem-breakout-level", (lvl != null) ? fmt2(lvl) : "—");
+
+  const note =
+    confDir ? `Retest confirmado • dir=${sr.direction || confDir}${(lvl!=null)?` • nível=${fmt2(lvl)}`:""}` :
+    retDir  ? `Retest detectado • dir=${sr.direction || retDir}${(lvl!=null)?` • nível=${fmt2(lvl)}`:""}` :
+    dir     ? `Breakout detectado • dir=${sr.direction || dir}${(lvl!=null)?` • nível=${fmt2(lvl)}`:""}` :
+    (lvl!=null) ? `Nível SR proxy: ${fmt2(lvl)} • dir=${sr.direction || "—"}` :
+    "Sem setup de breakout agora";
+
+  set("prem-breakout-note", note);
+}
 
 
   btn.textContent = label;
@@ -5328,6 +5453,7 @@ const extractPct = (txt) => {
           score: 0.88,
           trigger_price: 100 // depois o canvas ajusta para o preço atual se precisar
         };
+a10UpdatePremBreakoutBox(digest);
 
         if (!macroTxt) macroTxt = "PREMONIÇÃO MACRO (DEMO): tendência de baixa — ETA ~17 min.";
         if (!microTxt) microTxt = "PREMONIÇÃO MICRO (DEMO): queda rápida — ETA ~2 min.";
