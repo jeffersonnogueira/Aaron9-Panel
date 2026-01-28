@@ -5244,6 +5244,37 @@ function a10UpdatePremSignalCTA(){
     label = "CONTINUAÇÃO COMPRADO";
     if (passMicro) side = "buy";
   }
+
+
+
+  btn.textContent = label;
+  btn.disabled = !side;
+  btn.dataset.side = side;
+
+  btn.classList.remove("prem-signal-buy","prem-signal-sell","prem-signal-off");
+  btn.classList.add(side === "sell" ? "prem-signal-sell" : side === "buy" ? "prem-signal-buy" : "prem-signal-off");
+
+    if (hint){
+    const microTxt = (micro != null) ? `${Math.round(micro)}%` : "—";
+    const contTxt  = cont ? ` • CONT=${cont}` : "";
+    hint.textContent = `Filtro: AÇÃO=${acao || "—"}${contTxt} • Micro=${microTxt} (≥${A10_PREM_MICRO_GATE_PCT}%)`;
+  }
+
+
+  // click -> arma autopilot (se existir)
+  if (!btn.__a10Bound){
+    btn.__a10Bound = true;
+    btn.addEventListener("click", () => {
+      const s = String(btn.dataset.side || "");
+      if (!s) return;
+      try{
+        if (typeof arm === "function") arm(s);
+        else if (typeof apArmFromButton === "function") apArmFromButton(s);
+        else if (typeof apActivate === "function") apActivate(s);
+      }catch(_){}
+    });
+  }
+}
 function a10UpdatePremBreakoutBox(digest){
   const wrap = document.getElementById("prem-breakout-wrap");
   if (!wrap) return;
@@ -5298,36 +5329,6 @@ function a10UpdatePremBreakoutBox(digest){
     "Sem setup de breakout agora";
 
   set("prem-breakout-note", note);
-}
-
-
-  btn.textContent = label;
-  btn.disabled = !side;
-  btn.dataset.side = side;
-
-  btn.classList.remove("prem-signal-buy","prem-signal-sell","prem-signal-off");
-  btn.classList.add(side === "sell" ? "prem-signal-sell" : side === "buy" ? "prem-signal-buy" : "prem-signal-off");
-
-    if (hint){
-    const microTxt = (micro != null) ? `${Math.round(micro)}%` : "—";
-    const contTxt  = cont ? ` • CONT=${cont}` : "";
-    hint.textContent = `Filtro: AÇÃO=${acao || "—"}${contTxt} • Micro=${microTxt} (≥${A10_PREM_MICRO_GATE_PCT}%)`;
-  }
-
-
-  // click -> arma autopilot (se existir)
-  if (!btn.__a10Bound){
-    btn.__a10Bound = true;
-    btn.addEventListener("click", () => {
-      const s = String(btn.dataset.side || "");
-      if (!s) return;
-      try{
-        if (typeof arm === "function") arm(s);
-        else if (typeof apArmFromButton === "function") apArmFromButton(s);
-        else if (typeof apActivate === "function") apActivate(s);
-      }catch(_){}
-    });
-  }
 }
 
 function updatePremonitionPanel(payload){
@@ -5454,7 +5455,7 @@ const extractPct = (txt) => {
           score: 0.88,
           trigger_price: 100 // depois o canvas ajusta para o preço atual se precisar
         };
-a10UpdatePremBreakoutBox(digest);
+
 
         if (!macroTxt) macroTxt = "PREMONIÇÃO MACRO (DEMO): tendência de baixa — ETA ~17 min.";
         if (!microTxt) microTxt = "PREMONIÇÃO MICRO (DEMO): queda rápida — ETA ~2 min.";
