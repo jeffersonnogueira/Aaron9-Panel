@@ -2638,6 +2638,17 @@
   opacity: .85;
   margin-bottom: 10px;
 }
+/* Current Price (acima do horário no KPI grande) */
+.prem-kpi-right-current{
+  display:flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.prem-kpi-right-current-price{
+  color: #ffcc66; /* mesmo amarelo do KPI */
+}
 
 .prem-kpi-right-main{
   display:flex;
@@ -3202,6 +3213,11 @@
 
 
   <div class="prem-kpi-right-main">
+      <div class="prem-kpi-right-current">
+    <span class="prem-kpi-right-time prem-kpi-right-current-label">Current Price:</span>
+    <span class="prem-kpi-right-time prem-kpi-right-current-price" id="prem-right-current-price">—</span>
+  </div>
+
     <span class="prem-kpi-right-time" id="prem-right-time">--:--</span>
     <span class="prem-kpi-right-ampm" id="prem-right-ampm"></span>
     <span class="prem-kpi-right-prob" id="prem-right-prob">--%</span>
@@ -5324,6 +5340,17 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 
     // espelha KPI grande no painel direito (mockup)
     setText("prem-right-title", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
+        // ✅ Current Price (preço atual do ativo)
+    const currentPxRaw = pickFirst(
+      panel.price_now, panel.last_price,
+      ui.price_now, ui.last_price,
+      digest.price_now, digest.last_price, digest.price
+    );
+    const currentPxTxt = (currentPxRaw != null && isFinite(Number(currentPxRaw)))
+      ? Number(currentPxRaw).toFixed(2)
+      : "—";
+    setText("prem-right-current-price", currentPxTxt);
+
     setText("prem-right-time", t.hhmm || "—");
     setText("prem-right-ampm", t.ampm || "");
     setText("prem-right-prob", probLine);
