@@ -5122,10 +5122,12 @@ function renderResponderInline(data){
     </div>
   `;
 }
-// ===== PREMONIÇÃO: CTA filtrado (AÇÃO + Micro >= 75%) =====
+// ===== PREMONIÇÃO: CTA filtrado (AÇÃO + Micro >= 70%) =====
 let __A10_PREM_MICRO_PCT = null;
 let __A10_PREM_ACAO = null;
-const A10_PREM_MICRO_GATE_PCT = 75;
+let __A10_PREM_CONTINUACAO = null; // NEW: p/ "continuação comprado/vendido"
+const A10_PREM_MICRO_GATE_PCT = 70;
+
 
 function a10UpdatePremSignalCTA(){
   const btn  = document.getElementById("prem-signal-btn");
@@ -5136,17 +5138,43 @@ function a10UpdatePremSignalCTA(){
     ? Number(__A10_PREM_MICRO_PCT)
     : null;
 
-  const acao = (__A10_PREM_ACAO != null) ? String(__A10_PREM_ACAO).trim() : "";
+    const acao = (__A10_PREM_ACAO != null) ? String(__A10_PREM_ACAO).trim() : "";
   const up   = acao.toUpperCase();
 
-  const isSell   = /(VEND|SELL)/.test(up);
-  const isBuy    = /(COMPR|BUY)/.test(up);
+  const cont = (__A10_PREM_CONTINUACAO != null) ? String(__A10_PREM_CONTINUACAO).trim() : "";
+  const cup  = cont.toUpperCase();
+
+  const isSell = /(VEND|SELL)/.test(up);
+  const isBuy  = /(COMPR|BUY)/.test(up);
+
+  // Se a própria AÇÃO vier como "continuação de compra/venda"
+  const acaoIsCont = /(CONTINU|CONTINUA)/.test(up);
+
+  // Continuação pode vir do campo CONTINUAÇÃO (ou da própria AÇÃO)
+  const contIsBuy  = (acaoIsCont && isBuy)  || /(COMPRA|COMPRAR|BUY)/.test(cup);
+  const contIsSell = (acaoIsCont && isSell) || /(VENDA|VENDER|SELL)/.test(cup);
+
   const passMicro = (micro != null && micro >= A10_PREM_MICRO_GATE_PCT);
 
   let side = "";
   let label = "NÃO FAÇA NADA";
-  if (passMicro && isSell){ side = "sell"; label = "VENDER"; }
-  else if (passMicro && isBuy){ side = "buy"; label = "COMPRAR"; }
+
+  // 1) BUY/SELL "puro" só se Micro >= gate
+  const pureSell = isSell && !acaoIsCont;
+  const pureBuy  = isBuy  && !acaoIsCont;
+
+  if (passMicro && pureSell){ side = "sell"; label = "VENDER"; }
+  else if (passMicro && pureBuy){ side = "buy"; label = "COMPRAR"; }
+
+  // 2) Continuação: mostra sempre o texto; habilita só se Micro >= gate
+  else if (contIsSell){
+    label = "CONTINUAÇÃO VENDIDO";
+    if (passMicro) side = "sell";
+  } else if (contIsBuy){
+    label = "CONTINUAÇÃO COMPRADO";
+    if (passMicro) side = "buy";
+  }
+
 
   btn.textContent = label;
   btn.disabled = !side;
@@ -5155,10 +5183,12 @@ function a10UpdatePremSignalCTA(){
   btn.classList.remove("prem-signal-buy","prem-signal-sell","prem-signal-off");
   btn.classList.add(side === "sell" ? "prem-signal-sell" : side === "buy" ? "prem-signal-buy" : "prem-signal-off");
 
-  if (hint){
+    if (hint){
     const microTxt = (micro != null) ? `${Math.round(micro)}%` : "—";
-    hint.textContent = `Filtro: AÇÃO=${acao || "—"} • Micro=${microTxt} (≥${A10_PREM_MICRO_GATE_PCT}%)`;
+    const contTxt  = cont ? ` • CONT=${cont}` : "";
+    hint.textContent = `Filtro: AÇÃO=${acao || "—"}${contTxt} • Micro=${microTxt} (≥${A10_PREM_MICRO_GATE_PCT}%)`;
   }
+
 
   // click -> arma autopilot (se existir)
   if (!btn.__a10Bound){
@@ -5993,6 +6023,7 @@ if (topAcao && String(topAcao).trim()) acao = String(topAcao).trim();
     setText("prem-consolidacao", consolidacao);
     setText("prem-continuacao", continuacao);
     setText("prem-acao-full", acao);
+        __A10_PREM_CONTINUACAO = continuacao;
     __A10_PREM_ACAO = acao;
 a10UpdatePremSignalCTA();
 
