@@ -5526,7 +5526,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("prem-kpi-label", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
     setText("prem-kpi-time", t.hhmm || "—");
     setText("prem-kpi-ampm", t.ampm || "");
-    setText("prem-kpi-prob", probLine);
+    (document.getElementById("prem-kpi-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
 
     // espelha KPI grande no painel direito (mockup)
     setText("prem-right-title", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
@@ -5545,7 +5545,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 
     setText("prem-right-time", t.hhmm || "—");
     setText("prem-right-ampm", t.ampm || "");
-    setText("prem-right-prob", probLine);
+    (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
     setText("prem-right-eta", (etaMin != null) ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`) : "—");
 
 
