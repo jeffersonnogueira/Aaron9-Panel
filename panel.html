@@ -2699,6 +2699,53 @@
 .prem-kpi-right-current-price{
     color: #ffcc66 !important;
 }
+/* ===== Institutional Window (topo da Premonição) ===== */
+.inst-window{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  min-height: 34px;
+  margin: 2px 14px 0 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 10px 30px rgba(0,0,0,.25) inset;
+}
+
+.inst-tag{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+}
+
+.inst-range{
+  font-size: 12px;
+  font-weight: 800;
+  opacity: .85;
+  color: rgba(255,255,255,.92);
+}
+
+.inst-msg{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  color: rgba(255,255,255,.75);
+}
+
+/* estados (cores) */
+.inst-on .inst-msg{ color: var(--success, #4ade80); }
+.inst-caution .inst-msg{ color: #ffcc66; }
+.inst-off .inst-msg{ color: rgba(255,255,255,.55); }
+
 /* Current Price no chart (overlay no topo do gráfico) */
 .prem-chart-current-wrap{
   position: absolute;
@@ -3241,6 +3288,11 @@
 </div>
 
       </div>
+      <div class="inst-window" id="inst-window">
+  <span class="inst-tag" id="inst-tag">—</span>
+  <span class="inst-range" id="inst-range">—</span>
+  <span class="inst-msg" id="inst-msg">—</span>
+</div>
       <div class="premonition-badge" id="prem-badge">—</div>
     </div>
 
@@ -10513,6 +10565,59 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
 
 // ================== FIM GARIMPO DE HOJE ==================
+// ===== Institutional Window (MT / Utah) =====
+(function(){
+  const elWrap  = document.getElementById('inst-window');
+  const elTag   = document.getElementById('inst-tag');
+  const elRange = document.getElementById('inst-range');
+  const elMsg   = document.getElementById('inst-msg');
+  if (!elWrap || !elTag || !elRange || !elMsg) return;
+
+  const WINDOWS = [
+    { start: 5*60,      end: 7*60+30, tag:'PRE-MKT',      range:'5:00–7:30 MT',   msg:'CAUTION — liquidez subindo',      tone:'caution' },
+    { start: 7*60+30,   end: 8*60+30, tag:'OPEN DRIVE',   range:'7:30–8:30 MT',   msg:'ON ✅ — melhor janela do dia',      tone:'on' },
+    { start: 8*60+30,   end: 9*60+30, tag:'MID-MORNING',  range:'8:30–9:30 MT',   msg:'ON ✅ — boas continuações',        tone:'on' },
+    { start: 9*60+30,   end: 11*60+30,tag:'LUNCH / CHOP', range:'9:30–11:30 MT',  msg:'OFF ⚠️ — ruído alto',              tone:'off' },
+    { start: 13*60,     end: 14*60,   tag:'POWER HOUR',   range:'13:00–14:00 MT', msg:'ON ✅ — fluxo forte',              tone:'on' },
+  ];
+
+  function getMtMinutesNow(){
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Denver',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).formatToParts(new Date());
+    const hh = parseInt(parts.find(p => p.type === 'hour')?.value || '0', 10);
+    const mm = parseInt(parts.find(p => p.type === 'minute')?.value || '0', 10);
+    return hh*60 + mm;
+  }
+
+  function pickWindow(mins){
+    for (const w of WINDOWS){
+      if (mins >= w.start && mins < w.end) return w;
+    }
+    return { tag:'OFF HOURS', range:'—', msg:'OFF ⚠️ — fora das janelas institucionais', tone:'off' };
+  }
+
+  function paint(){
+    const mins = getMtMinutesNow();
+    const w = pickWindow(mins);
+
+    elTag.textContent = w.tag;
+    elRange.textContent = w.range;
+    elMsg.textContent = w.msg;
+
+    elWrap.classList.remove('inst-on','inst-off','inst-caution');
+    if (w.tone === 'on') elWrap.classList.add('inst-on');
+    else if (w.tone === 'caution') elWrap.classList.add('inst-caution');
+    else elWrap.classList.add('inst-off');
+  }
+
+  paint();
+  setInterval(paint, 10 * 1000);
+})();
+
 </script>
 <script>
 /* ===================== MATCHER PICKER (AUTO PILOT LOOK) ===================== */
