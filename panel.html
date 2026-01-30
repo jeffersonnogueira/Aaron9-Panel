@@ -2408,6 +2408,195 @@
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+/* ===== EXEC GATE (Micro) — abaixo do botão grande ===== */
+.exec-gate{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.eg-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+}
+
+.eg-title{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .85;
+}
+
+.eg-mode{
+  display:flex;
+  gap: 6px;
+}
+
+.eg-mode-btn{
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 10px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.70);
+  cursor: pointer;
+}
+.eg-mode-btn.is-on{
+  border-color: rgba(255,208,64,.45);
+  color: rgba(255,208,64,.95);
+  box-shadow: 0 0 14px rgba(255,208,64,.10);
+}
+
+.eg-metrics{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 980px){
+  .eg-metrics{ grid-template-columns: repeat(2, 1fr); }
+}
+
+.eg-kv{
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 6px 8px;
+  background: rgba(255,255,255,.02);
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap: 8px;
+}
+
+.eg-kv .k{
+  font-size: 9px;
+  opacity: .65;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.eg-kv .v{
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.eg-strong{
+  color: rgba(255,208,64,.95);
+}
+
+.eg-edge.is-ok .v{ color: var(--success, rgba(34,197,94,.95)); }
+.eg-edge.is-no .v{ color: rgba(255,208,64,.95); }
+
+.eg-microline{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 980px){
+  .eg-microline{ grid-template-columns: 1fr; }
+}
+
+.eg-inputs{
+  display:grid;
+  grid-template-columns: 1fr 1.35fr 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+@media (max-width: 980px){
+  .eg-inputs{ grid-template-columns: 1fr 1fr; }
+}
+
+.eg-lbl{
+  display:block;
+  font-size: 9px;
+  opacity: .6;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.eg-input,
+.eg-select{
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.25);
+  color: rgba(255,255,255,.88);
+  padding: 8px 10px;
+  font-size: 12px;
+  outline: none;
+}
+
+.eg-stop-row{
+  display:flex;
+  gap: 6px;
+}
+.eg-stop-row .eg-select{
+  flex: 0 0 90px;
+}
+
+.eg-table-wrap{
+  margin-top: 6px;
+  overflow:auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.eg-table{
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+  font-size: 12px;
+}
+
+.eg-table th{
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .7;
+  text-align: left;
+  background: rgba(0,0,0,.25);
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  white-space: nowrap;
+}
+
+.eg-table td{
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  white-space: nowrap;
+}
+
+.eg-td-acct{
+  font-weight: 850;
+  color: rgba(255,255,255,.90);
+}
+
+.eg-row-off{
+  opacity: .35;
+}
+
+.eg-foot{
+  font-size: 10px;
+  opacity: .7;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.exec-gate.eg-1line .eg-hide-1line{
+  display:none !important;
+}
+
 /* ===== PREMONIÇÃO: Breakout / Retest (abaixo do botão grande) ===== */
 .prem-breakout-wrap{
   margin-top: 10px;
@@ -3316,6 +3505,120 @@
             Filtro: AÇÃO=— • Micro=— (≥75%)
           </div>
         </div>
+                <div class="exec-gate" id="exec-gate">
+          <div class="eg-head">
+            <div class="eg-title">EXEC GATE (Micro)</div>
+            <div class="eg-mode">
+              <button class="eg-mode-btn is-on" id="eg-mode-1" type="button">1-line</button>
+              <button class="eg-mode-btn" id="eg-mode-3" type="button">3-line</button>
+            </div>
+          </div>
+
+          <div class="eg-metrics">
+            <div class="eg-kv"><span class="k">ATR14</span><span class="v" id="eg-atr14">—</span></div>
+            <div class="eg-kv"><span class="k">MinMove</span><span class="v" id="eg-minmove">—</span></div>
+            <div class="eg-kv"><span class="k">Dist→Micro</span><span class="v" id="eg-dist">—</span></div>
+            <div class="eg-kv eg-edge"><span class="k">EDGE</span><span class="v" id="eg-edge">—</span></div>
+          </div>
+
+          <div class="eg-microline">
+            <div class="eg-kv"><span class="k">Micro Take</span><span class="v eg-strong" id="eg-micro-take">—</span></div>
+            <div class="eg-kv"><span class="k">Prob</span><span class="v" id="eg-micro-prob">—</span></div>
+            <div class="eg-kv"><span class="k">ETA</span><span class="v" id="eg-micro-eta">—</span></div>
+          </div>
+
+          <div class="eg-inputs">
+            <div class="eg-in">
+              <label class="eg-lbl">Risk %</label>
+              <input id="eg-riskpct" class="eg-input" type="number" step="0.05" value="0.50" />
+            </div>
+
+            <div class="eg-in">
+              <label class="eg-lbl">Stop rule</label>
+              <div class="eg-stop-row">
+                <select id="eg-stop-mode" class="eg-select">
+                  <option value="atr" selected>ATR ×</option>
+                  <option value="cents">$ cents</option>
+                </select>
+                <input id="eg-stop-atr-mult" class="eg-input" type="number" step="0.05" value="0.80" />
+                <input id="eg-stop-cents" class="eg-input" type="number" step="0.01" value="0.31" style="display:none;" />
+              </div>
+            </div>
+
+            <div class="eg-in">
+              <label class="eg-lbl">Conta A</label>
+              <input id="eg-acct-1" class="eg-input" type="number" step="100" value="25000" />
+            </div>
+
+            <div class="eg-in eg-hide-1line">
+              <label class="eg-lbl">Conta B</label>
+              <input id="eg-acct-2" class="eg-input" type="number" step="100" value="50000" />
+            </div>
+
+            <div class="eg-in eg-hide-1line">
+              <label class="eg-lbl">Conta C</label>
+              <input id="eg-acct-3" class="eg-input" type="number" step="100" value="100000" />
+            </div>
+          </div>
+
+          <div class="eg-table-wrap">
+            <table class="eg-table">
+              <thead>
+                <tr>
+                  <th>Conta</th>
+                  <th>Risk %</th>
+                  <th>Shares</th>
+                  <th>Stop ($)</th>
+                  <th>Stop (ATR)</th>
+                  <th>Risk $</th>
+                  <th>Take = Micro ($)</th>
+                  <th>Reward $</th>
+                  <th>R:R</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="eg-row-1">
+                  <td class="eg-td-acct" id="eg-acct-txt-1">25,000</td>
+                  <td id="eg-riskpct-txt-1">0.50%</td>
+                  <td id="eg-shares-1">—</td>
+                  <td id="eg-stopusd-1">—</td>
+                  <td id="eg-stopatr-1">—</td>
+                  <td id="eg-riskusd-1">—</td>
+                  <td id="eg-takeusd-1">—</td>
+                  <td id="eg-rewardusd-1">—</td>
+                  <td id="eg-rr-1">—</td>
+                </tr>
+
+                <tr id="eg-row-2" class="eg-hide-1line">
+                  <td class="eg-td-acct" id="eg-acct-txt-2">50,000</td>
+                  <td id="eg-riskpct-txt-2">0.50%</td>
+                  <td id="eg-shares-2">—</td>
+                  <td id="eg-stopusd-2">—</td>
+                  <td id="eg-stopatr-2">—</td>
+                  <td id="eg-riskusd-2">—</td>
+                  <td id="eg-takeusd-2">—</td>
+                  <td id="eg-rewardusd-2">—</td>
+                  <td id="eg-rr-2">—</td>
+                </tr>
+
+                <tr id="eg-row-3" class="eg-hide-1line">
+                  <td class="eg-td-acct" id="eg-acct-txt-3">100,000</td>
+                  <td id="eg-riskpct-txt-3">0.50%</td>
+                  <td id="eg-shares-3">—</td>
+                  <td id="eg-stopusd-3">—</td>
+                  <td id="eg-stopatr-3">—</td>
+                  <td id="eg-riskusd-3">—</td>
+                  <td id="eg-takeusd-3">—</td>
+                  <td id="eg-rewardusd-3">—</td>
+                  <td id="eg-rr-3">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="eg-foot" id="eg-foot">—</div>
+        </div>
+
                 <div class="prem-breakout-wrap" id="prem-breakout-wrap">
                   <div class="prem-breakout-title">ROMPIMENTO • RETEST</div>
 
@@ -5327,6 +5630,228 @@ function a10UpdatePremSignalCTA(){
     });
   }
 }
+/* ================== EXEC GATE (Micro) · Sizing 3 contas ================== */
+function a10UpdateExecGateMicroSizing(payload, opts){
+  try{
+    a10InitExecGateMicroSizing();
+
+    const panel  = payload?.panel  || payload || {};
+    const ui     = payload?.ui     || {};
+    const digest = payload?.digest || {};
+
+    const num = (...vals) => {
+      for (const v of vals){
+        if (v === null || v === undefined) continue;
+        const n = Number(v);
+        if (Number.isFinite(n)) return n;
+      }
+      return null;
+    };
+
+    const setTxt = (id, v) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = (v === null || v === undefined || v === "") ? "—" : String(v);
+    };
+
+    const fmt2 = (n) => (Number.isFinite(Number(n)) ? Number(n).toFixed(2) : "—");
+    const fmtInt = (n) => (Number.isFinite(Number(n)) ? Math.round(Number(n)).toLocaleString("en-US") : "—");
+
+    // Current Price (mesma lógica do premonition)
+    const currentPx = num(
+      panel.price_now, panel.last_price,
+      ui.price_now, ui.last_price,
+      digest.price_now, digest.last_price, digest.price
+    );
+
+    // Micro Take (target) vem do updatePremonitionPanel (kpiPriceNum)
+    const microTake = num(
+      opts?.microTake,
+      digest.micro_target, digest.micro_take,
+      digest.micro?.target, digest.micro?.take
+    );
+
+    // ATR14 (tenta pegar do digest; fallback: inputs existentes)
+    const atr14 = num(
+      digest.atr14, digest.atr_14,
+      digest.indicators?.atr14, digest.indicators?.ATR14,
+      digest.metrics?.atr14,
+      document.getElementById("sb-atr-value")?.value,
+      document.getElementById("atr-value-input")?.value
+    );
+
+    // Custos (defaults que batem com seu exemplo: 0.01 + 0.01 + 0.06 = 0.08)
+    const spread  = num(digest.spread,  digest.costs?.spread,  panel.spread,  ui.spread)  ?? 0.01;
+    const slip    = num(digest.slippage,digest.costs?.slippage,panel.slippage,ui.slippage)?? 0.01;
+    const margin  = num(digest.margin_min, digest.margem_min, digest.costs?.margin_min, digest.costs?.margem_min) ?? 0.06;
+
+    const minMove = Number(spread) + Number(slip) + Number(margin);
+    const dist    = (currentPx != null && microTake != null) ? Math.abs(Number(microTake) - Number(currentPx)) : null;
+    const edgeOk  = (dist != null && Number.isFinite(Number(minMove))) ? (Number(dist) >= Number(minMove)) : false;
+
+    // Prob / ETA
+    const prob = (window.__A10_PREM_MICRO_PCT != null && Number.isFinite(Number(window.__A10_PREM_MICRO_PCT)))
+      ? Number(window.__A10_PREM_MICRO_PCT)
+      : num(opts?.microProb, digest.micro_prob, digest.prob_micro);
+
+    const etaMin = num(opts?.etaMin, digest.micro_eta_min, digest.eta_micro_min);
+
+    // Top KPIs
+    setTxt("eg-atr14",   (atr14 != null) ? fmt2(atr14) : "—");
+    setTxt("eg-minmove", (Number.isFinite(Number(minMove))) ? fmt2(minMove) : "—");
+    setTxt("eg-dist",    (dist != null) ? fmt2(dist) : "—");
+
+    const edgeWrap = document.querySelector("#exec-gate .eg-edge");
+    const edgeVal  = document.getElementById("eg-edge");
+    if (edgeWrap) {
+      edgeWrap.classList.toggle("is-ok", !!edgeOk);
+      edgeWrap.classList.toggle("is-no", !edgeOk);
+    }
+    if (edgeVal) edgeVal.textContent = edgeOk ? "OK ✅" : "NO ⚠️";
+
+    setTxt("eg-micro-take", (microTake != null) ? fmt2(microTake) : "—");
+    setTxt("eg-micro-prob", (prob != null && Number.isFinite(Number(prob))) ? `${Math.round(Number(prob))}%` : "—");
+    setTxt("eg-micro-eta",  (etaMin != null && Number.isFinite(Number(etaMin))) ? `~${Math.round(Number(etaMin))}m` : "—");
+
+    // guarda contexto e calcula tabela
+    window.__A10_EG_CTX = {
+      currentPx,
+      microTake,
+      atr14,
+      minMove,
+      dist,
+      edgeOk
+    };
+
+    a10CalcExecGateSizing();
+  }catch(_e){
+    // não quebra UI
+  }
+}
+
+function a10InitExecGateMicroSizing(){
+  if (window.__A10_EG_INIT) return;
+  window.__A10_EG_INIT = true;
+
+  const gate   = document.getElementById("exec-gate");
+  const btn1   = document.getElementById("eg-mode-1");
+  const btn3   = document.getElementById("eg-mode-3");
+
+  const setMode = (mode) => {
+    if (!gate) return;
+    const one = (mode === "1");
+    gate.classList.toggle("eg-1line", one);
+    if (btn1) btn1.classList.toggle("is-on", one);
+    if (btn3) btn3.classList.toggle("is-on", !one);
+    a10CalcExecGateSizing();
+  };
+
+  if (btn1) btn1.addEventListener("click", () => setMode("1"));
+  if (btn3) btn3.addEventListener("click", () => setMode("3"));
+  setMode("1");
+
+  const stopMode  = document.getElementById("eg-stop-mode");
+  const stopAtr   = document.getElementById("eg-stop-atr-mult");
+  const stopCents = document.getElementById("eg-stop-cents");
+
+  const syncStopUI = () => {
+    const m = stopMode ? stopMode.value : "atr";
+    if (stopAtr)   stopAtr.style.display   = (m === "atr") ? "" : "none";
+    if (stopCents) stopCents.style.display = (m === "cents") ? "" : "none";
+    a10CalcExecGateSizing();
+  };
+
+  if (stopMode)  stopMode.addEventListener("change", syncStopUI);
+  if (stopAtr)   stopAtr.addEventListener("input", a10CalcExecGateSizing);
+  if (stopCents) stopCents.addEventListener("input", a10CalcExecGateSizing);
+
+  ["eg-riskpct","eg-acct-1","eg-acct-2","eg-acct-3"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", a10CalcExecGateSizing);
+  });
+
+  syncStopUI();
+}
+
+function a10CalcExecGateSizing(){
+  try{
+    const ctx = window.__A10_EG_CTX || {};
+    const dist   = (ctx.dist != null) ? Number(ctx.dist) : null;
+    const atr14  = (ctx.atr14 != null) ? Number(ctx.atr14) : null;
+    const edgeOk = !!ctx.edgeOk;
+
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const fmt2 = (n) => (Number.isFinite(Number(n)) ? Number(n).toFixed(2) : "—");
+    const fmtInt = (n) => (Number.isFinite(Number(n)) ? Math.round(Number(n)).toLocaleString("en-US") : "—");
+
+    const riskPct = num(document.getElementById("eg-riskpct")?.value); // ex: 0.50 = 0.50%
+    const stopMode = document.getElementById("eg-stop-mode")?.value || "atr";
+    const stopMult = num(document.getElementById("eg-stop-atr-mult")?.value); // ex: 0.80
+    const stopCents = num(document.getElementById("eg-stop-cents")?.value);   // ex: 0.31
+
+    let stopDist = null;
+    if (stopMode === "atr"){
+      if (atr14 != null && stopMult != null) stopDist = atr14 * stopMult;
+    } else {
+      stopDist = stopCents;
+    }
+
+    const foot = document.getElementById("eg-foot");
+    if (foot){
+      if (dist == null || stopDist == null || stopDist <= 0){
+        foot.textContent = "—";
+      } else if (!edgeOk){
+        foot.textContent = "NÃO COMPENSA — Dist→Micro < MinMove (evita trade curto demais).";
+      } else {
+        foot.textContent = "OK — Micro como TAKE (padronizado) + risco ATR (padronizado).";
+      }
+    }
+
+    for (let i=1; i<=3; i++){
+      const acct = num(document.getElementById(`eg-acct-${i}`)?.value);
+
+      const riskMoney = (acct != null && riskPct != null) ? (acct * (riskPct/100)) : null;
+      const shares = (riskMoney != null && stopDist != null && stopDist > 0) ? Math.floor(riskMoney / stopDist) : null;
+
+      const rewardPerShare = (dist != null) ? dist : null; // Take = Micro ($) = distância
+      const rewardMoney = (shares != null && rewardPerShare != null) ? (shares * rewardPerShare) : null;
+
+      const rr = (rewardPerShare != null && stopDist != null && stopDist > 0) ? (rewardPerShare / stopDist) : null;
+      const stopATR = (stopDist != null && atr14 != null && atr14 > 0) ? (stopDist / atr14) : null;
+
+      const row = document.getElementById(`eg-row-${i}`);
+      if (row) row.classList.toggle("eg-row-off", !edgeOk);
+
+      const acctTxt = document.getElementById(`eg-acct-txt-${i}`);
+      if (acctTxt) acctTxt.textContent = (acct != null) ? acct.toLocaleString("en-US") : "—";
+
+      const rpTxt = document.getElementById(`eg-riskpct-txt-${i}`);
+      if (rpTxt) rpTxt.textContent = (riskPct != null) ? `${riskPct.toFixed(2)}%` : "—";
+
+      const set = (id, v) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = (v === null || v === undefined) ? "—" : String(v);
+      };
+
+      set(`eg-shares-${i}`,    (shares != null) ? shares.toLocaleString("en-US") : "—");
+      set(`eg-stopusd-${i}`,   (stopDist != null) ? fmt2(stopDist) : "—");
+      set(`eg-stopatr-${i}`,   (stopATR != null) ? `${stopATR.toFixed(2)} ATR` : "—");
+      set(`eg-riskusd-${i}`,   (riskMoney != null) ? fmtInt(riskMoney) : "—");
+      set(`eg-takeusd-${i}`,   (rewardPerShare != null) ? fmt2(rewardPerShare) : "—");
+      set(`eg-rewardusd-${i}`, (rewardMoney != null) ? fmtInt(rewardMoney) : "—");
+      set(`eg-rr-${i}`,        (rr != null) ? rr.toFixed(2) : "—");
+    }
+  }catch(_e){
+    // não quebra UI
+  }
+}
+/* ================== FIM EXEC GATE (Micro) ================== */
+
 function a10UpdatePremBreakoutBox(digest){
   const wrap = document.getElementById("prem-breakout-wrap");
   if (!wrap) return;
@@ -5614,6 +6139,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("prem-miss", bw?.miss_line || "—");
         setText("prem-macro", macroTxt || "—");
     setText("prem-micro", microTxt || "—");
+    try{ a10UpdateExecGateMicroSizing(payload, { microTake: kpiPriceNum, etaMin }); }catch(_e){}
 
     const score = (payload?.digest?.shape_focus?.score ?? bw?.score);
     const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
