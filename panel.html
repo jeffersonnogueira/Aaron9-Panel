@@ -3707,6 +3707,49 @@
           <div class="label">Base</div>
           <div class="value muted" id="prem-base">—</div>
         </div>
+                <!-- ===== EXEC (MICRO) - bloco do retângulo amarelo ===== -->
+        <div id="prem-exec-micro" style="padding-top:12px; margin-top:12px; border-top:1px solid rgba(255,255,255,.06);">
+          <div style="font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.80; margin-bottom:10px;">
+            EXEC (MICRO)
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px; line-height:1.35;">
+            <div>
+              <span style="opacity:.75;">Current:</span>
+              <span id="execm-current" style="color:#facc15; font-weight:900;">—</span>
+              <span style="opacity:.55;"> | </span>
+              <span style="opacity:.75;">ATR14:</span>
+              <span id="execm-atr14" style="color:#facc15; font-weight:900;">—</span>
+            </div>
+
+            <div>
+              <span style="opacity:.75;">Micro Take:</span>
+              <span id="execm-micro-take" style="color:#facc15; font-weight:900;">—</span>
+              <span style="opacity:.55;"> | </span>
+              <span style="opacity:.75;">Prob:</span>
+              <span id="execm-micro-prob" style="color:#facc15; font-weight:900;">—</span>
+              <span style="opacity:.55;"> | </span>
+              <span style="opacity:.75;">ETA:</span>
+              <span id="execm-micro-eta" style="color:#facc15; font-weight:900;">—</span>
+            </div>
+
+            <div>
+              <span style="opacity:.75;">OPTIMAL ENTRY (Respiro):</span>
+              <span id="execm-opt-entry" style="color:#facc15; font-weight:900;">—</span>
+              <span style="opacity:.55;"> | </span>
+              <span style="opacity:.75;">Prob pullback:</span>
+              <span id="execm-pullback-prob" style="color:#facc15; font-weight:900;">—</span>
+              <span style="opacity:.55;"> | </span>
+              <span style="opacity:.75;">ETA:</span>
+              <span id="execm-opt-eta" style="color:#facc15; font-weight:900;">—</span>
+              <span style="opacity:.55;"> (≈ </span>
+              <span id="execm-opt-time" style="color:#facc15; font-weight:900;">—</span>
+              <span style="opacity:.55;"> MT)</span>
+            </div>
+          </div>
+        </div>
+        <!-- ===== /EXEC (MICRO) ===== -->
+
       </div>
     </div>
   </div>
@@ -11633,6 +11676,84 @@ renderOptions("");
     document.addEventListener("DOMContentLoaded", install);
   } else {
     install();
+  }
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+
+  function el(id){ return document.getElementById(id); }
+  function t(id){ return (el(id)?.textContent || "").trim(); }
+  function numFrom(s){
+    const m = String(s || "").match(/-?\d+(?:\.\d+)?/);
+    return m ? Number(m[0]) : null;
+  }
+  function fmt2(n){ return (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(2); }
+  function fmtPct(n){ return (n == null || !Number.isFinite(n)) ? "—" : `${Math.round(Number(n))}%`; }
+
+  function fmtTimeMT(date){
+    try{
+      // MT = America/Denver
+      return new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Denver",
+        hour: "numeric",
+        minute: "2-digit"
+      }).format(date);
+    }catch(_e){
+      // fallback simples
+      const hh = String(date.getHours()).padStart(2,"0");
+      const mm = String(date.getMinutes()).padStart(2,"0");
+      return `${hh}:${mm}`;
+    }
+  }
+
+  function updateExecMicroBox(){
+    if (!el("prem-exec-micro")) return;
+
+    // Current (pega do KPI da direita ou do header)
+    const current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
+
+    // ATR14 / Micro Take / Prob / ETA do Exec Gate (já existente)
+    const atr14    = numFrom(t("eg-atr14"));
+    const microTake= numFrom(t("eg-micro-take"));
+    const prob     = numFrom(t("eg-micro-prob") || t("prem-right-prob"));
+    const etaMin   = numFrom(t("eg-micro-eta") || t("prem-right-eta"));
+
+    // Optimal Entry (Respiro): tenta extrair número do TOP respiro (ex: "YES (de 191.93)")
+    const respiroLine = t("top_respiro_value");
+    const optEntry = numFrom(respiroLine);
+
+    // Prob pullback = 100 - prob
+    const pullProb = (prob != null && Number.isFinite(prob)) ? (100 - Number(prob)) : null;
+
+    // ETA do respiro (heurístico): eta_micro + 1
+    const optEta = (etaMin != null && Number.isFinite(etaMin)) ? (Math.round(Number(etaMin)) + 1) : null;
+
+    // Hora aproximada em MT
+    const optTime = (optEta != null) ? fmtTimeMT(new Date(Date.now() + optEta * 60 * 1000)) : "—";
+
+    if (el("execm-current"))        el("execm-current").textContent        = (current != null) ? fmt2(current) : "—";
+    if (el("execm-atr14"))          el("execm-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("execm-micro-take"))     el("execm-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
+    if (el("execm-micro-prob"))     el("execm-micro-prob").textContent     = fmtPct(prob);
+    if (el("execm-micro-eta"))      el("execm-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+
+    if (el("execm-opt-entry"))      el("execm-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("execm-pullback-prob"))  el("execm-pullback-prob").textContent  = fmtPct(pullProb);
+
+    if (el("execm-opt-eta"))        el("execm-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
+    if (el("execm-opt-time"))       el("execm-opt-time").textContent       = (optEta != null) ? optTime : "—";
+  }
+
+  // Atualiza continuamente sem encostar em nada do teu pipeline
+  setInterval(updateExecMicroBox, 750);
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", updateExecMicroBox);
+  } else {
+    updateExecMicroBox();
   }
 })();
 </script>
