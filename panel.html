@@ -3713,34 +3713,34 @@
             EXEC (MICRO)
           </div>
 
-                    <div style="display:flex; flex-direction:column; gap:8px; font-size:44px; line-height:1.35;">
+                                        <div style="display:flex; flex-direction:column; gap:8px; font-size:44px; line-height:1.35;">
             <div>
-              <span style="opacity:.75; font-weight:950;">Current:</span>
+              <span style="font-weight:950;">Current:</span>
               <span id="execm-current" style="color:#facc15; font-weight:900;">—</span>
               <span style="opacity:.55;"> | </span>
-              <span style="opacity:.75; font-weight:950;">ATR14:</span>
+              <span style="font-weight:950;">ATR14:</span>
               <span id="execm-atr14" style="color:#facc15; font-weight:900;">—</span>
             </div>
 
             <div>
-              <span style="opacity:.75; font-weight:950;">Micro Take:</span>
+              <span style="font-weight:950;">Micro Take:</span>
               <span id="execm-micro-take" style="color:#facc15; font-weight:900;">—</span>
               <span style="opacity:.55;"> | </span>
-              <span style="opacity:.75; font-weight:950;">Prob:</span>
+              <span style="font-weight:950;">Prob:</span>
               <span id="execm-micro-prob" style="color:#facc15; font-weight:900;">—</span>
               <span style="opacity:.55;"> | </span>
-              <span style="opacity:.75; font-weight:950;">ETA:</span>
+              <span style="font-weight:950;">ETA:</span>
               <span id="execm-micro-eta" style="color:#facc15; font-weight:900;">—</span>
             </div>
 
             <div>
-              <span style="opacity:.75; font-weight:950;">OPTIMAL ENTRY (Respiro):</span>
+              <span style="font-weight:950;">OPTIMAL ENTRY (Respiro):</span>
               <span id="execm-opt-entry" style="color:#facc15; font-weight:900;">—</span>
               <span style="opacity:.55;"> | </span>
-              <span style="opacity:.75; font-weight:950;">Prob pullback:</span>
+              <span style="font-weight:950;">Prob pullback:</span>
               <span id="execm-pullback-prob" style="color:#facc15; font-weight:900;">—</span>
               <span style="opacity:.55;"> | </span>
-              <span style="opacity:.75; font-weight:950;">ETA:</span>
+              <span style="font-weight:950;">ETA:</span>
               <span id="execm-opt-eta" style="color:#facc15; font-weight:900;">—</span>
               <span style="opacity:.55;"> (≈ </span>
               <span id="execm-opt-time" style="color:#facc15; font-weight:900;">—</span>
@@ -3748,6 +3748,7 @@
             </div>
           </div>
         </div>
+
         <!-- ===== /EXEC (MICRO) ===== -->
 
       </div>
@@ -5714,14 +5715,24 @@ function a10UpdateExecGateMicroSizing(payload, opts){
       digest.micro?.target, digest.micro?.take
     );
 
-    // ATR14 (tenta pegar do digest; fallback: inputs existentes)
+        // ATR14 (tenta pegar do digest; fallback: inputs existentes)
     const atr14 = num(
+      panel.atr14, panel.atr_14,
+      panel.indicators?.atr14, panel.indicators?.ATR14,
+      panel.metrics?.atr14,
+
+      ui.atr14, ui.atr_14,
+      ui.indicators?.atr14, ui.indicators?.ATR14,
+      ui.metrics?.atr14,
+
       digest.atr14, digest.atr_14,
       digest.indicators?.atr14, digest.indicators?.ATR14,
       digest.metrics?.atr14,
+
       document.getElementById("sb-atr-value")?.value,
       document.getElementById("atr-value-input")?.value
     );
+
 
     // Custos (defaults que batem com seu exemplo: 0.01 + 0.01 + 0.06 = 0.08)
     const spread  = num(digest.spread,  digest.costs?.spread,  panel.spread,  ui.spread)  ?? 0.01;
