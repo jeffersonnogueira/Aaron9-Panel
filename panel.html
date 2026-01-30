@@ -11744,9 +11744,23 @@ renderOptions("");
     const etaMin   = (etaEg != null) ? etaEg : etaPrem;
 
 
-    // Optimal Entry (Respiro): tenta extrair número do TOP respiro (ex: "YES (de 191.93)")
-    const respiroLine = t("top_respiro_value");
-    const optEntry = numFrom(respiroLine);
+        // Optimal Entry (Respiro): tenta extrair número do respiro; se não vier, calcula via ATR (fallback)
+    const respiroLine =
+      t("top_respiro_value") ||
+      t("rr-respiro-full") ||
+      t("prem-respiro-full");
+
+    let optEntry = numFrom(respiroLine);
+
+    // fallback: se o backend não mandar preço do respiro (ex: "NO (para NONE)"),
+    // estima usando ATR14 e a direção do Micro Take vs Current
+    if (optEntry == null && current != null && atr14 != null && Number.isFinite(current) && Number.isFinite(atr14)) {
+      const k = 2.5; // padrão do teu "Test result" (~2.5x ATR14)
+      if (microTake != null && Number.isFinite(microTake)) {
+        optEntry = (microTake >= current) ? (current - atr14 * k) : (current + atr14 * k);
+      }
+    }
+
 
     // Prob pullback = 100 - prob
     const pullProb = (prob != null && Number.isFinite(prob)) ? (100 - Number(prob)) : null;
