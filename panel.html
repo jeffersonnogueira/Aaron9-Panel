@@ -11885,7 +11885,101 @@ renderOptions("");
   "use strict";
 
   function el(id){ return document.getElementById(id); }
-      // ===== EXEC (MICRO) MINI • PLAN 1x1 (somente UI) =====
+  function t(id){ return (el(id)?.textContent || "").trim(); }
+  function numFrom(s){
+    const m = String(s || "").match(/-?\d+(?:\.\d+)?/);
+    return m ? Number(m[0]) : null;
+  }
+  function fmt2(n){ return (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(2); }
+  function fmtPct(n){ return (n == null || !Number.isFinite(n)) ? "—" : `${Math.round(Number(n))}%`; }
+
+  function fmtTimeMT(date){
+    try{
+      // MT = America/Denver
+      return new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Denver",
+        hour: "numeric",
+        minute: "2-digit"
+      }).format(date);
+    }catch(_e){
+      const hh = String(date.getHours()).padStart(2,"0");
+      const mm = String(date.getMinutes()).padStart(2,"0");
+      return `${hh}:${mm}`;
+    }
+  }
+
+  function updateExecMicroBox(){
+    if (!el("prem-exec-micro")) return;
+
+    // Current (pega do KPI da direita ou do header)
+    const current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
+
+    // ATR14 / Micro Take / Prob / ETA do Exec Gate (já existente)
+    const atr14     = numFrom(t("eg-atr14"));
+    const microTake = numFrom(t("eg-micro-take"));
+
+    const probEg   = numFrom(t("eg-micro-prob"));
+    const probPrem = numFrom(t("prem-right-prob"));
+    const prob     = (probEg != null) ? probEg : probPrem;
+
+    const etaEg    = numFrom(t("eg-micro-eta"));
+    const etaPrem  = numFrom(t("prem-right-eta"));
+    const etaMin   = (etaEg != null) ? etaEg : etaPrem;
+
+    // Optimal Entry (Respiro): tenta extrair número do respiro; se não vier, calcula via ATR (fallback)
+    const respiroLine =
+      t("top_respiro_value") ||
+      t("rr-respiro-full") ||
+      t("prem-respiro-full");
+
+    let optEntry = numFrom(respiroLine);
+
+    // fallback: estima usando ATR14 e a direção do Micro Take vs Current
+    if (optEntry == null && current != null && atr14 != null && Number.isFinite(current) && Number.isFinite(atr14)) {
+      const k = 2.5; // padrão (~2.5x ATR14)
+      if (microTake != null && Number.isFinite(microTake)) {
+        optEntry = (microTake >= current) ? (current - atr14 * k) : (current + atr14 * k);
+      }
+    }
+
+    // Prob pullback = 100 - prob
+    const pullProb = (prob != null && Number.isFinite(prob)) ? (100 - Number(prob)) : null;
+
+    // ETA do respiro (heurístico): eta_micro + 1
+    const optEta = (etaMin != null && Number.isFinite(etaMin)) ? (Math.round(Number(etaMin)) + 1) : null;
+
+    // Hora aproximada em MT
+    const optTime = (optEta != null) ? fmtTimeMT(new Date(Date.now() + optEta * 60 * 1000)) : "—";
+
+    // Atualiza o bloco grande (prem-exec-micro)
+    if (el("execm-current"))        el("execm-current").textContent        = (current != null) ? fmt2(current) : "—";
+    if (el("execm-atr14"))          el("execm-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("execm-micro-take"))     el("execm-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
+    if (el("execm-micro-prob"))     el("execm-micro-prob").textContent     = fmtPct(prob);
+    if (el("execm-micro-eta"))      el("execm-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+
+    if (el("execm-opt-entry"))      el("execm-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("execm-pullback-prob"))  el("execm-pullback-prob").textContent  = fmtPct(pullProb);
+
+    if (el("execm-opt-eta"))        el("execm-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
+    if (el("execm-opt-time"))       el("execm-opt-time").textContent       = (optEta != null) ? optTime : "—";
+
+    // Espelho no card lateral (IDs execm2-*)
+    if (el("execm2-current"))        el("execm2-current").textContent        = (current != null) ? fmt2(current) : "—";
+    if (el("execm2-atr14"))          el("execm2-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("execm2-micro-take"))     el("execm2-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
+    if (el("execm2-micro-prob"))     el("execm2-micro-prob").textContent     = fmtPct(prob);
+    if (el("execm2-micro-eta"))      el("execm2-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+
+    if (el("execm2-opt-entry"))      el("execm2-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("execm2-pullback-prob"))  el("execm2-pullback-prob").textContent  = fmtPct(pullProb);
+
+    if (el("execm2-opt-eta"))        el("execm2-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
+    if (el("execm2-opt-time"))       el("execm2-opt-time").textContent       = (optEta != null) ? optTime : "—";
+
+    // ===== EXEC (MICRO) MINI • PLAN 1x1 (somente UI) =====
     const dir = (current != null && microTake != null && Number.isFinite(current) && Number.isFinite(microTake))
       ? (microTake >= current ? "BUY" : "SELL")
       : null;
@@ -11914,103 +12008,6 @@ renderOptions("");
     if (el("execm-mini-revprob"))  el("execm-mini-revprob").textContent  = fmtPct(pullProb);
     if (el("execm-mini-reveta"))   el("execm-mini-reveta").textContent   = (optEta != null) ? `~${optEta}m` : "—";
     // ===== /EXEC (MICRO) MINI • PLAN 1x1 =====
-
-  function t(id){ return (el(id)?.textContent || "").trim(); }
-  function numFrom(s){
-    const m = String(s || "").match(/-?\d+(?:\.\d+)?/);
-    return m ? Number(m[0]) : null;
-  }
-  function fmt2(n){ return (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(2); }
-  function fmtPct(n){ return (n == null || !Number.isFinite(n)) ? "—" : `${Math.round(Number(n))}%`; }
-
-  function fmtTimeMT(date){
-    try{
-      // MT = America/Denver
-      return new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Denver",
-        hour: "numeric",
-        minute: "2-digit"
-      }).format(date);
-    }catch(_e){
-      // fallback simples
-      const hh = String(date.getHours()).padStart(2,"0");
-      const mm = String(date.getMinutes()).padStart(2,"0");
-      return `${hh}:${mm}`;
-    }
-  }
-
-  function updateExecMicroBox(){
-    if (!el("prem-exec-micro")) return;
-
-    // Current (pega do KPI da direita ou do header)
-    const current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
-
-        // ATR14 / Micro Take / Prob / ETA do Exec Gate (já existente)
-    const atr14    = numFrom(t("eg-atr14"));
-    const microTake= numFrom(t("eg-micro-take"));
-
-    const probEg   = numFrom(t("eg-micro-prob"));
-    const probPrem = numFrom(t("prem-right-prob"));
-    const prob     = (probEg != null) ? probEg : probPrem;
-
-    const etaEg    = numFrom(t("eg-micro-eta"));
-    const etaPrem  = numFrom(t("prem-right-eta"));
-    const etaMin   = (etaEg != null) ? etaEg : etaPrem;
-
-
-        // Optimal Entry (Respiro): tenta extrair número do respiro; se não vier, calcula via ATR (fallback)
-    const respiroLine =
-      t("top_respiro_value") ||
-      t("rr-respiro-full") ||
-      t("prem-respiro-full");
-
-    let optEntry = numFrom(respiroLine);
-
-    // fallback: se o backend não mandar preço do respiro (ex: "NO (para NONE)"),
-    // estima usando ATR14 e a direção do Micro Take vs Current
-    if (optEntry == null && current != null && atr14 != null && Number.isFinite(current) && Number.isFinite(atr14)) {
-      const k = 2.5; // padrão do teu "Test result" (~2.5x ATR14)
-      if (microTake != null && Number.isFinite(microTake)) {
-        optEntry = (microTake >= current) ? (current - atr14 * k) : (current + atr14 * k);
-      }
-    }
-
-
-    // Prob pullback = 100 - prob
-    const pullProb = (prob != null && Number.isFinite(prob)) ? (100 - Number(prob)) : null;
-
-    // ETA do respiro (heurístico): eta_micro + 1
-    const optEta = (etaMin != null && Number.isFinite(etaMin)) ? (Math.round(Number(etaMin)) + 1) : null;
-
-    // Hora aproximada em MT
-    const optTime = (optEta != null) ? fmtTimeMT(new Date(Date.now() + optEta * 60 * 1000)) : "—";
-
-    if (el("execm-current"))        el("execm-current").textContent        = (current != null) ? fmt2(current) : "—";
-    if (el("execm-atr14"))          el("execm-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
-
-    if (el("execm-micro-take"))     el("execm-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
-    if (el("execm-micro-prob"))     el("execm-micro-prob").textContent     = fmtPct(prob);
-    if (el("execm-micro-eta"))      el("execm-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
-
-    if (el("execm-opt-entry"))      el("execm-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
-    if (el("execm-pullback-prob"))  el("execm-pullback-prob").textContent  = fmtPct(pullProb);
-
-    if (el("execm-opt-eta"))        el("execm-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
-    if (el("execm-opt-time"))       el("execm-opt-time").textContent       = (optEta != null) ? optTime : "—";
-        // ===== espelho do EXEC (MICRO) no card lateral (IDs execm2-*) =====
-    if (el("execm2-current"))        el("execm2-current").textContent        = (current != null) ? fmt2(current) : "—";
-    if (el("execm2-atr14"))          el("execm2-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
-
-    if (el("execm2-micro-take"))     el("execm2-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
-    if (el("execm2-micro-prob"))     el("execm2-micro-prob").textContent     = fmtPct(prob);
-    if (el("execm2-micro-eta"))      el("execm2-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
-
-    if (el("execm2-opt-entry"))      el("execm2-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
-    if (el("execm2-pullback-prob"))  el("execm2-pullback-prob").textContent  = fmtPct(pullProb);
-
-    if (el("execm2-opt-eta"))        el("execm2-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
-    if (el("execm2-opt-time"))       el("execm2-opt-time").textContent       = (optEta != null) ? optTime : "—";
-
   }
 
   // Atualiza continuamente sem encostar em nada do teu pipeline
@@ -12023,6 +12020,7 @@ renderOptions("");
   }
 })();
 </script>
+
 
 
 
