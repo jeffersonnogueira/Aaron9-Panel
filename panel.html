@@ -3027,6 +3027,48 @@
 .prem-kpi-right #prem-readout .rr-v.rr-strong{
   font-size: 18px;
 }
+/* ===== PREM: TOPCARDS (Readout + Exec Micro lado a lado) ===== */
+.prem-topcards{
+  display:flex;
+  gap:12px;
+  align-items:stretch;
+  flex-wrap:wrap; /* evita quebrar em telas menores */
+}
+
+.prem-topcards #prem-readout{
+  margin: 0;             /* remove o margin antigo dentro do layout novo */
+  flex: 0 0 260px;       /* largura fixa do quadro do "REGIME/REVERSÃO/..." */
+}
+
+.execm-side-card{
+  flex: 1 1 360px;       /* cresce e quebra se precisar */
+  min-width: 360px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+}
+
+.execm-side-title{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .70;
+  margin-bottom: 8px;
+}
+
+.execm-side-body{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  font-size:16px;
+  line-height:1.25;
+}
+
+.execm-side-body .ek{ font-weight:950; }
+.execm-side-body .ev{ color:#ffcc66; font-weight:900; }
+.execm-side-body .pipe{ opacity:.55; margin:0 6px; }
+.execm-side-body .muted{ opacity:.55; font-size:14px; }
 
 /* deixa o painel direito mais “TV-like” */
 .premonition-panel .label{
@@ -3653,14 +3695,54 @@
         <!-- KPI grande (estilo mockup) -->
 <div class="prem-kpi-right">
   <div class="prem-kpi-right-title" id="prem-right-title">Prob.</div>
-        <div class="rr-readout" id="prem-readout">
-      <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="prem-regime">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">RESPIRO</div><div class="rr-v" id="prem-respiro-full">—</div></div>
-      <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="prem-consolidacao">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
-    </div>
+                <div class="prem-topcards">
+          <div class="rr-readout" id="prem-readout">
+            <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="prem-regime">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">RESPIRO</div><div class="rr-v" id="prem-respiro-full">—</div></div>
+            <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="prem-consolidacao">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
+          </div>
+
+          <!-- ===== NOVO QUADRO AO LADO (EXEC MICRO) ===== -->
+          <div class="execm-side-card" id="execm-side-card">
+            <div class="execm-side-title">EXEC (MICRO)</div>
+            <div class="execm-side-body">
+              <div class="execm-line">
+                <span class="ek">Current:</span>
+                <span id="execm2-current" class="ev">—</span>
+                <span class="pipe">|</span>
+                <span class="ek">ATR14:</span>
+                <span id="execm2-atr14" class="ev">—</span>
+              </div>
+
+              <div class="execm-line">
+                <span class="ek">Micro Take:</span>
+                <span id="execm2-micro-take" class="ev">—</span>
+                <span class="pipe">|</span>
+                <span class="ek">Prob:</span>
+                <span id="execm2-micro-prob" class="ev">—</span>
+                <span class="pipe">|</span>
+                <span class="ek">ETA:</span>
+                <span id="execm2-micro-eta" class="ev">—</span>
+              </div>
+
+              <div class="execm-line">
+                <span class="ek">OPTIMAL ENTRY (Respiro):</span>
+                <span id="execm2-opt-entry" class="ev">—</span>
+                <span class="pipe">|</span>
+                <span class="ek">Prob pullback:</span>
+                <span id="execm2-pullback-prob" class="ev">—</span>
+                <span class="pipe">|</span>
+                <span class="ek">ETA:</span>
+                <span id="execm2-opt-eta" class="ev">—</span>
+                <span class="muted"> (≈ <span id="execm2-opt-time" class="ev">—</span> MT)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
 
 
@@ -11794,6 +11876,20 @@ renderOptions("");
 
     if (el("execm-opt-eta"))        el("execm-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
     if (el("execm-opt-time"))       el("execm-opt-time").textContent       = (optEta != null) ? optTime : "—";
+        // ===== espelho do EXEC (MICRO) no card lateral (IDs execm2-*) =====
+    if (el("execm2-current"))        el("execm2-current").textContent        = (current != null) ? fmt2(current) : "—";
+    if (el("execm2-atr14"))          el("execm2-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("execm2-micro-take"))     el("execm2-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
+    if (el("execm2-micro-prob"))     el("execm2-micro-prob").textContent     = fmtPct(prob);
+    if (el("execm2-micro-eta"))      el("execm2-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+
+    if (el("execm2-opt-entry"))      el("execm2-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("execm2-pullback-prob"))  el("execm2-pullback-prob").textContent  = fmtPct(pullProb);
+
+    if (el("execm2-opt-eta"))        el("execm2-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
+    if (el("execm2-opt-time"))       el("execm2-opt-time").textContent       = (optEta != null) ? optTime : "—";
+
   }
 
   // Atualiza continuamente sem encostar em nada do teu pipeline
