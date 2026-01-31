@@ -3027,6 +3027,61 @@
 .prem-kpi-right #prem-readout .rr-v.rr-strong{
   font-size: 18px;
 }
+/* ===== EXEC (MICRO) MINI + PLAN 1x1 (ao lado do readout) ===== */
+.prem-kpi-right #prem-readout{
+  float: left;
+  width: 52%;
+}
+
+#prem-exec-mini{
+  float: right;
+  width: 46%;
+  margin: 10px 0 12px;
+  padding: 10px 10px 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px;
+  background: rgba(0,0,0,.22);
+}
+
+.prem-kpi-right .prem-kpi-right-main,
+.prem-kpi-right .prem-kpi-right-sub{
+  clear: both;
+}
+
+#prem-exec-mini .x-title{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .80;
+  margin-bottom: 8px;
+}
+
+#prem-exec-mini .x-row{
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(255,255,255,.92);
+  margin-bottom: 6px;
+}
+
+#prem-exec-mini .x-row:last-child{ margin-bottom: 0; }
+
+#prem-exec-mini .x-val{
+  color: #ffcc66;
+  font-weight: 950;
+}
+
+#prem-exec-mini .x-dim{ opacity: .55; }
+
+@media (max-width: 980px){
+  .prem-kpi-right #prem-readout,
+  #prem-exec-mini{
+    float: none;
+    width: 100%;
+  }
+}
+/* ===== /EXEC (MICRO) MINI + PLAN 1x1 ===== */
+
 /* ===== PREM: TOPCARDS (Readout + Exec Micro lado a lado) ===== */
 .prem-topcards{
   display:flex;
@@ -3660,6 +3715,42 @@
 
           <div class="eg-foot" id="eg-foot">—</div>
         </div>
+<!-- ===== EXEC (MICRO) MINI • PLAN 1x1 (ao lado do readout) ===== -->
+<div id="prem-exec-mini">
+  <div class="x-title">EXEC (MICRO) • PLAN 1x1</div>
+
+  <div class="x-row">
+    <b>Dir:</b> <span class="x-val" id="execm-mini-dir">—</span>
+    <span class="x-dim"> | </span>
+    <b>Current:</b> <span class="x-val" id="execm-mini-current">—</span>
+    <span class="x-dim"> | </span>
+    <b>ATR14:</b> <span class="x-val" id="execm-mini-atr14">—</span>
+  </div>
+
+  <div class="x-row">
+    <b>Micro Take:</b> <span class="x-val" id="execm-mini-tp">—</span>
+    <span class="x-dim"> | </span>
+    <b>Prob:</b> <span class="x-val" id="execm-mini-prob">—</span>
+    <span class="x-dim"> | </span>
+    <b>ETA:</b> <span class="x-val" id="execm-mini-eta">—</span>
+  </div>
+
+  <div class="x-row">
+    <b>Entry:</b> <span class="x-val" id="execm-mini-entry">—</span>
+    <span class="x-dim"> → </span>
+    <b>SL (1x1):</b> <span class="x-val" id="execm-mini-sl">—</span>
+    <span class="x-dim"> (risk </span><span class="x-val" id="execm-mini-risk">—</span><span class="x-dim">)</span>
+  </div>
+
+  <div class="x-row">
+    <b>Re-entry (Respiro):</b> <span class="x-val" id="execm-mini-reentry">—</span>
+    <span class="x-dim"> | </span>
+    <b>Prob respiro:</b> <span class="x-val" id="execm-mini-revprob">—</span>
+    <span class="x-dim"> | </span>
+    <b>ETA:</b> <span class="x-val" id="execm-mini-reveta">—</span>
+  </div>
+</div>
+<!-- ===== /EXEC (MICRO) MINI • PLAN 1x1 ===== -->
 
                 <div class="prem-breakout-wrap" id="prem-breakout-wrap">
                   <div class="prem-breakout-title">ROMPIMENTO • RETEST</div>
@@ -11794,6 +11885,36 @@ renderOptions("");
   "use strict";
 
   function el(id){ return document.getElementById(id); }
+      // ===== EXEC (MICRO) MINI • PLAN 1x1 (somente UI) =====
+    const dir = (current != null && microTake != null && Number.isFinite(current) && Number.isFinite(microTake))
+      ? (microTake >= current ? "BUY" : "SELL")
+      : null;
+
+    const risk1x1 = (current != null && microTake != null && Number.isFinite(current) && Number.isFinite(microTake))
+      ? Math.abs(current - microTake)
+      : null;
+
+    const stop1x1 = (risk1x1 != null && dir)
+      ? (dir === "SELL" ? (current + risk1x1) : (current - risk1x1))
+      : null;
+
+    if (el("execm-mini-dir"))      el("execm-mini-dir").textContent      = dir || "—";
+    if (el("execm-mini-current"))  el("execm-mini-current").textContent  = (current != null) ? fmt2(current) : "—";
+    if (el("execm-mini-atr14"))    el("execm-mini-atr14").textContent    = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("execm-mini-tp"))       el("execm-mini-tp").textContent       = (microTake != null) ? fmt2(microTake) : "—";
+    if (el("execm-mini-prob"))     el("execm-mini-prob").textContent     = fmtPct(prob);
+    if (el("execm-mini-eta"))      el("execm-mini-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+
+    if (el("execm-mini-entry"))    el("execm-mini-entry").textContent    = (current != null) ? fmt2(current) : "—";
+    if (el("execm-mini-sl"))       el("execm-mini-sl").textContent       = (stop1x1 != null) ? fmt2(stop1x1) : "—";
+    if (el("execm-mini-risk"))     el("execm-mini-risk").textContent     = (risk1x1 != null) ? fmt2(risk1x1) : "—";
+
+    if (el("execm-mini-reentry"))  el("execm-mini-reentry").textContent  = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("execm-mini-revprob"))  el("execm-mini-revprob").textContent  = fmtPct(pullProb);
+    if (el("execm-mini-reveta"))   el("execm-mini-reveta").textContent   = (optEta != null) ? `~${optEta}m` : "—";
+    // ===== /EXEC (MICRO) MINI • PLAN 1x1 =====
+
   function t(id){ return (el(id)?.textContent || "").trim(); }
   function numFrom(s){
     const m = String(s || "").match(/-?\d+(?:\.\d+)?/);
