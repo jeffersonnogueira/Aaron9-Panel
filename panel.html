@@ -3882,44 +3882,55 @@
         </div>
                 <!-- ===== EXEC (MICRO) - bloco do retângulo amarelo ===== -->
         <div id="prem-exec-micro" style="padding-top:12px; margin-top:12px; border-top:1px solid rgba(255,255,255,.06);">
-                    <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.80; margin-bottom:10px;">
-            EXEC (MICRO)
+                              <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.80; margin-bottom:10px;">
+            PLANO “SE BATER STOP” (REENTRADA)
           </div>
 
-                                        <div style="display:flex; flex-direction:column; gap:8px; font-size:44px; line-height:1.35;">
-            <div>
-              <span style="font-weight:950;">Current:</span>
-              <span id="execm-current" style="color:#facc15; font-weight:900;">—</span>
-              <span style="opacity:.55;"> | </span>
-              <span style="font-weight:950;">ATR14:</span>
-              <span id="execm-atr14" style="color:#facc15; font-weight:900;">—</span>
-            </div>
+          <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
 
             <div>
-              <span style="font-weight:950;">Micro Take:</span>
-              <span id="execm-micro-take" style="color:#facc15; font-weight:900;">—</span>
+              <span style="font-weight:950;">SL 1x1:</span>
+              <span id="slr-sl" style="color:#facc15; font-weight:900;">—</span>
               <span style="opacity:.55;"> | </span>
-              <span style="font-weight:950;">Prob:</span>
-              <span id="execm-micro-prob" style="color:#facc15; font-weight:900;">—</span>
-              <span style="opacity:.55;"> | </span>
-              <span style="font-weight:950;">ETA:</span>
-              <span id="execm-micro-eta" style="color:#facc15; font-weight:900;">—</span>
+              <span style="font-weight:950;">Status:</span>
+              <span id="slr-status" style="font-weight:950;">—</span>
             </div>
 
-            <div>
-              <span style="font-weight:950;">OPTIMAL ENTRY (Respiro):</span>
-              <span id="execm-opt-entry" style="color:#facc15; font-weight:900;">—</span>
-              <span style="opacity:.55;"> | </span>
-              <span style="font-weight:950;">Prob pullback:</span>
-              <span id="execm-pullback-prob" style="color:#facc15; font-weight:900;">—</span>
-              <span style="opacity:.55;"> | </span>
-              <span style="font-weight:950;">ETA:</span>
-              <span id="execm-opt-eta" style="color:#facc15; font-weight:900;">—</span>
-              <span style="opacity:.55;"> (≈ </span>
-              <span id="execm-opt-time" style="color:#facc15; font-weight:900;">—</span>
-              <span style="opacity:.55;"> MT)</span>
+            <div id="slr-rule" style="font-size:20px; line-height:1.45; opacity:.78;">—</div>
+
+            <div style="font-size:24px; line-height:1.5;">
+              <div><span style="font-weight:950;">Quando SL atingir:</span></div>
+
+              <div>
+                <span style="font-weight:950;">Esperar:</span>
+                <span id="slr-wait" style="color:#facc15; font-weight:900;">—</span>
+                <span style="opacity:.55;"> (t_stop_to_reentry_med)</span>
+              </div>
+
+              <div>
+                <span style="font-weight:950;">Reentrada:</span>
+                <span id="slr-reentry" style="color:#facc15; font-weight:900;">—</span>
+                <span id="slr-reentry-note" style="opacity:.55;"></span>
+              </div>
+
+              <div>
+                <span style="font-weight:950;">TP travado:</span>
+                <span id="slr-tp" style="color:#facc15; font-weight:900;">—</span>
+              </div>
+
+              <div>
+                <span style="font-weight:950;">SL 1x1 reentrada:</span>
+                <span id="slr-resl" style="color:#facc15; font-weight:900;">—</span>
+              </div>
+
+              <div>
+                <span style="font-weight:950;">Chance stop→target:</span>
+                <span id="slr-chance" style="color:#facc15; font-weight:900;">—</span>
+              </div>
             </div>
+
           </div>
+
         </div>
 
         <!-- ===== /EXEC (MICRO) ===== -->
@@ -12007,6 +12018,113 @@ renderOptions("");
     if (el("execm-mini-reentry"))  el("execm-mini-reentry").textContent  = (optEntry != null) ? fmt2(optEntry) : "—";
     if (el("execm-mini-revprob"))  el("execm-mini-revprob").textContent  = fmtPct(pullProb);
     if (el("execm-mini-reveta"))   el("execm-mini-reveta").textContent   = (optEta != null) ? `~${optEta}m` : "—";
+        // ===== STOP LOSS REENTRY (quadro amarelo) =====
+    const payloadSL = window.__AARON_LAST_PAYLOAD__ || {};
+    const panelSL   = payloadSL.panel || payloadSL || {};
+
+    const exec1x1 =
+      panelSL.exec_1x1 ||
+      payloadSL.exec_1x1 ||
+      payloadSL.digest?.exec_1x1 ||
+      payloadSL.ui?.exec_1x1 ||
+      null;
+
+    const best =
+      exec1x1?.reentry_post_stop_v1?.best ||
+      exec1x1?.reentry_post_stop?.best ||
+      exec1x1?.post_stop?.best ||
+      null;
+
+    const asNum = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const dirFixed = (() => {
+      const d = String(exec1x1?.dir ?? exec1x1?.side ?? exec1x1?.direction ?? "").toUpperCase();
+      if (d.includes("SELL") || d.includes("SHORT") || d === "S") return "SELL";
+      if (d.includes("BUY")  || d.includes("LONG")  || d === "B") return "BUY";
+      return null;
+    })();
+
+    const dirUse = dirFixed || dir; // dir já existe no seu código (derivado do micro)
+
+    // SL 1x1: preferir o que vier do JSON; senão usar o SL calculado do UI
+    const slPrice = asNum(exec1x1?.orders_v12?.stop ?? exec1x1?.orders_v12?.sl ?? exec1x1?.stop) ?? stop1x1;
+
+    // depth ATR estatístico (fallback 0.8 se não vier)
+    const depthAtr = (() => {
+      const v = asNum(best?.depth_atr ?? best?.depthAtr);
+      return (v != null && v > 0) ? v : 0.8;
+    })();
+
+    // tempo estatístico (mediana)
+    const tMed = asNum(best?.t_stop_to_reentry_med ?? best?.t_stop_to_reentry_p50 ?? best?.t_med);
+
+    // chance estatística
+    let chance = asNum(best?.stop_then_target_pct ?? best?.stop_then_target_uncond_pct ?? best?.hit_rate_pct);
+    if (chance != null && chance > 0 && chance <= 1) chance = chance * 100;
+
+    // status: SL atingiu ou não
+    const slHit = (current != null && slPrice != null && dirUse)
+      ? (dirUse === "SELL" ? (current >= slPrice) : (current <= slPrice))
+      : null;
+
+    const statusTxt = (slHit === null)
+      ? "—"
+      : (slHit ? "⚠️ SL atingido — executar reentrada" : "✅ SL não atingido — continuar");
+
+    const ruleTxt = (slPrice != null && dirUse)
+      ? (dirUse === "SELL"
+          ? `Se current < ${fmt2(slPrice)} → ✅ SL não atingido — continuar · Se current ≥ ${fmt2(slPrice)} → ⚠️ SL atingido — executar reentrada`
+          : `Se current > ${fmt2(slPrice)} → ✅ SL não atingido — continuar · Se current ≤ ${fmt2(slPrice)} → ⚠️ SL atingido — executar reentrada`)
+      : "—";
+
+    // Reentrada = SL ± (depthAtr × ATR14)
+    const k = (atr14 != null && Number.isFinite(atr14)) ? (atr14 * depthAtr) : null;
+    const reentry = (slPrice != null && k != null && dirUse)
+      ? (dirUse === "SELL" ? (slPrice + k) : (slPrice - k))
+      : null;
+
+    // TP travado = micro target (usa o microTake do UI)
+    const tpLocked = (microTake != null && Number.isFinite(microTake)) ? microTake : null;
+
+    // SL 1x1 da reentrada (1x1 ancorado no TP travado)
+    const reRisk = (reentry != null && tpLocked != null) ? Math.abs(reentry - tpLocked) : null;
+    const reSL = (reentry != null && reRisk != null && dirUse)
+      ? (dirUse === "SELL" ? (reentry + reRisk) : (reentry - reRisk))
+      : null;
+
+    // inject DOM
+    if (el("slr-sl")) el("slr-sl").textContent = (slPrice != null) ? fmt2(slPrice) : "—";
+
+    if (el("slr-status")) {
+      const sEl = el("slr-status");
+      sEl.textContent = statusTxt;
+      sEl.style.color = (slHit === true) ? "#fb7185" : (slHit === false) ? "#34d399" : "";
+    }
+
+    if (el("slr-rule")) el("slr-rule").textContent = ruleTxt;
+
+    if (el("slr-wait")) el("slr-wait").textContent = (tMed != null) ? `~${Math.round(tMed)}m` : "—";
+
+    if (el("slr-reentry")) el("slr-reentry").textContent = (reentry != null) ? fmt2(reentry) : "—";
+
+    if (el("slr-reentry-note")) {
+      const noteEl = el("slr-reentry-note");
+      if (reentry != null && slPrice != null && atr14 != null && Number.isFinite(atr14)) {
+        const sign = (dirUse === "SELL") ? "+" : "−";
+        noteEl.textContent = ` (${fmt2(slPrice)} ${sign} ${depthAtr.toFixed(2)}×ATR14; ATR14=${fmt2(atr14)})`;
+      } else {
+        noteEl.textContent = "";
+      }
+    }
+
+    if (el("slr-tp"))     el("slr-tp").textContent     = (tpLocked != null) ? fmt2(tpLocked) : "—";
+    if (el("slr-resl"))   el("slr-resl").textContent   = (reSL != null) ? fmt2(reSL) : "—";
+    if (el("slr-chance")) el("slr-chance").textContent = (chance != null) ? `${chance.toFixed(2)}%` : "—";
+    // ===== /STOP LOSS REENTRY =====
+
     // ===== /EXEC (MICRO) MINI • PLAN 1x1 =====
   }
 
