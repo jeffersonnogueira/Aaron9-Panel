@@ -12062,18 +12062,39 @@ const slAuto1x1 = (current != null && microTake != null && Number.isFinite(micro
   ? (2 * current - microTake)
   : null;
 
-// SL 1x1: tenta usar o JSON, mas se vier invertido, cai no automático
+// SL 1x1: tenta usar o JSON, mas SÓ se for 1x1 de verdade e do lado certo.
+// Caso contrário, força o 1x1 automático ancorado no microTake (NUNCA quebra 1x1).
 const slFromJson = asNum(exec1x1?.orders_v12?.stop ?? exec1x1?.orders_v12?.sl ?? exec1x1?.stop);
-let slPrice = slFromJson ?? slAuto1x1 ?? stop1x1;
 
-// SANITY: BUY => SL abaixo do current | SELL => SL acima do current
+// 1x1 “verdadeiro” baseado no MICRO (distância SL = distância até TP=microTake)
+const sl1x1Micro = (slAuto1x1 != null && Number.isFinite(slAuto1x1)) ? slAuto1x1 : stop1x1;
+
+// default: sempre o 1x1 do micro
+let slPrice = sl1x1Micro ?? slFromJson ?? null;
+
+if (current != null && dirUse && slFromJson != null && sl1x1Micro != null) {
+  // BUY => SL abaixo do current | SELL => SL acima do current
+  const sideOk = (dirUse === "BUY") ? (slFromJson < current) : (slFromJson > current);
+
+  // 1x1 => distância até SL tem que bater com a distância até o TP (risk1x1)
+  const distJson = Math.abs(current - slFromJson);
+  const dist1x1  = (risk1x1 != null && Number.isFinite(risk1x1)) ? risk1x1 : Math.abs(current - sl1x1Micro);
+
+  const distOk = Math.abs(distJson - dist1x1) <= Math.max(0.02, dist1x1 * 0.15);
+
+  // só aceita o SL do JSON se passar nos dois testes
+  if (sideOk && distOk) slPrice = slFromJson;
+}
+
+// SANITY final (garantia absoluta do lado certo)
 if (current != null && slPrice != null && dirUse) {
   const wrongSide =
     (dirUse === "BUY"  && slPrice >= current) ||
     (dirUse === "SELL" && slPrice <= current);
 
-  if (wrongSide) slPrice = slAuto1x1 ?? stop1x1;
+  if (wrongSide) slPrice = sl1x1Micro ?? slPrice;
 }
+
 
 
 
@@ -12105,14 +12126,22 @@ if (current != null && slPrice != null && dirUse) {
           : `Se current > ${fmt2(slPrice)} → ✅ SL não atingido — continuar · Se current ≤ ${fmt2(slPrice)} → ⚠️ SL atingido — executar reentrada`)
       : "—";
 
-    // Reentrada = SL ± (depthAtr × ATR14)
-    const k = (atr14 != null && Number.isFinite(atr14)) ? (atr14 * depthAtr) : null;
-    const reentry = (slPrice != null && k != null && dirUse)
-      ? (dirUse === "SELL" ? (slPrice - k) : (slPrice + k))
-      : null;
-
     // TP travado = micro target (usa o microTake do UI)
-    const tpLocked = (microTake != null && Number.isFinite(microTake)) ? microTake : null;
+const tpLocked = (microTake != null && Number.isFinite(microTake)) ? microTake : null;
+
+// Reentrada = SL ± (depthAtr × ATR14) com trava para nunca passar do TP travado
+const kRaw = (atr14 != null && Number.isFinite(atr14)) ? (atr14 * depthAtr) : null;
+
+// cap: no máximo 60% da distância SL→TP (evita reentrada acima do TP)
+const distSLTP = (tpLocked != null && slPrice != null) ? Math.abs(tpLocked - slPrice) : null;
+const kCap = (distSLTP != null) ? Math.max(0, distSLTP * 0.60) : null;
+const k = (kRaw != null && kCap != null) ? Math.min(kRaw, kCap) : kRaw;
+
+// BUY: reentry acima do SL | SELL: reentry abaixo do SL
+const reentry = (slPrice != null && k != null && dirUse)
+  ? (dirUse === "SELL" ? (slPrice - k) : (slPrice + k))
+  : null;
+
 
     // SL 1x1 da reentrada (1x1 ancorado no TP travado)
     const reRisk = (reentry != null && tpLocked != null) ? Math.abs(reentry - tpLocked) : null;
