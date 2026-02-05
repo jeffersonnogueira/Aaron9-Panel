@@ -3887,6 +3887,10 @@
           </div>
 
           <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
+                        <div>
+              <span style="font-weight:950;">Most optimal entry:</span>
+              <span id="slr-optentry" style="color:#facc15; font-weight:900;">—</span>
+            </div>
 
             <div>
               <span style="font-weight:950;">SL 1x1:</span>
@@ -12150,6 +12154,7 @@ const reentry = (slPrice != null && k != null && dirUse)
       : null;
 
     // inject DOM
+    if (el("slr-optentry")) el("slr-optentry").textContent = (optEntry != null) ? fmt2(optEntry) : "—";
     if (el("slr-sl")) el("slr-sl").textContent = (slPrice != null) ? fmt2(slPrice) : "—";
 
     if (el("slr-status")) {
