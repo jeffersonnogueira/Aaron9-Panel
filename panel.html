@@ -12047,10 +12047,35 @@ renderOptions("");
       return null;
     })();
 
-    const dirUse = dirFixed || dir; // dir já existe no seu código (derivado do micro)
+    // direção do plano pelo MICRO (não depende do JSON)
+const dirFromMicro = (() => {
+  if (current == null || microTake == null || !Number.isFinite(microTake)) return null;
+  if (microTake > current) return "BUY";
+  if (microTake < current) return "SELL";
+  return null;
+})();
 
-    // SL 1x1: preferir o que vier do JSON; senão usar o SL calculado do UI
-    const slPrice = asNum(exec1x1?.orders_v12?.stop ?? exec1x1?.orders_v12?.sl ?? exec1x1?.stop) ?? stop1x1;
+const dirUse = dirFromMicro || dirFixed || dir;
+
+// SL 1x1 automático (espelhado em relação ao TP=microTake)
+const slAuto1x1 = (current != null && microTake != null && Number.isFinite(microTake))
+  ? (2 * current - microTake)
+  : null;
+
+// SL 1x1: tenta usar o JSON, mas se vier invertido, cai no automático
+const slFromJson = asNum(exec1x1?.orders_v12?.stop ?? exec1x1?.orders_v12?.sl ?? exec1x1?.stop);
+let slPrice = slFromJson ?? slAuto1x1 ?? stop1x1;
+
+// SANITY: BUY => SL abaixo do current | SELL => SL acima do current
+if (current != null && slPrice != null && dirUse) {
+  const wrongSide =
+    (dirUse === "BUY"  && slPrice >= current) ||
+    (dirUse === "SELL" && slPrice <= current);
+
+  if (wrongSide) slPrice = slAuto1x1 ?? stop1x1;
+}
+
+
 
     // depth ATR estatístico (fallback 0.8 se não vier)
     const depthAtr = (() => {
@@ -12083,7 +12108,7 @@ renderOptions("");
     // Reentrada = SL ± (depthAtr × ATR14)
     const k = (atr14 != null && Number.isFinite(atr14)) ? (atr14 * depthAtr) : null;
     const reentry = (slPrice != null && k != null && dirUse)
-      ? (dirUse === "SELL" ? (slPrice + k) : (slPrice - k))
+      ? (dirUse === "SELL" ? (slPrice - k) : (slPrice + k))
       : null;
 
     // TP travado = micro target (usa o microTake do UI)
@@ -12113,7 +12138,7 @@ renderOptions("");
     if (el("slr-reentry-note")) {
       const noteEl = el("slr-reentry-note");
       if (reentry != null && slPrice != null && atr14 != null && Number.isFinite(atr14)) {
-        const sign = (dirUse === "SELL") ? "+" : "−";
+        const sign = (dirUse === "SELL") ? "−" : "+";
         noteEl.textContent = ` (${fmt2(slPrice)} ${sign} ${depthAtr.toFixed(2)}×ATR14; ATR14=${fmt2(atr14)})`;
       } else {
         noteEl.textContent = "";
