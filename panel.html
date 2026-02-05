@@ -3886,13 +3886,8 @@
             PLANO “SE BATER STOP” (REENTRADA)
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
-                        <div>
-                                      <div>
-              <span style="font-weight:950;">Most optimal entry:</span>
-              <span id="slr-optentry" style="color:#facc15; font-weight:900;">—</span>
-            </div>
-
+                    <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
+            <div>
               <span style="font-weight:950;">Most optimal entry:</span>
               <span id="slr-optentry" style="color:#facc15; font-weight:900;">—</span>
             </div>
@@ -3904,6 +3899,7 @@
               <span style="font-weight:950;">Status:</span>
               <span id="slr-status" style="font-weight:950;">—</span>
             </div>
+
 
             <div id="slr-rule" style="font-size:20px; line-height:1.45; opacity:.78;">—</div>
 
@@ -12074,6 +12070,10 @@ const slAuto1x1 = (current != null && microTakeOk)
   ? (2 * current - microTakeN)
   : null;
 
+// SL 1x1: tenta usar o JSON só se for 1x1 de verdade e do lado certo;
+// caso contrário, usa o 1x1 automático do micro
+const slFromJson = asNum(exec1x1?.orders_v12?.stop ?? exec1x1?.orders_v12?.sl ?? exec1x1?.stop);
+const sl1x1Micro = (slAuto1x1 != null && Number.isFinite(slAuto1x1)) ? slAuto1x1 : stop1x1;
 
 // default: sempre o 1x1 do micro
 let slPrice = sl1x1Micro ?? slFromJson ?? null;
@@ -12133,7 +12133,7 @@ if (current != null && slPrice != null && dirUse) {
       : "—";
 
     // TP travado = micro target (usa o microTake do UI)
-const tpLocked = (microTake != null && Number.isFinite(microTake)) ? microTake : null;
+const tpLocked = (microTakeOk) ? microTakeN : null;
 
 // Reentrada = SL ± (depthAtr × ATR14) com trava para nunca passar do TP travado
 const kRaw = (atr14 != null && Number.isFinite(atr14)) ? (atr14 * depthAtr) : null;
