@@ -3888,6 +3888,11 @@
 
           <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
                         <div>
+                                      <div>
+              <span style="font-weight:950;">Most optimal entry:</span>
+              <span id="slr-optentry" style="color:#facc15; font-weight:900;">—</span>
+            </div>
+
               <span style="font-weight:950;">Most optimal entry:</span>
               <span id="slr-optentry" style="color:#facc15; font-weight:900;">—</span>
             </div>
@@ -12051,27 +12056,24 @@ renderOptions("");
       return null;
     })();
 
-    // direção do plano pelo MICRO (não depende do JSON)
+    // direção do plano pelo MICRO (não depende do JSON) — robusto (microTake pode vir string)
+const microTakeN = (microTake == null ? null : Number(microTake));
+const microTakeOk = (microTakeN != null && Number.isFinite(microTakeN));
+
 const dirFromMicro = (() => {
-  if (current == null || microTake == null || !Number.isFinite(microTake)) return null;
-  if (microTake > current) return "BUY";
-  if (microTake < current) return "SELL";
+  if (current == null || !microTakeOk) return null;
+  if (microTakeN > current) return "BUY";
+  if (microTakeN < current) return "SELL";
   return null;
 })();
 
 const dirUse = dirFromMicro || dirFixed || dir;
 
-// SL 1x1 automático (espelhado em relação ao TP=microTake)
-const slAuto1x1 = (current != null && microTake != null && Number.isFinite(microTake))
-  ? (2 * current - microTake)
+// SL 1x1 automático (espelhado em relação ao TP=microTake) — NUNCA mexe no microTake
+const slAuto1x1 = (current != null && microTakeOk)
+  ? (2 * current - microTakeN)
   : null;
 
-// SL 1x1: tenta usar o JSON, mas SÓ se for 1x1 de verdade e do lado certo.
-// Caso contrário, força o 1x1 automático ancorado no microTake (NUNCA quebra 1x1).
-const slFromJson = asNum(exec1x1?.orders_v12?.stop ?? exec1x1?.orders_v12?.sl ?? exec1x1?.stop);
-
-// 1x1 “verdadeiro” baseado no MICRO (distância SL = distância até TP=microTake)
-const sl1x1Micro = (slAuto1x1 != null && Number.isFinite(slAuto1x1)) ? slAuto1x1 : stop1x1;
 
 // default: sempre o 1x1 do micro
 let slPrice = sl1x1Micro ?? slFromJson ?? null;
@@ -12154,7 +12156,7 @@ const reentry = (slPrice != null && k != null && dirUse)
       : null;
 
     // inject DOM
-    if (el("slr-optentry")) el("slr-optentry").textContent = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("slr-optentry")) el("slr-optentry").textContent = (reentry != null) ? fmt2(reentry) : "—";
     if (el("slr-sl")) el("slr-sl").textContent = (slPrice != null) ? fmt2(slPrice) : "—";
 
     if (el("slr-status")) {
