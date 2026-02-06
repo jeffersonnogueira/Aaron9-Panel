@@ -3604,33 +3604,35 @@
         </div>
                 <<!-- ===== STOP RISK (1x1) — substitui EXEC GATE / MINI / BREAKOUT ===== -->
 <div class="prem-breakout-wrap" id="stop-risk-card" style="margin-top:10px;">
-  <div class="prem-breakout-title">STOP RISK (1x1)</div>
+  <div class="prem-breakout-title" style="font-size:18px; font-weight:950;">STOP RISK (1x1)</div>
 
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
     <div style="flex:1 1 auto;">
-      <div style="font-size:12px; opacity:.75; letter-spacing:.08em; text-transform:uppercase;">
+      <div style="font-size:14px; opacity:.78; letter-spacing:.10em; text-transform:uppercase;">
         Chance de bater SL antes do micro
       </div>
 
-      <div style="display:flex; align-items:baseline; gap:10px; margin-top:4px;">
-        <div id="sr-stop-first-pct" style="font-size:26px; font-weight:950; color:#facc15;">—</div>
-        <div id="sr-risk-badge" style="font-size:12px; font-weight:900; opacity:.85;">Stop Risk: —</div>
+      <div style="display:flex; align-items:baseline; gap:12px; margin-top:6px;">
+        <div id="sr-stop-first-pct" style="font-size:36px; font-weight:950; color:#facc15;">—</div>
+        <div id="sr-risk-badge" style="font-size:14px; font-weight:900; opacity:.90;">Stop Risk: —</div>
       </div>
 
-      <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:8px;">
+      <div style="height:12px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;">
         <div id="sr-meter-fill" style="height:100%; width:0%; background:rgba(250,204,21,.85);"></div>
       </div>
     </div>
   </div>
 
-  <div style="margin-top:10px; font-size:12px; line-height:1.5; color:rgba(255,255,255,.92);">
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">🧠</span> <span id="sr-market-msg">—</span></div>
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">✅</span> Melhor: esperar <span style="font-weight:900;">Optimal Entry</span></div>
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">🟡</span> Se entrar mesmo assim: <span style="font-weight:900;">Respiro ON</span> (+<span id="sr-respiro-atr" style="font-weight:900;">—</span> ATR)</div>
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">🔁</span> Se tomar SL: reentrada típica em <span id="sr-stop-reentry-eta" style="font-weight:900; color:#facc15;">—</span>, chance stop→target <span id="sr-stop-target-pct" style="font-weight:900; color:#facc15;">—</span></div>
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">🎯</span> Se bater SL, chance de depois ir pro micro: <span id="sr-after-stop-micro-pct" style="font-weight:900; color:#facc15;">—</span></div>
+  <div style="margin-top:12px; font-size:14px; line-height:1.65; color:rgba(255,255,255,.92);">
+    <div style="margin-bottom:8px;"><span style="opacity:.85;">🧠</span> <span id="sr-market-msg">—</span></div>
+    <div style="margin-bottom:8px;"><span style="opacity:.85;">✅</span> Melhor: esperar <span style="font-weight:900;">Optimal Entry</span></div>
+    <div style="margin-bottom:8px;"><span style="opacity:.85;">🟡</span> Se entrar mesmo assim: <span style="font-weight:900;">Respiro ON</span> (+<span id="sr-respiro-atr" style="font-weight:900;">—</span> ATR)</div>
+    <div style="margin-bottom:8px;"><span style="opacity:.85;">🔁</span> Se tomar SL: reentrada típica em <span id="sr-stop-reentry-eta" style="font-weight:900; color:#facc15;">—</span>, chance stop→target <span id="sr-stop-target-pct" style="font-weight:900; color:#facc15;">—</span></div>
+    <div style="margin-bottom:8px;"><span style="opacity:.85;">🎯</span> Se bater SL, chance de depois ir pro micro: <span id="sr-after-stop-micro-pct" style="font-weight:900; color:#facc15;">—</span></div>
     <div><span style="opacity:.85;">⏱️</span> Tempo típico depois do SL até micro: <span id="sr-stop-to-micro-eta" style="font-weight:900; color:#facc15;">—</span></div>
   </div>
+</div>
+
 </div>
 <!-- ===== /STOP RISK ===== -->
 
@@ -12122,7 +12124,11 @@ const reentry = (slPrice != null && k != null && dirUse)
 
     if (el("slr-tp"))     el("slr-tp").textContent     = (tpLocked != null) ? fmt2(tpLocked) : "—";
     if (el("slr-resl"))   el("slr-resl").textContent   = (reSL != null) ? fmt2(reSL) : "—";
-    if (el("slr-chance")) el("slr-chance").textContent = (chance != null) ? `${chance.toFixed(2)}%` : "—";
+    if (el("slr-chance")) {
+  const pct = (stopThenMicroPct != null) ? stopThenMicroPct : chance;
+  el("slr-chance").textContent = (pct != null) ? `${Number(pct).toFixed(2)}%` : "—";
+}
+
     // ===== /STOP LOSS REENTRY =====
 
 
