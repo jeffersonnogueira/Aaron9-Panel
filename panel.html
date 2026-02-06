@@ -1157,6 +1157,22 @@
     filter: brightness(1.25);
   }
 }
+/* pulsante verde (Premonição Micro LIVE - valor verde) */
+.pulse-micro{
+  display: inline-block;
+  animation: microTextPulse 1.05s ease-in-out infinite;
+}
+
+@keyframes microTextPulse{
+  0%, 100%{
+    text-shadow: 0 0 0 rgba(74,222,128,0);
+    filter: brightness(1);
+  }
+  50%{
+    text-shadow: 0 0 16px rgba(74,222,128,0.75);
+    filter: brightness(1.18);
+  }
+}
 
 /* ====== PATTERN DRAWINGS (PADRÃO DO DIA / MOMENTO) ====== */
 
@@ -6216,7 +6232,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("prem-kpi-label", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
     setText("prem-kpi-time", t.hhmm || "—");
     setText("prem-kpi-ampm", t.ampm || "");
-    (document.getElementById("prem-kpi-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
+    (document.getElementById("prem-kpi-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span class="pulse-micro" style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
 
     // espelha KPI grande no painel direito (mockup)
     setText("prem-right-title", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
@@ -6235,7 +6251,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 
     setText("prem-right-time", t.hhmm || "—");
     setText("prem-right-ampm", t.ampm || "");
-    (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
+    (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span class="pulse-micro" style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
     setText("prem-right-eta", (etaMin != null) ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`) : "—");
 
 
