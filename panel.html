@@ -1142,6 +1142,21 @@
   50%  { transform: scale(1.01); box-shadow: 0 0 0 12px rgba(248,113,113,0); }
   100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(248,113,113,0); }
 }
+/* pulsante vermelho (para SL 1x1) */
+.pulse-sl {
+  animation: slTextPulse 1.05s ease-in-out infinite;
+}
+
+@keyframes slTextPulse {
+  0%, 100% {
+    text-shadow: 0 0 0 rgba(248,113,113,0);
+    filter: brightness(1);
+  }
+  50% {
+    text-shadow: 0 0 16px rgba(248,113,113,0.75);
+    filter: brightness(1.25);
+  }
+}
 
 /* ====== PATTERN DRAWINGS (PADRÃO DO DIA / MOMENTO) ====== */
 
@@ -3744,12 +3759,12 @@
                     <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
             <div>
               <span style="font-weight:950;">Most optimal entry:</span>
-              <span id="slr-optentry" style="color:#facc15; font-weight:900;">—</span>
+              <span id="slr-optentry" style="color:#60a5fa; font-weight:900;">—</span>
             </div>
 
             <div>
               <span style="font-weight:950;">SL 1x1:</span>
-              <span id="slr-sl" style="color:#facc15; font-weight:900;">—</span>
+              <span id="slr-sl" class="pulse-sl" style="color:var(--danger); font-weight:900;">—</span>
               <span style="opacity:.55;"> | </span>
               <span style="font-weight:950;">Status:</span>
               <span id="slr-status" style="font-weight:950;">—</span>
