@@ -3602,183 +3602,38 @@
             Filtro: AÇÃO=— • Micro=— (≥75%)
           </div>
         </div>
-                <div class="exec-gate" id="exec-gate">
-          <div class="eg-head">
-            <div class="eg-title">EXEC GATE (Micro)</div>
-            <div class="eg-mode">
-              <button class="eg-mode-btn is-on" id="eg-mode-1" type="button">1-line</button>
-              <button class="eg-mode-btn" id="eg-mode-3" type="button">3-line</button>
-            </div>
-          </div>
+                <<!-- ===== STOP RISK (1x1) — substitui EXEC GATE / MINI / BREAKOUT ===== -->
+<div class="prem-breakout-wrap" id="stop-risk-card" style="margin-top:10px;">
+  <div class="prem-breakout-title">STOP RISK (1x1)</div>
 
-          <div class="eg-metrics">
-            <div class="eg-kv"><span class="k">ATR14</span><span class="v" id="eg-atr14">—</span></div>
-            <div class="eg-kv"><span class="k">MinMove</span><span class="v" id="eg-minmove">—</span></div>
-            <div class="eg-kv"><span class="k">Dist→Micro</span><span class="v" id="eg-dist">—</span></div>
-            <div class="eg-kv eg-edge"><span class="k">EDGE</span><span class="v" id="eg-edge">—</span></div>
-          </div>
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+    <div style="flex:1 1 auto;">
+      <div style="font-size:12px; opacity:.75; letter-spacing:.08em; text-transform:uppercase;">
+        Chance de bater SL antes do micro
+      </div>
 
-          <div class="eg-microline">
-            <div class="eg-kv"><span class="k">Micro Take</span><span class="v eg-strong" id="eg-micro-take">—</span></div>
-            <div class="eg-kv"><span class="k">Prob</span><span class="v" id="eg-micro-prob">—</span></div>
-            <div class="eg-kv"><span class="k">ETA</span><span class="v" id="eg-micro-eta">—</span></div>
-          </div>
+      <div style="display:flex; align-items:baseline; gap:10px; margin-top:4px;">
+        <div id="sr-stop-first-pct" style="font-size:26px; font-weight:950; color:#facc15;">—</div>
+        <div id="sr-risk-badge" style="font-size:12px; font-weight:900; opacity:.85;">Stop Risk: —</div>
+      </div>
 
-          <div class="eg-inputs">
-            <div class="eg-in">
-              <label class="eg-lbl">Risk %</label>
-              <input id="eg-riskpct" class="eg-input" type="number" step="0.05" value="0.50" />
-            </div>
-
-            <div class="eg-in">
-              <label class="eg-lbl">Stop rule</label>
-              <div class="eg-stop-row">
-                <select id="eg-stop-mode" class="eg-select">
-                  <option value="atr" selected>ATR ×</option>
-                  <option value="cents">$ cents</option>
-                </select>
-                <input id="eg-stop-atr-mult" class="eg-input" type="number" step="0.05" value="0.80" />
-                <input id="eg-stop-cents" class="eg-input" type="number" step="0.01" value="0.31" style="display:none;" />
-              </div>
-            </div>
-
-            <div class="eg-in">
-              <label class="eg-lbl">Conta A</label>
-              <input id="eg-acct-1" class="eg-input" type="number" step="100" value="25000" />
-            </div>
-
-            <div class="eg-in eg-hide-1line">
-              <label class="eg-lbl">Conta B</label>
-              <input id="eg-acct-2" class="eg-input" type="number" step="100" value="50000" />
-            </div>
-
-            <div class="eg-in eg-hide-1line">
-              <label class="eg-lbl">Conta C</label>
-              <input id="eg-acct-3" class="eg-input" type="number" step="100" value="100000" />
-            </div>
-          </div>
-
-          <div class="eg-table-wrap">
-            <table class="eg-table">
-              <thead>
-                <tr>
-                  <th>Conta</th>
-                  <th>Risk %</th>
-                  <th>Shares</th>
-                  <th>Stop ($)</th>
-                  <th>Stop (ATR)</th>
-                  <th>Risk $</th>
-                  <th>Take = Micro ($)</th>
-                  <th>Reward $</th>
-                  <th>R:R</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr id="eg-row-1">
-                  <td class="eg-td-acct" id="eg-acct-txt-1">25,000</td>
-                  <td id="eg-riskpct-txt-1">0.50%</td>
-                  <td id="eg-shares-1">—</td>
-                  <td id="eg-stopusd-1">—</td>
-                  <td id="eg-stopatr-1">—</td>
-                  <td id="eg-riskusd-1">—</td>
-                  <td id="eg-takeusd-1">—</td>
-                  <td id="eg-rewardusd-1">—</td>
-                  <td id="eg-rr-1">—</td>
-                </tr>
-
-                <tr id="eg-row-2" class="eg-hide-1line">
-                  <td class="eg-td-acct" id="eg-acct-txt-2">50,000</td>
-                  <td id="eg-riskpct-txt-2">0.50%</td>
-                  <td id="eg-shares-2">—</td>
-                  <td id="eg-stopusd-2">—</td>
-                  <td id="eg-stopatr-2">—</td>
-                  <td id="eg-riskusd-2">—</td>
-                  <td id="eg-takeusd-2">—</td>
-                  <td id="eg-rewardusd-2">—</td>
-                  <td id="eg-rr-2">—</td>
-                </tr>
-
-                <tr id="eg-row-3" class="eg-hide-1line">
-                  <td class="eg-td-acct" id="eg-acct-txt-3">100,000</td>
-                  <td id="eg-riskpct-txt-3">0.50%</td>
-                  <td id="eg-shares-3">—</td>
-                  <td id="eg-stopusd-3">—</td>
-                  <td id="eg-stopatr-3">—</td>
-                  <td id="eg-riskusd-3">—</td>
-                  <td id="eg-takeusd-3">—</td>
-                  <td id="eg-rewardusd-3">—</td>
-                  <td id="eg-rr-3">—</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="eg-foot" id="eg-foot">—</div>
-        </div>
-<!-- ===== EXEC (MICRO) MINI • PLAN 1x1 (ao lado do readout) ===== -->
-<div id="prem-exec-mini">
-  <div class="x-title">EXEC (MICRO) • PLAN 1x1</div>
-
-  <div class="x-row">
-    <b>Dir:</b> <span class="x-val" id="execm-mini-dir">—</span>
-    <span class="x-dim"> | </span>
-    <b>Current:</b> <span class="x-val" id="execm-mini-current">—</span>
-    <span class="x-dim"> | </span>
-    <b>ATR14:</b> <span class="x-val" id="execm-mini-atr14">—</span>
+      <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:8px;">
+        <div id="sr-meter-fill" style="height:100%; width:0%; background:rgba(250,204,21,.85);"></div>
+      </div>
+    </div>
   </div>
 
-  <div class="x-row">
-    <b>Micro Take:</b> <span class="x-val" id="execm-mini-tp">—</span>
-    <span class="x-dim"> | </span>
-    <b>Prob:</b> <span class="x-val" id="execm-mini-prob">—</span>
-    <span class="x-dim"> | </span>
-    <b>ETA:</b> <span class="x-val" id="execm-mini-eta">—</span>
-  </div>
-
-  <div class="x-row">
-    <b>Entry:</b> <span class="x-val" id="execm-mini-entry">—</span>
-    <span class="x-dim"> → </span>
-    <b>SL (1x1):</b> <span class="x-val" id="execm-mini-sl">—</span>
-    <span class="x-dim"> (risk </span><span class="x-val" id="execm-mini-risk">—</span><span class="x-dim">)</span>
-  </div>
-
-  <div class="x-row">
-    <b>Re-entry (Respiro):</b> <span class="x-val" id="execm-mini-reentry">—</span>
-    <span class="x-dim"> | </span>
-    <b>Prob respiro:</b> <span class="x-val" id="execm-mini-revprob">—</span>
-    <span class="x-dim"> | </span>
-    <b>ETA:</b> <span class="x-val" id="execm-mini-reveta">—</span>
+  <div style="margin-top:10px; font-size:12px; line-height:1.5; color:rgba(255,255,255,.92);">
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🧠</span> <span id="sr-market-msg">—</span></div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">✅</span> Melhor: esperar <span style="font-weight:900;">Optimal Entry</span></div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🟡</span> Se entrar mesmo assim: <span style="font-weight:900;">Respiro ON</span> (+<span id="sr-respiro-atr" style="font-weight:900;">—</span> ATR)</div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🔁</span> Se tomar SL: reentrada típica em <span id="sr-stop-reentry-eta" style="font-weight:900; color:#facc15;">—</span>, chance stop→target <span id="sr-stop-target-pct" style="font-weight:900; color:#facc15;">—</span></div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🎯</span> Se bater SL, chance de depois ir pro micro: <span id="sr-after-stop-micro-pct" style="font-weight:900; color:#facc15;">—</span></div>
+    <div><span style="opacity:.85;">⏱️</span> Tempo típico depois do SL até micro: <span id="sr-stop-to-micro-eta" style="font-weight:900; color:#facc15;">—</span></div>
   </div>
 </div>
-<!-- ===== /EXEC (MICRO) MINI • PLAN 1x1 ===== -->
+<!-- ===== /STOP RISK ===== -->
 
-                <div class="prem-breakout-wrap" id="prem-breakout-wrap">
-                  <div class="prem-breakout-title">ROMPIMENTO • RETEST</div>
-
-                  <div class="prem-breakout-grid">
-                    <div class="pb">
-                      <div class="pb-k">BREAKOUT</div>
-                      <div class="pb-v" id="prem-breakout-status">—</div>
-                    </div>
-
-                    <div class="pb">
-                      <div class="pb-k">RETEST</div>
-                      <div class="pb-v" id="prem-retest-status">—</div>
-                    </div>
-
-                    <div class="pb">
-                      <div class="pb-k">CONFIRM.</div>
-                      <div class="pb-v" id="prem-retest-confirm">—</div>
-                    </div>
-
-                    <div class="pb">
-                      <div class="pb-k">NÍVEL</div>
-                      <div class="pb-v" id="prem-breakout-level">—</div>
-                    </div>
-                  </div>
-
-                  <div class="prem-breakout-note" id="prem-breakout-note">—</div>
-                </div>
 
       </div>
 
@@ -11926,33 +11781,60 @@ renderOptions("");
 
   function updateExecMicroBox(){
     if (!el("prem-exec-micro")) return;
-
     // Current (pega do KPI da direita ou do header)
     const current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
 
-    // ATR14 / Micro Take / Prob / ETA do Exec Gate (já existente)
-    const atr14     = numFrom(t("eg-atr14"));
-    const microTake = numFrom(t("eg-micro-take"));
+    // Payload & ctx (não depende do bloco do retângulo amarelo)
+    const payload = window.__AARON_LAST_PAYLOAD__ || {};
+    const panel   = payload.panel || payload || {};
+    const digest  = payload.digest || {};
+    const ctx     = window.__A10_EG_CTX || {};
 
-    const probEg   = numFrom(t("eg-micro-prob"));
-    const probPrem = numFrom(t("prem-right-prob"));
-    const prob     = (probEg != null) ? probEg : probPrem;
+    const numPick = (...vals) => {
+      for (const v of vals) {
+        if (v === null || v === undefined) continue;
+        const n = Number(v);
+        if (Number.isFinite(n)) return n;
+      }
+      return null;
+    };
 
-    const etaEg    = numFrom(t("eg-micro-eta"));
-    const etaPrem  = numFrom(t("prem-right-eta"));
-    const etaMin   = (etaEg != null) ? etaEg : etaPrem;
+    const exec1x1 =
+      panel.exec_1x1 ||
+      payload.exec_1x1 ||
+      digest.exec_1x1 ||
+      payload.digest?.exec_1x1 ||
+      payload.ui?.exec_1x1 ||
+      null;
 
-    // Optimal Entry (Respiro): tenta extrair número do respiro; se não vier, calcula via ATR (fallback)
+    // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
+    const atr14     = numPick(ctx.atr14, digest.atr14, panel.atr14, digest.indicators?.atr14, panel.indicators?.atr14, exec1x1?.atr14);
+    const microTake = numPick(ctx.microTake, digest.micro_target, digest.micro_take, panel.micro_target, panel.micro_take, exec1x1?.micro_take, exec1x1?.microTake);
+
+    // Prob / ETA (preferindo premonição)
+    const prob = (window.__A10_PREM_MICRO_PCT != null && Number.isFinite(Number(window.__A10_PREM_MICRO_PCT)))
+      ? Number(window.__A10_PREM_MICRO_PCT)
+      : numPick(numFrom(t("prem-right-prob")), exec1x1?.micro_prob_pct);
+
+    const etaMin = numPick(
+      digest.micro_eta_min, digest.eta_micro_min,
+      panel.micro_eta_min, panel.eta_micro_min,
+      exec1x1?.micro_eta_min,
+      numFrom(t("prem-right-eta"))
+    );
+
+    // Optimal Entry (Respiro): usa o JSON se vier; senão tenta extrair do respiro; senão ATR (fallback)
     const respiroLine =
       t("top_respiro_value") ||
       t("rr-respiro-full") ||
       t("prem-respiro-full");
 
-    let optEntry = numFrom(respiroLine);
+    let optEntry = numPick(exec1x1?.optimal_entry, exec1x1?.optimalEntry);
+    if (optEntry == null) optEntry = numFrom(respiroLine);
 
     // fallback: estima usando ATR14 e a direção do Micro Take vs Current
     if (optEntry == null && current != null && atr14 != null && Number.isFinite(current) && Number.isFinite(atr14)) {
-      const k = 2.5; // padrão (~2.5x ATR14)
+      const k = 2.5; // fallback (~2.5x ATR14)
       if (microTake != null && Number.isFinite(microTake)) {
         optEntry = (microTake >= current) ? (current - atr14 * k) : (current + atr14 * k);
       }
@@ -12023,11 +11905,11 @@ renderOptions("");
     if (el("execm-mini-reentry"))  el("execm-mini-reentry").textContent  = (optEntry != null) ? fmt2(optEntry) : "—";
     if (el("execm-mini-revprob"))  el("execm-mini-revprob").textContent  = fmtPct(pullProb);
     if (el("execm-mini-reveta"))   el("execm-mini-reveta").textContent   = (optEta != null) ? `~${optEta}m` : "—";
-        // ===== STOP LOSS REENTRY (quadro amarelo) =====
+                // ===== STOP LOSS REENTRY (quadro amarelo) =====
     const payloadSL = window.__AARON_LAST_PAYLOAD__ || {};
     const panelSL   = payloadSL.panel || payloadSL || {};
 
-    const exec1x1 =
+    const exec1x1SL =
       panelSL.exec_1x1 ||
       payloadSL.exec_1x1 ||
       payloadSL.digest?.exec_1x1 ||
@@ -12035,9 +11917,9 @@ renderOptions("");
       null;
 
     const best =
-      exec1x1?.reentry_post_stop_v1?.best ||
-      exec1x1?.reentry_post_stop?.best ||
-      exec1x1?.post_stop?.best ||
+      exec1x1SL?.reentry_post_stop_v1?.best ||
+      exec1x1SL?.reentry_post_stop?.best ||
+      exec1x1SL?.post_stop?.best ||
       null;
 
     const asNum = (v) => {
@@ -12046,7 +11928,7 @@ renderOptions("");
     };
 
     const dirFixed = (() => {
-      const d = String(exec1x1?.dir ?? exec1x1?.side ?? exec1x1?.direction ?? "").toUpperCase();
+      const d = String(exec1x1SL?.dir ?? exec1x1SL?.side ?? exec1x1SL?.direction ?? "").toUpperCase();
       if (d.includes("SELL") || d.includes("SHORT") || d === "S") return "SELL";
       if (d.includes("BUY")  || d.includes("LONG")  || d === "B") return "BUY";
       return null;
@@ -12072,7 +11954,7 @@ const slAuto1x1 = (current != null && microTakeOk)
 
 // SL 1x1: tenta usar o JSON só se for 1x1 de verdade e do lado certo;
 // caso contrário, usa o 1x1 automático do micro
-const slFromJson = asNum(exec1x1?.orders_v12?.stop ?? exec1x1?.orders_v12?.sl ?? exec1x1?.stop);
+const slFromJson = asNum(exec1x1SL?.orders_v12?.stop ?? exec1x1SL?.orders_v12?.sl ?? exec1x1SL?.stop);
 const sl1x1Micro = (slAuto1x1 != null && Number.isFinite(slAuto1x1)) ? slAuto1x1 : stop1x1;
 
 // default: sempre o 1x1 do micro
@@ -12103,7 +11985,6 @@ if (current != null && slPrice != null && dirUse) {
 
 
 
-
     // depth ATR estatístico (fallback 0.8 se não vier)
     const depthAtr = (() => {
       const v = asNum(best?.depth_atr ?? best?.depthAtr);
@@ -12116,6 +11997,64 @@ if (current != null && slPrice != null && dirUse) {
     // chance estatística
     let chance = asNum(best?.stop_then_target_pct ?? best?.stop_then_target_uncond_pct ?? best?.hit_rate_pct);
     if (chance != null && chance > 0 && chance <= 1) chance = chance * 100;
+    // ===== STOP RISK (1x1) — NOVO QUADRO =====
+    const revProb  = asNum(exec1x1SL?.reversal_prob_pct);
+    const pullProbStats = asNum(exec1x1SL?.prob_pullback_pct ?? exec1x1SL?.pullback_prob_pct);
+    const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_to_micro_eta_min);
+
+    // stop_then_target_pct (se existir) senão usa chance
+    let stopThenMicroPct = asNum(exec1x1SL?.stop_then_target_pct) ?? chance;
+    if (stopThenMicroPct != null && stopThenMicroPct > 0 && stopThenMicroPct <= 1) stopThenMicroPct *= 100;
+
+    // Heurística: stop risk = 0.60*reversal + 0.40*(100 - microProb)
+    const microProbForRisk = (prob != null && Number.isFinite(Number(prob))) ? Number(prob) : null;
+    const stopRiskPct = (revProb != null && microProbForRisk != null)
+      ? (0.60 * revProb + 0.40 * (100 - microProbForRisk))
+      : (revProb != null ? revProb : null);
+
+    const clamp = (v) => Math.max(0, Math.min(100, v ?? 0));
+    const riskLevel =
+      (stopRiskPct == null) ? null :
+      (stopRiskPct >= 65 ? "ALTO" :
+       stopRiskPct >= 40 ? "MÉDIO" : "BAIXO");
+
+    if (el("sr-stop-first-pct")) el("sr-stop-first-pct").textContent = fmtPct(stopRiskPct);
+
+    if (el("sr-risk-badge")) {
+      const b = el("sr-risk-badge");
+      b.textContent = (riskLevel && stopRiskPct != null)
+        ? `Stop Risk: ${riskLevel} (${Math.round(stopRiskPct)}%)`
+        : "Stop Risk: —";
+
+      b.style.color =
+        (riskLevel === "ALTO") ? "#fb7185" :
+        (riskLevel === "MÉDIO") ? "#facc15" :
+        (riskLevel === "BAIXO") ? "#34d399" : "";
+    }
+
+    if (el("sr-meter-fill")) {
+      const f = el("sr-meter-fill");
+      f.style.width = `${clamp(stopRiskPct).toFixed(0)}%`;
+      f.style.background =
+        (riskLevel === "ALTO") ? "rgba(251,113,133,.85)" :
+        (riskLevel === "MÉDIO") ? "rgba(250,204,21,.85)" :
+        (riskLevel === "BAIXO") ? "rgba(52,211,153,.85)" :
+        "rgba(255,255,255,.18)";
+    }
+
+    if (el("sr-market-msg")) {
+      const msgEl = el("sr-market-msg");
+      if (revProb != null && revProb >= 60) msgEl.textContent = "Mercado em Reversão/Chop.";
+      else if (pullProbStats != null && pullProbStats >= 40) msgEl.textContent = "Mercado em Respiro (pullback) — ruído alto.";
+      else msgEl.textContent = "Mercado neutro — risco moderado.";
+    }
+
+    if (el("sr-respiro-atr")) el("sr-respiro-atr").textContent = "0.25";
+    if (el("sr-stop-reentry-eta")) el("sr-stop-reentry-eta").textContent = (tMed != null) ? `~${Math.round(tMed)}m` : "—";
+    if (el("sr-stop-target-pct")) el("sr-stop-target-pct").textContent = (stopThenMicroPct != null) ? `${stopThenMicroPct.toFixed(2)}%` : "—";
+    if (el("sr-after-stop-micro-pct")) el("sr-after-stop-micro-pct").textContent = (stopThenMicroPct != null) ? `${stopThenMicroPct.toFixed(2)}%` : "—";
+    if (el("sr-stop-to-micro-eta")) el("sr-stop-to-micro-eta").textContent = (stopToMicro != null) ? `~${Math.round(stopToMicro)}m` : "—";
+    // ===== /STOP RISK =====
 
     // status: SL atingiu ou não
     const slHit = (current != null && slPrice != null && dirUse)
@@ -12185,6 +12124,7 @@ const reentry = (slPrice != null && k != null && dirUse)
     if (el("slr-resl"))   el("slr-resl").textContent   = (reSL != null) ? fmt2(reSL) : "—";
     if (el("slr-chance")) el("slr-chance").textContent = (chance != null) ? `${chance.toFixed(2)}%` : "—";
     // ===== /STOP LOSS REENTRY =====
+
 
     // ===== /EXEC (MICRO) MINI • PLAN 1x1 =====
   }
