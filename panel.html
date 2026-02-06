@@ -3682,42 +3682,49 @@
             <div class="rr-row rr-primary"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
           </div>
 
-          <!-- ===== NOVO QUADRO AO LADO (EXEC MICRO) ===== -->
+                    <!-- ===== NOVO QUADRO AO LADO (MICRO PATH LIVE) ===== -->
           <div class="execm-side-card" id="execm-side-card">
-            <div class="execm-side-title">EXEC (MICRO)</div>
+            <div class="execm-side-title">MICRO PATH (LIVE)</div>
             <div class="execm-side-body">
+
               <div class="execm-line">
                 <span class="ek">Current:</span>
-                <span id="execm2-current" class="ev">—</span>
+                <span id="mpl-current" class="ev">—</span>
                 <span class="pipe">|</span>
                 <span class="ek">ATR14:</span>
-                <span id="execm2-atr14" class="ev">—</span>
+                <span id="mpl-atr14" class="ev">—</span>
               </div>
 
               <div class="execm-line">
-                <span class="ek">Micro Take:</span>
-                <span id="execm2-micro-take" class="ev">—</span>
-                <span class="pipe">|</span>
-                <span class="ek">Prob:</span>
-                <span id="execm2-micro-prob" class="ev">—</span>
-                <span class="pipe">|</span>
-                <span class="ek">ETA:</span>
-                <span id="execm2-micro-eta" class="ev">—</span>
+                <span class="ek">Path A:</span>
+                <span id="mpl-a1-pct" class="ev" style="color:var(--success); font-weight:900;">—</span>
+                <span class="ek"> tocar</span>
+                <span id="mpl-a1-price" class="ev" style="color:var(--success); font-weight:900;">—</span>
+                <span class="muted"> (<span id="mpl-a1-eta" class="ev">—</span>)</span>
+              </div>
+
+              <div class="execm-line" style="padding-left:14px;">
+                <span class="pipe">→</span>
+                <span class="ek">depois:</span>
+                <span id="mpl-a2-pct" class="ev" style="color:#facc15; font-weight:900;">—</span>
+                <span class="ek"> estender</span>
+                <span id="mpl-a2-price" class="ev" style="color:#facc15; font-weight:900;">—</span>
+                <span class="muted"> (<span id="mpl-a2-eta" class="ev">—</span>)</span>
               </div>
 
               <div class="execm-line">
-                <span class="ek">OPTIMAL ENTRY (Respiro):</span>
-                <span id="execm2-opt-entry" class="ev">—</span>
-                <span class="pipe">|</span>
-                <span class="ek">Prob pullback:</span>
-                <span id="execm2-pullback-prob" class="ev">—</span>
-                <span class="pipe">|</span>
-                <span class="ek">ETA:</span>
-                <span id="execm2-opt-eta" class="ev">—</span>
-                <span class="muted"> (≈ <span id="execm2-opt-time" class="ev">—</span> MT)</span>
+                <span class="ek">Path B:</span>
+                <span id="mpl-b-pct" class="ev" style="color:var(--danger); font-weight:900;">—</span>
+                <span class="ek"> falhar antes</span>
+                <span class="pipe">→</span>
+                <span id="mpl-b-price" class="ev" style="color:var(--danger); font-weight:900;">—</span>
+                <span class="muted"> (<span id="mpl-b-eta" class="ev">—</span>)</span>
+                <span class="muted"> (rejeição/flush)</span>
               </div>
+
             </div>
           </div>
+
         </div>
 
 
@@ -11894,19 +11901,48 @@ renderOptions("");
     if (el("execm-opt-eta"))        el("execm-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
     if (el("execm-opt-time"))       el("execm-opt-time").textContent       = (optEta != null) ? optTime : "—";
 
-    // Espelho no card lateral (IDs execm2-*)
-    if (el("execm2-current"))        el("execm2-current").textContent        = (current != null) ? fmt2(current) : "—";
-    if (el("execm2-atr14"))          el("execm2-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
+        // ===== MICRO PATH (LIVE) • card lateral (somente UI) =====
+    const microProb = (prob != null && Number.isFinite(Number(prob))) ? Number(prob) : null;
+    const microTakeNum = (microTake != null && Number.isFinite(Number(microTake))) ? Number(microTake) : null;
+    const etaMicro = (etaMin != null && Number.isFinite(Number(etaMin))) ? Math.round(Number(etaMin)) : null;
 
-    if (el("execm2-micro-take"))     el("execm2-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
-    if (el("execm2-micro-prob"))     el("execm2-micro-prob").textContent     = fmtPct(prob);
-    if (el("execm2-micro-eta"))      el("execm2-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+    const dirPath = (current != null && microTakeNum != null && Number.isFinite(Number(current)))
+      ? (microTakeNum >= Number(current) ? "BUY" : "SELL")
+      : null;
 
-    if (el("execm2-opt-entry"))      el("execm2-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
-    if (el("execm2-pullback-prob"))  el("execm2-pullback-prob").textContent  = fmtPct(pullProb);
+    const sign = (dirPath === "BUY") ? 1 : (dirPath === "SELL") ? -1 : 0;
 
-    if (el("execm2-opt-eta"))        el("execm2-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
-    if (el("execm2-opt-time"))       el("execm2-opt-time").textContent       = (optEta != null) ? optTime : "—";
+    // Path A2 (extensão) — heurístico: 0.125×ATR14, ETA +2
+    const a2Price = (microTakeNum != null && atr14 != null && Number.isFinite(Number(atr14)) && sign !== 0)
+      ? (microTakeNum + sign * Number(atr14) * 0.125)
+      : null;
+
+    const a2Prob = (microProb != null) ? Math.max(0, Math.min(100, microProb * 0.68)) : null;
+    const a2Eta  = (etaMicro != null) ? (etaMicro + 2) : null;
+
+    // Path B (falha antes) — heurístico: prob = 100 - microProb; alvo = espelho 1x1; ETA +1
+    const bProb  = (microProb != null) ? (100 - microProb) : null;
+    const bPrice = (current != null && microTakeNum != null && Number.isFinite(Number(current)))
+      ? (2 * Number(current) - microTakeNum)
+      : null;
+    const bEta   = (etaMicro != null) ? (etaMicro + 1) : null;
+
+    if (el("mpl-current"))  el("mpl-current").textContent  = (current != null) ? fmt2(current) : "—";
+    if (el("mpl-atr14"))    el("mpl-atr14").textContent    = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("mpl-a1-pct"))   el("mpl-a1-pct").textContent   = fmtPct(microProb);
+    if (el("mpl-a1-price")) el("mpl-a1-price").textContent = (microTakeNum != null) ? fmt2(microTakeNum) : "—";
+    if (el("mpl-a1-eta"))   el("mpl-a1-eta").textContent   = (etaMicro != null) ? `~${etaMicro}m` : "—";
+
+    if (el("mpl-a2-pct"))   el("mpl-a2-pct").textContent   = fmtPct(a2Prob);
+    if (el("mpl-a2-price")) el("mpl-a2-price").textContent = (a2Price != null) ? fmt2(a2Price) : "—";
+    if (el("mpl-a2-eta"))   el("mpl-a2-eta").textContent   = (a2Eta != null) ? `~${a2Eta}m` : "—";
+
+    if (el("mpl-b-pct"))    el("mpl-b-pct").textContent    = fmtPct(bProb);
+    if (el("mpl-b-price"))  el("mpl-b-price").textContent  = (bPrice != null) ? fmt2(bPrice) : "—";
+    if (el("mpl-b-eta"))    el("mpl-b-eta").textContent    = (bEta != null) ? `~${bEta}m` : "—";
+    // ===== /MICRO PATH (LIVE) =====
+
 
     // ===== EXEC (MICRO) MINI • PLAN 1x1 (somente UI) =====
     const dir = (current != null && microTake != null && Number.isFinite(current) && Number.isFinite(microTake))
