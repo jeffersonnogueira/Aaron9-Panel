@@ -3664,6 +3664,37 @@
   </div>
 </div>
 <!-- ===== /STOP RISK ===== -->
+<!-- ===== RESPIRO x REVERSÃO (MICRO) — bloco do retângulo amarelo ===== -->
+<div class="prem-breakout-wrap" id="rrv-card" style="margin-top:12px;">
+  <div class="prem-breakout-title">RESPIRO × REVERSÃO (MICRO)</div>
+
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    <!-- RESPIRO -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div style="font-size:12px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:#34d399;">RESPIRO</div>
+      <div id="rrv-respiro-pct" style="font-size:18px; font-weight:950; color:#34d399;">—</div>
+    </div>
+    <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
+      <div id="rrv-respiro-fill" style="height:100%; width:0%; background:rgba(52,211,153,.85);"></div>
+    </div>
+
+    <!-- REVERSÃO -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px;">
+      <div style="font-size:12px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:#fb7185;">REVERSÃO</div>
+      <div id="rrv-reversao-pct" style="font-size:18px; font-weight:950; color:#fb7185;">—</div>
+    </div>
+    <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
+      <div id="rrv-reversao-fill" style="height:100%; width:0%; background:rgba(251,113,133,.85);"></div>
+    </div>
+
+    <!-- leitura -->
+    <div style="margin-top:8px; font-size:12px; line-height:1.5; color:rgba(255,255,255,.92);">
+      <div><span style="opacity:.85;">📌</span> Dominante: <span id="rrv-dominant" style="font-weight:950;">—</span></div>
+      <div style="margin-top:4px;"><span style="opacity:.85;">🧠</span> Leitura: <span id="rrv-reading">—</span></div>
+    </div>
+  </div>
+</div>
+<!-- ===== /RESPIRO x REVERSÃO (MICRO) ===== -->
 
 
       </div>
@@ -4983,7 +5014,7 @@
 
   <script>
 // ======= CONFIG PAINEL (JSON) =======
-const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json?mock=1';
+const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json';
 const REFRESH_MS = 60000; // 1 minuto
 
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
@@ -12121,6 +12152,63 @@ if (current != null && slPrice != null && dirUse) {
     if (el("sr-stop-target-pct")) el("sr-stop-target-pct").textContent = (stopThenMicroPct != null) ? `${stopThenMicroPct.toFixed(2)}%` : "—";
     if (el("sr-after-stop-micro-pct")) el("sr-after-stop-micro-pct").textContent = (stopThenMicroPct != null) ? `${stopThenMicroPct.toFixed(2)}%` : "—";
     if (el("sr-stop-to-micro-eta")) el("sr-stop-to-micro-eta").textContent = (stopToMicro != null) ? `~${Math.round(stopToMicro)}m` : "—";
+    // ===== RESPIRO x REVERSÃO (MICRO) — BLOCO AMARELO =====
+const normPct = (x) => (x == null) ? null : ((x > 0 && x <= 1) ? x * 100 : x);
+
+const respiroPct = normPct(pullProbStats);
+const reversaoPct = normPct(revProb);
+
+if (el("rrv-respiro-pct"))  el("rrv-respiro-pct").textContent  = fmtPct(respiroPct);
+if (el("rrv-reversao-pct")) el("rrv-reversao-pct").textContent = fmtPct(reversaoPct);
+
+if (el("rrv-respiro-fill"))  el("rrv-respiro-fill").style.width  = `${clamp(respiroPct).toFixed(0)}%`;
+if (el("rrv-reversao-fill")) el("rrv-reversao-fill").style.width = `${clamp(reversaoPct).toFixed(0)}%`;
+
+const domEl  = el("rrv-dominant");
+const readEl = el("rrv-reading");
+
+if (domEl || readEl) {
+  const a = (respiroPct != null) ? respiroPct : -1;
+  const b = (reversaoPct != null) ? reversaoPct : -1;
+
+  let dom = "—";
+  let read = "—";
+
+  if (a < 0 && b < 0) {
+    dom = "—";
+    read = "Sem dados.";
+  } else {
+    const high = Math.max(a, b);
+    const diff = Math.abs(a - b);
+
+    if (high < 35) {
+      dom = "NEUTRO";
+      read = "Probabilidades baixas → esperar confirmação do micro.";
+    } else if (diff <= 10) {
+      dom = "CHOP";
+      read = "Respiro e reversão próximos → reduzir tamanho e aguardar.";
+    } else if (a > b) {
+      dom = "RESPIRO";
+      read = "Pullback provável → melhor entrada é no respiro (Optimal Entry).";
+    } else {
+      dom = "REVERSÃO";
+      read = "Risco de inverter → cautela; micro pode falhar antes.";
+    }
+  }
+
+  if (domEl) {
+    domEl.textContent = dom;
+    domEl.style.color =
+      (dom === "RESPIRO") ? "#34d399" :
+      (dom === "REVERSÃO") ? "#fb7185" :
+      (dom === "CHOP") ? "#facc15" :
+      (dom === "NEUTRO") ? "rgba(255,255,255,.8)" : "";
+  }
+
+  if (readEl) readEl.textContent = read;
+}
+// ===== /RESPIRO x REVERSÃO (MICRO) =====
+
     // ===== /STOP RISK =====
 
     // status: SL atingiu ou não
