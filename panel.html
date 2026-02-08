@@ -3409,6 +3409,66 @@
 }
 
 
+/* ===== SL FLEX (Respiro Profundo) — bloco inferior (retângulo amarelo) ===== */
+#slflex-card{ grid-column: 1 / -1; margin-top: 12px; }
+
+#slflex-card .slflex-grid{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0,1fr));
+  gap:10px;
+}
+
+@media (max-width: 980px){
+  #slflex-card .slflex-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+#slflex-prob-respiro{ color: rgba(52,211,153,.95); }
+#slflex-prob-reversao{ color: rgba(251,113,133,.95); }
+
+#slflex-card .slflex-bar-wrap{ margin-top: 10px; }
+
+#slflex-card .slflex-bar{
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  overflow: hidden;
+}
+
+#slflex-card .slflex-fill{
+  height: 100%;
+  width: 0%;
+  background: rgba(250,204,21,.70);
+}
+
+#slflex-card .slflex-marker{
+  position:absolute;
+  top:-5px;
+  width:12px;
+  height:22px;
+  border-radius:8px;
+  background: rgba(96,165,250,.95);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+  left: 0%;
+}
+
+#slflex-card .slflex-marker.p50{ background: rgba(52,211,153,.95); }
+#slflex-card .slflex-marker.p75{ background: rgba(251,113,133,.90); }
+
+#slflex-card .slflex-labels{
+  margin-top: 6px;
+  display:flex;
+  justify-content: space-between;
+  font-size: 10px;
+  opacity: .60;
+}
+
+#slflex-card .slflex-advice{
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: .82;
+}
 
   </style>
 </head>
@@ -3834,6 +3894,58 @@
                 <span style="font-weight:950;">Esperar:</span>
                 <span id="slr-wait" style="color:#facc15; font-weight:900;">—</span>
                 <span style="opacity:.55;"> (t_stop_to_reentry_med)</span>
+                      <!-- ===== SL FLEX (Respiro Profundo) — bloco do retângulo amarelo inferior ===== -->
+      <div class="prem-breakout-wrap" id="slflex-card" style="margin-top:12px; grid-column: 1 / -1;">
+        <div class="prem-breakout-title">SL FLEX · Respiro Profundo (ATR)</div>
+
+        <div class="slflex-grid">
+          <div>
+            <div class="pb-k">Prob Respiro</div>
+            <div class="pb-v" id="slflex-prob-respiro">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Prob Reversão</div>
+            <div class="pb-v" id="slflex-prob-reversao">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Depth P25 (ATR)</div>
+            <div class="pb-v" id="slflex-depth-p25">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Depth P50 (ATR)</div>
+            <div class="pb-v" id="slflex-depth-p50">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Depth P75 (ATR)</div>
+            <div class="pb-v" id="slflex-depth-p75">—</div>
+          </div>
+        </div>
+
+        <div class="slflex-bar-wrap">
+          <div class="slflex-bar">
+            <div class="slflex-fill" id="slflex-fill"></div>
+            <div class="slflex-marker stop" id="slflex-mark-stop" title="SL atual"></div>
+            <div class="slflex-marker p50" id="slflex-mark-p50" title="P50 respiro"></div>
+            <div class="slflex-marker p75" id="slflex-mark-p75" title="P75 respiro"></div>
+          </div>
+
+          <div class="slflex-labels">
+            <span>0 ATR</span><span>1.0</span><span>2.0</span><span>2.5</span>
+          </div>
+        </div>
+
+        <div class="slflex-advice" id="slflex-advice">Leitura: —</div>
+
+        <div class="prem-breakout-note" style="margin-top:2px;">
+          SL atual (ATR): <b id="slflex-stop-atr">—</b> · SL sugerido: <b id="slflex-suggest-mult">—</b> (<span id="slflex-suggest-atr">—</span> ATR)
+        </div>
+      </div>
+      <!-- ===== /SL FLEX ===== -->
+
               </div>
 
               <div>
@@ -12123,6 +12235,64 @@ if (current != null && slPrice != null && dirUse) {
       b.textContent = (riskLevel && stopRiskPct != null)
         ? `Stop Risk: ${riskLevel} (${Math.round(stopRiskPct)}%)`
         : "Stop Risk: —";
+            // ===== SL FLEX (Respiro Profundo) — NOVO BLOCO (retângulo amarelo inferior) =====
+    if (el("slflex-card")) {
+      const rd = exec1x1SL?.respiro_depth_atr || exec1x1SL?.pullback_depth_atr || exec1x1SL?.respiroDepthAtr || null;
+
+      const p25 = asNum(rd?.p25 ?? rd?.p25_atr ?? rd?.q25);
+      const p50 = asNum(rd?.p50 ?? rd?.p50_atr ?? rd?.q50);
+      const p75 = asNum(rd?.p75 ?? rd?.p75_atr ?? rd?.q75);
+
+      const stopAtrNow = asNum(exec1x1SL?.stop_atr ?? exec1x1SL?.sl_atr ?? exec1x1SL?.stopAtr);
+
+      // Probabilidades (usa as mesmas do STOP RISK)
+      if (el("slflex-prob-respiro")) el("slflex-prob-respiro").textContent = (pullProbStats != null) ? fmtPct(pullProbStats) : "—";
+      if (el("slflex-prob-reversao")) el("slflex-prob-reversao").textContent = (revProb != null) ? fmtPct(revProb) : "—";
+
+      if (el("slflex-depth-p25")) el("slflex-depth-p25").textContent = fmt2(p25);
+      if (el("slflex-depth-p50")) el("slflex-depth-p50").textContent = fmt2(p50);
+      if (el("slflex-depth-p75")) el("slflex-depth-p75").textContent = fmt2(p75);
+
+      if (el("slflex-stop-atr")) el("slflex-stop-atr").textContent = fmt2(stopAtrNow);
+
+      // Sugestão de multiplicador (1x1 → 1x1.2/1.5/2.0) baseado no P50
+      let mult = null;
+      if (stopAtrNow != null && stopAtrNow > 0 && p50 != null) {
+        const r = p50 / stopAtrNow;
+        mult = (r <= 1.05) ? 1.0 : (r <= 1.25) ? 1.2 : (r <= 1.55) ? 1.5 : 2.0;
+      }
+
+      const sugAtr = (mult != null && stopAtrNow != null) ? (stopAtrNow * mult) : null;
+
+      if (el("slflex-suggest-mult")) el("slflex-suggest-mult").textContent = (mult != null) ? `1x${mult.toFixed(1)}` : "—";
+      if (el("slflex-suggest-atr")) el("slflex-suggest-atr").textContent = (sugAtr != null) ? fmt2(sugAtr) : "—";
+
+      // Termômetro (0 → 2.5 ATR)
+      const maxAtr = 2.5;
+      const pct = (v) => (v == null || !Number.isFinite(v)) ? null : Math.max(0, Math.min(100, (v / maxAtr) * 100));
+
+      const pStop = pct(stopAtrNow);
+      const pP50  = pct(p50);
+      const pP75  = pct(p75);
+
+      if (el("slflex-fill")) el("slflex-fill").style.width = (pP50 != null) ? `${pP50}%` : "0%";
+      if (el("slflex-mark-stop")) el("slflex-mark-stop").style.left = (pStop != null) ? `calc(${pStop}% - 6px)` : "0%";
+      if (el("slflex-mark-p50")) el("slflex-mark-p50").style.left = (pP50 != null) ? `calc(${pP50}% - 6px)` : "0%";
+      if (el("slflex-mark-p75")) el("slflex-mark-p75").style.left = (pP75 != null) ? `calc(${pP75}% - 6px)` : "0%";
+
+      // Leitura
+      let read = "Leitura: —";
+      if (stopAtrNow != null && p25 != null && p50 != null && p75 != null) {
+        if (stopAtrNow >= p75) read = "Leitura: SL 1x1 OK — difícil tomar stop por respiro.";
+        else if (stopAtrNow >= p50) read = "Leitura: SL 1x1 razoável — respiro profundo às vezes.";
+        else if (stopAtrNow >= p25) read = `Leitura: SL 1x1 apertado — considere SL 1x${(mult ?? 1.2).toFixed(1)} para evitar stops em respiro.`;
+        else read = "Leitura: SL 1x1 MUITO apertado — respiro tende a passar do seu SL.";
+      }
+
+      if (el("slflex-advice")) el("slflex-advice").textContent = read;
+    }
+    // ===== /SL FLEX =====
+
 
       b.style.color =
         (riskLevel === "ALTO") ? "#fb7185" :
