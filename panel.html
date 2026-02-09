@@ -1142,6 +1142,37 @@
   50%  { transform: scale(1.01); box-shadow: 0 0 0 12px rgba(248,113,113,0); }
   100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(248,113,113,0); }
 }
+/* pulsante vermelho (para SL 1x1) */
+.pulse-sl {
+  animation: slTextPulse 1.05s ease-in-out infinite;
+}
+
+@keyframes slTextPulse {
+  0%, 100% {
+    text-shadow: 0 0 0 rgba(248,113,113,0);
+    filter: brightness(1);
+  }
+  50% {
+    text-shadow: 0 0 16px rgba(248,113,113,0.75);
+    filter: brightness(1.25);
+  }
+}
+/* pulsante verde (Premonição Micro LIVE - valor verde) */
+.pulse-micro{
+  display: inline-block;
+  animation: microTextPulse 1.05s ease-in-out infinite;
+}
+
+@keyframes microTextPulse{
+  0%, 100%{
+    text-shadow: 0 0 0 rgba(74,222,128,0);
+    filter: brightness(1);
+  }
+  50%{
+    text-shadow: 0 0 16px rgba(74,222,128,0.75);
+    filter: brightness(1.18);
+  }
+}
 
 /* ====== PATTERN DRAWINGS (PADRÃO DO DIA / MOMENTO) ====== */
 
@@ -2338,6 +2369,55 @@
   height: 240px;
   display:block;
 }
+/* ===== MICRO TIMELINE (substitui canvas no quadro grande) ===== */
+.microtime-panel{
+  min-height: 380px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(900px 280px at 0% 0%, rgba(96,165,250,.10), rgba(0,0,0,0) 60%),
+    rgba(0,0,0,.18);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.microtime-row{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+}
+
+.mt-k{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .65;
+  flex: 0 0 auto;
+}
+
+.mt-v{
+  font-size: 16px;
+  font-weight: 900;
+  color: rgba(255,255,255,.92);
+  text-align: right;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mt-target{ color: rgba(255,208,64,.95); }
+.mt-up{ color: rgba(74,222,128,.95); }
+.mt-down{ color: rgba(248,113,113,.95); }
+.mt-muted{ opacity: .75; font-weight: 800; font-size: 13px; }
+/* ===== /MICRO TIMELINE ===== */
 
 .premonition-kpi{
   margin-top: 10px;
@@ -3027,6 +3107,103 @@
 .prem-kpi-right #prem-readout .rr-v.rr-strong{
   font-size: 18px;
 }
+/* ===== EXEC (MICRO) MINI + PLAN 1x1 (ao lado do readout) ===== */
+.prem-kpi-right #prem-readout{
+  float: left;
+  width: 52%;
+}
+
+#prem-exec-mini{
+  float: right;
+  width: 46%;
+  margin: 10px 0 12px;
+  padding: 10px 10px 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px;
+  background: rgba(0,0,0,.22);
+}
+
+.prem-kpi-right .prem-kpi-right-main,
+.prem-kpi-right .prem-kpi-right-sub{
+  clear: both;
+}
+
+#prem-exec-mini .x-title{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .80;
+  margin-bottom: 8px;
+}
+
+#prem-exec-mini .x-row{
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(255,255,255,.92);
+  margin-bottom: 6px;
+}
+
+#prem-exec-mini .x-row:last-child{ margin-bottom: 0; }
+
+#prem-exec-mini .x-val{
+  color: #ffcc66;
+  font-weight: 950;
+}
+
+#prem-exec-mini .x-dim{ opacity: .55; }
+
+@media (max-width: 980px){
+  .prem-kpi-right #prem-readout,
+  #prem-exec-mini{
+    float: none;
+    width: 100%;
+  }
+}
+/* ===== /EXEC (MICRO) MINI + PLAN 1x1 ===== */
+
+/* ===== PREM: TOPCARDS (Readout + Exec Micro lado a lado) ===== */
+.prem-topcards{
+  display:flex;
+  gap:12px;
+  align-items:stretch;
+  flex-wrap:wrap; /* evita quebrar em telas menores */
+}
+
+.prem-topcards #prem-readout{
+  margin: 0;             /* remove o margin antigo dentro do layout novo */
+  flex: 0 0 260px;       /* largura fixa do quadro do "REGIME/REVERSÃO/..." */
+}
+
+.execm-side-card{
+  flex: 1 1 360px;       /* cresce e quebra se precisar */
+  min-width: 360px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+}
+
+.execm-side-title{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .70;
+  margin-bottom: 8px;
+}
+
+.execm-side-body{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  font-size:16px;
+  line-height:1.25;
+}
+
+.execm-side-body .ek{ font-weight:950; }
+.execm-side-body .ev{ color:#ffcc66; font-weight:900; }
+.execm-side-body .pipe{ opacity:.55; margin:0 6px; }
+.execm-side-body .muted{ opacity:.55; font-size:14px; }
 
 /* deixa o painel direito mais “TV-like” */
 .premonition-panel .label{
@@ -3281,6 +3458,66 @@
 }
 
 
+/* ===== SL FLEX (Respiro Profundo) — bloco inferior (retângulo amarelo) ===== */
+#slflex-card{ grid-column: 1 / -1; margin-top: 12px; }
+
+#slflex-card .slflex-grid{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0,1fr));
+  gap:10px;
+}
+
+@media (max-width: 980px){
+  #slflex-card .slflex-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+#slflex-prob-respiro{ color: rgba(52,211,153,.95); }
+#slflex-prob-reversao{ color: rgba(251,113,133,.95); }
+
+#slflex-card .slflex-bar-wrap{ margin-top: 10px; }
+
+#slflex-card .slflex-bar{
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  overflow: hidden;
+}
+
+#slflex-card .slflex-fill{
+  height: 100%;
+  width: 0%;
+  background: rgba(250,204,21,.70);
+}
+
+#slflex-card .slflex-marker{
+  position:absolute;
+  top:-5px;
+  width:12px;
+  height:22px;
+  border-radius:8px;
+  background: rgba(96,165,250,.95);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+  left: 0%;
+}
+
+#slflex-card .slflex-marker.p50{ background: rgba(52,211,153,.95); }
+#slflex-card .slflex-marker.p75{ background: rgba(251,113,133,.90); }
+
+#slflex-card .slflex-labels{
+  margin-top: 6px;
+  display:flex;
+  justify-content: space-between;
+  font-size: 10px;
+  opacity: .60;
+}
+
+#slflex-card .slflex-advice{
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: .82;
+}
 
   </style>
 </head>
@@ -3489,14 +3726,37 @@
       <div class="premonition-chart">
        
 
-        <canvas id="prem-canvas" class="premonition-canvas" width="900" height="260"></canvas>
+                <!-- ===== MICRO TIMELINE (substitui o quadro do canvas) ===== -->
+        <div class="microtime-panel" id="microtime-panel">
 
-        <div class="premonition-kpi">
-          <span class="kpi-label" id="prem-kpi-label">Prob. romper —</span>
-          <span class="kpi-time" id="prem-kpi-time">—</span>
-          <span class="kpi-ampm" id="prem-kpi-ampm"></span>
-          <span class="kpi-prob" id="prem-kpi-prob">—</span>
+          <div class="microtime-row microtime-future">
+            <div class="mt-k">FUTURE (NEXT)</div>
+            <div class="mt-v" id="mt-future">—</div>
+          </div>
+
+          <div class="microtime-row microtime-max">
+            <div class="mt-k">MICRO LIVE — MAX</div>
+            <div class="mt-v" id="mt-micro-max">—</div>
+          </div>
+
+          <div class="microtime-row microtime-now">
+            <div class="mt-k">MICRO LIVE — NOW</div>
+            <div class="mt-v" id="mt-micro-now">—</div>
+          </div>
+
+          <div class="microtime-row microtime-current">
+            <div class="mt-k">CURRENT</div>
+            <div class="mt-v" id="mt-current">—</div>
+          </div>
+
+          <div class="microtime-row microtime-past">
+            <div class="mt-k">PAST</div>
+            <div class="mt-v" id="mt-past">—</div>
+          </div>
+
         </div>
+        <!-- ===== /MICRO TIMELINE ===== -->
+
                 <div class="prem-signal-wrap" id="prem-signal-wrap">
           <button class="prem-signal-btn prem-signal-off" id="prem-signal-btn" type="button" disabled>
             NÃO FAÇA NADA
@@ -3505,147 +3765,73 @@
             Filtro: AÇÃO=— • Micro=— (≥75%)
           </div>
         </div>
-                <div class="exec-gate" id="exec-gate">
-          <div class="eg-head">
-            <div class="eg-title">EXEC GATE (Micro)</div>
-            <div class="eg-mode">
-              <button class="eg-mode-btn is-on" id="eg-mode-1" type="button">1-line</button>
-              <button class="eg-mode-btn" id="eg-mode-3" type="button">3-line</button>
-            </div>
-          </div>
+                <<!-- ===== STOP RISK (1x1) — substitui EXEC GATE / MINI / BREAKOUT ===== -->
+<div class="prem-breakout-wrap" id="stop-risk-card" style="margin-top:10px;">
+  <!-- ===== SL FLEX DOCK (mover card pra área grande de baixo) ===== -->
+<div id="slflex-dock" style="margin-top:12px;"></div>
+<!-- ===== /SL FLEX DOCK ===== -->
 
-          <div class="eg-metrics">
-            <div class="eg-kv"><span class="k">ATR14</span><span class="v" id="eg-atr14">—</span></div>
-            <div class="eg-kv"><span class="k">MinMove</span><span class="v" id="eg-minmove">—</span></div>
-            <div class="eg-kv"><span class="k">Dist→Micro</span><span class="v" id="eg-dist">—</span></div>
-            <div class="eg-kv eg-edge"><span class="k">EDGE</span><span class="v" id="eg-edge">—</span></div>
-          </div>
+  <div class="prem-breakout-title">STOP RISK (1x1)</div>
 
-          <div class="eg-microline">
-            <div class="eg-kv"><span class="k">Micro Take</span><span class="v eg-strong" id="eg-micro-take">—</span></div>
-            <div class="eg-kv"><span class="k">Prob</span><span class="v" id="eg-micro-prob">—</span></div>
-            <div class="eg-kv"><span class="k">ETA</span><span class="v" id="eg-micro-eta">—</span></div>
-          </div>
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+    <div style="flex:1 1 auto;">
+      <div style="font-size:12px; opacity:.75; letter-spacing:.08em; text-transform:uppercase;">
+        Chance de bater SL antes do micro
+      </div>
 
-          <div class="eg-inputs">
-            <div class="eg-in">
-              <label class="eg-lbl">Risk %</label>
-              <input id="eg-riskpct" class="eg-input" type="number" step="0.05" value="0.50" />
-            </div>
+      <div style="display:flex; align-items:baseline; gap:10px; margin-top:4px;">
+        <div id="sr-stop-first-pct" style="font-size:26px; font-weight:950; color:#facc15;">—</div>
+        <div id="sr-risk-badge" style="font-size:12px; font-weight:900; opacity:.85;">Stop Risk: —</div>
+      </div>
 
-            <div class="eg-in">
-              <label class="eg-lbl">Stop rule</label>
-              <div class="eg-stop-row">
-                <select id="eg-stop-mode" class="eg-select">
-                  <option value="atr" selected>ATR ×</option>
-                  <option value="cents">$ cents</option>
-                </select>
-                <input id="eg-stop-atr-mult" class="eg-input" type="number" step="0.05" value="0.80" />
-                <input id="eg-stop-cents" class="eg-input" type="number" step="0.01" value="0.31" style="display:none;" />
-              </div>
-            </div>
+      <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:8px;">
+        <div id="sr-meter-fill" style="height:100%; width:0%; background:rgba(250,204,21,.85);"></div>
+      </div>
+    </div>
+  </div>
 
-            <div class="eg-in">
-              <label class="eg-lbl">Conta A</label>
-              <input id="eg-acct-1" class="eg-input" type="number" step="100" value="25000" />
-            </div>
+  <div style="margin-top:10px; font-size:12px; line-height:1.5; color:rgba(255,255,255,.92);">
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🧠</span> <span id="sr-market-msg">—</span></div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">✅</span> Melhor: esperar <span style="font-weight:900;">Optimal Entry</span></div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🟡</span> Se entrar mesmo assim: <span style="font-weight:900;">Respiro ON</span> (+<span id="sr-respiro-atr" style="font-weight:900;">—</span> ATR)</div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🔁</span> Se tomar SL: reentrada típica em <span id="sr-stop-reentry-eta" style="font-weight:900; color:#facc15;">—</span>, chance stop→target <span id="sr-stop-target-pct" style="font-weight:900; color:#facc15;">—</span></div>
+    <div style="margin-bottom:6px;"><span style="opacity:.85;">🎯</span> Se bater SL, chance de depois ir pro micro: <span id="sr-after-stop-micro-pct" style="font-weight:900; color:#facc15;">—</span></div>
+    <div><span style="opacity:.85;">⏱️</span> Tempo típico depois do SL até micro: <span id="sr-stop-to-micro-eta" style="font-weight:900; color:#facc15;">—</span></div>
+  </div>
+</div>
+<!-- ===== /STOP RISK ===== -->
+<!-- ===== RESPIRO x REVERSÃO (MICRO) — bloco do retângulo amarelo ===== -->
+<div class="prem-breakout-wrap" id="rrv-card" style="margin-top:12px;">
+  <div class="prem-breakout-title">RESPIRO × REVERSÃO (MICRO)</div>
 
-            <div class="eg-in eg-hide-1line">
-              <label class="eg-lbl">Conta B</label>
-              <input id="eg-acct-2" class="eg-input" type="number" step="100" value="50000" />
-            </div>
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    <!-- RESPIRO -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div style="font-size:12px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:#34d399;">RESPIRO</div>
+      <div id="rrv-respiro-pct" style="font-size:18px; font-weight:950; color:#34d399;">—</div>
+    </div>
+    <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
+      <div id="rrv-respiro-fill" style="height:100%; width:0%; background:rgba(52,211,153,.85);"></div>
+    </div>
 
-            <div class="eg-in eg-hide-1line">
-              <label class="eg-lbl">Conta C</label>
-              <input id="eg-acct-3" class="eg-input" type="number" step="100" value="100000" />
-            </div>
-          </div>
+    <!-- REVERSÃO -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px;">
+      <div style="font-size:12px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:#fb7185;">REVERSÃO</div>
+      <div id="rrv-reversao-pct" style="font-size:18px; font-weight:950; color:#fb7185;">—</div>
+    </div>
+    <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
+      <div id="rrv-reversao-fill" style="height:100%; width:0%; background:rgba(251,113,133,.85);"></div>
+    </div>
 
-          <div class="eg-table-wrap">
-            <table class="eg-table">
-              <thead>
-                <tr>
-                  <th>Conta</th>
-                  <th>Risk %</th>
-                  <th>Shares</th>
-                  <th>Stop ($)</th>
-                  <th>Stop (ATR)</th>
-                  <th>Risk $</th>
-                  <th>Take = Micro ($)</th>
-                  <th>Reward $</th>
-                  <th>R:R</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr id="eg-row-1">
-                  <td class="eg-td-acct" id="eg-acct-txt-1">25,000</td>
-                  <td id="eg-riskpct-txt-1">0.50%</td>
-                  <td id="eg-shares-1">—</td>
-                  <td id="eg-stopusd-1">—</td>
-                  <td id="eg-stopatr-1">—</td>
-                  <td id="eg-riskusd-1">—</td>
-                  <td id="eg-takeusd-1">—</td>
-                  <td id="eg-rewardusd-1">—</td>
-                  <td id="eg-rr-1">—</td>
-                </tr>
+    <!-- leitura -->
+    <div style="margin-top:8px; font-size:12px; line-height:1.5; color:rgba(255,255,255,.92);">
+      <div><span style="opacity:.85;">📌</span> Dominante: <span id="rrv-dominant" style="font-weight:950;">—</span></div>
+      <div style="margin-top:4px;"><span style="opacity:.85;">🧠</span> Leitura: <span id="rrv-reading">—</span></div>
+    </div>
+  </div>
+</div>
+<!-- ===== /RESPIRO x REVERSÃO (MICRO) ===== -->
 
-                <tr id="eg-row-2" class="eg-hide-1line">
-                  <td class="eg-td-acct" id="eg-acct-txt-2">50,000</td>
-                  <td id="eg-riskpct-txt-2">0.50%</td>
-                  <td id="eg-shares-2">—</td>
-                  <td id="eg-stopusd-2">—</td>
-                  <td id="eg-stopatr-2">—</td>
-                  <td id="eg-riskusd-2">—</td>
-                  <td id="eg-takeusd-2">—</td>
-                  <td id="eg-rewardusd-2">—</td>
-                  <td id="eg-rr-2">—</td>
-                </tr>
-
-                <tr id="eg-row-3" class="eg-hide-1line">
-                  <td class="eg-td-acct" id="eg-acct-txt-3">100,000</td>
-                  <td id="eg-riskpct-txt-3">0.50%</td>
-                  <td id="eg-shares-3">—</td>
-                  <td id="eg-stopusd-3">—</td>
-                  <td id="eg-stopatr-3">—</td>
-                  <td id="eg-riskusd-3">—</td>
-                  <td id="eg-takeusd-3">—</td>
-                  <td id="eg-rewardusd-3">—</td>
-                  <td id="eg-rr-3">—</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="eg-foot" id="eg-foot">—</div>
-        </div>
-
-                <div class="prem-breakout-wrap" id="prem-breakout-wrap">
-                  <div class="prem-breakout-title">ROMPIMENTO • RETEST</div>
-
-                  <div class="prem-breakout-grid">
-                    <div class="pb">
-                      <div class="pb-k">BREAKOUT</div>
-                      <div class="pb-v" id="prem-breakout-status">—</div>
-                    </div>
-
-                    <div class="pb">
-                      <div class="pb-k">RETEST</div>
-                      <div class="pb-v" id="prem-retest-status">—</div>
-                    </div>
-
-                    <div class="pb">
-                      <div class="pb-k">CONFIRM.</div>
-                      <div class="pb-v" id="prem-retest-confirm">—</div>
-                    </div>
-
-                    <div class="pb">
-                      <div class="pb-k">NÍVEL</div>
-                      <div class="pb-v" id="prem-breakout-level">—</div>
-                    </div>
-                  </div>
-
-                  <div class="prem-breakout-note" id="prem-breakout-note">—</div>
-                </div>
 
       </div>
 
@@ -3653,14 +3839,61 @@
         <!-- KPI grande (estilo mockup) -->
 <div class="prem-kpi-right">
   <div class="prem-kpi-right-title" id="prem-right-title">Prob.</div>
-        <div class="rr-readout" id="prem-readout">
-      <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="prem-regime">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">RESPIRO</div><div class="rr-v" id="prem-respiro-full">—</div></div>
-      <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="prem-consolidacao">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
-      <div class="rr-row rr-primary"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
-    </div>
+                <div class="prem-topcards">
+          <div class="rr-readout" id="prem-readout">
+            <div class="rr-row"><div class="rr-k">REGIME</div><div class="rr-v" id="prem-regime">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">REVERSÃO</div><div class="rr-v" id="prem-reversao-full">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">RESPIRO</div><div class="rr-v" id="prem-respiro-full">—</div></div>
+            <div class="rr-row"><div class="rr-k">CONSOLIDAÇÃO</div><div class="rr-v" id="prem-consolidacao">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">CONTINUAÇÃO</div><div class="rr-v" id="prem-continuacao">—</div></div>
+            <div class="rr-row rr-primary"><div class="rr-k">AÇÃO</div><div class="rr-v rr-strong" id="prem-acao-full">—</div></div>
+          </div>
+
+                    <!-- ===== NOVO QUADRO AO LADO (MICRO PATH LIVE) ===== -->
+          <div class="execm-side-card" id="execm-side-card">
+            <div class="execm-side-title">MICRO PATH (LIVE)</div>
+            <div class="execm-side-body">
+
+              <div class="execm-line">
+                <span class="ek">Current:</span>
+                <span id="mpl-current" class="ev">—</span>
+                <span class="pipe">|</span>
+                <span class="ek">ATR14:</span>
+                <span id="mpl-atr14" class="ev">—</span>
+              </div>
+
+              <div class="execm-line">
+                <span class="ek">Path A:</span>
+                <span id="mpl-a1-pct" class="ev" style="color:var(--success); font-weight:900;">—</span>
+                <span class="ek"> tocar</span>
+                <span id="mpl-a1-price" class="ev" style="color:var(--success); font-weight:900;">—</span>
+                <span class="muted"> (<span id="mpl-a1-eta" class="ev">—</span>)</span>
+              </div>
+
+              <div class="execm-line" style="padding-left:14px;">
+                <span class="pipe">→</span>
+                <span class="ek">depois:</span>
+                <span id="mpl-a2-pct" class="ev" style="color:#facc15; font-weight:900;">—</span>
+                <span class="ek"> estender</span>
+                <span id="mpl-a2-price" class="ev" style="color:#facc15; font-weight:900;">—</span>
+                <span class="muted"> (<span id="mpl-a2-eta" class="ev">—</span>)</span>
+              </div>
+
+              <div class="execm-line">
+                <span class="ek">Path B:</span>
+                <span id="mpl-b-pct" class="ev" style="color:var(--danger); font-weight:900;">—</span>
+                <span class="ek"> falhar antes</span>
+                <span class="pipe">→</span>
+                <span id="mpl-b-price" class="ev" style="color:var(--danger); font-weight:900;">—</span>
+                <span class="muted"> (<span id="mpl-b-eta" class="ev">—</span>)</span>
+                <span class="muted"> (rejeição/flush)</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
 
 
 
@@ -3707,6 +3940,118 @@
           <div class="label">Base</div>
           <div class="value muted" id="prem-base">—</div>
         </div>
+                <!-- ===== EXEC (MICRO) - bloco do retângulo amarelo ===== -->
+        <div id="prem-exec-micro" style="padding-top:12px; margin-top:12px; border-top:1px solid rgba(255,255,255,.06);">
+                              <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.80; margin-bottom:10px;">
+            PLANO “SE BATER STOP” (REENTRADA)
+          </div>
+
+                    <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
+            <div>
+              <span style="font-weight:950;">Most optimal entry:</span>
+              <span id="slr-optentry" style="color:#60a5fa; font-weight:900;">—</span>
+            </div>
+
+            <div>
+              <span style="font-weight:950;">SL 1x1:</span>
+              <span id="slr-sl" class="pulse-sl" style="color:var(--danger); font-weight:900;">—</span>
+              <span style="opacity:.55;"> | </span>
+              <span style="font-weight:950;">Status:</span>
+              <span id="slr-status" style="font-weight:950;">—</span>
+            </div>
+
+
+            <div id="slr-rule" style="font-size:20px; line-height:1.45; opacity:.78;">—</div>
+
+            <div style="font-size:24px; line-height:1.5;">
+              <div><span style="font-weight:950;">Quando SL atingir:</span></div>
+
+              <div>
+                <span style="font-weight:950;">Esperar:</span>
+                <span id="slr-wait" style="color:#facc15; font-weight:900;">—</span>
+                <span style="opacity:.55;"> (t_stop_to_reentry_med)</span>
+                      <!-- ===== SL FLEX (Respiro Profundo) — bloco do retângulo amarelo inferior ===== -->
+      <div class="prem-breakout-wrap" id="slflex-card" style="margin-top:12px; grid-column: 1 / -1;">
+        <div class="prem-breakout-title">SL FLEX · Respiro Profundo (ATR)</div>
+
+        <div class="slflex-grid">
+          <div>
+            <div class="pb-k">Prob Respiro</div>
+            <div class="pb-v" id="slflex-prob-respiro">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Prob Reversão</div>
+            <div class="pb-v" id="slflex-prob-reversao">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Depth P25 (ATR)</div>
+            <div class="pb-v" id="slflex-depth-p25">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Depth P50 (ATR)</div>
+            <div class="pb-v" id="slflex-depth-p50">—</div>
+          </div>
+
+          <div>
+            <div class="pb-k">Depth P75 (ATR)</div>
+            <div class="pb-v" id="slflex-depth-p75">—</div>
+          </div>
+        </div>
+
+        <div class="slflex-bar-wrap">
+          <div class="slflex-bar">
+            <div class="slflex-fill" id="slflex-fill"></div>
+            <div class="slflex-marker stop" id="slflex-mark-stop" title="SL atual"></div>
+            <div class="slflex-marker p50" id="slflex-mark-p50" title="P50 respiro"></div>
+            <div class="slflex-marker p75" id="slflex-mark-p75" title="P75 respiro"></div>
+          </div>
+
+          <div class="slflex-labels">
+            <span>0 ATR</span><span>1.0</span><span>2.0</span><span>2.5</span>
+          </div>
+        </div>
+
+        <div class="slflex-advice" id="slflex-advice">Leitura: —</div>
+
+        <div class="prem-breakout-note" style="margin-top:2px;">
+          SL atual (ATR): <b id="slflex-stop-atr">—</b> · SL sugerido: <b id="slflex-suggest-mult">—</b> (<span id="slflex-suggest-atr">—</span> ATR)
+        </div>
+      </div>
+      <!-- ===== /SL FLEX ===== -->
+
+              </div>
+
+              <div>
+                <span style="font-weight:950;">Reentrada:</span>
+                <span id="slr-reentry" style="color:#facc15; font-weight:900;">—</span>
+                <span id="slr-reentry-note" style="opacity:.55;"></span>
+              </div>
+
+              <div>
+                <span style="font-weight:950;">TP travado:</span>
+                <span id="slr-tp" style="color:#facc15; font-weight:900;">—</span>
+              </div>
+
+              <div>
+                <span style="font-weight:950;">SL 1x1 reentrada:</span>
+                <span id="slr-resl" style="color:#facc15; font-weight:900;">—</span>
+              </div>
+
+              <div>
+                <span style="font-weight:950;">Chance stop→target:</span>
+                <span id="slr-chance" style="color:#facc15; font-weight:900;">—</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ===== /EXEC (MICRO) ===== -->
+
       </div>
     </div>
   </div>
@@ -5671,14 +6016,24 @@ function a10UpdateExecGateMicroSizing(payload, opts){
       digest.micro?.target, digest.micro?.take
     );
 
-    // ATR14 (tenta pegar do digest; fallback: inputs existentes)
+        // ATR14 (tenta pegar do digest; fallback: inputs existentes)
     const atr14 = num(
+      panel.atr14, panel.atr_14,
+      panel.indicators?.atr14, panel.indicators?.ATR14,
+      panel.metrics?.atr14,
+
+      ui.atr14, ui.atr_14,
+      ui.indicators?.atr14, ui.indicators?.ATR14,
+      ui.metrics?.atr14,
+
       digest.atr14, digest.atr_14,
       digest.indicators?.atr14, digest.indicators?.ATR14,
       digest.metrics?.atr14,
+
       document.getElementById("sb-atr-value")?.value,
       document.getElementById("atr-value-input")?.value
     );
+
 
     // Custos (defaults que batem com seu exemplo: 0.01 + 0.01 + 0.06 = 0.08)
     const spread  = num(digest.spread,  digest.costs?.spread,  panel.spread,  ui.spread)  ?? 0.01;
@@ -5907,6 +6262,187 @@ function a10UpdatePremBreakoutBox(digest){
 
   set("prem-breakout-note", note);
 }
+function a10UpdateMicroTimeline(payload, opts = {}){
+  try{
+    const panel  = payload?.panel || payload || {};
+    const digest = payload?.digest || {};
+    const ui     = payload?.ui || {};
+
+    const bw =
+      opts.bw ||
+      digest.breakout_window_card || panel.breakout_window_card ||
+      digest.breakout_window || panel.breakout_window ||
+      null;
+
+    const setHTML = (id, html) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = (html === null || html === undefined || html === "") ? "—" : String(html);
+    };
+
+    const esc = (s) => String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const fmt2 = (n) => (n == null ? "—" : Number(n).toFixed(2));
+    const fmtPct = (n) => (n == null ? "—" : `${Math.round(Number(n))}%`);
+    const fmtMin = (n) => (n == null ? "—" : `~${Math.round(Number(n))}m`);
+
+    // CURRENT PRICE (prioridade: opts -> payload -> UI)
+    const currentPx =
+      num(opts.currentPx) ??
+      num(panel.price_now) ?? num(ui.price_now) ?? num(digest.price_now) ??
+      num(document.getElementById("prem-head-current-price")?.textContent) ??
+      null;
+
+    const currentPxTxt = (currentPx != null) ? fmt2(currentPx) : "—";
+
+    // ===== FUTURE (NEXT) =====
+    const futureTarget = num(bw?.trigger_price);
+    const futureProb   = num(bw?.prob_until_end_pct);
+    const futureEta    = num(bw?.median_minutes);
+    const futureArrow  = (bw?.dir === "DOWN") ? "↓" : (bw?.dir === "UP") ? "↑" : "→";
+    const futureArrowCls = (futureArrow === "↑") ? "mt-up" : (futureArrow === "↓") ? "mt-down" : "mt-muted";
+
+    const futureHtml = (futureTarget != null || futureProb != null || futureEta != null)
+      ? `<span class="mt-muted">${esc(fmtMin(futureEta))}</span> • <span class="mt-muted">${esc(fmtPct(futureProb))}</span> • Target <span class="mt-target">${esc(fmt2(futureTarget))}</span> <span class="${futureArrowCls}">${futureArrow}</span>`
+      : "—";
+
+    setHTML("mt-future", futureHtml);
+
+    // ===== MICRO LIVE — NOW =====
+    const microTarget =
+      num(opts.microTarget) ??
+      num(digest.micro_target) ?? num(digest.micro_take) ??
+      num(panel.micro_target) ?? num(panel.micro_take) ??
+      null;
+
+    const microProb =
+      num(opts.microProb) ??
+      num(digest.micro_prob_pct) ?? num(panel.micro_prob_pct) ??
+      (window.__A10_PREM_MICRO_PCT != null ? num(window.__A10_PREM_MICRO_PCT) : null);
+
+    const microEta =
+      num(opts.microEtaMin) ??
+      num(digest.micro_eta_min) ?? num(digest.eta_micro_min) ??
+      num(panel.micro_eta_min) ?? num(panel.eta_micro_min) ??
+      num(opts.etaMin) ??
+      null;
+
+    const microArrow = (microTarget != null && currentPx != null)
+      ? (microTarget > currentPx ? "↑" : (microTarget < currentPx ? "↓" : "→"))
+      : "→";
+    const microArrowCls = (microArrow === "↑") ? "mt-up" : (microArrow === "↓") ? "mt-down" : "mt-muted";
+
+    const microNowHtml = (microTarget != null || microProb != null || microEta != null)
+      ? `<span class="mt-muted">${esc(fmtMin(microEta))}</span> • <span class="mt-muted">${esc(fmtPct(microProb))}</span> • Target <span class="mt-target">${esc(fmt2(microTarget))}</span> <span class="${microArrowCls}">${microArrow}</span>`
+      : "—";
+
+    setHTML("mt-micro-now", microNowHtml);
+
+    // ===== MICRO LIVE — MAX (tracking) =====
+    const nowMs = Date.now();
+
+    if (microTarget != null && currentPx != null){
+      const dirKey = (microArrow === "↓") ? "down" : (microArrow === "↑") ? "up" : "flat";
+      const max = window.__A10_MICRO_LIVE_MAX__ || null;
+
+      const better =
+        !max ||
+        max.dir !== dirKey ||
+        (dirKey === "up"   && microTarget > max.target) ||
+        (dirKey === "down" && microTarget < max.target) ||
+        (dirKey === "flat" && microProb != null && microProb > (max.prob ?? -1));
+
+      if (better){
+        window.__A10_MICRO_LIVE_MAX__ = {
+          dir: dirKey,
+          target: microTarget,
+          prob: microProb,
+          eta: microEta,
+          seenAt: nowMs
+        };
+      }
+    }
+
+    const fmtAgo = (ms) => {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      if (m <= 0) return `${r}s`;
+      return `${m}m${String(r).padStart(2,"0")}s`;
+    };
+
+    const max = window.__A10_MICRO_LIVE_MAX__ || null;
+    if (max && max.target != null){
+      const age = fmtAgo(nowMs - (max.seenAt ?? nowMs));
+      const arrow = (max.dir === "down") ? "↓" : (max.dir === "up") ? "↑" : "→";
+      const arrowCls = (arrow === "↑") ? "mt-up" : (arrow === "↓") ? "mt-down" : "mt-muted";
+
+      const maxHtml =
+        `<span class="mt-target">${esc(fmt2(num(max.target)))}</span> <span class="${arrowCls}">${arrow}</span>` +
+        ` • <span class="mt-muted">${esc(fmtPct(num(max.prob)))}</span>` +
+        ` • <span class="mt-muted">${esc(fmtMin(num(max.eta)))}</span>` +
+        ` • <span class="mt-muted">há ${esc(age)}</span>`;
+
+      setHTML("mt-micro-max", maxHtml);
+    } else {
+      setHTML("mt-micro-max", "—");
+    }
+
+    // ===== CURRENT =====
+    const timeStr = (() => {
+      try{
+        return new Date().toLocaleTimeString("en-US", {
+          hour:"numeric", minute:"2-digit", hour12:true, timeZone:"America/Denver"
+        });
+      }catch(_e){
+        return new Date().toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit", hour12:true });
+      }
+    })();
+
+    setHTML("mt-current", `<span class="mt-target">${esc(currentPxTxt)}</span> • <span class="mt-muted">${esc(timeStr)}</span>`);
+
+    // ===== PAST (retest / SR proxy) =====
+    const sf = digest.shape_focus || {};
+    const sr = digest.sr_proxy || {};
+    const f  = digest.features || {};
+
+    const conf = num(sf.confidence_pct) ?? num(ui.confidence_pct);
+    const lvl  = num(sr.breakout_level);
+    const low  = num(sr.recent_low);
+    const high = num(sr.recent_high);
+
+    const retUp  = !!f.breakout_up_with_retest;
+    const retDn  = !!f.breakout_down_with_retest;
+    const confUp = !!f.breakout_up_with_retest_confirmed;
+    const confDn = !!f.breakout_down_with_retest_confirmed;
+
+    let pastLabel = "SR";
+    if (confUp || confDn) pastLabel = "Retest confirmado";
+    else if (retUp || retDn) pastLabel = "Retest";
+
+    const pastLevelTxt =
+      (lvl != null) ? fmt2(lvl) :
+      ((low != null || high != null) ? `${fmt2(low)} — ${fmt2(high)}` : "—");
+
+    const pastHtml =
+      `${esc(pastLabel)} <span class="mt-target">${esc(pastLevelTxt)}</span>` +
+      (conf != null ? ` • <span class="mt-muted">${esc(fmtPct(conf))}</span>` : "");
+
+    setHTML("mt-past", pastHtml);
+
+  }catch(_e){
+    // não quebra UI
+  }
+}
 
 function updatePremonitionPanel(payload){
   try{
@@ -6103,7 +6639,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("prem-kpi-label", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
     setText("prem-kpi-time", t.hhmm || "—");
     setText("prem-kpi-ampm", t.ampm || "");
-    (document.getElementById("prem-kpi-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
+    (document.getElementById("prem-kpi-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span class="pulse-micro" style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
 
     // espelha KPI grande no painel direito (mockup)
     setText("prem-right-title", (lang === "en") ? `Prob. ${verbEN} by` : `Prob. ${verbPT} até`);
@@ -6122,7 +6658,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 
     setText("prem-right-time", t.hhmm || "—");
     setText("prem-right-ampm", t.ampm || "");
-    (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
+    (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span class="pulse-micro" style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
     setText("prem-right-eta", (etaMin != null) ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`) : "—");
 
 
@@ -6149,7 +6685,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 
     const badge = bw?.source ? `${bw.source} · ${dir || "—"}` : (dir || "—");
     setText("prem-badge", badge);
-
+        try{ a10UpdateMicroTimeline(payload, { bw, etaMin, currentPx: currentPxRaw }); }catch(_e){}
     // --------- MINI CHART (candles) + cruz X/Y ----------
     const canvas = document.getElementById("prem-canvas");
     if (canvas){
@@ -6541,9 +7077,12 @@ function renderAll(data) {
     "panel.digest.top_respiro_de_ui",
   ], "NONE");
 
-  const respiroLine = (topRespiro === "YES")
+    const respiroLine = (topRespiro === "YES")
     ? `YES (de ${topRespiroDe})`
-    : `NO (NONE)`;
+    : ((topRespiroDe && String(topRespiroDe).trim() !== "" && String(topRespiroDe).toUpperCase() !== "NONE" && String(topRespiroDe) !== "—")
+        ? `NO (de ${topRespiroDe})`
+        : `NO (NONE)`);
+
 
   const topActionPT = pick(data, [
     "ui.top_action_pt",
@@ -11126,13 +11665,27 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
     return { tag:'OFF HOURS', range:'—', msg:'OFF ⚠️ — fora das janelas institucionais', tone:'off' };
   }
 
-  function paint(){
+    function paint(){
     const mins = getMtMinutesNow();
     const w = pickWindow(mins);
 
     elTag.textContent = w.tag;
-    elRange.textContent = w.range;
+
+    const nowRange = (() => {
+      try{
+        return new Intl.DateTimeFormat('en-US', {
+          timeZone: 'America/Denver',
+          hour: 'numeric',
+          minute: '2-digit'
+        }).format(new Date()) + ' MT';
+      }catch(_e){
+        return '—';
+      }
+    })();
+
+    elRange.textContent = (w.range && w.range !== '—') ? w.range : nowRange;
     elMsg.textContent = w.msg;
+
 
     elWrap.classList.remove('inst-on','inst-off','inst-caution');
     if (w.tone === 'on') elWrap.classList.add('inst-on');
@@ -11636,6 +12189,547 @@ renderOptions("");
   }
 })();
 </script>
+<script>
+(function(){
+  "use strict";
+
+  function el(id){ return document.getElementById(id); }
+  function t(id){ return (el(id)?.textContent || "").trim(); }
+  function numFrom(s){
+    const m = String(s || "").match(/-?\d+(?:\.\d+)?/);
+    return m ? Number(m[0]) : null;
+  }
+  function fmt2(n){ return (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(2); }
+  function fmtPct(n){ return (n == null || !Number.isFinite(n)) ? "—" : `${Math.round(Number(n))}%`; }
+
+  function fmtTimeMT(date){
+    try{
+      // MT = America/Denver
+      return new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Denver",
+        hour: "numeric",
+        minute: "2-digit"
+      }).format(date);
+    }catch(_e){
+      const hh = String(date.getHours()).padStart(2,"0");
+      const mm = String(date.getMinutes()).padStart(2,"0");
+      return `${hh}:${mm}`;
+    }
+  }
+
+  function updateExecMicroBox(){
+    if (!el("prem-exec-micro")) return;
+    // Current (pega do KPI da direita ou do header)
+    const current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
+
+    // Payload & ctx (não depende do bloco do retângulo amarelo)
+    const payload = window.__AARON_LAST_PAYLOAD__ || {};
+    const panel   = payload.panel || payload || {};
+    const digest  = payload.digest || {};
+    const ctx     = window.__A10_EG_CTX || {};
+
+    const numPick = (...vals) => {
+      for (const v of vals) {
+        if (v === null || v === undefined) continue;
+        const n = Number(v);
+        if (Number.isFinite(n)) return n;
+      }
+      return null;
+    };
+
+    const exec1x1 =
+      panel.exec_1x1 ||
+      payload.exec_1x1 ||
+      digest.exec_1x1 ||
+      payload.digest?.exec_1x1 ||
+      payload.ui?.exec_1x1 ||
+      null;
+
+    // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
+    const atr14     = numPick(ctx.atr14, digest.atr14, panel.atr14, digest.indicators?.atr14, panel.indicators?.atr14, exec1x1?.atr14);
+    const microTake = numPick(ctx.microTake, digest.micro_target, digest.micro_take, panel.micro_target, panel.micro_take, exec1x1?.micro_take, exec1x1?.microTake);
+
+    // Prob / ETA (preferindo premonição)
+    const prob = (window.__A10_PREM_MICRO_PCT != null && Number.isFinite(Number(window.__A10_PREM_MICRO_PCT)))
+      ? Number(window.__A10_PREM_MICRO_PCT)
+      : numPick(numFrom(t("prem-right-prob")), exec1x1?.micro_prob_pct);
+
+    const etaMin = numPick(
+      digest.micro_eta_min, digest.eta_micro_min,
+      panel.micro_eta_min, panel.eta_micro_min,
+      exec1x1?.micro_eta_min,
+      numFrom(t("prem-right-eta"))
+    );
+
+    // Optimal Entry (Respiro): usa o JSON se vier; senão tenta extrair do respiro; senão ATR (fallback)
+    const respiroLine =
+      t("top_respiro_value") ||
+      t("rr-respiro-full") ||
+      t("prem-respiro-full");
+
+    let optEntry = numPick(exec1x1?.optimal_entry, exec1x1?.optimalEntry);
+    if (optEntry == null) optEntry = numFrom(respiroLine);
+
+    // fallback: estima usando ATR14 e a direção do Micro Take vs Current
+    if (optEntry == null && current != null && atr14 != null && Number.isFinite(current) && Number.isFinite(atr14)) {
+      const k = 2.5; // fallback (~2.5x ATR14)
+      if (microTake != null && Number.isFinite(microTake)) {
+        optEntry = (microTake >= current) ? (current - atr14 * k) : (current + atr14 * k);
+      }
+    }
+
+    // Prob pullback = 100 - prob
+    const pullProb = (prob != null && Number.isFinite(prob)) ? (100 - Number(prob)) : null;
+
+    // ETA do respiro (heurístico): eta_micro + 1
+    const optEta = (etaMin != null && Number.isFinite(etaMin)) ? (Math.round(Number(etaMin)) + 1) : null;
+
+    // Hora aproximada em MT
+    const optTime = (optEta != null) ? fmtTimeMT(new Date(Date.now() + optEta * 60 * 1000)) : "—";
+
+    // Atualiza o bloco grande (prem-exec-micro)
+    if (el("execm-current"))        el("execm-current").textContent        = (current != null) ? fmt2(current) : "—";
+    if (el("execm-atr14"))          el("execm-atr14").textContent          = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("execm-micro-take"))     el("execm-micro-take").textContent     = (microTake != null) ? fmt2(microTake) : "—";
+    if (el("execm-micro-prob"))     el("execm-micro-prob").textContent     = fmtPct(prob);
+    if (el("execm-micro-eta"))      el("execm-micro-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+
+    if (el("execm-opt-entry"))      el("execm-opt-entry").textContent      = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("execm-pullback-prob"))  el("execm-pullback-prob").textContent  = fmtPct(pullProb);
+
+    if (el("execm-opt-eta"))        el("execm-opt-eta").textContent        = (optEta != null) ? `~${optEta}m` : "—";
+    if (el("execm-opt-time"))       el("execm-opt-time").textContent       = (optEta != null) ? optTime : "—";
+
+        // ===== MICRO PATH (LIVE) • card lateral (somente UI) =====
+    const microProb = (prob != null && Number.isFinite(Number(prob))) ? Number(prob) : null;
+    const microTakeNum = (microTake != null && Number.isFinite(Number(microTake))) ? Number(microTake) : null;
+    const etaMicro = (etaMin != null && Number.isFinite(Number(etaMin))) ? Math.round(Number(etaMin)) : null;
+
+    const dirPath = (current != null && microTakeNum != null && Number.isFinite(Number(current)))
+      ? (microTakeNum >= Number(current) ? "BUY" : "SELL")
+      : null;
+
+    const sign = (dirPath === "BUY") ? 1 : (dirPath === "SELL") ? -1 : 0;
+
+    // Path A2 (extensão) — heurístico: 0.125×ATR14, ETA +2
+    const a2Price = (microTakeNum != null && atr14 != null && Number.isFinite(Number(atr14)) && sign !== 0)
+      ? (microTakeNum + sign * Number(atr14) * 0.125)
+      : null;
+
+    const a2Prob = (microProb != null) ? Math.max(0, Math.min(100, microProb * 0.68)) : null;
+    const a2Eta  = (etaMicro != null) ? (etaMicro + 2) : null;
+
+    // Path B (falha antes) — heurístico: prob = 100 - microProb; alvo = espelho 1x1; ETA +1
+    const bProb  = (microProb != null) ? (100 - microProb) : null;
+    const bPrice = (current != null && microTakeNum != null && Number.isFinite(Number(current)))
+      ? (2 * Number(current) - microTakeNum)
+      : null;
+    const bEta   = (etaMicro != null) ? (etaMicro + 1) : null;
+
+    if (el("mpl-current"))  el("mpl-current").textContent  = (current != null) ? fmt2(current) : "—";
+    if (el("mpl-atr14"))    el("mpl-atr14").textContent    = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("mpl-a1-pct"))   el("mpl-a1-pct").textContent   = fmtPct(microProb);
+    if (el("mpl-a1-price")) el("mpl-a1-price").textContent = (microTakeNum != null) ? fmt2(microTakeNum) : "—";
+    if (el("mpl-a1-eta"))   el("mpl-a1-eta").textContent   = (etaMicro != null) ? `~${etaMicro}m` : "—";
+
+    if (el("mpl-a2-pct"))   el("mpl-a2-pct").textContent   = fmtPct(a2Prob);
+    if (el("mpl-a2-price")) el("mpl-a2-price").textContent = (a2Price != null) ? fmt2(a2Price) : "—";
+    if (el("mpl-a2-eta"))   el("mpl-a2-eta").textContent   = (a2Eta != null) ? `~${a2Eta}m` : "—";
+
+    if (el("mpl-b-pct"))    el("mpl-b-pct").textContent    = fmtPct(bProb);
+    if (el("mpl-b-price"))  el("mpl-b-price").textContent  = (bPrice != null) ? fmt2(bPrice) : "—";
+    if (el("mpl-b-eta"))    el("mpl-b-eta").textContent    = (bEta != null) ? `~${bEta}m` : "—";
+    // ===== /MICRO PATH (LIVE) =====
+
+
+    // ===== EXEC (MICRO) MINI • PLAN 1x1 (somente UI) =====
+    const dir = (current != null && microTake != null && Number.isFinite(current) && Number.isFinite(microTake))
+      ? (microTake >= current ? "BUY" : "SELL")
+      : null;
+
+    const risk1x1 = (current != null && microTake != null && Number.isFinite(current) && Number.isFinite(microTake))
+      ? Math.abs(current - microTake)
+      : null;
+
+    const stop1x1 = (risk1x1 != null && dir)
+      ? (dir === "SELL" ? (current + risk1x1) : (current - risk1x1))
+      : null;
+
+    if (el("execm-mini-dir"))      el("execm-mini-dir").textContent      = dir || "—";
+    if (el("execm-mini-current"))  el("execm-mini-current").textContent  = (current != null) ? fmt2(current) : "—";
+    if (el("execm-mini-atr14"))    el("execm-mini-atr14").textContent    = (atr14 != null) ? fmt2(atr14) : "—";
+
+    if (el("execm-mini-tp"))       el("execm-mini-tp").textContent       = (microTake != null) ? fmt2(microTake) : "—";
+    if (el("execm-mini-prob"))     el("execm-mini-prob").textContent     = fmtPct(prob);
+    if (el("execm-mini-eta"))      el("execm-mini-eta").textContent      = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+
+    if (el("execm-mini-entry"))    el("execm-mini-entry").textContent    = (current != null) ? fmt2(current) : "—";
+    if (el("execm-mini-sl"))       el("execm-mini-sl").textContent       = (stop1x1 != null) ? fmt2(stop1x1) : "—";
+    if (el("execm-mini-risk"))     el("execm-mini-risk").textContent     = (risk1x1 != null) ? fmt2(risk1x1) : "—";
+
+    if (el("execm-mini-reentry"))  el("execm-mini-reentry").textContent  = (optEntry != null) ? fmt2(optEntry) : "—";
+    if (el("execm-mini-revprob"))  el("execm-mini-revprob").textContent  = fmtPct(pullProb);
+    if (el("execm-mini-reveta"))   el("execm-mini-reveta").textContent   = (optEta != null) ? `~${optEta}m` : "—";
+                // ===== STOP LOSS REENTRY (quadro amarelo) =====
+    const payloadSL = window.__AARON_LAST_PAYLOAD__ || {};
+    const panelSL   = payloadSL.panel || payloadSL || {};
+
+    const exec1x1SL =
+      panelSL.exec_1x1 ||
+      payloadSL.exec_1x1 ||
+      payloadSL.digest?.exec_1x1 ||
+      payloadSL.ui?.exec_1x1 ||
+      null;
+
+    const best =
+      exec1x1SL?.reentry_post_stop_v1?.best ||
+      exec1x1SL?.reentry_post_stop?.best ||
+      exec1x1SL?.post_stop?.best ||
+      null;
+
+    const asNum = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const dirFixed = (() => {
+      const d = String(exec1x1SL?.dir ?? exec1x1SL?.side ?? exec1x1SL?.direction ?? "").toUpperCase();
+      if (d.includes("SELL") || d.includes("SHORT") || d === "S") return "SELL";
+      if (d.includes("BUY")  || d.includes("LONG")  || d === "B") return "BUY";
+      return null;
+    })();
+
+    // direção do plano pelo MICRO (não depende do JSON) — robusto (microTake pode vir string)
+const microTakeN = (microTake == null ? null : Number(microTake));
+const microTakeOk = (microTakeN != null && Number.isFinite(microTakeN));
+
+const dirFromMicro = (() => {
+  if (current == null || !microTakeOk) return null;
+  if (microTakeN > current) return "BUY";
+  if (microTakeN < current) return "SELL";
+  return null;
+})();
+
+const dirUse = dirFromMicro || dirFixed || dir;
+
+// SL 1x1 automático (espelhado em relação ao TP=microTake) — NUNCA mexe no microTake
+const slAuto1x1 = (current != null && microTakeOk)
+  ? (2 * current - microTakeN)
+  : null;
+
+// SL 1x1: tenta usar o JSON só se for 1x1 de verdade e do lado certo;
+// caso contrário, usa o 1x1 automático do micro
+const slFromJson = asNum(exec1x1SL?.orders_v12?.stop ?? exec1x1SL?.orders_v12?.sl ?? exec1x1SL?.stop);
+const sl1x1Micro = (slAuto1x1 != null && Number.isFinite(slAuto1x1)) ? slAuto1x1 : stop1x1;
+
+// default: sempre o 1x1 do micro
+let slPrice = sl1x1Micro ?? slFromJson ?? null;
+
+if (current != null && dirUse && slFromJson != null && sl1x1Micro != null) {
+  // BUY => SL abaixo do current | SELL => SL acima do current
+  const sideOk = (dirUse === "BUY") ? (slFromJson < current) : (slFromJson > current);
+
+  // 1x1 => distância até SL tem que bater com a distância até o TP (risk1x1)
+  const distJson = Math.abs(current - slFromJson);
+  const dist1x1  = (risk1x1 != null && Number.isFinite(risk1x1)) ? risk1x1 : Math.abs(current - sl1x1Micro);
+
+  const distOk = Math.abs(distJson - dist1x1) <= Math.max(0.02, dist1x1 * 0.15);
+
+  // só aceita o SL do JSON se passar nos dois testes
+  if (sideOk && distOk) slPrice = slFromJson;
+}
+
+// SANITY final (garantia absoluta do lado certo)
+if (current != null && slPrice != null && dirUse) {
+  const wrongSide =
+    (dirUse === "BUY"  && slPrice >= current) ||
+    (dirUse === "SELL" && slPrice <= current);
+
+  if (wrongSide) slPrice = sl1x1Micro ?? slPrice;
+}
+
+
+
+    // depth ATR estatístico (fallback 0.8 se não vier)
+    const depthAtr = (() => {
+      const v = asNum(best?.depth_atr ?? best?.depthAtr);
+      return (v != null && v > 0) ? v : 0.8;
+    })();
+
+    // tempo estatístico (mediana)
+    const tMed = asNum(best?.t_stop_to_reentry_med ?? best?.t_stop_to_reentry_p50 ?? best?.t_med);
+
+    // chance estatística
+    let chance = asNum(best?.stop_then_target_pct ?? best?.stop_then_target_uncond_pct ?? best?.hit_rate_pct);
+    if (chance != null && chance > 0 && chance <= 1) chance = chance * 100;
+    // ===== STOP RISK (1x1) — NOVO QUADRO =====
+    // ===== SL FLEX — mover quadro para baixo (dock) =====
+(() => {
+  const dock = el("slflex-dock");
+  const card = el("slflex-card");
+  if (dock && card && card.parentElement !== dock) dock.appendChild(card);
+})();
+// ===== /SL FLEX =====
+
+    const revProb  = asNum(exec1x1SL?.reversal_prob_pct);
+    const pullProbStats = asNum(exec1x1SL?.prob_pullback_pct ?? exec1x1SL?.pullback_prob_pct);
+    const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_to_micro_eta_min);
+
+    // stop_then_target_pct (se existir) senão usa chance
+    let stopThenMicroPct = asNum(exec1x1SL?.stop_then_target_pct) ?? chance;
+    if (stopThenMicroPct != null && stopThenMicroPct > 0 && stopThenMicroPct <= 1) stopThenMicroPct *= 100;
+
+    // Heurística: stop risk = 0.60*reversal + 0.40*(100 - microProb)
+    const microProbForRisk = (prob != null && Number.isFinite(Number(prob))) ? Number(prob) : null;
+    const stopRiskPct = (revProb != null && microProbForRisk != null)
+      ? (0.60 * revProb + 0.40 * (100 - microProbForRisk))
+      : (revProb != null ? revProb : null);
+
+    const clamp = (v) => Math.max(0, Math.min(100, v ?? 0));
+    const riskLevel =
+      (stopRiskPct == null) ? null :
+      (stopRiskPct >= 65 ? "ALTO" :
+       stopRiskPct >= 40 ? "MÉDIO" : "BAIXO");
+
+    if (el("sr-stop-first-pct")) el("sr-stop-first-pct").textContent = fmtPct(stopRiskPct);
+
+    if (el("sr-risk-badge")) {
+      const b = el("sr-risk-badge");
+      b.textContent = (riskLevel && stopRiskPct != null)
+        ? `Stop Risk: ${riskLevel} (${Math.round(stopRiskPct)}%)`
+        : "Stop Risk: —";
+            // ===== SL FLEX (Respiro Profundo) — NOVO BLOCO (retângulo amarelo inferior) =====
+    if (el("slflex-card")) {
+      const rd = exec1x1SL?.respiro_depth_atr || exec1x1SL?.pullback_depth_atr || exec1x1SL?.respiroDepthAtr || null;
+
+      const p25 = asNum(rd?.p25 ?? rd?.p25_atr ?? rd?.q25);
+      const p50 = asNum(rd?.p50 ?? rd?.p50_atr ?? rd?.q50);
+      const p75 = asNum(rd?.p75 ?? rd?.p75_atr ?? rd?.q75);
+
+      const stopAtrNow = asNum(exec1x1SL?.stop_atr ?? exec1x1SL?.sl_atr ?? exec1x1SL?.stopAtr);
+
+      // Probabilidades (usa as mesmas do STOP RISK)
+      if (el("slflex-prob-respiro")) el("slflex-prob-respiro").textContent = (pullProbStats != null) ? fmtPct(pullProbStats) : "—";
+      if (el("slflex-prob-reversao")) el("slflex-prob-reversao").textContent = (revProb != null) ? fmtPct(revProb) : "—";
+
+      if (el("slflex-depth-p25")) el("slflex-depth-p25").textContent = fmt2(p25);
+      if (el("slflex-depth-p50")) el("slflex-depth-p50").textContent = fmt2(p50);
+      if (el("slflex-depth-p75")) el("slflex-depth-p75").textContent = fmt2(p75);
+
+      if (el("slflex-stop-atr")) el("slflex-stop-atr").textContent = fmt2(stopAtrNow);
+
+      // Sugestão de multiplicador (1x1 → 1x1.2/1.5/2.0) baseado no P50
+      let mult = null;
+      if (stopAtrNow != null && stopAtrNow > 0 && p50 != null) {
+        const r = p50 / stopAtrNow;
+        mult = (r <= 1.05) ? 1.0 : (r <= 1.25) ? 1.2 : (r <= 1.55) ? 1.5 : 2.0;
+      }
+
+      const sugAtr = (mult != null && stopAtrNow != null) ? (stopAtrNow * mult) : null;
+
+      if (el("slflex-suggest-mult")) el("slflex-suggest-mult").textContent = (mult != null) ? `1x${mult.toFixed(1)}` : "—";
+      if (el("slflex-suggest-atr")) el("slflex-suggest-atr").textContent = (sugAtr != null) ? fmt2(sugAtr) : "—";
+
+      // Termômetro (0 → 2.5 ATR)
+      const maxAtr = 2.5;
+      const pct = (v) => (v == null || !Number.isFinite(v)) ? null : Math.max(0, Math.min(100, (v / maxAtr) * 100));
+
+      const pStop = pct(stopAtrNow);
+      const pP50  = pct(p50);
+      const pP75  = pct(p75);
+
+      if (el("slflex-fill")) el("slflex-fill").style.width = (pP50 != null) ? `${pP50}%` : "0%";
+      if (el("slflex-mark-stop")) el("slflex-mark-stop").style.left = (pStop != null) ? `calc(${pStop}% - 6px)` : "0%";
+      if (el("slflex-mark-p50")) el("slflex-mark-p50").style.left = (pP50 != null) ? `calc(${pP50}% - 6px)` : "0%";
+      if (el("slflex-mark-p75")) el("slflex-mark-p75").style.left = (pP75 != null) ? `calc(${pP75}% - 6px)` : "0%";
+
+      // Leitura
+      let read = "Leitura: —";
+      if (stopAtrNow != null && p25 != null && p50 != null && p75 != null) {
+        if (stopAtrNow >= p75) read = "Leitura: SL 1x1 OK — difícil tomar stop por respiro.";
+        else if (stopAtrNow >= p50) read = "Leitura: SL 1x1 razoável — respiro profundo às vezes.";
+        else if (stopAtrNow >= p25) read = `Leitura: SL 1x1 apertado — considere SL 1x${(mult ?? 1.2).toFixed(1)} para evitar stops em respiro.`;
+        else read = "Leitura: SL 1x1 MUITO apertado — respiro tende a passar do seu SL.";
+      }
+
+      if (el("slflex-advice")) el("slflex-advice").textContent = read;
+    }
+    // ===== /SL FLEX =====
+
+
+      b.style.color =
+        (riskLevel === "ALTO") ? "#fb7185" :
+        (riskLevel === "MÉDIO") ? "#facc15" :
+        (riskLevel === "BAIXO") ? "#34d399" : "";
+    }
+
+    if (el("sr-meter-fill")) {
+      const f = el("sr-meter-fill");
+      f.style.width = `${clamp(stopRiskPct).toFixed(0)}%`;
+      f.style.background =
+        (riskLevel === "ALTO") ? "rgba(251,113,133,.85)" :
+        (riskLevel === "MÉDIO") ? "rgba(250,204,21,.85)" :
+        (riskLevel === "BAIXO") ? "rgba(52,211,153,.85)" :
+        "rgba(255,255,255,.18)";
+    }
+
+    if (el("sr-market-msg")) {
+      const msgEl = el("sr-market-msg");
+      if (revProb != null && revProb >= 60) msgEl.textContent = "Mercado em Reversão/Chop.";
+      else if (pullProbStats != null && pullProbStats >= 40) msgEl.textContent = "Mercado em Respiro (pullback) — ruído alto.";
+      else msgEl.textContent = "Mercado neutro — risco moderado.";
+    }
+
+    if (el("sr-respiro-atr")) el("sr-respiro-atr").textContent = "0.25";
+    if (el("sr-stop-reentry-eta")) el("sr-stop-reentry-eta").textContent = (tMed != null) ? `~${Math.round(tMed)}m` : "—";
+    if (el("sr-stop-target-pct")) el("sr-stop-target-pct").textContent = (stopThenMicroPct != null) ? `${stopThenMicroPct.toFixed(2)}%` : "—";
+    if (el("sr-after-stop-micro-pct")) el("sr-after-stop-micro-pct").textContent = (stopThenMicroPct != null) ? `${stopThenMicroPct.toFixed(2)}%` : "—";
+    if (el("sr-stop-to-micro-eta")) el("sr-stop-to-micro-eta").textContent = (stopToMicro != null) ? `~${Math.round(stopToMicro)}m` : "—";
+    // ===== RESPIRO x REVERSÃO (MICRO) — BLOCO AMARELO =====
+const normPct = (x) => (x == null) ? null : ((x > 0 && x <= 1) ? x * 100 : x);
+
+const respiroPct = normPct(pullProbStats);
+const reversaoPct = normPct(revProb);
+
+if (el("rrv-respiro-pct"))  el("rrv-respiro-pct").textContent  = fmtPct(respiroPct);
+if (el("rrv-reversao-pct")) el("rrv-reversao-pct").textContent = fmtPct(reversaoPct);
+
+if (el("rrv-respiro-fill"))  el("rrv-respiro-fill").style.width  = `${clamp(respiroPct).toFixed(0)}%`;
+if (el("rrv-reversao-fill")) el("rrv-reversao-fill").style.width = `${clamp(reversaoPct).toFixed(0)}%`;
+
+const domEl  = el("rrv-dominant");
+const readEl = el("rrv-reading");
+
+if (domEl || readEl) {
+  const a = (respiroPct != null) ? respiroPct : -1;
+  const b = (reversaoPct != null) ? reversaoPct : -1;
+
+  let dom = "—";
+  let read = "—";
+
+  if (a < 0 && b < 0) {
+    dom = "—";
+    read = "Sem dados.";
+  } else {
+    const high = Math.max(a, b);
+    const diff = Math.abs(a - b);
+
+    if (high < 35) {
+      dom = "NEUTRO";
+      read = "Probabilidades baixas → esperar confirmação do micro.";
+    } else if (diff <= 10) {
+      dom = "CHOP";
+      read = "Respiro e reversão próximos → reduzir tamanho e aguardar.";
+    } else if (a > b) {
+      dom = "RESPIRO";
+      read = "Pullback provável → melhor entrada é no respiro (Optimal Entry).";
+    } else {
+      dom = "REVERSÃO";
+      read = "Risco de inverter → cautela; micro pode falhar antes.";
+    }
+  }
+
+  if (domEl) {
+    domEl.textContent = dom;
+    domEl.style.color =
+      (dom === "RESPIRO") ? "#34d399" :
+      (dom === "REVERSÃO") ? "#fb7185" :
+      (dom === "CHOP") ? "#facc15" :
+      (dom === "NEUTRO") ? "rgba(255,255,255,.8)" : "";
+  }
+
+  if (readEl) readEl.textContent = read;
+}
+// ===== /RESPIRO x REVERSÃO (MICRO) =====
+
+    // ===== /STOP RISK =====
+
+    // status: SL atingiu ou não
+    const slHit = (current != null && slPrice != null && dirUse)
+      ? (dirUse === "SELL" ? (current >= slPrice) : (current <= slPrice))
+      : null;
+
+    const statusTxt = (slHit === null)
+      ? "—"
+      : (slHit ? "⚠️ SL atingido — executar reentrada" : "✅ SL não atingido — continuar");
+
+    const ruleTxt = (slPrice != null && dirUse)
+      ? (dirUse === "SELL"
+          ? `Se current < ${fmt2(slPrice)} → ✅ SL não atingido — continuar · Se current ≥ ${fmt2(slPrice)} → ⚠️ SL atingido — executar reentrada`
+          : `Se current > ${fmt2(slPrice)} → ✅ SL não atingido — continuar · Se current ≤ ${fmt2(slPrice)} → ⚠️ SL atingido — executar reentrada`)
+      : "—";
+
+    // TP travado = micro target (usa o microTake do UI)
+const tpLocked = (microTakeOk) ? microTakeN : null;
+
+// Reentrada = SL ± (depthAtr × ATR14) com trava para nunca passar do TP travado
+const kRaw = (atr14 != null && Number.isFinite(atr14)) ? (atr14 * depthAtr) : null;
+
+// cap: no máximo 60% da distância SL→TP (evita reentrada acima do TP)
+const distSLTP = (tpLocked != null && slPrice != null) ? Math.abs(tpLocked - slPrice) : null;
+const kCap = (distSLTP != null) ? Math.max(0, distSLTP * 0.60) : null;
+const k = (kRaw != null && kCap != null) ? Math.min(kRaw, kCap) : kRaw;
+
+// BUY: reentry acima do SL | SELL: reentry abaixo do SL
+const reentry = (slPrice != null && k != null && dirUse)
+  ? (dirUse === "SELL" ? (slPrice - k) : (slPrice + k))
+  : null;
+
+
+    // SL 1x1 da reentrada (1x1 ancorado no TP travado)
+    const reRisk = (reentry != null && tpLocked != null) ? Math.abs(reentry - tpLocked) : null;
+    const reSL = (reentry != null && reRisk != null && dirUse)
+      ? (dirUse === "SELL" ? (reentry + reRisk) : (reentry - reRisk))
+      : null;
+
+    // inject DOM
+    if (el("slr-optentry")) el("slr-optentry").textContent = (reentry != null) ? fmt2(reentry) : "—";
+    if (el("slr-sl")) el("slr-sl").textContent = (slPrice != null) ? fmt2(slPrice) : "—";
+
+    if (el("slr-status")) {
+      const sEl = el("slr-status");
+      sEl.textContent = statusTxt;
+      sEl.style.color = (slHit === true) ? "#fb7185" : (slHit === false) ? "#34d399" : "";
+    }
+
+    if (el("slr-rule")) el("slr-rule").textContent = ruleTxt;
+
+    if (el("slr-wait")) el("slr-wait").textContent = (tMed != null) ? `~${Math.round(tMed)}m` : "—";
+
+    if (el("slr-reentry")) el("slr-reentry").textContent = (reentry != null) ? fmt2(reentry) : "—";
+
+    if (el("slr-reentry-note")) {
+      const noteEl = el("slr-reentry-note");
+      if (reentry != null && slPrice != null && atr14 != null && Number.isFinite(atr14)) {
+        const sign = (dirUse === "SELL") ? "−" : "+";
+        noteEl.textContent = ` (${fmt2(slPrice)} ${sign} ${depthAtr.toFixed(2)}×ATR14; ATR14=${fmt2(atr14)})`;
+      } else {
+        noteEl.textContent = "";
+      }
+    }
+
+    if (el("slr-tp"))     el("slr-tp").textContent     = (tpLocked != null) ? fmt2(tpLocked) : "—";
+    if (el("slr-resl"))   el("slr-resl").textContent   = (reSL != null) ? fmt2(reSL) : "—";
+    if (el("slr-chance")) el("slr-chance").textContent = (chance != null) ? `${chance.toFixed(2)}%` : "—";
+    // ===== /STOP LOSS REENTRY =====
+
+
+    // ===== /EXEC (MICRO) MINI • PLAN 1x1 =====
+  }
+
+  // Atualiza continuamente sem encostar em nada do teu pipeline
+  setInterval(updateExecMicroBox, 750);
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", updateExecMicroBox);
+  } else {
+    updateExecMicroBox();
+  }
+})();
+</script>
+
 
 
 
