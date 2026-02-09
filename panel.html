@@ -2369,6 +2369,55 @@
   height: 240px;
   display:block;
 }
+/* ===== MICRO TIMELINE (substitui canvas no quadro grande) ===== */
+.microtime-panel{
+  min-height: 380px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(900px 280px at 0% 0%, rgba(96,165,250,.10), rgba(0,0,0,0) 60%),
+    rgba(0,0,0,.18);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.microtime-row{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+}
+
+.mt-k{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .65;
+  flex: 0 0 auto;
+}
+
+.mt-v{
+  font-size: 16px;
+  font-weight: 900;
+  color: rgba(255,255,255,.92);
+  text-align: right;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mt-target{ color: rgba(255,208,64,.95); }
+.mt-up{ color: rgba(74,222,128,.95); }
+.mt-down{ color: rgba(248,113,113,.95); }
+.mt-muted{ opacity: .75; font-weight: 800; font-size: 13px; }
+/* ===== /MICRO TIMELINE ===== */
 
 .premonition-kpi{
   margin-top: 10px;
@@ -3677,14 +3726,37 @@
       <div class="premonition-chart">
        
 
-        <canvas id="prem-canvas" class="premonition-canvas" width="900" height="260"></canvas>
+                <!-- ===== MICRO TIMELINE (substitui o quadro do canvas) ===== -->
+        <div class="microtime-panel" id="microtime-panel">
 
-        <div class="premonition-kpi">
-          <span class="kpi-label" id="prem-kpi-label">Prob. romper —</span>
-          <span class="kpi-time" id="prem-kpi-time">—</span>
-          <span class="kpi-ampm" id="prem-kpi-ampm"></span>
-          <span class="kpi-prob" id="prem-kpi-prob">—</span>
+          <div class="microtime-row microtime-future">
+            <div class="mt-k">FUTURE (NEXT)</div>
+            <div class="mt-v" id="mt-future">—</div>
+          </div>
+
+          <div class="microtime-row microtime-max">
+            <div class="mt-k">MICRO LIVE — MAX</div>
+            <div class="mt-v" id="mt-micro-max">—</div>
+          </div>
+
+          <div class="microtime-row microtime-now">
+            <div class="mt-k">MICRO LIVE — NOW</div>
+            <div class="mt-v" id="mt-micro-now">—</div>
+          </div>
+
+          <div class="microtime-row microtime-current">
+            <div class="mt-k">CURRENT</div>
+            <div class="mt-v" id="mt-current">—</div>
+          </div>
+
+          <div class="microtime-row microtime-past">
+            <div class="mt-k">PAST</div>
+            <div class="mt-v" id="mt-past">—</div>
+          </div>
+
         </div>
+        <!-- ===== /MICRO TIMELINE ===== -->
+
                 <div class="prem-signal-wrap" id="prem-signal-wrap">
           <button class="prem-signal-btn prem-signal-off" id="prem-signal-btn" type="button" disabled>
             NÃO FAÇA NADA
@@ -6190,6 +6262,187 @@ function a10UpdatePremBreakoutBox(digest){
 
   set("prem-breakout-note", note);
 }
+function a10UpdateMicroTimeline(payload, opts = {}){
+  try{
+    const panel  = payload?.panel || payload || {};
+    const digest = payload?.digest || {};
+    const ui     = payload?.ui || {};
+
+    const bw =
+      opts.bw ||
+      digest.breakout_window_card || panel.breakout_window_card ||
+      digest.breakout_window || panel.breakout_window ||
+      null;
+
+    const setHTML = (id, html) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = (html === null || html === undefined || html === "") ? "—" : String(html);
+    };
+
+    const esc = (s) => String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const fmt2 = (n) => (n == null ? "—" : Number(n).toFixed(2));
+    const fmtPct = (n) => (n == null ? "—" : `${Math.round(Number(n))}%`);
+    const fmtMin = (n) => (n == null ? "—" : `~${Math.round(Number(n))}m`);
+
+    // CURRENT PRICE (prioridade: opts -> payload -> UI)
+    const currentPx =
+      num(opts.currentPx) ??
+      num(panel.price_now) ?? num(ui.price_now) ?? num(digest.price_now) ??
+      num(document.getElementById("prem-head-current-price")?.textContent) ??
+      null;
+
+    const currentPxTxt = (currentPx != null) ? fmt2(currentPx) : "—";
+
+    // ===== FUTURE (NEXT) =====
+    const futureTarget = num(bw?.trigger_price);
+    const futureProb   = num(bw?.prob_until_end_pct);
+    const futureEta    = num(bw?.median_minutes);
+    const futureArrow  = (bw?.dir === "DOWN") ? "↓" : (bw?.dir === "UP") ? "↑" : "→";
+    const futureArrowCls = (futureArrow === "↑") ? "mt-up" : (futureArrow === "↓") ? "mt-down" : "mt-muted";
+
+    const futureHtml = (futureTarget != null || futureProb != null || futureEta != null)
+      ? `<span class="mt-muted">${esc(fmtMin(futureEta))}</span> • <span class="mt-muted">${esc(fmtPct(futureProb))}</span> • Target <span class="mt-target">${esc(fmt2(futureTarget))}</span> <span class="${futureArrowCls}">${futureArrow}</span>`
+      : "—";
+
+    setHTML("mt-future", futureHtml);
+
+    // ===== MICRO LIVE — NOW =====
+    const microTarget =
+      num(opts.microTarget) ??
+      num(digest.micro_target) ?? num(digest.micro_take) ??
+      num(panel.micro_target) ?? num(panel.micro_take) ??
+      null;
+
+    const microProb =
+      num(opts.microProb) ??
+      num(digest.micro_prob_pct) ?? num(panel.micro_prob_pct) ??
+      (window.__A10_PREM_MICRO_PCT != null ? num(window.__A10_PREM_MICRO_PCT) : null);
+
+    const microEta =
+      num(opts.microEtaMin) ??
+      num(digest.micro_eta_min) ?? num(digest.eta_micro_min) ??
+      num(panel.micro_eta_min) ?? num(panel.eta_micro_min) ??
+      num(opts.etaMin) ??
+      null;
+
+    const microArrow = (microTarget != null && currentPx != null)
+      ? (microTarget > currentPx ? "↑" : (microTarget < currentPx ? "↓" : "→"))
+      : "→";
+    const microArrowCls = (microArrow === "↑") ? "mt-up" : (microArrow === "↓") ? "mt-down" : "mt-muted";
+
+    const microNowHtml = (microTarget != null || microProb != null || microEta != null)
+      ? `<span class="mt-muted">${esc(fmtMin(microEta))}</span> • <span class="mt-muted">${esc(fmtPct(microProb))}</span> • Target <span class="mt-target">${esc(fmt2(microTarget))}</span> <span class="${microArrowCls}">${microArrow}</span>`
+      : "—";
+
+    setHTML("mt-micro-now", microNowHtml);
+
+    // ===== MICRO LIVE — MAX (tracking) =====
+    const nowMs = Date.now();
+
+    if (microTarget != null && currentPx != null){
+      const dirKey = (microArrow === "↓") ? "down" : (microArrow === "↑") ? "up" : "flat";
+      const max = window.__A10_MICRO_LIVE_MAX__ || null;
+
+      const better =
+        !max ||
+        max.dir !== dirKey ||
+        (dirKey === "up"   && microTarget > max.target) ||
+        (dirKey === "down" && microTarget < max.target) ||
+        (dirKey === "flat" && microProb != null && microProb > (max.prob ?? -1));
+
+      if (better){
+        window.__A10_MICRO_LIVE_MAX__ = {
+          dir: dirKey,
+          target: microTarget,
+          prob: microProb,
+          eta: microEta,
+          seenAt: nowMs
+        };
+      }
+    }
+
+    const fmtAgo = (ms) => {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      if (m <= 0) return `${r}s`;
+      return `${m}m${String(r).padStart(2,"0")}s`;
+    };
+
+    const max = window.__A10_MICRO_LIVE_MAX__ || null;
+    if (max && max.target != null){
+      const age = fmtAgo(nowMs - (max.seenAt ?? nowMs));
+      const arrow = (max.dir === "down") ? "↓" : (max.dir === "up") ? "↑" : "→";
+      const arrowCls = (arrow === "↑") ? "mt-up" : (arrow === "↓") ? "mt-down" : "mt-muted";
+
+      const maxHtml =
+        `<span class="mt-target">${esc(fmt2(num(max.target)))}</span> <span class="${arrowCls}">${arrow}</span>` +
+        ` • <span class="mt-muted">${esc(fmtPct(num(max.prob)))}</span>` +
+        ` • <span class="mt-muted">${esc(fmtMin(num(max.eta)))}</span>` +
+        ` • <span class="mt-muted">há ${esc(age)}</span>`;
+
+      setHTML("mt-micro-max", maxHtml);
+    } else {
+      setHTML("mt-micro-max", "—");
+    }
+
+    // ===== CURRENT =====
+    const timeStr = (() => {
+      try{
+        return new Date().toLocaleTimeString("en-US", {
+          hour:"numeric", minute:"2-digit", hour12:true, timeZone:"America/Denver"
+        });
+      }catch(_e){
+        return new Date().toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit", hour12:true });
+      }
+    })();
+
+    setHTML("mt-current", `<span class="mt-target">${esc(currentPxTxt)}</span> • <span class="mt-muted">${esc(timeStr)}</span>`);
+
+    // ===== PAST (retest / SR proxy) =====
+    const sf = digest.shape_focus || {};
+    const sr = digest.sr_proxy || {};
+    const f  = digest.features || {};
+
+    const conf = num(sf.confidence_pct) ?? num(ui.confidence_pct);
+    const lvl  = num(sr.breakout_level);
+    const low  = num(sr.recent_low);
+    const high = num(sr.recent_high);
+
+    const retUp  = !!f.breakout_up_with_retest;
+    const retDn  = !!f.breakout_down_with_retest;
+    const confUp = !!f.breakout_up_with_retest_confirmed;
+    const confDn = !!f.breakout_down_with_retest_confirmed;
+
+    let pastLabel = "SR";
+    if (confUp || confDn) pastLabel = "Retest confirmado";
+    else if (retUp || retDn) pastLabel = "Retest";
+
+    const pastLevelTxt =
+      (lvl != null) ? fmt2(lvl) :
+      ((low != null || high != null) ? `${fmt2(low)} — ${fmt2(high)}` : "—");
+
+    const pastHtml =
+      `${esc(pastLabel)} <span class="mt-target">${esc(pastLevelTxt)}</span>` +
+      (conf != null ? ` • <span class="mt-muted">${esc(fmtPct(conf))}</span>` : "");
+
+    setHTML("mt-past", pastHtml);
+
+  }catch(_e){
+    // não quebra UI
+  }
+}
 
 function updatePremonitionPanel(payload){
   try{
@@ -6432,6 +6685,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 
     const badge = bw?.source ? `${bw.source} · ${dir || "—"}` : (dir || "—");
     setText("prem-badge", badge);
+    try{ a10UpdateMicroTimeline(payload, { bw, etaMin, currentPx: currentPxRaw }); }catch(_e){}
 
     // --------- MINI CHART (candles) + cruz X/Y ----------
     const canvas = document.getElementById("prem-canvas");
