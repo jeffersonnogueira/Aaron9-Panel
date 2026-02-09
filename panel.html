@@ -3695,6 +3695,10 @@
         </div>
                 <<!-- ===== STOP RISK (1x1) — substitui EXEC GATE / MINI / BREAKOUT ===== -->
 <div class="prem-breakout-wrap" id="stop-risk-card" style="margin-top:10px;">
+  <!-- ===== SL FLEX DOCK (mover card pra área grande de baixo) ===== -->
+<div id="slflex-dock" style="margin-top:12px;"></div>
+<!-- ===== /SL FLEX DOCK ===== -->
+
   <div class="prem-breakout-title">STOP RISK (1x1)</div>
 
   <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
@@ -12208,6 +12212,14 @@ if (current != null && slPrice != null && dirUse) {
     let chance = asNum(best?.stop_then_target_pct ?? best?.stop_then_target_uncond_pct ?? best?.hit_rate_pct);
     if (chance != null && chance > 0 && chance <= 1) chance = chance * 100;
     // ===== STOP RISK (1x1) — NOVO QUADRO =====
+    // ===== SL FLEX — mover quadro para baixo (dock) =====
+(() => {
+  const dock = el("slflex-dock");
+  const card = el("slflex-card");
+  if (dock && card && card.parentElement !== dock) dock.appendChild(card);
+})();
+// ===== /SL FLEX =====
+
     const revProb  = asNum(exec1x1SL?.reversal_prob_pct);
     const pullProbStats = asNum(exec1x1SL?.prob_pullback_pct ?? exec1x1SL?.pullback_prob_pct);
     const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_to_micro_eta_min);
