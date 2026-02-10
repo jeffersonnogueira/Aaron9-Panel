@@ -12474,9 +12474,39 @@ if (current != null && slPrice != null && dirUse) {
 })();
 // ===== /SL FLEX =====
 
-    const revProb  = asNum(exec1x1SL?.reversal_prob_pct);
-    const pullProbStats = asNum(exec1x1SL?.prob_pullback_pct ?? exec1x1SL?.pullback_prob_pct);
-    const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_to_micro_eta_min);
+    // Probabilidades: preferir LIVE (reversal_classifier) e, se não houver, usar híbrido (stats + Micro LIVE)
+const toPct100 = (x) => {
+  const n = asNum(x);
+  if (n == null) return null;
+  return (n > 0 && n <= 1) ? (n * 100) : n;
+};
+
+const revProbStats  = toPct100(exec1x1SL?.reversal_prob_pct);
+const pullProbStats = toPct100(exec1x1SL?.prob_pullback_pct ?? exec1x1SL?.pullback_prob_pct);
+
+const rc = exec1x1SL?.reversal_classifier || payload.reversal_classifier || panel.reversal_classifier || digest.reversal_classifier || null;
+const rcOpp  = toPct100(rc?.opp_pct);   // opposite/trap → REVERSÃO
+const rcCont = toPct100(rc?.cont_pct);  // continuation → RESPIRO/CONTINUAÇÃO
+
+const microProbNow = (prob != null && Number.isFinite(Number(prob))) ? Number(prob) : null;
+const microFailNow = (microProbNow != null) ? (100 - microProbNow) : null;
+
+const W_STATS = 0.80, W_LIVE = 0.20;
+
+const revProb = (rcOpp != null)
+  ? rcOpp
+  : (revProbStats != null && microFailNow != null)
+    ? (W_STATS * revProbStats + W_LIVE * microFailNow)
+    : revProbStats;
+
+const pullProbUse = (rcCont != null)
+  ? rcCont
+  : (pullProbStats != null && microFailNow != null)
+    ? (W_STATS * pullProbStats + W_LIVE * (microFailNow * 0.50))
+    : pullProbStats;
+
+const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_to_micro_eta_min);
+
 
     // stop_then_target_pct (se existir) senão usa chance
     let stopThenMicroPct = asNum(exec1x1SL?.stop_then_target_pct) ?? chance;
@@ -12512,7 +12542,7 @@ if (current != null && slPrice != null && dirUse) {
       const stopAtrNow = asNum(exec1x1SL?.stop_atr ?? exec1x1SL?.sl_atr ?? exec1x1SL?.stopAtr);
 
       // Probabilidades (usa as mesmas do STOP RISK)
-      if (el("slflex-prob-respiro")) el("slflex-prob-respiro").textContent = (pullProbStats != null) ? fmtPct(pullProbStats) : "—";
+      if (el("slflex-prob-respiro")) el("slflex-prob-respiro").textContent = (pullProbUse != null) ? fmtPct(pullProbUse) : "—";
       if (el("slflex-prob-reversao")) el("slflex-prob-reversao").textContent = (revProb != null) ? fmtPct(revProb) : "—";
 
       if (el("slflex-depth-p25")) el("slflex-depth-p25").textContent = fmt2(p25);
@@ -12579,7 +12609,7 @@ if (current != null && slPrice != null && dirUse) {
     if (el("sr-market-msg")) {
       const msgEl = el("sr-market-msg");
       if (revProb != null && revProb >= 60) msgEl.textContent = "Mercado em Reversão/Chop.";
-      else if (pullProbStats != null && pullProbStats >= 40) msgEl.textContent = "Mercado em Respiro (pullback) — ruído alto.";
+      else if (pullProbUse != null && pullProbUse >= 40) msgEl.textContent = "Mercado em Respiro (pullback) — ruído alto.";
       else msgEl.textContent = "Mercado neutro — risco moderado.";
     }
 
@@ -12591,7 +12621,7 @@ if (current != null && slPrice != null && dirUse) {
     // ===== RESPIRO x REVERSÃO (MICRO) — BLOCO AMARELO =====
 const normPct = (x) => (x == null) ? null : ((x > 0 && x <= 1) ? x * 100 : x);
 
-const respiroPct = normPct(pullProbStats);
+const respiroPct = normPct(pullProbUse);
 const reversaoPct = normPct(revProb);
 
 if (el("rrv-respiro-pct"))  el("rrv-respiro-pct").textContent  = fmtPct(respiroPct);
