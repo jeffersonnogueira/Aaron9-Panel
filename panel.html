@@ -12391,9 +12391,11 @@ renderOptions("");
       null;
 
     const asNum = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : null;
-    };
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+};
+
 
     const dirFixed = (() => {
       const d = String(exec1x1SL?.dir ?? exec1x1SL?.side ?? exec1x1SL?.direction ?? "").toUpperCase();
@@ -12542,8 +12544,9 @@ const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_t
       const stopAtrNow = asNum(exec1x1SL?.stop_atr ?? exec1x1SL?.sl_atr ?? exec1x1SL?.stopAtr);
 
       // Probabilidades (usa as mesmas do STOP RISK)
-      if (el("slflex-prob-respiro")) el("slflex-prob-respiro").textContent = (pullProbUse != null) ? fmtPct(pullProbUse) : "—";
+      if (el("slflex-prob-respiro")) el("slflex-prob-respiro").textContent = (pullProbStats != null) ? fmtPct(pullProbStats) : "—";
       if (el("slflex-prob-reversao")) el("slflex-prob-reversao").textContent = (revProb != null) ? fmtPct(revProb) : "—";
+
 
       if (el("slflex-depth-p25")) el("slflex-depth-p25").textContent = fmt2(p25);
       if (el("slflex-depth-p50")) el("slflex-depth-p50").textContent = fmt2(p50);
