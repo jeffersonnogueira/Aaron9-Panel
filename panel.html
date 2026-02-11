@@ -12195,6 +12195,14 @@ renderOptions("");
   "use strict";
 
   function el(id){ return document.getElementById(id); }
+    // SL FLEX dock: garante que o card fique no lugar certo (abaixo do STOP RISK)
+  function dockSLFlex(){
+    const dock = document.getElementById("slflex-dock");
+    const card = document.getElementById("slflex-card");
+    if (dock && card && card.parentElement !== dock) dock.appendChild(card);
+  }
+  window.addEventListener("DOMContentLoaded", dockSLFlex);
+
   function t(id){ return (el(id)?.textContent || "").trim(); }
   function numFrom(s){
     const m = String(s || "").match(/-?\d+(?:\.\d+)?/);
@@ -12390,11 +12398,16 @@ renderOptions("");
       exec1x1SL?.post_stop?.best ||
       null;
 
-    const asNum = (v) => {
-  if (v === null || v === undefined || v === "") return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-};
+        const asNum = (v) => {
+      if (v === null || v === undefined || v === "") return null;
+      if (typeof v === "number") return Number.isFinite(v) ? v : null;
+      const s = String(v).trim().replace(",", ".");
+      const m = s.match(/-?\d+(?:\.\d+)?/);
+      if (!m) return null;
+      const n = Number(m[0]);
+      return Number.isFinite(n) ? n : null;
+    };
+
 
 
     const dirFixed = (() => {
@@ -12468,13 +12481,10 @@ if (current != null && slPrice != null && dirUse) {
     let chance = asNum(best?.stop_then_target_pct ?? best?.stop_then_target_uncond_pct ?? best?.hit_rate_pct);
     if (chance != null && chance > 0 && chance <= 1) chance = chance * 100;
     // ===== STOP RISK (1x1) — NOVO QUADRO =====
-    // ===== SL FLEX — mover quadro para baixo (dock) =====
-(() => {
-  const dock = el("slflex-dock");
-  const card = el("slflex-card");
-  if (dock && card && card.parentElement !== dock) dock.appendChild(card);
-})();
-// ===== /SL FLEX =====
+        // ===== SL FLEX — garantir dock no STOP RISK =====
+    try { dockSLFlex(); } catch(e){}
+    // ===== /SL FLEX =====
+
 
     // Probabilidades: preferir LIVE (reversal_classifier) e, se não houver, usar híbrido (stats + Micro LIVE)
 const toPct100 = (x) => {
@@ -12483,8 +12493,26 @@ const toPct100 = (x) => {
   return (n > 0 && n <= 1) ? (n * 100) : n;
 };
 
-const revProbStats  = toPct100(exec1x1SL?.reversal_prob_pct);
-const pullProbStats = toPct100(exec1x1SL?.prob_pullback_pct ?? exec1x1SL?.pullback_prob_pct);
+const revProbStats  = toPct100(
+  exec1x1SL?.reversal_prob_pct ??
+  exec1x1SL?.reversalProbPct ??
+  exec1x1SL?.rev_prob_pct ??
+  exec1x1SL?.reversao_prob_pct ??
+  exec1x1SL?.prob_reversao_pct ??
+  exec1x1SL?.reversal_probability ??
+  null
+);
+
+const pullProbStats = toPct100(
+  exec1x1SL?.prob_pullback_pct ??
+  exec1x1SL?.pullback_prob_pct ??
+  exec1x1SL?.pullbackProbPct ??
+  exec1x1SL?.prob_respiro_pct ??
+  exec1x1SL?.respiro_prob_pct ??
+  exec1x1SL?.pullback_probability ??
+  null
+);
+
 
 const rc = exec1x1SL?.reversal_classifier || payload.reversal_classifier || panel.reversal_classifier || digest.reversal_classifier || null;
 const rcOpp  = toPct100(rc?.opp_pct);   // opposite/trap → REVERSÃO
