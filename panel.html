@@ -12784,12 +12784,13 @@ const reversaoPct = normPct(revProb);
     asNum(p75Obj?.eta_min) ??
     ((microEta != null) ? (microEta + 1) : null);
 
-  // ===== REVERSÃO (gatilho / SL 1x1) =====
-  const slAuto = microOk ? (2 * curMap - microTarget) : null;
+    // ===== REVERSÃO (gatilho) + SL duro (1x1) =====
+  const slHard = microOk ? (2 * curMap - microTarget) : null; // SL 1x1 (DURO)
 
-  const revTrigger =
+  // gatilho de reversão (SOFT). Se não vier do matcher, cai no SL duro.
+  let revTrigger =
     asNum(mp?.reversal?.trigger_price) ??
-    slAuto;
+    slHard;
 
   const revProb =
     asNum(mp?.reversal?.prob_stop_before_target_pct) ??
@@ -12799,20 +12800,51 @@ const reversaoPct = normPct(revProb);
     asNum(mp?.reversal?.eta_min) ??
     microEta;
 
-  // aviso quando p75 passa do SL 1x1 (isso explica exatamente o que você viu)
-  let warn = "";
-  if (dirMap && respiroPrice != null && revTrigger != null) {
-    if (dirMap === "SELL" && respiroPrice > revTrigger) warn = " ⚠ (p75 > SL 1x1)";
-    if (dirMap === "BUY"  && respiroPrice < revTrigger) warn = " ⚠ (p75 > SL 1x1)";
+  // ===== CLAMPS (pra nunca existir "RESPIRO passa do STOP") =====
+  const eps = (slHard != null && curMap != null)
+    ? Math.max(0.01, Math.min(0.05, Math.abs(Number(slHard) - Number(curMap)) * 0.05))
+    : 0.01;
+
+  let noteRespiro = "";
+  let noteRev = "";
+
+  // 1) garante que o gatilho nunca fique além do SL duro
+  if (dirMap && revTrigger != null && slHard != null) {
+    if (dirMap === "SELL" && revTrigger > slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
+    if (dirMap === "BUY"  && revTrigger < slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
+  }
+
+  // 2) RESPIRO não pode passar do REV gatilho e nem do SL duro
+  //    SELL: cur < respiro < revTrigger <= slHard
+  //    BUY : cur > respiro > revTrigger >= slHard
+  if (dirMap && respiroPrice != null) {
+    const capBase =
+      (revTrigger != null && slHard != null) ? Math.min(revTrigger, slHard)
+      : (revTrigger != null ? revTrigger : (slHard != null ? slHard : null));
+
+    const floorBase =
+      (revTrigger != null && slHard != null) ? Math.max(revTrigger, slHard)
+      : (revTrigger != null ? revTrigger : (slHard != null ? slHard : null));
+
+    if (dirMap === "SELL" && capBase != null) {
+      const cap = Math.max(curMap + eps, capBase - eps);
+      if (respiroPrice > cap) { respiroPrice = cap; noteRespiro = " (capado)"; }
+    }
+
+    if (dirMap === "BUY" && floorBase != null) {
+      const floor = Math.min(curMap - eps, floorBase + eps);
+      if (respiroPrice < floor) { respiroPrice = floor; noteRespiro = " (capado)"; }
+    }
   }
 
   const respiroLine = (respiroPrice != null && dirMap)
-    ? `RESPIRO (max / p75): ${fmtEta(respiroEta)} • ${fmtPct2d(respiroProb)} • Pode esticar até ${fmt2(respiroPrice)} ${arrowOpp} (${dirMap === "SELL" ? "antes de cair" : "antes de subir"})${warn}`
+    ? `RESPIRO (max / p75): ${fmtEta(respiroEta)} • ${fmtPct2d(respiroProb)} • Pode esticar até ${fmt2(respiroPrice)} ${arrowOpp} (${dirMap === "SELL" ? "antes de cair" : "antes de subir"})${noteRespiro}`
     : `RESPIRO (max / p75): —`;
 
   const reversaoLine = (revTrigger != null && dirMap)
-    ? `REVERSÃO (gatilho / SL 1x1): ${fmtEta(revEta)} • ${fmtPct2d(revProb)} • Se tocar ${fmt2(revTrigger)} ${arrowOpp} → chance de stop antes do micro (invalida o micro ${dirMap})`
-    : `REVERSÃO (gatilho / SL 1x1): —`;
+    ? `REVERSÃO (gatilho): ${fmtEta(revEta)} • ${fmtPct2d(revProb)} • Se tocar ${fmt2(revTrigger)} ${arrowOpp} → invalida o micro ${dirMap} • SL 1x1: ${fmt2(slHard)}${noteRev}`
+    : `REVERSÃO (gatilho): —`;
+
 
   const mm1 = el("mm-micro-line");
   const mm2 = el("mm-respiro-line");
