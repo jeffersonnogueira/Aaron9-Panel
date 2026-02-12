@@ -2382,6 +2382,52 @@
   flex-direction: column;
   gap: 10px;
 }
+/* ===== MICRO MAP (NOW) — card ao lado do Micro Timeline ===== */
+.microtime-split{
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.microtime-split > .microtime-panel{
+  flex: 1 1 420px;
+}
+.micro-map-card{
+  flex: 1 1 460px;
+  min-height: 380px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(900px 280px at 0% 0%, rgba(250,204,21,.06), rgba(0,0,0,0) 60%),
+    rgba(0,0,0,.18);
+  padding: 14px;
+}
+.micro-map-title{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .85;
+  margin-bottom: 10px;
+}
+.micro-map-line{
+  font-size: 14px;   /* NÃO pequeno */
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.micro-map-foot{
+  font-size: 11px;
+  opacity: .65;
+  margin-top: 10px;
+}
+@media (max-width: 1100px){
+  .microtime-split{ flex-direction: column; }
+  .micro-map-card{ min-height: auto; }
+}
+/* ===== /MICRO MAP (NOW) ===== */
 
 .microtime-row{
   display: flex;
@@ -3726,35 +3772,43 @@
       <div class="premonition-chart">
        
 
-                <!-- ===== MICRO TIMELINE (substitui o quadro do canvas) ===== -->
-        <div class="microtime-panel" id="microtime-panel">
+                                <!-- ===== MICRO TIMELINE + MICRO MAP (NOW) ===== -->
+                <div class="microtime-split">
 
-          <div class="microtime-row microtime-future">
-            <div class="mt-k">FUTURE (NEXT)</div>
-            <div class="mt-v" id="mt-future">—</div>
-          </div>
+                  <div class="microtime-panel" id="microtime-panel">
+                    <div class="microtime-row">
+                      <div class="microtime-title">FUTURE (NEXT)</div>
+                      <div class="microtime-value" id="mt-future-next">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">MICRO LIVE — MAX</div>
+                      <div class="microtime-value" id="mt-micro-max">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">MICRO LIVE — NOW</div>
+                      <div class="microtime-value" id="mt-micro-now">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">CURRENT</div>
+                      <div class="microtime-value" id="mt-current">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">PAST</div>
+                      <div class="microtime-value" id="mt-past">—</div>
+                    </div>
+                  </div>
 
-          <div class="microtime-row microtime-max">
-            <div class="mt-k">MICRO LIVE — MAX</div>
-            <div class="mt-v" id="mt-micro-max">—</div>
-          </div>
+                  <div class="micro-map-card" id="micro-map-card">
+                    <div class="micro-map-title">MICRO MAP (NOW)</div>
+                    <div class="micro-map-line" id="mm-micro-line">MICRO LIVE — NOW: —</div>
+                    <div class="micro-map-line" id="mm-respiro-line">RESPIRO (max / p75): —</div>
+                    <div class="micro-map-line" id="mm-reversao-line">REVERSÃO (gatilho): —</div>
+                    <div class="micro-map-foot">Base: Micro Live + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
+                  </div>
 
-          <div class="microtime-row microtime-now">
-            <div class="mt-k">MICRO LIVE — NOW</div>
-            <div class="mt-v" id="mt-micro-now">—</div>
-          </div>
+                </div>
+                <!-- ===== /MICRO TIMELINE + MICRO MAP (NOW) ===== -->
 
-          <div class="microtime-row microtime-current">
-            <div class="mt-k">CURRENT</div>
-            <div class="mt-v" id="mt-current">—</div>
-          </div>
-
-          <div class="microtime-row microtime-past">
-            <div class="mt-k">PAST</div>
-            <div class="mt-v" id="mt-past">—</div>
-          </div>
-
-        </div>
         <!-- ===== /MICRO TIMELINE ===== -->
 
                 <div class="prem-signal-wrap" id="prem-signal-wrap">
@@ -12658,6 +12712,87 @@ const normPct = (x) => (x == null) ? null : ((x > 0 && x <= 1) ? x * 100 : x);
 
 const respiroPct = normPct(pullProbUse);
 const reversaoPct = normPct(revProb);
+// ===== MICRO MAP (NOW) — 3 linhas (Micro / Respiro / Reversão) =====
+(function renderMicroMapNow(){
+  // helpers locais (não conflitam com o resto do painel)
+  const fmtPct2d = (x) => {
+    const n = asNum(normPct(x));
+    return (n == null) ? "—" : `${n.toFixed(2)}%`;
+  };
+  const fmtEta = (m) => {
+    const n = asNum(m);
+    return (n == null) ? "—" : `~${Math.max(0, Math.round(n))}m`;
+  };
+
+  // micro target (pega de onde existir, sem ReferenceError)
+  const microTakeRaw =
+    (typeof microTake !== "undefined") ? microTake :
+    (panelSL?.micro_take ??
+     payloadSL?.micro_take ??
+     payloadSL?.premonition?.micro_take ??
+     payloadSL?.premonition?.micro_target ??
+     payloadSL?.premonition?.micro_target_price ??
+     null);
+
+  const microTakeN2 = asNum(microTakeRaw);
+  const microOk = (current != null && microTakeN2 != null &&
+                   Number.isFinite(Number(current)) && Number.isFinite(Number(microTakeN2)));
+
+  const dirMap = (() => {
+    if (!microOk) return null;
+    if (microTakeN2 > current) return "BUY";
+    if (microTakeN2 < current) return "SELL";
+    return null;
+  })();
+
+  const arrowMicro = (dirMap === "BUY") ? "↑" : (dirMap === "SELL") ? "↓" : "";
+  const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
+
+  // p75 do respiro (ATR)
+  const rd = exec1x1SL?.respiro_depth_atr || exec1x1SL?.pullback_depth_atr || exec1x1SL?.respiroDepthAtr || null;
+  const p75 = asNum(rd?.p75 ?? rd?.p75_atr ?? rd?.q75 ?? rd?.depth_p75_atr ?? rd?.p75_depth_atr);
+
+  const respiroMaxPrice = (microOk && atr14 != null && p75 != null && dirMap)
+    ? (dirMap === "SELL" ? (current + p75 * atr14) : (current - p75 * atr14))
+    : null;
+
+  // gatilho = SL 1x1 automático (espelho do micro target)
+  const slAuto = microOk ? (2 * current - microTakeN2) : null;
+
+  const etaMicro   = fmtEta(etaMin);
+  const etaRespiro = (etaMin != null) ? fmtEta(asNum(etaMin) + 1) : "—";
+  const etaRevers  = (etaMin != null) ? fmtEta(asNum(etaMin)) : "—";
+
+  const microLine = microOk
+    ? `MICRO LIVE — NOW: ${etaMicro} • ${fmtPct2d(prob)} • Target ${fmt2(microTakeN2)} ${arrowMicro}`
+    : `MICRO LIVE — NOW: —`;
+
+  const respiroLine = (respiroMaxPrice != null && dirMap)
+    ? `RESPIRO (max / p75): ${etaRespiro} • ${fmtPct2d(respiroPct)} • Pode esticar até ${fmt2(respiroMaxPrice)} ${arrowOpp} (${dirMap === "SELL" ? "antes de cair" : "antes de subir"})`
+    : `RESPIRO (max / p75): —`;
+
+  const reversaoLine = (slAuto != null && dirMap)
+    ? `REVERSÃO (gatilho): ${etaRevers} • ${fmtPct2d(reversaoPct)} • Se tocar ${fmt2(slAuto)} ${arrowOpp} → chance de stop antes do micro (invalida o micro ${dirMap})`
+    : `REVERSÃO (gatilho): —`;
+
+  const mm1 = el("mm-micro-line");
+  const mm2 = el("mm-respiro-line");
+  const mm3 = el("mm-reversao-line");
+
+  if (mm1) {
+    mm1.textContent = microLine;
+    mm1.style.color = (dirMap === "BUY") ? "var(--success)" : (dirMap === "SELL") ? "#fb7185" : "";
+  }
+  if (mm2) {
+    mm2.textContent = respiroLine;
+    mm2.style.color = "#facc15";
+  }
+  if (mm3) {
+    mm3.textContent = reversaoLine;
+    mm3.style.color = "var(--danger)";
+  }
+})();
+// ===== /MICRO MAP (NOW) =====
 
 if (el("rrv-respiro-pct"))  el("rrv-respiro-pct").textContent  = fmtPct(respiroPct);
 if (el("rrv-reversao-pct")) el("rrv-reversao-pct").textContent = fmtPct(reversaoPct);
