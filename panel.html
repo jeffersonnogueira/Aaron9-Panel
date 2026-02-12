@@ -3777,50 +3777,21 @@
   <!-- ===== /MICRO TIMELINE ===== -->
 
 
-  <!-- ===== NOVO BLOCO AO LADO (MICRO PATH NOW) ===== -->
-  <div class="execm-side-card" id="microtime-path-card">
-    <div class="execm-side-title">MICRO PATH (NOW)</div>
-    <div class="execm-side-body">
+            <div class="execm-side-card" id="microtime-path-card">
+            <div class="execm-side-title">MICRO MAP (NOW)</div>
+            <div class="execm-side-body">
 
-      <div class="execm-line">
-        <span class="ek">Current:</span>
-        <span id="mpl2-current" class="ev">—</span>
-        <span class="pipe">|</span>
-        <span class="ek">ATR14:</span>
-        <span id="mpl2-atr14" class="ev">—</span>
-        <span class="pipe">|</span>
-        <span class="ek">Side:</span>
-        <span id="mpl2-side" class="ev">—</span>
-      </div>
+              <div class="execm-line" id="mm-micro-line" style="font-size:14px; font-weight:950; letter-spacing:.01em;">—</div>
+              <div class="execm-line" id="mm-respiro-line" style="font-size:14px; font-weight:950; letter-spacing:.01em; margin-top:6px;">—</div>
+              <div class="execm-line" id="mm-reversao-line" style="font-size:14px; font-weight:950; letter-spacing:.01em; margin-top:6px;">—</div>
 
-      <div class="execm-line">
-        <span class="ek">Path A:</span>
-        <span id="mpl2-a1-pct" class="ev" style="color:var(--success); font-weight:900;">—</span>
-        <span class="ek"> tocar</span>
-        <span id="mpl2-a1-price" class="ev" style="color:var(--success); font-weight:900;">—</span>
-        <span class="muted"> (<span id="mpl2-a1-eta" class="ev">—</span>)</span>
-      </div>
+              <div class="muted" style="margin-top:10px; font-size:12px; line-height:1.4;">
+                Base: Micro Live + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)
+              </div>
 
-      <div class="execm-line" style="padding-left:14px;">
-        <span class="pipe">→</span>
-        <span class="ek">depois:</span>
-        <span id="mpl2-a2-pct" class="ev" style="color:#facc15; font-weight:900;">—</span>
-        <span class="ek"> estender</span>
-        <span id="mpl2-a2-price" class="ev" style="color:#facc15; font-weight:900;">—</span>
-        <span class="muted"> (<span id="mpl2-a2-eta" class="ev">—</span>)</span>
-      </div>
+            </div>
+          </div>
 
-      <div class="execm-line">
-        <span class="ek">Path B:</span>
-        <span id="mpl2-b-pct" class="ev" style="color:var(--danger); font-weight:900;">—</span>
-        <span class="ek"> falhar antes</span>
-        <span class="pipe">→</span>
-        <span id="mpl2-b-price" class="ev" style="color:var(--danger); font-weight:900;">—</span>
-        <span class="muted"> (<span id="mpl2-b-eta" class="ev">—</span>)</span>
-        <span class="muted"> (rejeição/flush)</span>
-      </div>
-
-    </div>
   </div>
 
 </div>
@@ -12728,6 +12699,75 @@ const normPct = (x) => (x == null) ? null : ((x > 0 && x <= 1) ? x * 100 : x);
 
 const respiroPct = normPct(pullProbUse);
 const reversaoPct = normPct(revProb);
+// ===== MICRO MAP (NOW) — 3 linhas (Micro / Respiro / Reversão) =====
+const fmtPct2MM = (n) => {
+  const x = Number(n);
+  return (n == null || !Number.isFinite(x)) ? "—" : `${x.toFixed(2)}%`;
+};
+const fmtEtaMM = (m) => {
+  const x = Number(m);
+  return (m == null || !Number.isFinite(x)) ? "—" : `~${Math.max(0, Math.round(x))}m`;
+};
+
+const microArrowMM = (dirUse === "BUY") ? "↑" : (dirUse === "SELL") ? "↓" : "";
+const oppArrowMM   = (dirUse === "BUY") ? "↓" : (dirUse === "SELL") ? "↑" : "";
+
+// pega o micro_path vindo do matcher (prioridade)
+const mpMM =
+  exec1x1SL?.micro_path_v1 ||
+  exec1x1SL?.micro_path_live_v1 ||
+  exec1x1SL?.micro_path ||
+  null;
+
+// ----- RESPIRO p75 (preferir preço pronto do JSON)
+const resP75PriceMM = asNum(mpMM?.respiro?.levels?.p75?.price ?? mpMM?.respiro?.p75?.price ?? mpMM?.respiro?.p75_price);
+const resP75ProbMM  = asNum(mpMM?.respiro?.levels?.p75?.prob_touch_pct ?? mpMM?.respiro?.p75?.prob_touch_pct ?? mpMM?.respiro?.prob_touch_p75_pct);
+const resP75EtaMM   = asNum(mpMM?.respiro?.levels?.p75?.eta_min ?? mpMM?.respiro?.p75?.eta_min ?? mpMM?.respiro?.p75_eta_min);
+
+// fallback por ATR caso não venha price pronto
+const rdMM = exec1x1SL?.respiro_depth_atr || exec1x1SL?.pullback_depth_atr || exec1x1SL?.respiro_depth || null;
+const p75AtrMM = asNum(rdMM?.p75 ?? rdMM?.p75_atr ?? rdMM?.depth_p75_atr ?? rdMM?.p75_depth_atr);
+
+const respiroMaxPriceMM = (resP75PriceMM != null) ? resP75PriceMM :
+  (current != null && atr14 != null && p75AtrMM != null && dirUse)
+    ? (dirUse === "SELL" ? (current + p75AtrMM * atr14) : (current - p75AtrMM * atr14))
+    : null;
+
+const respiroProbUseMM = (resP75ProbMM != null) ? resP75ProbMM : respiroPct;
+const respiroEtaUseMM  = (resP75EtaMM  != null) ? resP75EtaMM  :
+  (etaMin != null && Number.isFinite(Number(etaMin))) ? (Math.round(Number(etaMin)) + 1) : null;
+
+// ----- REVERSÃO (gatilho real + chance stop antes do micro)
+const revTrigPriceMM   = asNum(mpMM?.reversal?.trigger_price ?? mpMM?.reversal?.triggerPrice ?? mpMM?.reversal?.trigger);
+const revStopBeforeMM  = asNum(mpMM?.reversal?.prob_stop_before_target_pct ?? mpMM?.reversal?.stop_before_target_pct ?? mpMM?.reversal?.prob_stop_first_pct);
+const revEtaToTrigMM   = asNum(mpMM?.reversal?.eta_to_trigger_min ?? mpMM?.reversal?.eta_min ?? mpMM?.reversal?.etaToTriggerMin);
+
+// fallback de trigger caso não venha
+const revTrigFallbackMM = (current != null && microTakeOk) ? (2 * current - microTakeN) : null;
+
+const revTrigUseMM = (revTrigPriceMM != null) ? revTrigPriceMM : revTrigFallbackMM;
+const revPctUseMM  = (revStopBeforeMM != null) ? revStopBeforeMM : reversaoPct;
+const revEtaUseMM  = (revEtaToTrigMM != null) ? revEtaToTrigMM :
+  (etaMin != null && Number.isFinite(Number(etaMin))) ? Math.round(Number(etaMin)) : null;
+
+// linhas
+const microLineMM = (microTakeOk && dirUse)
+  ? `MICRO LIVE — NOW: ${fmtEtaMM(etaMin)} • ${fmtPct2MM(prob)} • Target ${fmt2(microTakeN)} ${microArrowMM}`
+  : `MICRO LIVE — NOW: —`;
+
+const respiroLineMM = (respiroMaxPriceMM != null && dirUse)
+  ? `RESPIRO (max / p75): ${fmtEtaMM(respiroEtaUseMM)} • ${fmtPct2MM(respiroProbUseMM)} • Pode esticar até ${fmt2(respiroMaxPriceMM)} ${oppArrowMM} (${dirUse === "SELL" ? "antes de cair" : "antes de subir"})`
+  : `RESPIRO (max / p75): —`;
+
+const reversaoLineMM = (revTrigUseMM != null && dirUse)
+  ? `REVERSÃO (gatilho): ${fmtEtaMM(revEtaUseMM)} • ${fmtPct2MM(revPctUseMM)} • Se tocar ${fmt2(revTrigUseMM)} ${oppArrowMM} → chance de stop antes do micro (invalida o micro ${dirUse})`
+  : `REVERSÃO (gatilho): —`;
+
+// render no card do lado (tem que existir esses IDs no HTML)
+if (el("mm-micro-line"))   el("mm-micro-line").textContent   = microLineMM;
+if (el("mm-respiro-line")) el("mm-respiro-line").textContent = respiroLineMM;
+if (el("mm-reversao-line")) el("mm-reversao-line").textContent = reversaoLineMM;
+// ===== /MICRO MAP (NOW) =====
 
 if (el("rrv-respiro-pct"))  el("rrv-respiro-pct").textContent  = fmtPct(respiroPct);
 if (el("rrv-reversao-pct")) el("rrv-reversao-pct").textContent = fmtPct(reversaoPct);
