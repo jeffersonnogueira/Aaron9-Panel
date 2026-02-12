@@ -2382,6 +2382,23 @@
   flex-direction: column;
   gap: 10px;
 }
+/* ===== MICRO TIMELINE split (shrink left + add new card to the side) ===== */
+.microtime-split{
+  display: grid;
+  grid-template-columns: 1.25fr 0.95fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.microtime-split .execm-side-card{
+  min-width: 320px;
+}
+
+@media (max-width: 980px){
+  .microtime-split{ grid-template-columns: 1fr; }
+  .microtime-split .execm-side-card{ min-width: 0; }
+}
+/* ===== /MICRO TIMELINE split ===== */
 
 .microtime-row{
   display: flex;
@@ -3726,36 +3743,89 @@
       <div class="premonition-chart">
        
 
-                <!-- ===== MICRO TIMELINE (substitui o quadro do canvas) ===== -->
-        <div class="microtime-panel" id="microtime-panel">
+                <div class="microtime-split" id="microtime-split">
 
-          <div class="microtime-row microtime-future">
-            <div class="mt-k">FUTURE (NEXT)</div>
-            <div class="mt-v" id="mt-future">—</div>
-          </div>
+  <!-- ===== MICRO TIMELINE (original) ===== -->
+  <div class="microtime-panel" id="microtime-panel">
 
-          <div class="microtime-row microtime-max">
-            <div class="mt-k">MICRO LIVE — MAX</div>
-            <div class="mt-v" id="mt-micro-max">—</div>
-          </div>
+    <div class="microtime-row microtime-future">
+      <div class="mt-k">FUTURE (NEXT)</div>
+      <div class="mt-v" id="mt-future">—</div>
+    </div>
 
-          <div class="microtime-row microtime-now">
-            <div class="mt-k">MICRO LIVE — NOW</div>
-            <div class="mt-v" id="mt-micro-now">—</div>
-          </div>
+    <div class="microtime-row microtime-max">
+      <div class="mt-k">MICRO LIVE — MAX</div>
+      <div class="mt-v" id="mt-micro-max">—</div>
+    </div>
 
-          <div class="microtime-row microtime-current">
-            <div class="mt-k">CURRENT</div>
-            <div class="mt-v" id="mt-current">—</div>
-          </div>
+    <div class="microtime-row microtime-now">
+      <div class="mt-k">MICRO LIVE — NOW</div>
+      <div class="mt-v" id="mt-micro-now">—</div>
+    </div>
 
-          <div class="microtime-row microtime-past">
-            <div class="mt-k">PAST</div>
-            <div class="mt-v" id="mt-past">—</div>
-          </div>
+    <div class="microtime-row microtime-current">
+      <div class="mt-k">CURRENT</div>
+      <div class="mt-v" id="mt-current">—</div>
+    </div>
 
-        </div>
-        <!-- ===== /MICRO TIMELINE ===== -->
+    <div class="microtime-row microtime-past">
+      <div class="mt-k">PAST</div>
+      <div class="mt-v" id="mt-past">—</div>
+    </div>
+
+  </div>
+  <!-- ===== /MICRO TIMELINE ===== -->
+
+
+  <!-- ===== NOVO BLOCO AO LADO (MICRO PATH NOW) ===== -->
+  <div class="execm-side-card" id="microtime-path-card">
+    <div class="execm-side-title">MICRO PATH (NOW)</div>
+    <div class="execm-side-body">
+
+      <div class="execm-line">
+        <span class="ek">Current:</span>
+        <span id="mpl2-current" class="ev">—</span>
+        <span class="pipe">|</span>
+        <span class="ek">ATR14:</span>
+        <span id="mpl2-atr14" class="ev">—</span>
+        <span class="pipe">|</span>
+        <span class="ek">Side:</span>
+        <span id="mpl2-side" class="ev">—</span>
+      </div>
+
+      <div class="execm-line">
+        <span class="ek">Path A:</span>
+        <span id="mpl2-a1-pct" class="ev" style="color:var(--success); font-weight:900;">—</span>
+        <span class="ek"> tocar</span>
+        <span id="mpl2-a1-price" class="ev" style="color:var(--success); font-weight:900;">—</span>
+        <span class="muted"> (<span id="mpl2-a1-eta" class="ev">—</span>)</span>
+      </div>
+
+      <div class="execm-line" style="padding-left:14px;">
+        <span class="pipe">→</span>
+        <span class="ek">depois:</span>
+        <span id="mpl2-a2-pct" class="ev" style="color:#facc15; font-weight:900;">—</span>
+        <span class="ek"> estender</span>
+        <span id="mpl2-a2-price" class="ev" style="color:#facc15; font-weight:900;">—</span>
+        <span class="muted"> (<span id="mpl2-a2-eta" class="ev">—</span>)</span>
+      </div>
+
+      <div class="execm-line">
+        <span class="ek">Path B:</span>
+        <span id="mpl2-b-pct" class="ev" style="color:var(--danger); font-weight:900;">—</span>
+        <span class="ek"> falhar antes</span>
+        <span class="pipe">→</span>
+        <span id="mpl2-b-price" class="ev" style="color:var(--danger); font-weight:900;">—</span>
+        <span class="muted"> (<span id="mpl2-b-eta" class="ev">—</span>)</span>
+        <span class="muted"> (rejeição/flush)</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<!-- ===== /MICRO TIMELINE split ===== -->
+
 
                 <div class="prem-signal-wrap" id="prem-signal-wrap">
           <button class="prem-signal-btn prem-signal-off" id="prem-signal-btn" type="button" disabled>
