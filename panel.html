@@ -12724,14 +12724,33 @@ const reversaoPct = normPct(revProb);
     return (n == null) ? "—" : `~${Math.max(0, Math.round(n))}m`;
   };
 
-  // Preferir dados do matcher (micro_path_v1) quando existirem
+  // Preferir dados do matcher (micro_path_live / v1) onde existirem
 const mp =
+  // 1) se vier grudado no exec_1x1 (raramente)
   exec1x1SL?.micro_path_v1 ||
   exec1x1SL?.micro_path ||
+
+  // 2) Digest V19 (LAST_PAYLOAD / real-time)
+  panelSL?.micro_path_live ||
+  payloadSL?.micro_path_live ||
+  payloadSL?.digest?.micro_path_live ||
+  payloadSL?.ui?.micro_path_live ||
+
+  // 3) fallback do payload “normal”
+  panel?.micro_path_live ||
+  digest?.micro_path_live ||
+  payload?.micro_path_live ||
+
+  // 4) versões antigas (v1 / legacy)
+  panelSL?.micro_path_v1 ||
+  panelSL?.micro_path ||
+  panel?.micro_path_v1 ||
+  panel?.micro_path ||
   payload?.micro_path_v1 ||
   payload?.micro_path ||
-  payload?.micro_path_live ||          // <<< Digest V19
+
   null;
+
 
 // (mbt) micro base time — só p/ consistência/debug
 const mbt =
