@@ -12725,15 +12725,27 @@ const reversaoPct = normPct(revProb);
   };
 
   // Preferir dados do matcher (micro_path_v1) quando existirem
-  const mp =
-    exec1x1SL?.micro_path_v1 ||
-    exec1x1SL?.micro_path ||
-    payload?.micro_path_v1 ||
-    payload?.micro_path ||
-    null;
+const mp =
+  exec1x1SL?.micro_path_v1 ||
+  exec1x1SL?.micro_path ||
+  payload?.micro_path_v1 ||
+  payload?.micro_path ||
+  payload?.micro_path_live ||          // <<< Digest V19
+  null;
 
-  const curMap = asNum(mp?.current) ?? asNum(current);
-  const atrMap = asNum(mp?.atr14) ?? asNum(atr14);
+// (mbt) micro base time — só p/ consistência/debug
+const mbt =
+  mp?.base_time || mp?.base_ts ||
+  payload?.micro_base_time || payload?.micro_base_ts ||
+  null;
+
+const curMap = asNum(mp?.current) ?? asNum(current);
+
+// ATR usado no Micro Map: mp.atr14 > micro_path_live.atr14 > atr14
+const atrMap =
+  asNum(mp?.atr14) ??
+  asNum(payload?.micro_path_live?.atr14) ??
+  asNum(atr14);
 
   const microTarget = asNum(mp?.micro_live_target) ?? asNum(microTake);
   const microOk = (curMap != null && microTarget != null);
