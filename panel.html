@@ -2369,101 +2369,6 @@
   height: 240px;
   display:block;
 }
-/* ===== MICRO TIMELINE (substitui canvas no quadro grande) ===== */
-.microtime-panel{
-  min-height: 380px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.08);
-  background:
-    radial-gradient(900px 280px at 0% 0%, rgba(96,165,250,.10), rgba(0,0,0,0) 60%),
-    rgba(0,0,0,.18);
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-/* ===== MICRO MAP (NOW) — card ao lado do Micro Timeline ===== */
-.microtime-split{
-  display: flex;
-  gap: 10px;
-  align-items: stretch;
-}
-.microtime-split > .microtime-panel{
-  flex: 1 1 420px;
-}
-.micro-map-card{
-  flex: 1 1 460px;
-  min-height: 380px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.08);
-  background:
-    radial-gradient(900px 280px at 0% 0%, rgba(250,204,21,.06), rgba(0,0,0,0) 60%),
-    rgba(0,0,0,.18);
-  padding: 14px;
-}
-.micro-map-title{
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: .85;
-  margin-bottom: 10px;
-}
-.micro-map-line{
-  font-size: 14px;   /* NÃO pequeno */
-  font-weight: 800;
-  line-height: 1.35;
-  margin: 0 0 8px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.micro-map-foot{
-  font-size: 11px;
-  opacity: .65;
-  margin-top: 10px;
-}
-@media (max-width: 1100px){
-  .microtime-split{ flex-direction: column; }
-  .micro-map-card{ min-height: auto; }
-}
-/* ===== /MICRO MAP (NOW) ===== */
-
-.microtime-row{
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(0,0,0,.22);
-}
-
-.mt-k{
-  font-size: 10px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: .65;
-  flex: 0 0 auto;
-}
-
-.mt-v{
-  font-size: 16px;
-  font-weight: 900;
-  color: rgba(255,255,255,.92);
-  text-align: right;
-  flex: 1 1 auto;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mt-target{ color: rgba(255,208,64,.95); }
-.mt-up{ color: rgba(74,222,128,.95); }
-.mt-down{ color: rgba(248,113,113,.95); }
-.mt-muted{ opacity: .75; font-weight: 800; font-size: 13px; }
-/* ===== /MICRO TIMELINE ===== */
 
 .premonition-kpi{
   margin-top: 10px;
@@ -3772,45 +3677,14 @@
       <div class="premonition-chart">
        
 
-                                <!-- ===== MICRO TIMELINE + MICRO MAP (NOW) ===== -->
-                <div class="microtime-split">
+        <canvas id="prem-canvas" class="premonition-canvas" width="900" height="260"></canvas>
 
-                  <div class="microtime-panel" id="microtime-panel">
-                    <div class="microtime-row">
-                      <div class="microtime-title">FUTURE (NEXT)</div>
-                      <div class="microtime-value" id="mt-future-next">—</div>
-                    </div>
-                    <div class="microtime-row">
-                      <div class="microtime-title">MICRO LIVE — MAX</div>
-                      <div class="microtime-value" id="mt-micro-max">—</div>
-                    </div>
-                    <div class="microtime-row">
-                      <div class="microtime-title">MICRO LIVE — NOW</div>
-                      <div class="microtime-value" id="mt-micro-now">—</div>
-                    </div>
-                    <div class="microtime-row">
-                      <div class="microtime-title">CURRENT</div>
-                      <div class="microtime-value" id="mt-current">—</div>
-                    </div>
-                    <div class="microtime-row">
-                      <div class="microtime-title">PAST</div>
-                      <div class="microtime-value" id="mt-past">—</div>
-                    </div>
-                  </div>
-
-                  <div class="micro-map-card" id="micro-map-card">
-                    <div class="micro-map-title">MICRO MAP (NOW)</div>
-                    <div class="micro-map-line" id="mm-micro-line">MICRO LIVE — NOW: —</div>
-                    <div class="micro-map-line" id="mm-respiro-line">RESPIRO (max / p75): —</div>
-                    <div class="micro-map-line" id="mm-reversao-line">REVERSÃO (gatilho): —</div>
-                    <div class="micro-map-foot">Base: Micro Live + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
-                  </div>
-
-                </div>
-                <!-- ===== /MICRO TIMELINE + MICRO MAP (NOW) ===== -->
-
-        <!-- ===== /MICRO TIMELINE ===== -->
-
+        <div class="premonition-kpi">
+          <span class="kpi-label" id="prem-kpi-label">Prob. romper —</span>
+          <span class="kpi-time" id="prem-kpi-time">—</span>
+          <span class="kpi-ampm" id="prem-kpi-ampm"></span>
+          <span class="kpi-prob" id="prem-kpi-prob">—</span>
+        </div>
                 <div class="prem-signal-wrap" id="prem-signal-wrap">
           <button class="prem-signal-btn prem-signal-off" id="prem-signal-btn" type="button" disabled>
             NÃO FAÇA NADA
@@ -3870,11 +3744,7 @@
 
     <!-- REVERSÃO -->
     <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px;">
-      <div style="display:flex; align-items:center; gap:8px;">
-  <div style="font-size:12px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:#fb7185;">REVERSÃO</div>
-  <span id="rrv-reversao-dir" style="font-size:11px; font-weight:950; letter-spacing:.06em; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); color:rgba(255,255,255,.75);">—</span>
-</div>
-
+      <div style="font-size:12px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:#fb7185;">REVERSÃO</div>
       <div id="rrv-reversao-pct" style="font-size:18px; font-weight:950; color:#fb7185;">—</div>
     </div>
     <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
@@ -6320,187 +6190,6 @@ function a10UpdatePremBreakoutBox(digest){
 
   set("prem-breakout-note", note);
 }
-function a10UpdateMicroTimeline(payload, opts = {}){
-  try{
-    const panel  = payload?.panel || payload || {};
-    const digest = payload?.digest || {};
-    const ui     = payload?.ui || {};
-
-    const bw =
-      opts.bw ||
-      digest.breakout_window_card || panel.breakout_window_card ||
-      digest.breakout_window || panel.breakout_window ||
-      null;
-
-    const setHTML = (id, html) => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = (html === null || html === undefined || html === "") ? "—" : String(html);
-    };
-
-    const esc = (s) => String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-
-    const num = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : null;
-    };
-
-    const fmt2 = (n) => (n == null ? "—" : Number(n).toFixed(2));
-    const fmtPct = (n) => (n == null ? "—" : `${Math.round(Number(n))}%`);
-    const fmtMin = (n) => (n == null ? "—" : `~${Math.round(Number(n))}m`);
-
-    // CURRENT PRICE (prioridade: opts -> payload -> UI)
-    const currentPx =
-      num(opts.currentPx) ??
-      num(panel.price_now) ?? num(ui.price_now) ?? num(digest.price_now) ??
-      num(document.getElementById("prem-head-current-price")?.textContent) ??
-      null;
-
-    const currentPxTxt = (currentPx != null) ? fmt2(currentPx) : "—";
-
-    // ===== FUTURE (NEXT) =====
-    const futureTarget = num(bw?.trigger_price);
-    const futureProb   = num(bw?.prob_until_end_pct);
-    const futureEta    = num(bw?.median_minutes);
-    const futureArrow  = (bw?.dir === "DOWN") ? "↓" : (bw?.dir === "UP") ? "↑" : "→";
-    const futureArrowCls = (futureArrow === "↑") ? "mt-up" : (futureArrow === "↓") ? "mt-down" : "mt-muted";
-
-    const futureHtml = (futureTarget != null || futureProb != null || futureEta != null)
-      ? `<span class="mt-muted">${esc(fmtMin(futureEta))}</span> • <span class="mt-muted">${esc(fmtPct(futureProb))}</span> • Target <span class="mt-target">${esc(fmt2(futureTarget))}</span> <span class="${futureArrowCls}">${futureArrow}</span>`
-      : "—";
-
-    setHTML("mt-future", futureHtml);
-
-    // ===== MICRO LIVE — NOW =====
-    const microTarget =
-      num(opts.microTarget) ??
-      num(digest.micro_target) ?? num(digest.micro_take) ??
-      num(panel.micro_target) ?? num(panel.micro_take) ??
-      null;
-
-    const microProb =
-      num(opts.microProb) ??
-      num(digest.micro_prob_pct) ?? num(panel.micro_prob_pct) ??
-      (window.__A10_PREM_MICRO_PCT != null ? num(window.__A10_PREM_MICRO_PCT) : null);
-
-    const microEta =
-      num(opts.microEtaMin) ??
-      num(digest.micro_eta_min) ?? num(digest.eta_micro_min) ??
-      num(panel.micro_eta_min) ?? num(panel.eta_micro_min) ??
-      num(opts.etaMin) ??
-      null;
-
-    const microArrow = (microTarget != null && currentPx != null)
-      ? (microTarget > currentPx ? "↑" : (microTarget < currentPx ? "↓" : "→"))
-      : "→";
-    const microArrowCls = (microArrow === "↑") ? "mt-up" : (microArrow === "↓") ? "mt-down" : "mt-muted";
-
-    const microNowHtml = (microTarget != null || microProb != null || microEta != null)
-      ? `<span class="mt-muted">${esc(fmtMin(microEta))}</span> • <span class="mt-muted">${esc(fmtPct(microProb))}</span> • Target <span class="mt-target">${esc(fmt2(microTarget))}</span> <span class="${microArrowCls}">${microArrow}</span>`
-      : "—";
-
-    setHTML("mt-micro-now", microNowHtml);
-
-    // ===== MICRO LIVE — MAX (tracking) =====
-    const nowMs = Date.now();
-
-    if (microTarget != null && currentPx != null){
-      const dirKey = (microArrow === "↓") ? "down" : (microArrow === "↑") ? "up" : "flat";
-      const max = window.__A10_MICRO_LIVE_MAX__ || null;
-
-      const better =
-        !max ||
-        max.dir !== dirKey ||
-        (dirKey === "up"   && microTarget > max.target) ||
-        (dirKey === "down" && microTarget < max.target) ||
-        (dirKey === "flat" && microProb != null && microProb > (max.prob ?? -1));
-
-      if (better){
-        window.__A10_MICRO_LIVE_MAX__ = {
-          dir: dirKey,
-          target: microTarget,
-          prob: microProb,
-          eta: microEta,
-          seenAt: nowMs
-        };
-      }
-    }
-
-    const fmtAgo = (ms) => {
-      const s = Math.max(0, Math.floor(ms / 1000));
-      const m = Math.floor(s / 60);
-      const r = s % 60;
-      if (m <= 0) return `${r}s`;
-      return `${m}m${String(r).padStart(2,"0")}s`;
-    };
-
-    const max = window.__A10_MICRO_LIVE_MAX__ || null;
-    if (max && max.target != null){
-      const age = fmtAgo(nowMs - (max.seenAt ?? nowMs));
-      const arrow = (max.dir === "down") ? "↓" : (max.dir === "up") ? "↑" : "→";
-      const arrowCls = (arrow === "↑") ? "mt-up" : (arrow === "↓") ? "mt-down" : "mt-muted";
-
-      const maxHtml =
-        `<span class="mt-target">${esc(fmt2(num(max.target)))}</span> <span class="${arrowCls}">${arrow}</span>` +
-        ` • <span class="mt-muted">${esc(fmtPct(num(max.prob)))}</span>` +
-        ` • <span class="mt-muted">${esc(fmtMin(num(max.eta)))}</span>` +
-        ` • <span class="mt-muted">há ${esc(age)}</span>`;
-
-      setHTML("mt-micro-max", maxHtml);
-    } else {
-      setHTML("mt-micro-max", "—");
-    }
-
-    // ===== CURRENT =====
-    const timeStr = (() => {
-      try{
-        return new Date().toLocaleTimeString("en-US", {
-          hour:"numeric", minute:"2-digit", hour12:true, timeZone:"America/Denver"
-        });
-      }catch(_e){
-        return new Date().toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit", hour12:true });
-      }
-    })();
-
-    setHTML("mt-current", `<span class="mt-target">${esc(currentPxTxt)}</span> • <span class="mt-muted">${esc(timeStr)}</span>`);
-
-    // ===== PAST (retest / SR proxy) =====
-    const sf = digest.shape_focus || {};
-    const sr = digest.sr_proxy || {};
-    const f  = digest.features || {};
-
-    const conf = num(sf.confidence_pct) ?? num(ui.confidence_pct);
-    const lvl  = num(sr.breakout_level);
-    const low  = num(sr.recent_low);
-    const high = num(sr.recent_high);
-
-    const retUp  = !!f.breakout_up_with_retest;
-    const retDn  = !!f.breakout_down_with_retest;
-    const confUp = !!f.breakout_up_with_retest_confirmed;
-    const confDn = !!f.breakout_down_with_retest_confirmed;
-
-    let pastLabel = "SR";
-    if (confUp || confDn) pastLabel = "Retest confirmado";
-    else if (retUp || retDn) pastLabel = "Retest";
-
-    const pastLevelTxt =
-      (lvl != null) ? fmt2(lvl) :
-      ((low != null || high != null) ? `${fmt2(low)} — ${fmt2(high)}` : "—");
-
-    const pastHtml =
-      `${esc(pastLabel)} <span class="mt-target">${esc(pastLevelTxt)}</span>` +
-      (conf != null ? ` • <span class="mt-muted">${esc(fmtPct(conf))}</span>` : "");
-
-    setHTML("mt-past", pastHtml);
-
-  }catch(_e){
-    // não quebra UI
-  }
-}
 
 function updatePremonitionPanel(payload){
   try{
@@ -6743,7 +6432,6 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 
     const badge = bw?.source ? `${bw.source} · ${dir || "—"}` : (dir || "—");
     setText("prem-badge", badge);
-    try{ a10UpdateMicroTimeline(payload, { bw, etaMin, currentPx: currentPxRaw }); }catch(_e){}
 
     // --------- MINI CHART (candles) + cruz X/Y ----------
     const canvas = document.getElementById("prem-canvas");
@@ -12253,14 +11941,6 @@ renderOptions("");
   "use strict";
 
   function el(id){ return document.getElementById(id); }
-    // SL FLEX dock: garante que o card fique no lugar certo (abaixo do STOP RISK)
-  function dockSLFlex(){
-    const dock = document.getElementById("slflex-dock");
-    const card = document.getElementById("slflex-card");
-    if (dock && card && card.parentElement !== dock) dock.appendChild(card);
-  }
-  window.addEventListener("DOMContentLoaded", dockSLFlex);
-
   function t(id){ return (el(id)?.textContent || "").trim(); }
   function numFrom(s){
     const m = String(s || "").match(/-?\d+(?:\.\d+)?/);
@@ -12456,17 +12136,10 @@ renderOptions("");
       exec1x1SL?.post_stop?.best ||
       null;
 
-        const asNum = (v) => {
-      if (v === null || v === undefined || v === "") return null;
-      if (typeof v === "number") return Number.isFinite(v) ? v : null;
-      const s = String(v).trim().replace(",", ".");
-      const m = s.match(/-?\d+(?:\.\d+)?/);
-      if (!m) return null;
-      const n = Number(m[0]);
+    const asNum = (v) => {
+      const n = Number(v);
       return Number.isFinite(n) ? n : null;
     };
-
-
 
     const dirFixed = (() => {
       const d = String(exec1x1SL?.dir ?? exec1x1SL?.side ?? exec1x1SL?.direction ?? "").toUpperCase();
@@ -12539,62 +12212,17 @@ if (current != null && slPrice != null && dirUse) {
     let chance = asNum(best?.stop_then_target_pct ?? best?.stop_then_target_uncond_pct ?? best?.hit_rate_pct);
     if (chance != null && chance > 0 && chance <= 1) chance = chance * 100;
     // ===== STOP RISK (1x1) — NOVO QUADRO =====
-        // ===== SL FLEX — garantir dock no STOP RISK =====
-    try { dockSLFlex(); } catch(e){}
-    // ===== /SL FLEX =====
+    // ===== SL FLEX — mover quadro para baixo (dock) =====
+(() => {
+  const dock = el("slflex-dock");
+  const card = el("slflex-card");
+  if (dock && card && card.parentElement !== dock) dock.appendChild(card);
+})();
+// ===== /SL FLEX =====
 
-
-    // Probabilidades: preferir LIVE (reversal_classifier) e, se não houver, usar híbrido (stats + Micro LIVE)
-const toPct100 = (x) => {
-  const n = asNum(x);
-  if (n == null) return null;
-  return (n > 0 && n <= 1) ? (n * 100) : n;
-};
-
-const revProbStats  = toPct100(
-  exec1x1SL?.reversal_prob_pct ??
-  exec1x1SL?.reversalProbPct ??
-  exec1x1SL?.rev_prob_pct ??
-  exec1x1SL?.reversao_prob_pct ??
-  exec1x1SL?.prob_reversao_pct ??
-  exec1x1SL?.reversal_probability ??
-  null
-);
-
-const pullProbStats = toPct100(
-  exec1x1SL?.prob_pullback_pct ??
-  exec1x1SL?.pullback_prob_pct ??
-  exec1x1SL?.pullbackProbPct ??
-  exec1x1SL?.prob_respiro_pct ??
-  exec1x1SL?.respiro_prob_pct ??
-  exec1x1SL?.pullback_probability ??
-  null
-);
-
-
-const rc = exec1x1SL?.reversal_classifier || payload.reversal_classifier || panel.reversal_classifier || digest.reversal_classifier || null;
-const rcOpp  = toPct100(rc?.opp_pct);   // opposite/trap → REVERSÃO
-const rcCont = toPct100(rc?.cont_pct);  // continuation → RESPIRO/CONTINUAÇÃO
-
-const microProbNow = (prob != null && Number.isFinite(Number(prob))) ? Number(prob) : null;
-const microFailNow = (microProbNow != null) ? (100 - microProbNow) : null;
-
-const W_STATS = 0.80, W_LIVE = 0.20;
-
-const revProb = (rcOpp != null)
-  ? rcOpp
-  : (revProbStats != null && microFailNow != null)
-    ? (W_STATS * revProbStats + W_LIVE * microFailNow)
-    : revProbStats;
-
-const pullProbUse = (rcCont != null)
-  ? rcCont
-  : (pullProbStats != null && microFailNow != null)
-    ? (W_STATS * pullProbStats + W_LIVE * (microFailNow * 0.50))
-    : pullProbStats;
-
-const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_to_micro_eta_min);
-
+    const revProb  = asNum(exec1x1SL?.reversal_prob_pct);
+    const pullProbStats = asNum(exec1x1SL?.prob_pullback_pct ?? exec1x1SL?.pullback_prob_pct);
+    const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_to_micro_eta_min);
 
     // stop_then_target_pct (se existir) senão usa chance
     let stopThenMicroPct = asNum(exec1x1SL?.stop_then_target_pct) ?? chance;
@@ -12632,7 +12260,6 @@ const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_t
       // Probabilidades (usa as mesmas do STOP RISK)
       if (el("slflex-prob-respiro")) el("slflex-prob-respiro").textContent = (pullProbStats != null) ? fmtPct(pullProbStats) : "—";
       if (el("slflex-prob-reversao")) el("slflex-prob-reversao").textContent = (revProb != null) ? fmtPct(revProb) : "—";
-
 
       if (el("slflex-depth-p25")) el("slflex-depth-p25").textContent = fmt2(p25);
       if (el("slflex-depth-p50")) el("slflex-depth-p50").textContent = fmt2(p50);
@@ -12698,7 +12325,7 @@ const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_t
     if (el("sr-market-msg")) {
       const msgEl = el("sr-market-msg");
       if (revProb != null && revProb >= 60) msgEl.textContent = "Mercado em Reversão/Chop.";
-      else if (pullProbUse != null && pullProbUse >= 40) msgEl.textContent = "Mercado em Respiro (pullback) — ruído alto.";
+      else if (pullProbStats != null && pullProbStats >= 40) msgEl.textContent = "Mercado em Respiro (pullback) — ruído alto.";
       else msgEl.textContent = "Mercado neutro — risco moderado.";
     }
 
@@ -12710,180 +12337,14 @@ const stopToMicro = asNum(exec1x1SL?.stop_to_target_eta_min ?? exec1x1SL?.stop_t
     // ===== RESPIRO x REVERSÃO (MICRO) — BLOCO AMARELO =====
 const normPct = (x) => (x == null) ? null : ((x > 0 && x <= 1) ? x * 100 : x);
 
-const respiroPct = normPct(pullProbUse);
+const respiroPct = normPct(pullProbStats);
 const reversaoPct = normPct(revProb);
-// ===== MICRO MAP (NOW) — 3 linhas (Micro / Respiro / Reversão) =====
-(function renderMicroMapNow(){
-  // helpers locais (não conflitam com o resto do painel)
-  const fmtPct2d = (x) => {
-    const n = asNum(normPct(x));
-    return (n == null) ? "—" : `${n.toFixed(2)}%`;
-  };
-  const fmtEta = (m) => {
-    const n = asNum(m);
-    return (n == null) ? "—" : `~${Math.max(0, Math.round(n))}m`;
-  };
-
-  // Preferir dados do matcher (micro_path_v1) quando existirem
-  const mp =
-    exec1x1SL?.micro_path_v1 ||
-    exec1x1SL?.micro_path ||
-    payload?.micro_path_v1 ||
-    payload?.micro_path ||
-    null;
-
-  const curMap = asNum(mp?.current) ?? asNum(current);
-  const atrMap = asNum(mp?.atr14) ?? asNum(atr14);
-
-  const microTarget = asNum(mp?.micro_live_target) ?? asNum(microTake);
-  const microOk = (curMap != null && microTarget != null);
-
-  const dirMap = (() => {
-    if (!microOk) return null;
-    if (microTarget > curMap) return "BUY";
-    if (microTarget < curMap) return "SELL";
-    return null;
-  })();
-
-  const arrowMicro = (dirMap === "BUY") ? "↑" : (dirMap === "SELL") ? "↓" : "";
-  const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
-
-  // micro prob/eta — usa micro_path_v1 se tiver, senão cai no que já existe
-  const microProb = asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
-  const microEta  = asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
-
-  const microLine = microOk
-    ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}`
-    : `MICRO LIVE — NOW: —`;
-
-  // ===== RESPIRO (p75) =====
-  const p75Obj = mp?.respiro?.levels?.p75 || null;
-
-  // preço pronto do matcher (melhor)
-  let respiroPrice = asNum(p75Obj?.price);
-
-  // fallback: calcular via depth_atr * atr14
-  const depthP75 =
-    asNum(p75Obj?.depth_atr) ??
-    asNum(mp?.respiro?.depth_p75_atr) ??
-    asNum(exec1x1SL?.respiro_depth_atr?.p75) ??
-    null;
-
-  if (respiroPrice == null && microOk && dirMap && atrMap != null && depthP75 != null) {
-    respiroPrice = (dirMap === "SELL")
-      ? (curMap + depthP75 * atrMap)
-      : (curMap - depthP75 * atrMap);
-  }
-
-  const respiroProb =
-    asNum(p75Obj?.prob_touch_pct) ??
-    asNum(mp?.respiro?.prob_touch_pct_p75) ??
-    asNum(respiroPct);
-
-  const respiroEta =
-    asNum(p75Obj?.eta_min) ??
-    ((microEta != null) ? (microEta + 1) : null);
-
-    // ===== REVERSÃO (gatilho) + SL duro (1x1) =====
-  const slHard = microOk ? (2 * curMap - microTarget) : null; // SL 1x1 (DURO)
-
-  // gatilho de reversão (SOFT). Se não vier do matcher, cai no SL duro.
-  let revTrigger =
-    asNum(mp?.reversal?.trigger_price) ??
-    slHard;
-
-  const revProb =
-    asNum(mp?.reversal?.prob_stop_before_target_pct) ??
-    asNum(reversaoPct);
-
-  const revEta =
-    asNum(mp?.reversal?.eta_min) ??
-    microEta;
-
-  // ===== CLAMPS (pra nunca existir "RESPIRO passa do STOP") =====
-  const eps = (slHard != null && curMap != null)
-    ? Math.max(0.01, Math.min(0.05, Math.abs(Number(slHard) - Number(curMap)) * 0.05))
-    : 0.01;
-
-  let noteRespiro = "";
-  let noteRev = "";
-
-  // 1) garante que o gatilho nunca fique além do SL duro
-  if (dirMap && revTrigger != null && slHard != null) {
-    if (dirMap === "SELL" && revTrigger > slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
-    if (dirMap === "BUY"  && revTrigger < slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
-  }
-
-  // 2) RESPIRO não pode passar do REV gatilho e nem do SL duro
-  //    SELL: cur < respiro < revTrigger <= slHard
-  //    BUY : cur > respiro > revTrigger >= slHard
-  if (dirMap && respiroPrice != null) {
-    const capBase =
-      (revTrigger != null && slHard != null) ? Math.min(revTrigger, slHard)
-      : (revTrigger != null ? revTrigger : (slHard != null ? slHard : null));
-
-    const floorBase =
-      (revTrigger != null && slHard != null) ? Math.max(revTrigger, slHard)
-      : (revTrigger != null ? revTrigger : (slHard != null ? slHard : null));
-
-    if (dirMap === "SELL" && capBase != null) {
-      const cap = Math.max(curMap + eps, capBase - eps);
-      if (respiroPrice > cap) { respiroPrice = cap; noteRespiro = " (capado)"; }
-    }
-
-    if (dirMap === "BUY" && floorBase != null) {
-      const floor = Math.min(curMap - eps, floorBase + eps);
-      if (respiroPrice < floor) { respiroPrice = floor; noteRespiro = " (capado)"; }
-    }
-  }
-
-  const respiroLine = (respiroPrice != null && dirMap)
-    ? `RESPIRO (max / p75): ${fmtEta(respiroEta)} • ${fmtPct2d(respiroProb)} • Pode esticar até ${fmt2(respiroPrice)} ${arrowOpp} (${dirMap === "SELL" ? "antes de cair" : "antes de subir"})${noteRespiro}`
-    : `RESPIRO (max / p75): —`;
-
-  const reversaoLine = (revTrigger != null && dirMap)
-    ? `REVERSÃO (gatilho): ${fmtEta(revEta)} • ${fmtPct2d(revProb)} • Se tocar ${fmt2(revTrigger)} ${arrowOpp} → invalida o micro ${dirMap} • SL 1x1: ${fmt2(slHard)}${noteRev}`
-    : `REVERSÃO (gatilho): —`;
-
-
-  const mm1 = el("mm-micro-line");
-  const mm2 = el("mm-respiro-line");
-  const mm3 = el("mm-reversao-line");
-
-  if (mm1) {
-    mm1.textContent = microLine;
-    mm1.style.color = (dirMap === "BUY") ? "var(--success)" : (dirMap === "SELL") ? "#fb7185" : "";
-  }
-  if (mm2) {
-    mm2.textContent = respiroLine;
-    mm2.style.color = "#facc15";
-  }
-  if (mm3) {
-    mm3.textContent = reversaoLine;
-    mm3.style.color = "var(--danger)";
-  }
-})();
-// ===== /MICRO MAP (NOW) =====
-
 
 if (el("rrv-respiro-pct"))  el("rrv-respiro-pct").textContent  = fmtPct(respiroPct);
 if (el("rrv-reversao-pct")) el("rrv-reversao-pct").textContent = fmtPct(reversaoPct);
 
 if (el("rrv-respiro-fill"))  el("rrv-respiro-fill").style.width  = `${clamp(respiroPct).toFixed(0)}%`;
 if (el("rrv-reversao-fill")) el("rrv-reversao-fill").style.width = `${clamp(reversaoPct).toFixed(0)}%`;
-// direcao da REVERSAO (oposto do lado do micro)
-const pbSide = String(exec1x1SL?.pullback_brain?.side ?? panelSL?.pullback_brain?.side ?? "").toLowerCase();
-const baseSide = (dirUse === "BUY" || dirUse === "SELL") ? dirUse : (pbSide === "buy" ? "BUY" : (pbSide === "sell" ? "SELL" : null));
-const revDir = baseSide ? (baseSide === "BUY" ? "SELL" : "BUY") : null;
-
-const revDirLabel = (revDir === "BUY") ? "↑ BUY" : (revDir === "SELL") ? "↓ SELL" : "—";
-const revDirEl = el("rrv-reversao-dir");
-if (revDirEl) {
-  revDirEl.textContent = revDirLabel;
-  revDirEl.style.borderColor = (revDir === "BUY") ? "rgba(52,211,153,.45)" : (revDir === "SELL") ? "rgba(251,113,133,.45)" : "rgba(255,255,255,.25)";
-  revDirEl.style.background  = (revDir === "BUY") ? "rgba(52,211,153,.12)" : (revDir === "SELL") ? "rgba(251,113,133,.12)" : "rgba(255,255,255,.08)";
-  revDirEl.style.color       = (revDir === "BUY") ? "#34d399" : (revDir === "SELL") ? "#fb7185" : "rgba(255,255,255,.75)";
-}
 
 const domEl  = el("rrv-dominant");
 const readEl = el("rrv-reading");
