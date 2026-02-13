@@ -2382,6 +2382,52 @@
   flex-direction: column;
   gap: 10px;
 }
+/* ===== MICRO MAP (NOW) — card ao lado do Micro Timeline ===== */
+.microtime-split{
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.microtime-split > .microtime-panel{
+  flex: 1 1 420px;
+}
+.micro-map-card{
+  flex: 1 1 460px;
+  min-height: 380px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(900px 280px at 0% 0%, rgba(250,204,21,.06), rgba(0,0,0,0) 60%),
+    rgba(0,0,0,.18);
+  padding: 14px;
+}
+.micro-map-title{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .85;
+  margin-bottom: 10px;
+}
+.micro-map-line{
+  font-size: 14px;   /* NÃO pequeno */
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.micro-map-foot{
+  font-size: 11px;
+  opacity: .65;
+  margin-top: 10px;
+}
+@media (max-width: 1100px){
+  .microtime-split{ flex-direction: column; }
+  .micro-map-card{ min-height: auto; }
+}
+/* ===== /MICRO MAP (NOW) ===== */
 
 .microtime-row{
   display: flex;
@@ -3726,35 +3772,43 @@
       <div class="premonition-chart">
        
 
-                <!-- ===== MICRO TIMELINE (substitui o quadro do canvas) ===== -->
-        <div class="microtime-panel" id="microtime-panel">
+                                <!-- ===== MICRO TIMELINE + MICRO MAP (NOW) ===== -->
+                <div class="microtime-split">
 
-          <div class="microtime-row microtime-future">
-            <div class="mt-k">FUTURE (NEXT)</div>
-            <div class="mt-v" id="mt-future">—</div>
-          </div>
+                  <div class="microtime-panel" id="microtime-panel">
+                    <div class="microtime-row">
+                      <div class="microtime-title">FUTURE (NEXT)</div>
+                      <div class="microtime-value" id="mt-future-next">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">MICRO LIVE — MAX</div>
+                      <div class="microtime-value" id="mt-micro-max">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">MICRO LIVE — NOW</div>
+                      <div class="microtime-value" id="mt-micro-now">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">CURRENT</div>
+                      <div class="microtime-value" id="mt-current">—</div>
+                    </div>
+                    <div class="microtime-row">
+                      <div class="microtime-title">PAST</div>
+                      <div class="microtime-value" id="mt-past">—</div>
+                    </div>
+                  </div>
 
-          <div class="microtime-row microtime-max">
-            <div class="mt-k">MICRO LIVE — MAX</div>
-            <div class="mt-v" id="mt-micro-max">—</div>
-          </div>
+                  <div class="micro-map-card" id="micro-map-card">
+                    <div class="micro-map-title">MICRO MAP (NOW)</div>
+                    <div class="micro-map-line" id="mm-micro-line">MICRO LIVE — NOW: —</div>
+                    <div class="micro-map-line" id="mm-respiro-line">RESPIRO (max / p75): —</div>
+                    <div class="micro-map-line" id="mm-reversao-line">REVERSÃO (gatilho): —</div>
+                    <div class="micro-map-foot">Base: Micro Live + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
+                  </div>
 
-          <div class="microtime-row microtime-now">
-            <div class="mt-k">MICRO LIVE — NOW</div>
-            <div class="mt-v" id="mt-micro-now">—</div>
-          </div>
+                </div>
+                <!-- ===== /MICRO TIMELINE + MICRO MAP (NOW) ===== -->
 
-          <div class="microtime-row microtime-current">
-            <div class="mt-k">CURRENT</div>
-            <div class="mt-v" id="mt-current">—</div>
-          </div>
-
-          <div class="microtime-row microtime-past">
-            <div class="mt-k">PAST</div>
-            <div class="mt-v" id="mt-past">—</div>
-          </div>
-
-        </div>
         <!-- ===== /MICRO TIMELINE ===== -->
 
                 <div class="prem-signal-wrap" id="prem-signal-wrap">
@@ -12658,6 +12712,159 @@ const normPct = (x) => (x == null) ? null : ((x > 0 && x <= 1) ? x * 100 : x);
 
 const respiroPct = normPct(pullProbUse);
 const reversaoPct = normPct(revProb);
+// ===== MICRO MAP (NOW) — 3 linhas (Micro / Respiro / Reversão) =====
+(function renderMicroMapNow(){
+  // helpers locais (não conflitam com o resto do painel)
+  const fmtPct2d = (x) => {
+    const n = asNum(normPct(x));
+    return (n == null) ? "—" : `${n.toFixed(2)}%`;
+  };
+  const fmtEta = (m) => {
+    const n = asNum(m);
+    return (n == null) ? "—" : `~${Math.max(0, Math.round(n))}m`;
+  };
+
+  // Preferir dados do matcher (micro_path_v1) quando existirem
+  const mp =
+    exec1x1SL?.micro_path_v1 ||
+    exec1x1SL?.micro_path ||
+    payload?.micro_path_v1 ||
+    payload?.micro_path ||
+    null;
+
+  const curMap = asNum(mp?.current) ?? asNum(current);
+  const atrMap = asNum(mp?.atr14) ?? asNum(atr14);
+
+  const microTarget = asNum(mp?.micro_live_target) ?? asNum(microTake);
+  const microOk = (curMap != null && microTarget != null);
+
+  const dirMap = (() => {
+    if (!microOk) return null;
+    if (microTarget > curMap) return "BUY";
+    if (microTarget < curMap) return "SELL";
+    return null;
+  })();
+
+  const arrowMicro = (dirMap === "BUY") ? "↑" : (dirMap === "SELL") ? "↓" : "";
+  const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
+
+  // micro prob/eta — usa micro_path_v1 se tiver, senão cai no que já existe
+  const microProb = asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
+  const microEta  = asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
+
+  const microLine = microOk
+    ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}`
+    : `MICRO LIVE — NOW: —`;
+
+  // ===== RESPIRO (p75) =====
+  const p75Obj = mp?.respiro?.levels?.p75 || null;
+
+  // preço pronto do matcher (melhor)
+  let respiroPrice = asNum(p75Obj?.price);
+
+  // fallback: calcular via depth_atr * atr14
+  const depthP75 =
+    asNum(p75Obj?.depth_atr) ??
+    asNum(mp?.respiro?.depth_p75_atr) ??
+    asNum(exec1x1SL?.respiro_depth_atr?.p75) ??
+    null;
+
+  if (respiroPrice == null && microOk && dirMap && atrMap != null && depthP75 != null) {
+    respiroPrice = (dirMap === "SELL")
+      ? (curMap + depthP75 * atrMap)
+      : (curMap - depthP75 * atrMap);
+  }
+
+  const respiroProb =
+    asNum(p75Obj?.prob_touch_pct) ??
+    asNum(mp?.respiro?.prob_touch_pct_p75) ??
+    asNum(respiroPct);
+
+  const respiroEta =
+    asNum(p75Obj?.eta_min) ??
+    ((microEta != null) ? (microEta + 1) : null);
+
+    // ===== REVERSÃO (gatilho) + SL duro (1x1) =====
+  const slHard = microOk ? (2 * curMap - microTarget) : null; // SL 1x1 (DURO)
+
+  // gatilho de reversão (SOFT). Se não vier do matcher, cai no SL duro.
+  let revTrigger =
+    asNum(mp?.reversal?.trigger_price) ??
+    slHard;
+
+  const revProb =
+    asNum(mp?.reversal?.prob_stop_before_target_pct) ??
+    asNum(reversaoPct);
+
+  const revEta =
+    asNum(mp?.reversal?.eta_min) ??
+    microEta;
+
+  // ===== CLAMPS (pra nunca existir "RESPIRO passa do STOP") =====
+  const eps = (slHard != null && curMap != null)
+    ? Math.max(0.01, Math.min(0.05, Math.abs(Number(slHard) - Number(curMap)) * 0.05))
+    : 0.01;
+
+  let noteRespiro = "";
+  let noteRev = "";
+
+  // 1) garante que o gatilho nunca fique além do SL duro
+  if (dirMap && revTrigger != null && slHard != null) {
+    if (dirMap === "SELL" && revTrigger > slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
+    if (dirMap === "BUY"  && revTrigger < slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
+  }
+
+  // 2) RESPIRO não pode passar do REV gatilho e nem do SL duro
+  //    SELL: cur < respiro < revTrigger <= slHard
+  //    BUY : cur > respiro > revTrigger >= slHard
+  if (dirMap && respiroPrice != null) {
+    const capBase =
+      (revTrigger != null && slHard != null) ? Math.min(revTrigger, slHard)
+      : (revTrigger != null ? revTrigger : (slHard != null ? slHard : null));
+
+    const floorBase =
+      (revTrigger != null && slHard != null) ? Math.max(revTrigger, slHard)
+      : (revTrigger != null ? revTrigger : (slHard != null ? slHard : null));
+
+    if (dirMap === "SELL" && capBase != null) {
+      const cap = Math.max(curMap + eps, capBase - eps);
+      if (respiroPrice > cap) { respiroPrice = cap; noteRespiro = " (capado)"; }
+    }
+
+    if (dirMap === "BUY" && floorBase != null) {
+      const floor = Math.min(curMap - eps, floorBase + eps);
+      if (respiroPrice < floor) { respiroPrice = floor; noteRespiro = " (capado)"; }
+    }
+  }
+
+  const respiroLine = (respiroPrice != null && dirMap)
+    ? `RESPIRO (max / p75): ${fmtEta(respiroEta)} • ${fmtPct2d(respiroProb)} • Pode esticar até ${fmt2(respiroPrice)} ${arrowOpp} (${dirMap === "SELL" ? "antes de cair" : "antes de subir"})${noteRespiro}`
+    : `RESPIRO (max / p75): —`;
+
+  const reversaoLine = (revTrigger != null && dirMap)
+    ? `REVERSÃO (gatilho): ${fmtEta(revEta)} • ${fmtPct2d(revProb)} • Se tocar ${fmt2(revTrigger)} ${arrowOpp} → invalida o micro ${dirMap} • SL 1x1: ${fmt2(slHard)}${noteRev}`
+    : `REVERSÃO (gatilho): —`;
+
+
+  const mm1 = el("mm-micro-line");
+  const mm2 = el("mm-respiro-line");
+  const mm3 = el("mm-reversao-line");
+
+  if (mm1) {
+    mm1.textContent = microLine;
+    mm1.style.color = (dirMap === "BUY") ? "var(--success)" : (dirMap === "SELL") ? "#fb7185" : "";
+  }
+  if (mm2) {
+    mm2.textContent = respiroLine;
+    mm2.style.color = "#facc15";
+  }
+  if (mm3) {
+    mm3.textContent = reversaoLine;
+    mm3.style.color = "var(--danger)";
+  }
+})();
+// ===== /MICRO MAP (NOW) =====
+
 
 if (el("rrv-respiro-pct"))  el("rrv-respiro-pct").textContent  = fmtPct(respiroPct);
 if (el("rrv-reversao-pct")) el("rrv-reversao-pct").textContent = fmtPct(reversaoPct);
