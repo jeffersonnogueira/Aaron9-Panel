@@ -10981,6 +10981,181 @@ function a10InitChart() {
   ro.observe(el);
 }
 
+// =======================================================
+// WINDOWS (Janela de entrada) — preencher o quadro WINDOWS
+// =======================================================
+function a10TfToMinutes(tf) {
+  const s = String(tf || "1m").trim().toLowerCase();
+  const m = s.match(/^(\d+)\s*m/);
+  if (m) return Math.max(1, parseInt(m[1], 10) || 1);
+  const h = s.match(/^(\d+)\s*h/);
+  if (h) return Math.max(1, (parseInt(h[1], 10) || 1) * 60);
+  return 1;
+}
+
+function a10Num(x) {
+  const n = Number(x);
+  return Number.isFinite(n) ? n : null;
+}
+
+function a10Fmt2(n) {
+  return (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(2);
+}
+
+function a10Clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
+function a10CandleParts(c) {
+  if (!c) return null;
+  const o = a10Num(c.open), h = a10Num(c.high), l = a10Num(c.low), cl = a10Num(c.close);
+  if (o == null || h == null || l == null || cl == null) return null;
+
+  const body = Math.abs(cl - o);
+  const range = Math.max(1e-9, h - l);
+  const upperWick = h - Math.max(o, cl);
+  const lowerWick = Math.min(o, cl) - l;
+
+  return { o, h, l, cl, body, range, upperWick, lowerWick };
+}
+
+function a10GetMicroCtx(payload, candles) {
+  const raw   = payload?.raw || payload?.data || payload || {};
+  const panel = payload?.panel || raw?.panel || raw || {};
+  const digest = payload?.digest || panel?.digest || raw?.digest || {};
+
+  const mp = digest?.micro_path_live || panel?.micro_path_live || payload?.micro_path_live || null;
+
+  const current =
+    a10Num(panel.price_now ?? panel.last_price ?? payload.price_now ?? payload.last_price) ??
+    a10Num(candles?.[candles.length - 1]?.close);
+
+  const microTarget =
+    a10Num(mp?.micro_live_target) ??
+    a10Num(panel?.premonition_micro?.micro_take ?? panel?.premonition_micro?.take_profit) ??
+    a10Num(panel?.micro_take ?? panel?.micro_target_price) ??
+    a10Num(digest?.premonition?.micro_target_price) ??
+    a10Num(payload?.micro_take ?? payload?.micro_target_price);
+
+  const microProb =
+    a10Num(mp?.micro_live_prob_pct) ??
+    a10Num(panel?.premonition_micro?.micro_prob_pct ?? panel?.micro_prob_pct) ??
+    a10Num(digest?.premonition?.micro_prob_pct) ??
+    a10Num(payload?.micro_prob_pct);
+
+  const dir =
+    (current != null && microTarget != null)
+      ? (microTarget > current ? "BUY" : (microTarget < current ? "SELL" : null))
+      : null;
+
+  const tf =
+    panel.timeframe ||
+    payload.timeframe ||
+    (window.a10LiveWanted && window.a10LiveWanted.timeframe) ||
+    "1m";
+
+  const tfMin = a10TfToMinutes(tf);
+
+  return { current, microTarget, microProb, dir, tfMin };
+}
+
+// Heurística simples (bem sua ideia):
+// SELL: candle "setup" fecha abaixo do anterior + wick superior grande (rejeição).
+// BUY : espelhado (fecha acima + wick inferior grande).
+function a10ComputeWindowSignal(candles, payload) {
+  const ctx = a10GetMicroCtx(payload, candles);
+  const { dir, microProb, tfMin } = ctx;
+
+  // Elementos do quadro
+  const elStatus = document.getElementById("win-status");
+  const elPred   = document.getElementById("win-predicted");
+  const elConf   = document.getElementById("win-confidence");
+  const elRule   = document.getElementById("win-rule"); // (se existir)
+
+  // se o quadro nem existe, sai silencioso
+  if (!elStatus && !elPred && !elConf && !elRule) return;
+
+  // defaults
+  let status = "WAIT";
+  let predictedTxt = "—";
+  let confTxt = "—";
+  let ruleTxt = "Regra: close abaixo do candle anterior + confirmação no próximo";
+
+  if (!candles || candles.length < 3 || !dir) {
+    // Sem candles suficientes ou sem direção
+    elStatus && (elStatus.textContent = "WAIT");
+    elPred   && (elPred.textContent   = "—");
+    elConf   && (elConf.textContent   = "—");
+    elRule   && (elRule.textContent   = ruleTxt);
+    return;
+  }
+
+  // usa: prev (fechado), setup (fechado), live (candle atual)
+  const prev  = a10CandleParts(candles[candles.length - 3]);
+  const setup = a10CandleParts(candles[candles.length - 2]);
+  const live  = a10CandleParts(candles[candles.length - 1]);
+
+  if (!prev || !setup || !live) return;
+
+  // força do wick vs body (seu “wick maior que o corpo”)
+  const wickBodyRatioSell = setup.upperWick / Math.max(1e-9, setup.body);
+  const wickBodyRatioBuy  = setup.lowerWick / Math.max(1e-9, setup.body);
+
+  const closesLower = setup.cl < prev.cl; // SELL setup
+  const closesHigher = setup.cl > prev.cl; // BUY setup
+
+  const hasRejectionSell =
+    (wickBodyRatioSell >= 1.2) && (setup.upperWick / setup.range >= 0.25);
+
+  const hasRejectionBuy =
+    (wickBodyRatioBuy >= 1.2) && (setup.lowerWick / setup.range >= 0.25);
+
+  const isSetupSell = (dir === "SELL") && closesLower && hasRejectionSell;
+  const isSetupBuy  = (dir === "BUY")  && closesHigher && hasRejectionBuy;
+
+  // confirmação (candle atual já está indo a favor)
+  const isConfirmingSell = isSetupSell && (live.cl < setup.cl);
+  const isConfirmingBuy  = isSetupBuy  && (live.cl > setup.cl);
+
+  // previsão / gatilho (números!)
+  if (isConfirmingSell || isConfirmingBuy) {
+    status = "NOW";
+    const trig = (dir === "SELL") ? setup.cl : setup.cl;
+    predictedTxt = `NOW • confirmando • (gatilho: close ${dir === "SELL" ? "<" : ">"} ${a10Fmt2(trig)}) • ~0m`;
+  } else if (isSetupSell || isSetupBuy) {
+    status = "WAIT";
+    const trig = (dir === "SELL") ? setup.cl : setup.cl;
+    predictedTxt = `~1 candle (${tfMin}m) • (gatilho: close ${dir === "SELL" ? "<" : ">"} ${a10Fmt2(trig)})`;
+  } else {
+    // sem janela
+    status = "WAIT";
+    predictedTxt = "—";
+  }
+
+  // confiança (%): microProb + força do wick (bem simples)
+  const base = (microProb != null) ? Math.max(0, Math.min(100, microProb)) : 50;
+
+  const wickScore =
+    (dir === "SELL")
+      ? a10Clamp01((wickBodyRatioSell - 1.0) / 1.5)
+      : a10Clamp01((wickBodyRatioBuy  - 1.0) / 1.5);
+
+  let conf = 0.65 * base + 0.35 * (wickScore * 100);
+  if (status === "NOW") conf += 7; // bônus por confirmação
+  conf = Math.max(0, Math.min(99, conf));
+
+  confTxt = `${Math.round(conf)}%`;
+
+  // escreve no quadro
+  elStatus && (elStatus.textContent = status);
+  elPred   && (elPred.textContent   = predictedTxt);
+  elConf   && (elConf.textContent   = confTxt);
+  elRule   && (elRule.textContent   = ruleTxt);
+}
+
+function a10UpdateWindowsCardFromCandles(payload, candles) {
+  try { a10ComputeWindowSignal(candles, payload); } catch (e) {
+    console.warn("[WINDOWS] falhou sem quebrar o painel:", e);
+  }
+}
 
 function a10UpdateChartFromPayload(payload) {
   try {
@@ -11073,10 +11248,14 @@ function a10UpdateChartFromPayload(payload) {
 
 
     window.a10ChartCandles = a10ChartCandles;
-    const candles = a10ChartCandles;
-    if (!candles || !candles.length) return;
+const candles = a10ChartCandles;
+if (!candles || !candles.length) return;
 
-    const t = a10ToggleState();
+// ✅ WINDOWS: preencher números do quadro
+a10UpdateWindowsCardFromCandles(payload, candles);
+
+const t = a10ToggleState();
+
 
     // EMA 21
     if (a10Ema21Series) {
