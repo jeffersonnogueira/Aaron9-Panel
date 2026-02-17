@@ -2382,7 +2382,7 @@
   flex-direction: column;
   gap: 10px;
 }
-/* ===== MICRO MAP (NOW) — card ao lado do Micro Timeline ===== */
+/* ===== MICRO MAP (NOW) — card ao lado do Micro Timeline + WINDOWS ===== */
 .microtime-split{
   display: flex;
   gap: 10px;
@@ -2391,17 +2391,35 @@
 .microtime-split > .microtime-panel{
   flex: 1 1 420px;
 }
-.micro-map-card{
-  flex: 1 1 460px;
+
+/* NOVO: coluna da direita (Micro Map + Windows lado a lado) */
+.micro-right-split{
+  flex: 1 1 520px;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  min-width: 520px;
+}
+
+/* Micro Map “squish” (fica menor) */
+.micro-right-split > .micro-map-card{
+  flex: 0 1 330px;
+  min-width: 300px;
+}
+
+/* NOVO: WINDOWS card */
+.windows-card{
+  flex: 1 1 260px;
   min-height: 380px;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,.08);
   background:
-    radial-gradient(900px 280px at 0% 0%, rgba(250,204,21,.06), rgba(0,0,0,0) 60%),
+    radial-gradient(900px 280px at 0% 0%, rgba(56,189,248,.08), rgba(0,0,0,0) 60%),
     rgba(0,0,0,.18);
   padding: 14px;
 }
-.micro-map-title{
+
+.windows-title{
   font-size: 12px;
   font-weight: 900;
   letter-spacing: .14em;
@@ -2409,25 +2427,61 @@
   opacity: .85;
   margin-bottom: 10px;
 }
-.micro-map-line{
-  font-size: 14px;   /* NÃO pequeno */
+
+.windows-line{
+  font-size: 14px;
   font-weight: 800;
   line-height: 1.35;
-  margin: 0 0 8px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin: 0 0 10px 0;
+  white-space: normal; /* pode quebrar linha */
+  overflow-wrap: anywhere;
 }
-.micro-map-foot{
+
+.win-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+}
+
+.win-wait{
+  background: rgba(148,163,184,.12);
+  border-color: rgba(148,163,184,.22);
+  color: rgba(226,232,240,.95);
+}
+.win-now{
+  background: rgba(74,222,128,.15);
+  border-color: rgba(74,222,128,.30);
+  color: rgba(74,222,128,.95);
+}
+.win-warn{
+  background: rgba(250,204,21,.15);
+  border-color: rgba(250,204,21,.30);
+  color: rgba(250,204,21,.95);
+}
+
+.windows-foot{
   font-size: 11px;
   opacity: .65;
   margin-top: 10px;
 }
+
+/* responsivo */
 @media (max-width: 1100px){
   .microtime-split{ flex-direction: column; }
+  .micro-right-split{ flex-direction: column; min-width: 0; }
   .micro-map-card{ min-height: auto; }
+  .windows-card{ min-height: auto; }
 }
-/* ===== /MICRO MAP (NOW) ===== */
+/* ===== /MICRO MAP (NOW) + WINDOWS ===== */
+
 
 .microtime-row{
   display: flex;
@@ -3798,13 +3852,43 @@
                     </div>
                   </div>
 
-                  <div class="micro-map-card" id="micro-map-card">
-                    <div class="micro-map-title">MICRO MAP (NOW)</div>
-                    <div class="micro-map-line" id="mm-micro-line">MICRO LIVE — NOW: —</div>
-                    <div class="micro-map-line" id="mm-respiro-line">RESPIRO (max / p75): —</div>
-                    <div class="micro-map-line" id="mm-reversao-line">REVERSÃO (gatilho): —</div>
-                    <div class="micro-map-foot">Base: Micro Live + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
+                                    <div class="micro-right-split" id="micro-right-split">
+
+                    <div class="micro-map-card" id="micro-map-card">
+                      <div class="micro-map-title">MICRO MAP (NOW)</div>
+                      <div class="micro-map-line" id="mm-micro-line">MICRO LIVE — NOW: —</div>
+                      <div class="micro-map-line" id="mm-respiro-line">RESPIRO (max / p75): —</div>
+                      <div class="micro-map-line" id="mm-reversao-line">REVERSÃO (gatilho): —</div>
+                      <div class="micro-map-foot">Base: Micro Live + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
+                    </div>
+
+                    <div class="windows-card" id="windows-card">
+                      <div class="windows-title">WINDOWS</div>
+
+                      <div class="windows-line">
+                        Status:
+                        <span id="win-status" class="win-badge win-wait">WAIT</span>
+                      </div>
+
+                      <div class="windows-line" id="win-predicted">
+                        Window prevista: —
+                      </div>
+
+                      <div class="windows-line" id="win-confidence">
+                        Confiança: —
+                      </div>
+
+                      <div class="windows-line" id="win-rule">
+                        Regra: close abaixo do candle anterior + confirmação no próximo
+                      </div>
+
+                      <div class="windows-foot">
+                        Fonte: candles Alpaca + heurística de estrutura/wicks.
+                      </div>
+                    </div>
+
                   </div>
+
 
                 </div>
                 <!-- ===== /MICRO TIMELINE + MICRO MAP (NOW) ===== -->
