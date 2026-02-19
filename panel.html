@@ -1499,6 +1499,11 @@
 }
 
 /* termômetro horizontal */
+/* PB Candle (do Digest) */
+.pb-candle { font-weight: 800; }
+.pb-candle.on-buy { color: rgba(34, 197, 94, 0.95); }
+.pb-candle.on-sell { color: rgba(248, 113, 113, 0.95); }
+.pb-candle.on-conflict { color: rgba(234, 179, 8, 0.95); }
 
 .pullback-meter {
   margin-top: 8px;
@@ -5171,6 +5176,11 @@
         </div>
       </div>
     </div>
+    <div>
+  <span>PB Candle</span>:
+  <strong id="pullback-candle" class="pb-candle">—</strong>
+</div>
+
 
     <!-- TERMÔMETRO / CONFIANÇA DO PULLBACK -->
     <div class="pullback-meter">
@@ -7844,6 +7854,7 @@ const els = {
   sizingMaxDD: document.getElementById('sizing-max-dd'),
   sizingRiskTrade: document.getElementById('sizing-risk-trade'),
   sizingTradesCount: document.getElementById('sizing-trades-count'),
+  pullbackCandle: document.getElementById('pullback-candle'),
   sizingProfileTag: document.getElementById('sizing-profile-tag'),
   sizingStyleTag: document.getElementById('sizing-style-tag'),
   sizingMeterFill: document.getElementById('sizing-meter-fill'),
@@ -9625,6 +9636,53 @@ v = Math.max(0, Math.min(100, v));
   // termômetro de confiança / “risco de reversão”
   setMeter(score, tone);
 }
+// ====== PB CANDLE (Digest V20) – FUNÇÃO GLOBAL ======
+function updatePullbackCandleFromDigest(payload) {
+  try {
+    const el = (typeof els !== 'undefined' && els && els.pullbackCandle)
+      ? els.pullbackCandle
+      : document.getElementById('pullback-candle');
+    if (!el) return;
+
+    // reset
+    el.classList.remove('on-buy', 'on-sell', 'on-conflict');
+
+    const root = payload || {};
+    const panel = root.panel || root || {};
+    const digest = root.digest || panel.digest || {};
+
+    const pb =
+      panel.pullback_candle_v1 ||
+      (digest && digest.pullback_candle_v1) ||
+      (digest && digest.micro && digest.micro.pullback_candle_v1) ||
+      root.pullback_candle_v1 ||
+      null;
+
+    if (!pb || pb.on !== true) {
+      el.textContent = '—';
+      return;
+    }
+
+    let side = String(pb.side || pb.direction || '').toUpperCase().trim();
+    if (side === 'LONG') side = 'BUY';
+    if (side === 'SHORT') side = 'SELL';
+
+    const barsAgo = (pb.bars_ago != null && isFinite(Number(pb.bars_ago)))
+      ? Number(pb.bars_ago)
+      : 0;
+
+    const nowTxt = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'NOW' : 'AGORA';
+    const barsTxt = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'bars' : 'candles';
+    const agoTxt = (barsAgo === 0) ? nowTxt : `${barsAgo} ${barsTxt}`;
+
+    if (side !== 'BUY' && side !== 'SELL' && side !== 'CONFLICT') side = 'ON';
+    el.textContent = `${side} · ${agoTxt}`;
+
+    if (side === 'BUY') el.classList.add('on-buy');
+    else if (side === 'SELL') el.classList.add('on-sell');
+    else if (side === 'CONFLICT') el.classList.add('on-conflict');
+  } catch (e) {}
+}
 
   
 
@@ -10348,9 +10406,16 @@ try {
     const pullbackBrain =
       panel.pullback_brain ||
       panel.pullbackBrain ||
+      
       panel.pullback ||
       {};
     updatePullbackBrain(pullbackBrain);
+
+    // PB Candle (Digest V20)
+if (typeof updatePullbackCandleFromDigest === "function") {
+  updatePullbackCandleFromDigest(payload);
+}
+
 
         const sizingBrain =
       panel.sizing_brain ||
