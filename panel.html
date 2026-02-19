@@ -3878,6 +3878,7 @@
                       <div class="microtime-value" id="mt-past">—</div>
                     </div>
                   </div>
+    <div id="rrv-respiro-meta" style="margin-top:4px; text-align:right; font-size:11px; font-weight:900; color:#facc15; opacity:.95;">—</div>
 
                                     <div class="micro-right-split" id="micro-right-split">
 
@@ -3991,6 +3992,7 @@
     <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
       <div id="rrv-reversao-fill" style="height:100%; width:0%; background:rgba(251,113,133,.85);"></div>
     </div>
+    <div id="rrv-reversao-meta" style="margin-top:4px; text-align:right; font-size:11px; font-weight:900; color:rgba(255,255,255,.72);">—</div>
 
     <!-- leitura -->
     <div style="margin-top:8px; font-size:12px; line-height:1.5; color:rgba(255,255,255,.92);">
@@ -13255,6 +13257,25 @@ const atrMap =
     mm3.textContent = reversaoLine;
     mm3.style.color = "var(--danger)";
   }
+    // preço + horário estimado do RESPIRO / REVERSÃO (no card)
+  const nowMs = Date.now();
+
+  const rrvResMeta = el("rrv-respiro-meta");
+  if (rrvResMeta) {
+    const m = (respiroEta != null && Number.isFinite(Number(respiroEta))) ? Math.max(0, Number(respiroEta)) : null;
+    const tt = (m != null) ? fmtTimeMT(new Date(nowMs + m * 60000)) : null;
+    const p  = (respiroPrice != null) ? fmt2(respiroPrice) : null;
+    rrvResMeta.textContent = (p && tt) ? `${p} @ ${tt} (MT)` : (p || "—");
+  }
+
+  const rrvRevMeta = el("rrv-reversao-meta");
+  if (rrvRevMeta) {
+    const m = (revEta != null && Number.isFinite(Number(revEta))) ? Math.max(0, Number(revEta)) : null;
+    const tt = (m != null) ? fmtTimeMT(new Date(nowMs + m * 60000)) : null;
+    const p  = (revTrigger != null) ? fmt2(revTrigger) : null;
+    rrvRevMeta.textContent = (p && tt) ? `${p} @ ${tt} (MT)` : (p || "—");
+  }
+
 })();
 // ===== /MICRO MAP (NOW) =====
 
