@@ -3190,6 +3190,95 @@
   font-size: 16px;
   opacity: .75;
 }
+/* ===== QUICK P&L (Premonição) ===== */
+.prem-pnlcalc{
+  margin-top: 10px;
+  padding: 10px 10px 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px;
+  background: rgba(0,0,0,.22);
+}
+
+.prem-pnlcalc .pnl-h{
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .80;
+  margin-bottom: 8px;
+}
+
+.prem-pnlcalc .pnl-controls{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.prem-pnlcalc .pnl-field{
+  display:flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.prem-pnlcalc .pnl-l{
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  opacity: .75;
+  white-space: nowrap;
+}
+
+.prem-pnlcalc .pnl-in,
+.prem-pnlcalc .pnl-sel{
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.92);
+  outline: none;
+  font-weight: 900;
+}
+
+.prem-pnlcalc .pnl-in:focus,
+.prem-pnlcalc .pnl-sel:focus{
+  border-color: rgba(250,204,21,.55);
+  box-shadow: 0 0 0 2px rgba(250,204,21,.18);
+}
+
+.prem-pnlcalc .pnl-grid{
+  display:grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px 12px;
+  align-items: baseline;
+}
+
+.prem-pnlcalc .pnl-k{
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .75;
+}
+
+.prem-pnlcalc .pnl-v{
+  font-size: 14px;
+  font-weight: 950;
+  text-align: right;
+}
+
+.prem-pnlcalc .pnl-loss{ color: #fb7185; }
+.prem-pnlcalc .pnl-muted{ opacity: .65; font-weight: 850; margin-left: 6px; }
+
+.prem-pnlcalc .pnl-foot{
+  margin-top: 10px;
+  font-size: 11px;
+}
+
 /* PREMONIÇÃO: readout (REGIME/REVERSÃO/CONSOLIDAÇÃO/...) com hierarquia visual */
 .prem-kpi-right #prem-readout{
   margin: 10px 0 12px;
@@ -4081,6 +4170,47 @@
 
   <div class="prem-kpi-right-sub" id="prem-right-eta">—</div>
 </div>
+  <!-- ===== QUICK P&L (simulação) — NÃO mexe no Premonition Micro Live ===== -->
+  <div class="prem-pnlcalc" id="prem-pnlcalc">
+    <div class="pnl-h">QUICK P&L (simulação)</div>
+
+    <div class="pnl-controls">
+      <div class="pnl-field">
+        <span class="pnl-l">Montante</span>
+        <input id="pnl-capital" class="pnl-in" type="number" inputmode="decimal" step="1000" value="100000" />
+      </div>
+
+      <div class="pnl-field">
+        <span class="pnl-l">Entrada</span>
+        <select id="pnl-entrymode" class="pnl-sel">
+          <option value="now">NOW (Current)</option>
+          <option value="opt">Most optimal entry</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pnl-grid">
+      <div class="pnl-k">ΔTP/share</div>
+      <div class="pnl-v">
+        <span id="pnl-delta">—</span>
+        <span class="pnl-muted" id="pnl-delta-cents"></span>
+      </div>
+
+      <div class="pnl-k">Qtd</div>
+      <div class="pnl-v">
+        <span id="pnl-shares">—</span> <span class="pnl-muted">shares</span>
+      </div>
+
+      <div class="pnl-k">P/L no TP</div>
+      <div class="pnl-v" id="pnl-profit">—</div>
+
+      <div class="pnl-k">P/L no SL</div>
+      <div class="pnl-v pnl-loss" id="pnl-loss">—</div>
+    </div>
+
+    <div class="pnl-foot pnl-muted" id="pnl-foot">—</div>
+  </div>
+  <!-- ===== /QUICK P&L ===== -->
 
         <div class="row">
           <div class="label">Janela estimada</div>
@@ -13435,6 +13565,149 @@ const reentry = (slPrice != null && k != null && dirUse)
     updateExecMicroBox();
   }
 })();
+/* ===== QUICK P&L (front-end only) — NÃO mexe no Premonition Micro Live ===== */
+(function(){
+  const $ = (id) => document.getElementById(id);
+
+  const num = (s) => {
+    if (s == null) return null;
+    const raw = String(s).trim();
+    if (!raw || raw === "—") return null;
+    // remove tudo exceto dígitos, ponto, vírgula e sinal
+    const cleaned = raw.replace(/[^\d.,-]/g, "").replace(",", ".");
+    const n = Number(cleaned);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const fmt2 = (n) => (n == null || !Number.isFinite(n)) ? "—" : n.toFixed(2);
+
+  const fmtMoney = (n) => {
+    if (n == null || !Number.isFinite(n)) return "—";
+    const abs = Math.abs(n);
+    const txt = abs.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (n < 0 ? "-$" : "$") + txt;
+  };
+
+  const fmtInt = (n) => (n == null || !Number.isFinite(n)) ? "—" : Math.round(n).toLocaleString("en-US");
+
+  function updatePnL(){
+    const box = $("prem-pnlcalc");
+    if (!box) return;
+
+    const capEl  = $("pnl-capital");
+    const modeEl = $("pnl-entrymode");
+
+    const cap  = num(capEl?.value);
+    const mode = modeEl?.value || "now";
+
+    // lê do painel (já renderizado)
+    const current = num($("prem-right-current-price")?.textContent);
+    const opt     = num($("slr-optentry")?.textContent);
+    const tp      = num($("slr-tp")?.textContent);
+    const sl      = num($("slr-sl")?.textContent);
+
+    const entry = (mode === "opt") ? opt : current;
+
+    // direção inferida pelo TP vs entrada (não depende de mexer no micro)
+    let dir = null;
+    if (entry != null && tp != null){
+      if (tp > entry) dir = "BUY";
+      else if (tp < entry) dir = "SELL";
+    }
+
+    // delta até TP (lucro por share)
+    let delta = null;
+    if (entry != null && tp != null && dir){
+      delta = (dir === "BUY") ? (tp - entry) : (entry - tp);
+    }
+
+    // risco até SL (perda por share)
+    let lossPer = null;
+    if (entry != null && sl != null && dir){
+      lossPer = (dir === "BUY") ? (entry - sl) : (sl - entry);
+      if (lossPer != null) lossPer = Math.abs(lossPer);
+    }
+
+    const shares = (cap != null && entry != null && cap > 0 && entry > 0)
+      ? Math.floor(cap / entry)
+      : null;
+
+    const profit = (shares != null && delta != null)   ? (shares * delta)   : null;
+    const loss   = (shares != null && lossPer != null) ? (shares * lossPer) : null;
+    const rr     = (profit != null && loss != null && loss > 0) ? (profit / loss) : null;
+
+    if ($("pnl-delta")) $("pnl-delta").textContent = (delta != null) ? fmt2(delta) : "—";
+    if ($("pnl-delta-cents")) $("pnl-delta-cents").textContent = (delta != null) ? `(${Math.round(delta * 100)}¢)` : "";
+
+    if ($("pnl-shares")) $("pnl-shares").textContent = (shares != null) ? fmtInt(shares) : "—";
+
+    const pEl = $("pnl-profit");
+    if (pEl){
+      pEl.textContent = (profit != null) ? fmtMoney(profit) : "—";
+      pEl.style.color = (profit != null) ? "#34d399" : "";
+    }
+
+    const lEl = $("pnl-loss");
+    if (lEl){
+      lEl.textContent = (loss != null) ? fmtMoney(-Math.abs(loss)) : "—";
+    }
+
+    const foot = $("pnl-foot");
+    if (foot){
+      const bits = [];
+      if (dir) bits.push(`Dir: ${dir}`);
+      if (entry != null) bits.push(`Entrada: ${fmt2(entry)}`);
+      if (tp != null) bits.push(`TP: ${fmt2(tp)}`);
+      if (sl != null) bits.push(`SL: ${fmt2(sl)}`);
+      if (rr != null) bits.push(`RR≈${rr.toFixed(2)}x`);
+      foot.textContent = bits.length ? bits.join(" · ") : "—";
+    }
+  }
+
+  function loadPnL(){
+    try{
+      const capSaved  = localStorage.getItem("a10_pnl_capital");
+      const modeSaved = localStorage.getItem("a10_pnl_entrymode");
+      if ($("pnl-capital") && capSaved) $("pnl-capital").value = capSaved;
+      if ($("pnl-entrymode") && modeSaved) $("pnl-entrymode").value = modeSaved;
+    }catch(_e){}
+  }
+
+  function bindPnL(){
+    const capEl  = $("pnl-capital");
+    const modeEl = $("pnl-entrymode");
+
+    if (capEl){
+      capEl.addEventListener("input", () => {
+        try{ localStorage.setItem("a10_pnl_capital", capEl.value); }catch(_e){}
+        updatePnL();
+      });
+    }
+
+    if (modeEl){
+      modeEl.addEventListener("change", () => {
+        try{ localStorage.setItem("a10_pnl_entrymode", modeEl.value); }catch(_e){}
+        updatePnL();
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      loadPnL();
+      bindPnL();
+      updatePnL();
+    });
+  } else {
+    loadPnL();
+    bindPnL();
+    updatePnL();
+  }
+
+  // acompanha o painel (mesma cadência do exec micro)
+  setInterval(updatePnL, 750);
+})();
+
 </script>
 
 
