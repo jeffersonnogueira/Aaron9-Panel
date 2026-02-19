@@ -4117,9 +4117,15 @@
 
                     <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
             <div>
-              <span style="font-weight:950;">Most optimal entry:</span>
-              <span id="slr-optentry" style="color:#60a5fa; font-weight:900;">—</span>
-            </div>
+  <span style="font-weight:950;">Most optimal entry:</span>
+  <span id="slr-optentry" style="color:#60a5fa; font-weight:900;">—</span>
+
+  <span style="opacity:.65; font-size:22px; margin-left:10px;">
+    @ <span id="slr-entrytime" style="color:#facc15; font-weight:900;">—</span>
+    <span style="opacity:.55;">(MT)</span>
+  </span>
+</div>
+
 
             <div>
               <span style="font-weight:950;">SL 1x1:</span>
@@ -13370,6 +13376,13 @@ const reentry = (slPrice != null && k != null && dirUse)
     if (el("slr-rule")) el("slr-rule").textContent = ruleTxt;
 
     if (el("slr-wait")) el("slr-wait").textContent = (tMed != null) ? `~${Math.round(tMed)}m` : "—";
+    if (el("slr-entrytime")) {
+  const when = (tMed != null && Number.isFinite(tMed))
+    ? fmtTimeMT(new Date(Date.now() + (tMed * 60 * 1000)))
+    : "—";
+  el("slr-entrytime").textContent = when;
+}
+
 
     if (el("slr-reentry")) el("slr-reentry").textContent = (reentry != null) ? fmt2(reentry) : "—";
 
