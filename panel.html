@@ -3296,7 +3296,7 @@
   display:grid;
   grid-template-columns: 120px 1fr;
   gap: 8px 12px;
-  align-items: baseline;
+  align-items: center; /* era baseline */
 }
 
 .prem-pnlcalc .pnl-k{
@@ -3308,14 +3308,21 @@
 }
 
 .prem-pnlcalc .pnl-v{
-  font-size: 14px;
+  font-size: 44px; /* igual ao Most optimal entry */
+  line-height: 1.05;
   font-weight: 950;
   text-align: right;
+  white-space: nowrap;
 }
 
 .prem-pnlcalc .pnl-loss{ color: #fb7185; }
-.prem-pnlcalc .pnl-muted{ opacity: .65; font-weight: 850; margin-left: 6px; }
 
+.prem-pnlcalc .pnl-muted{
+  font-size: 22px;
+  opacity: .65;
+  font-weight: 850;
+  margin-left: 6px;
+}
 .prem-pnlcalc .pnl-foot{
   margin-top: 10px;
   font-size: 11px;
