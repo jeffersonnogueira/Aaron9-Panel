@@ -2924,7 +2924,66 @@
 #ee-brain-card #ee-target{ font-size: 18px; }
 
 #ee-brain-card .prem-breakout-note{ font-size: 12px; }
+/* ===== EE BRAIN — TRIGGER/CANCEL (quadrado amarelo) ===== */
+#ee-brain-card #ee-trigger,
+#ee-brain-card #ee-cancel{
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 900;
+  opacity: .92;
+}
 
+/* preço gigante (igual Current Price) */
+#ee-brain-card .ee-price{
+  display:inline-block;
+  padding: 0 8px;
+  margin: 0 3px;
+  font-size: 44px;          /* igual Current Price */
+  font-weight: 950;
+  letter-spacing: .02em;
+  line-height: 1.05;
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 0 18px rgba(0,0,0,.35);
+  vertical-align: baseline;
+}
+
+#ee-brain-card .ee-price.ee-above{
+  color: var(--success);
+  border-color: rgba(74,222,128,.28);
+  background: rgba(74,222,128,.08);
+}
+
+#ee-brain-card .ee-price.ee-below{
+  color: var(--danger);
+  border-color: rgba(248,113,113,.28);
+  background: rgba(248,113,113,.08);
+}
+
+#ee-brain-card .ee-price.ee-at{
+  color: #ffcc66;
+  border-color: rgba(255,208,64,.22);
+  background: rgba(255,208,64,.06);
+}
+
+/* footer mais legível */
+#ee-brain-card #ee-foot{
+  font-size: 18px;
+  opacity: .88;
+}
+#ee-brain-card .ee-pct{ font-weight: 950; }
+#ee-brain-card .ee-pct.ee-ok{ color: var(--success); }
+#ee-brain-card .ee-pct.ee-bad{ color: var(--danger); }
+#ee-brain-card .ee-pct.ee-warn{ color: #ffcc66; }
+
+/* mobile */
+@media (max-width: 720px){
+  #ee-brain-card #ee-trigger,
+  #ee-brain-card #ee-cancel{ font-size: 16px; }
+  #ee-brain-card .ee-price{ font-size: 28px; }
+  #ee-brain-card #ee-foot{ font-size: 14px; }
+}
 /* mobile: evita quebrar layout */
 @media (max-width: 720px){
   #ee-brain-card .ee-line{ font-size: 14px; }
@@ -13871,6 +13930,57 @@ const reentry = (slPrice != null && k != null && dirUse)
   };
 
   const fmt2 = (n) => (n == null || !Number.isFinite(n)) ? "—" : n.toFixed(2);
+    function wrapPricesHTML(text, current){
+    if (!text) return "—";
+
+    const cur = Number.isFinite(current) ? current : null;
+    const re = /-?\d+(?:\.\d+)?/g;
+
+    let out = "";
+    let last = 0;
+    let m;
+
+    while ((m = re.exec(text)) !== null){
+      const raw = m[0];
+      const idx = m.index;
+
+      out += text.slice(last, idx);
+
+      const n = parseFloat(raw);
+      const after = text.slice(idx + raw.length);
+      const afterTrim = after.replace(/^\s+/, "");
+
+      const isPct = afterTrim.startsWith("%");          // não mexe em "70%"
+      const isSmall = !Number.isFinite(n) || Math.abs(n) < 1; // não mexe em 0.07 etc
+
+      if (isPct || isSmall){
+        out += raw;
+      } else {
+        let cls = "ee-at";
+        if (cur != null){
+          if (n > cur) cls = "ee-above";
+          else if (n < cur) cls = "ee-below";
+        }
+        out += `<span class="ee-price ${cls}">${raw}</span>`;
+      }
+
+      last = idx + raw.length;
+    }
+
+    out += text.slice(last);
+    return out;
+  }
+
+  function eeFootHTML(stopRisk,respiroPct,reversaoPct){
+    const sr = (stopRisk!=null && Number.isFinite(stopRisk)) ? Math.round(stopRisk) : null;
+    const rp = (respiroPct!=null && Number.isFinite(respiroPct)) ? Math.round(respiroPct) : null;
+    const rv = (reversaoPct!=null && Number.isFinite(reversaoPct)) ? Math.round(reversaoPct) : null;
+
+    const a = (sr==null) ? "—" : `<span class="ee-pct ee-warn">${sr}%</span>`;
+    const b = (rp==null) ? "—" : `<span class="ee-pct ee-ok">${rp}%</span>`;
+    const c = (rv==null) ? "—" : `<span class="ee-pct ee-bad">${rv}%</span>`;
+    return `StopRisk ${a} · Respiro ${b} · Reversão ${c}`;
+  }
   const fmtPct = (p) => (p == null || !Number.isFinite(p)) ? "—" : `${Math.round(p)}%`;
 
   function parseEtaMin(txt){
@@ -13926,9 +14036,9 @@ const reentry = (slPrice != null && k != null && dirUse)
       setBadge("WAIT");
       if ($("ee-plan")) $("ee-plan").textContent = "—";
       if ($("ee-entry")) $("ee-entry").textContent = "—";
-      if ($("ee-conf")) $("ee-conf").textContent = "—";
-      if ($("ee-trigger")) $("ee-trigger").textContent = "—";
-      if ($("ee-cancel")) $("ee-cancel").textContent = "—";
+      if ($("ee-trigger")) $("ee-trigger").innerHTML = "—";
+      if ($("ee-cancel")) $("ee-cancel").innerHTML = "—";
+      if ($("ee-foot")) $("ee-foot").innerHTML = "—";
       if ($("ee-foot")) $("ee-foot").textContent = "—";
       return;
     }
@@ -14035,12 +14145,11 @@ const reentry = (slPrice != null && k != null && dirUse)
         : `Cancelar se retornar acima de ${fmt2(entry + zConf)}.`;
     }
 
-    if ($("ee-trigger")) $("ee-trigger").textContent = trigger;
-    if ($("ee-cancel")) $("ee-cancel").textContent = cancel;
+        if ($("ee-trigger")) $("ee-trigger").innerHTML = wrapPricesHTML(trigger, current);
+    if ($("ee-cancel")) $("ee-cancel").innerHTML = wrapPricesHTML(cancel, current);
 
     if ($("ee-foot")){
-      $("ee-foot").textContent =
-        `StopRisk ${stopRisk!=null?Math.round(stopRisk)+"%":"—"} · Respiro ${respiroPct!=null?Math.round(respiroPct)+"%":"—"} · Reversão ${reversaoPct!=null?Math.round(reversaoPct)+"%":"—"}`;
+      $("ee-foot").innerHTML = eeFootHTML(stopRisk, respiroPct, reversaoPct);
     }
 
     setBadge(status);
