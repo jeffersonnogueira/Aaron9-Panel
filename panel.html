@@ -2890,6 +2890,51 @@
   color: rgba(255,255,255,.88);
 }
 .ee-strong{ font-weight:950; }
+/* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
+#ee-brain-card{ padding: 12px 14px; }
+
+#ee-brain-card .prem-breakout-title{
+  font-size: 12px;
+  opacity: .72;
+}
+
+#ee-brain-card .ee-badge{
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+#ee-brain-card .ee-hdr{
+  font-size: 14px;
+  font-weight: 900;
+  opacity: .80;
+  text-align: right;
+}
+
+#ee-brain-card .ee-k{ font-size: 10px; }
+
+#ee-brain-card .ee-line{
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+#ee-brain-card .ee-line .ee-strong{ font-size: 18px; }
+
+#ee-brain-card #ee-entry,
+#ee-brain-card #ee-conf,
+#ee-brain-card #ee-target{ font-size: 18px; }
+
+#ee-brain-card .prem-breakout-note{ font-size: 12px; }
+
+/* mobile: evita quebrar layout */
+@media (max-width: 720px){
+  #ee-brain-card .ee-line{ font-size: 14px; }
+  #ee-brain-card .ee-line .ee-strong,
+  #ee-brain-card #ee-entry,
+  #ee-brain-card #ee-conf,
+  #ee-brain-card #ee-target{ font-size: 16px; }
+  #ee-brain-card .ee-badge,
+  #ee-brain-card .ee-hdr{ font-size: 12px; }
+}
 @media (max-width: 720px){
   .prem-signal-btn{ font-size: 28px; padding: 14px 14px; }
 }
@@ -4423,7 +4468,7 @@
     <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
       <div class="ee-badge wait" id="ee-status-badge">WAIT</div>
 
-      <div style="font-size:11px; font-weight:900; opacity:.80; text-align:right;">
+      <div class="ee-hdr">
         Target:
         <span id="ee-target" style="color:var(--success); font-weight:950;">—</span>
         <span style="opacity:.55;">·</span>
