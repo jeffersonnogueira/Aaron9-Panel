@@ -2847,7 +2847,49 @@
   font-size: 10px;
   opacity: .55;
 }
+/* ===== EXEC MICRO + EE BRAIN (lado a lado) ===== */
+.prem-exec-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+  gap: 14px;
+  align-items: start;
+}
+.prem-exec-grid > *{ min-width: 0; }
 
+/* em telas menores, empilha */
+@media (max-width: 1180px){
+  .prem-exec-grid{ grid-template-columns: 1fr; }
+}
+
+/* ===== EE BRAIN ===== */
+.ee-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.22);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.06em;
+}
+.ee-badge.go{ color:#34d399; border-color: rgba(52,211,153,.25); }
+.ee-badge.wait{ color:#facc15; border-color: rgba(250,204,21,.25); }
+.ee-badge.no{ color:#fb7185; border-color: rgba(251,113,133,.25); }
+
+.ee-k{
+  font-size:9px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.55;
+}
+.ee-line{
+  font-size:12px;
+  line-height:1.35;
+  color: rgba(255,255,255,.88);
+}
+.ee-strong{ font-weight:950; }
 @media (max-width: 720px){
   .prem-signal-btn{ font-size: 28px; padding: 14px 14px; }
 }
@@ -4242,6 +4284,7 @@
           <div class="value muted" id="prem-base">—</div>
         </div>
                 <!-- ===== EXEC (MICRO) - bloco do retângulo amarelo ===== -->
+                 <div class="prem-exec-grid" id="prem-exec-grid"></div>
         <div id="prem-exec-micro" style="padding-top:12px; margin-top:12px; border-top:1px solid rgba(255,255,255,.06);">
                               <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.80; margin-bottom:10px;">
             PLANO “SE BATER STOP” (REENTRADA)
@@ -4366,6 +4409,62 @@
         <!-- ===== /EXEC (MICRO) ===== -->
 
       </div>
+        <!-- ===== EE BRAIN (Entry Brain) — NOVO QUADRO AO LADO ===== -->
+  <div class="prem-breakout-wrap" id="ee-brain-card" style="margin-top:12px;">
+    <div class="prem-breakout-title">EE BRAIN · ENTRY (Micro Live)</div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div class="ee-badge wait" id="ee-status-badge">WAIT</div>
+
+      <div style="font-size:11px; font-weight:900; opacity:.80; text-align:right;">
+        Target:
+        <span id="ee-target" style="color:var(--success); font-weight:950;">—</span>
+        <span style="opacity:.55;">·</span>
+        <span id="ee-target-pct" style="color:var(--success); font-weight:950;">—</span>
+        <span style="opacity:.55;">·</span>
+        <span id="ee-target-eta" style="color:#facc15; font-weight:950;">—</span>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:4px;">
+      <div>
+        <div class="ee-k">Plano primário</div>
+        <div class="ee-line">
+          <span id="ee-plan" class="ee-strong">—</span>
+          <span style="opacity:.55;"> @ </span>
+          <span id="ee-entry" style="color:#60a5fa; font-weight:950;">—</span>
+          <span style="opacity:.55;"> · Conf </span>
+          <span id="ee-conf" style="color:#facc15; font-weight:950;">—</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="ee-k">Zonas Pullback (ATR)</div>
+        <div class="ee-line">
+          P25 <span id="ee-pb25" class="ee-strong">—</span>
+          <span style="opacity:.55;"> · </span>
+          P50 <span id="ee-pb50" class="ee-strong">—</span>
+          <span style="opacity:.55;"> · </span>
+          P75 <span id="ee-pb75" class="ee-strong">—</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="ee-k">Gatilho / Confirmação</div>
+        <div class="ee-line" id="ee-trigger">—</div>
+      </div>
+
+      <div>
+        <div class="ee-k">Cancelamento</div>
+        <div class="ee-line" id="ee-cancel">—</div>
+      </div>
+    </div>
+
+    <div class="prem-breakout-note" id="ee-foot">—</div>
+  </div>
+  <!-- ===== /EE BRAIN ===== -->
+
+</div> <!-- fecha prem-exec-grid -->
     </div>
   </div>
 </section>
@@ -13707,7 +13806,197 @@ const reentry = (slPrice != null && k != null && dirUse)
   // acompanha o painel (mesma cadência do exec micro)
   setInterval(updatePnL, 750);
 })();
+/* ===== EE BRAIN (Entry Brain) — onde/quando entrar (Target = Micro Live) ===== */
+(function(){
+  const $ = (id) => document.getElementById(id);
 
+  const num = (v) => {
+    if (v == null) return null;
+    const s = String(v).replace(/[^0-9.\-]/g, "");
+    const n = parseFloat(s);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const fmt2 = (n) => (n == null || !Number.isFinite(n)) ? "—" : n.toFixed(2);
+  const fmtPct = (p) => (p == null || !Number.isFinite(p)) ? "—" : `${Math.round(p)}%`;
+
+  function parseEtaMin(txt){
+    if (!txt) return null;
+    const s = String(txt);
+    let m = s.match(/~\s*(\d+(?:\.\d+)?)\s*(m|min)/i);
+    if (m) return parseFloat(m[1]);
+    m = s.match(/em\s*~?\s*(\d+(?:\.\d+)?)\s*min/i);
+    if (m) return parseFloat(m[1]);
+    return null;
+  }
+
+  function setBadge(state){
+    const el = $("ee-status-badge");
+    if (!el) return;
+    el.classList.remove("go","wait","no");
+    if (state === "GO"){ el.classList.add("go"); el.textContent = "GO"; }
+    else if (state === "NO"){ el.classList.add("no"); el.textContent = "NO"; }
+    else { el.classList.add("wait"); el.textContent = "WAIT"; }
+  }
+
+  function updateEEBrain(){
+    if (!$("ee-brain-card")) return;
+
+    // fontes confiáveis do seu painel (já existem)
+    const current = num($("mpl-current")?.textContent) ?? num($("prem-right-current-price")?.textContent);
+    const atr14   = num($("mpl-atr14")?.textContent);
+
+    const target     = num($("mpl-a1-price")?.textContent) ?? num($("slr-tp")?.textContent);
+    const targetPct  = num($("mpl-a1-pct")?.textContent) ?? num($("prem-right-prob")?.textContent);
+    const etaTxt     = ($("mpl-a1-eta")?.textContent || $("prem-right-eta")?.textContent || "").trim();
+    const etaMin     = parseEtaMin(etaTxt);
+
+    const stopRisk   = num($("sr-stop-first-pct")?.textContent);
+    const respiroPct = num($("rrv-respiro-pct")?.textContent);
+    const reversaoPct= num($("rrv-reversao-pct")?.textContent);
+
+    const optEntry   = num($("slr-optentry")?.textContent);
+    const sl         = num($("slr-sl")?.textContent);
+    const tp         = num($("slr-tp")?.textContent) ?? target;
+
+    const d25 = num($("slflex-depth-p25")?.textContent);
+    const d50 = num($("slflex-depth-p50")?.textContent);
+    const d75 = num($("slflex-depth-p75")?.textContent);
+
+    // preencher header
+    if ($("ee-target")) $("ee-target").textContent = (target != null) ? fmt2(target) : "—";
+    if ($("ee-target-pct")) $("ee-target-pct").textContent = fmtPct(targetPct);
+    if ($("ee-target-eta")) $("ee-target-eta").textContent = (etaMin != null) ? `~${Math.round(etaMin)}m` : (etaTxt || "—");
+
+    // sem dados? sai
+    if (current == null || atr14 == null || tp == null){
+      setBadge("WAIT");
+      if ($("ee-plan")) $("ee-plan").textContent = "—";
+      if ($("ee-entry")) $("ee-entry").textContent = "—";
+      if ($("ee-conf")) $("ee-conf").textContent = "—";
+      if ($("ee-trigger")) $("ee-trigger").textContent = "—";
+      if ($("ee-cancel")) $("ee-cancel").textContent = "—";
+      if ($("ee-foot")) $("ee-foot").textContent = "—";
+      return;
+    }
+
+    const dir = (tp > current) ? "BUY" : "SELL";
+    const sign = (dir === "BUY") ? -1 : +1;
+
+    const pb25 = (d25 != null) ? current + sign * atr14 * d25 : null;
+    const pb50 = (d50 != null) ? current + sign * atr14 * d50 : null;
+    const pb75 = (d75 != null) ? current + sign * atr14 * d75 : null;
+
+    if ($("ee-pb25")) $("ee-pb25").textContent = fmt2(pb25);
+    if ($("ee-pb50")) $("ee-pb50").textContent = fmt2(pb50);
+    if ($("ee-pb75")) $("ee-pb75").textContent = fmt2(pb75);
+
+    // escolhe profundidade recomendada baseado no StopRisk
+    let depthRec = d25 ?? d50 ?? d75;
+    if (stopRisk != null){
+      if (stopRisk >= 65) depthRec = d75 ?? d50 ?? d25;
+      else if (stopRisk >= 45) depthRec = d50 ?? d25 ?? d75;
+      else depthRec = d25 ?? d50 ?? d75;
+    }
+    const pbRec = (depthRec != null) ? (current + sign * atr14 * depthRec) : null;
+
+    // regime simples
+    const isReversalHeavy =
+      (reversaoPct != null && reversaoPct >= 60) ||
+      (respiroPct != null && reversaoPct != null && (reversaoPct - respiroPct) >= 20);
+
+    const isPullbackHeavy =
+      (respiroPct != null && respiroPct >= 40) &&
+      (reversaoPct == null || respiroPct >= (reversaoPct + 5));
+
+    // decide plano
+    let plan = "—";
+    let entry = optEntry ?? pbRec;
+    let status = "WAIT";
+
+    // confiança (heurística)
+    let conf = (targetPct != null) ? targetPct : 60;
+    if (stopRisk != null) conf -= Math.max(0, stopRisk - 40) * 0.5;
+    if (reversaoPct != null) conf -= Math.max(0, reversaoPct - 55) * 0.4;
+    conf = Math.max(1, Math.min(99, conf));
+
+    const zone = 0.10 * atr14;   // “perto o suficiente”
+    const zConf = 0.06 * atr14;  // banda pra confirmação
+
+    if (isReversalHeavy || (stopRisk != null && stopRisk >= 55)){
+      plan = `RETEST (confirmar) · ${dir}`;
+      status = "WAIT";
+      entry = optEntry ?? pbRec ?? current;
+    } else if (isPullbackHeavy){
+      plan = `PULLBACK (melhor preço) · ${dir}`;
+      entry = optEntry ?? pbRec ?? current;
+      if (Math.abs(current - entry) <= zone && (stopRisk == null || stopRisk <= 50)) status = "GO";
+    } else {
+      plan = `CONTINUAÇÃO (break) · ${dir}`;
+      entry = current + ((dir === "BUY") ? +0.12 * atr14 : -0.12 * atr14);
+      if ((targetPct != null && targetPct >= 70) && (stopRisk == null || stopRisk <= 45)) status = "GO";
+    }
+
+    // trava: entrada nunca “passa” do TP
+    if (entry != null && tp != null){
+      if (dir === "BUY" && entry > tp) entry = tp - 0.05 * atr14;
+      if (dir === "SELL" && entry < tp) entry = tp + 0.05 * atr14;
+    }
+
+    // preencher UI
+    if ($("ee-plan")) $("ee-plan").textContent = plan;
+    if ($("ee-entry")) $("ee-entry").textContent = fmt2(entry);
+    if ($("ee-conf")) $("ee-conf").textContent = fmtPct(conf);
+
+    // regras (gatilho/cancel)
+    let trigger = "—";
+    let cancel = "—";
+
+    if (plan.startsWith("PULLBACK")){
+      trigger = (dir === "BUY")
+        ? `Esperar tocar ${fmt2(entry)} ± ${fmt2(zConf)} e fechar acima (reclaim).`
+        : `Esperar tocar ${fmt2(entry)} ± ${fmt2(zConf)} e fechar abaixo (reclaim).`;
+
+      cancel = (sl != null)
+        ? `Cancelar se bater SL ${fmt2(sl)} antes do reclaim.`
+        : `Cancelar se falhar o reclaim (sem confirmação).`;
+    }
+    else if (plan.startsWith("RETEST")){
+      const reclaim = (dir === "BUY") ? (entry + zConf) : (entry - zConf);
+
+      trigger = (dir === "BUY")
+        ? `Touch ${fmt2(entry)} → entrar só após fechar acima de ${fmt2(reclaim)}.`
+        : `Touch ${fmt2(entry)} → entrar só após fechar abaixo de ${fmt2(reclaim)}.`;
+
+      cancel = (dir === "BUY")
+        ? `Cancelar se fechar abaixo de ${fmt2(entry - zConf)} (falha retest).`
+        : `Cancelar se fechar acima de ${fmt2(entry + zConf)} (falha retest).`;
+    }
+    else if (plan.startsWith("CONTINUAÇÃO")){
+      trigger = (dir === "BUY")
+        ? `Entrar no rompimento acima de ${fmt2(entry)} com micro ainda ≥70%.`
+        : `Entrar no rompimento abaixo de ${fmt2(entry)} com micro ainda ≥70%.`;
+
+      cancel = (dir === "BUY")
+        ? `Cancelar se retornar abaixo de ${fmt2(entry - zConf)}.`
+        : `Cancelar se retornar acima de ${fmt2(entry + zConf)}.`;
+    }
+
+    if ($("ee-trigger")) $("ee-trigger").textContent = trigger;
+    if ($("ee-cancel")) $("ee-cancel").textContent = cancel;
+
+    if ($("ee-foot")){
+      $("ee-foot").textContent =
+        `StopRisk ${stopRisk!=null?Math.round(stopRisk)+"%":"—"} · Respiro ${respiroPct!=null?Math.round(respiroPct)+"%":"—"} · Reversão ${reversaoPct!=null?Math.round(reversaoPct)+"%":"—"}`;
+    }
+
+    setBadge(status);
+  }
+
+  setInterval(updateEEBrain, 750);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", updateEEBrain);
+  else updateEEBrain();
+})();
 </script>
 
 
