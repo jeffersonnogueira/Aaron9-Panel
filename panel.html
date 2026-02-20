@@ -2847,6 +2847,44 @@
   font-size: 10px;
   opacity: .55;
 }
+/* ===== EE BRAIN (Entry Brain) ===== */
+.ee-brain-card{ padding: 14px 14px; gap: 10px; }
+.ee-brain-card .prem-breakout-title{ font-size: 12px; opacity: .80; }
+
+.ee-line{ display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.ee-k{
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .65;
+  flex: 0 0 auto;
+}
+.ee-v{
+  font-size: 14px;
+  font-weight: 950;
+  color: rgba(255,255,255,.92);
+  text-align: right;
+  flex: 1 1 auto;
+}
+.ee-foot{
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255,255,255,.75);
+}
+
+.ee-badge{
+  font-size: 11px;
+  font-weight: 950;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.85);
+}
+.ee-badge.ee-wait{ border-color: rgba(250,204,21,.35); background: rgba(250,204,21,.10); color:#facc15; }
+.ee-badge.ee-ready{ border-color: rgba(52,211,153,.45); background: rgba(52,211,153,.12); color:#34d399; }
+.ee-badge.ee-go{ border-color: rgba(96,165,250,.45); background: rgba(96,165,250,.12); color:#60a5fa; }
 /* ===== EXEC MICRO + EE BRAIN (lado a lado) ===== */
 .prem-exec-grid{
   display: grid;
@@ -3235,55 +3273,57 @@
 /* ===== QUICK P&L (Premonição) ===== */
 .prem-pnlcalc{
   margin-top: 10px;
-  padding: 10px 10px 12px;
+  padding: 12px 12px 14px;
   border: 1px solid rgba(255,255,255,.10);
   border-radius: 12px;
   background: rgba(0,0,0,.22);
 }
 
 .prem-pnlcalc .pnl-h{
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 950;
   letter-spacing: .14em;
   text-transform: uppercase;
-  opacity: .80;
-  margin-bottom: 8px;
+  opacity: .85;
+  margin-bottom: 10px;
 }
 
 .prem-pnlcalc .pnl-controls{
   display:flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .prem-pnlcalc .pnl-field{
   display:flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
-  min-width: 180px;
+  min-width: 200px;
 }
 
 .prem-pnlcalc .pnl-l{
-  font-size: 11px;
-  font-weight: 900;
+  font-size: 13px;
+  font-weight: 950;
   letter-spacing: .10em;
   text-transform: uppercase;
-  opacity: .75;
+  opacity: .80;
   white-space: nowrap;
 }
 
 .prem-pnlcalc .pnl-in,
 .prem-pnlcalc .pnl-sel{
   flex: 1;
-  padding: 8px 10px;
+  padding: 9px 12px;
+  height: 36px;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,.12);
   background: rgba(255,255,255,.04);
   color: rgba(255,255,255,.92);
   outline: none;
-  font-weight: 900;
+  font-weight: 950;
+  font-size: 14px;
 }
 
 .prem-pnlcalc .pnl-in:focus,
@@ -3294,31 +3334,31 @@
 
 .prem-pnlcalc .pnl-grid{
   display:grid;
-  grid-template-columns: 120px 1fr;
-  gap: 8px 12px;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 12px;
   align-items: baseline;
 }
 
 .prem-pnlcalc .pnl-k{
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: .14em;
   text-transform: uppercase;
-  opacity: .75;
+  opacity: .78;
 }
 
 .prem-pnlcalc .pnl-v{
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 950;
   text-align: right;
 }
 
 .prem-pnlcalc .pnl-loss{ color: #fb7185; }
-.prem-pnlcalc .pnl-muted{ opacity: .65; font-weight: 850; margin-left: 6px; }
+.prem-pnlcalc .pnl-muted{ opacity: .65; font-weight: 900; margin-left: 6px; }
 
 .prem-pnlcalc .pnl-foot{
-  margin-top: 10px;
-  font-size: 11px;
+  margin-top: 12px;
+  font-size: 12px;
 }
 
 /* PREMONIÇÃO: readout (REGIME/REVERSÃO/CONSOLIDAÇÃO/...) com hierarquia visual */
@@ -4021,77 +4061,107 @@
                       <div class="micro-map-foot">Base: Micro Live + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
                     </div>
 
-                    <div class="windows-card" id="windows-card">
-                      <div class="windows-title">WINDOWS</div>
+                    <!-- ===== EE BRAIN – ENTRY (MICRO LIVE) ===== -->
+<div class="prem-breakout-wrap ee-brain-card" id="ee-brain-card" style="margin-top:10px;">
+  <div class="prem-breakout-title" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+    <span>EE BRAIN · ENTRY (MICRO LIVE)</span>
+    <span id="ee-status" class="ee-badge ee-wait">WAIT</span>
+  </div>
 
-                      <div class="windows-line">
-                        Status:
-                        <span id="win-status" class="win-badge win-wait">WAIT</span>
-                      </div>
+  <div class="ee-line">
+    <div class="ee-k">Plano primário</div>
+    <div class="ee-v" id="ee-plan">—</div>
+  </div>
 
-                      <div class="windows-line" id="win-predicted">
-                        Window prevista: —
-                      </div>
+  <div class="ee-line">
+    <div class="ee-k">Zonas pullback (ATR)</div>
+    <div class="ee-v" id="ee-zones">—</div>
+  </div>
 
-                      <div class="windows-line" id="win-confidence">
-                        Confiança: —
-                      </div>
+  <div class="ee-line">
+    <div class="ee-k">Gatilho / confirmação</div>
+    <div class="ee-v" id="ee-trigger">—</div>
+  </div>
 
-                      <div class="windows-line" id="win-rule">
-                        Regra: close abaixo do candle anterior + confirmação no próximo
-                      </div>
+  <div class="ee-line">
+    <div class="ee-k">Cancelamento</div>
+    <div class="ee-v" id="ee-cancel">—</div>
+  </div>
 
-                      <div class="windows-foot">
-                        Fonte: candles Alpaca + heurística de estrutura/wicks.
-                      </div>
-                    </div>
-
-                  </div>
+  <div class="ee-foot" id="ee-foot">Target: —</div>
+</div>
+<!-- ===== /EE BRAIN ===== -->
 
 
-                </div>
-                <!-- ===== /MICRO TIMELINE + MICRO MAP (NOW) ===== -->
-
-        <!-- ===== /MICRO TIMELINE ===== -->
-
-                <div class="prem-signal-wrap" id="prem-signal-wrap">
-          <button class="prem-signal-btn prem-signal-off" id="prem-signal-btn" type="button" disabled>
-            NÃO FAÇA NADA
-          </button>
-          <div class="prem-signal-hint" id="prem-signal-hint">
-            Filtro: AÇÃO=— • Micro=— (≥75%)
-          </div>
-        </div>
-                <<!-- ===== STOP RISK (1x1) — substitui EXEC GATE / MINI / BREAKOUT ===== -->
-<div class="prem-breakout-wrap" id="stop-risk-card" style="margin-top:10px;">
-  <!-- ===== SL FLEX DOCK (mover card pra área grande de baixo) ===== -->
+<!-- ===== SL FLEX DOCK (mover card pra área grande de baixo) ===== -->
 <div id="slflex-dock" style="margin-top:12px;"></div>
 <!-- ===== /SL FLEX DOCK ===== -->
 
-  <div class="prem-breakout-title">STOP RISK (1x1)</div>
 
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-    <div style="flex:1 1 auto;">
-      <div style="font-size:12px; opacity:.75; letter-spacing:.08em; text-transform:uppercase;">
-        Chance de bater SL antes do micro
-      </div>
+<!-- ===== RESPIRO x REVERSÃO (MICRO) — bloco do retângulo amarelo ===== -->
+<div class="prem-breakout-wrap" id="rrv-card" style="margin-top:12px;">
+  <div class="prem-breakout-title">RESPIRO x REVERSÃO (MICRO)</div>
 
-      <div style="display:flex; align-items:baseline; gap:10px; margin-top:4px;">
-        <div id="sr-stop-first-pct" style="font-size:26px; font-weight:950; color:#facc15;">—</div>
-        <div id="sr-risk-badge" style="font-size:12px; font-weight:900; opacity:.85;">Stop Risk: —</div>
+  <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+    <div>
+      <div class="pb-k" style="display:flex; align-items:center; justify-content:space-between;">
+        <span>RESPIRO</span>
       </div>
+      <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
+        <div id="rrv-respiro-fill" style="height:100%; width:0%; background:rgba(52,211,153,.85);"></div>
+      </div>
+      <div style="margin-top:4px; font-size:11px; font-weight:900; text-align:right; color:#34d399;">
+        <span id="rrv-respiro-pct">—</span>
+      </div>
+      <div id="rrv-respiro-meta" style="margin-top:4px; text-align:right; font-size:11px; font-weight:900; color:rgba(255,255,255,.72);">—</div>
+    </div>
 
-      <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:8px;">
-        <div id="sr-meter-fill" style="height:100%; width:0%; background:rgba(250,204,21,.85);"></div>
+    <div>
+      <div class="pb-k" style="display:flex; align-items:center; justify-content:space-between;">
+        <span id="rrv-reversao-title">REVERSÃO (SELL)</span>
       </div>
+      <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;">
+        <div id="rrv-reversao-fill" style="height:100%; width:0%; background:rgba(251,113,133,.85);"></div>
+      </div>
+      <div style="margin-top:4px; font-size:11px; font-weight:900; text-align:right; color:#fb7185;">
+        <span id="rrv-reversao-pct">—</span>
+      </div>
+      <div id="rrv-reversao-meta" style="margin-top:4px; text-align:right; font-size:11px; font-weight:900; color:rgba(255,255,255,.72);">—</div>
     </div>
   </div>
 
-  <div style="margin-top:10px; font-size:12px; line-height:1.5; color:rgba(255,255,255,.92);">
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">🧠</span> <span id="sr-market-msg">—</span></div>
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">✅</span> Melhor: esperar <span style="font-weight:900;">Optimal Entry</span></div>
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">🟡</span> Se entrar mesmo assim: <span style="font-weight:900;">Respiro ON</span> (+<span id="sr-respiro-atr" style="font-weight:900;">—</span> ATR)</div>
-    <div style="margin-bottom:6px;"><span style="opacity:.85;">🔁</span> Se tomar SL: reentrada típica em <span id="sr-stop-reentry-eta" style="font-weight:900; color:#facc15;">—</span>, chance stop→target <span id="sr-stop-target-pct" style="font-weight:900; color:#facc15;">—</span></div>
+  <div class="prem-breakout-note" id="rrv-dominant-line" style="margin-top:6px;">• Dominante: <span style="font-weight:900;">—</span></div>
+  <div class="prem-breakout-note" id="rrv-read-line">• Leitura: <span style="font-weight:900;">—</span></div>
+</div>
+<!-- ===== /RESPIRO x REVERSÃO (MICRO) ===== -->
+
+
+<!-- ===== STOP RISK (1x1) — substitui EXEC GATE / MINI / BREAKOUT ===== -->
+<div class="prem-breakout-wrap" id="stop-risk-card" style="margin-top:12px;">
+  <div class="prem-breakout-title">STOP RISK (1x1)</div>
+
+  <div style="font-size:10px; opacity:.70; letter-spacing:.12em; text-transform:uppercase;">
+    Chance de bater SL antes do Micro
+  </div>
+
+  <div style="display:flex; align-items:baseline; gap:10px;">
+    <div id="sr-stop-first-pct" style="font-size:26px; font-weight:950; color:#facc15;">—</div>
+    <div id="sr-risk-label" style="font-size:12px; font-weight:900; opacity:.85;">Stop Risk: —</div>
+  </div>
+
+  <div style="height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:6px;">
+    <div id="sr-meter-fill" style="height:100%; width:0%; background:rgba(250,204,21,.85);"></div>
+  </div>
+
+  <div id="sr-market-msg" class="prem-breakout-note" style="margin-top:8px;">—</div>
+
+  <div class="prem-breakout-note" style="margin-top:6px; display:flex; flex-direction:column; gap:6px;">
+    <div>• Melhor: esperar <b style="color:#ffcc66;">Optimal Entry</b></div>
+    <div>• Se entrar mesmo assim: <b style="color:#ffcc66;">Respiro ON</b> (<span id="sr-respiro-atr" style="font-weight:900;">—</span> ATR)</div>
+    <div>• Se tomar SL: reentrada típica em <span id="sr-stop-reentry-eta" style="font-weight:900; color:#facc15;">—</span>, chance stop→target <span id="sr-stop-target-pct" style="font-weight:900; color:#facc15;">—</span></div>
+  </div>
+</div>
+<!-- ===== /STOP RISK ===== -->
     <div style="margin-bottom:6px;"><span style="opacity:.85;">🎯</span> Se bater SL, chance de depois ir pro micro: <span id="sr-after-stop-micro-pct" style="font-weight:900; color:#facc15;">—</span></div>
     <div><span style="opacity:.85;">⏱️</span> Tempo típico depois do SL até micro: <span id="sr-stop-to-micro-eta" style="font-weight:900; color:#facc15;">—</span></div>
   </div>
@@ -13551,6 +13621,104 @@ if (domEl || readEl) {
     } else if (diff <= 10) {
       dom = "CHOP";
       read = "Respiro e reversão próximos → reduzir tamanho e aguardar.";
+      // ===== EE BRAIN – ENTRY (MICRO LIVE) (front-end only) =====
+(function renderEEBrain(){
+  const card = el("ee-brain-card");
+  if (!card) return;
+
+  // pega "entry" do próprio plano (optEntry) e faz fallback no texto do UI
+  const entryPx = (optEntry != null) ? Number(optEntry) : asNum(el("slr-optentry")?.textContent);
+  const tpPx    = (tpLocked != null) ? Number(tpLocked) : asNum(el("slr-tp")?.textContent);
+  const curPx   = (current != null) ? Number(current) : asNum(el("prem-right-current-price")?.textContent);
+  const atr     = (atr14 != null) ? Number(atr14) : asNum(el("mpl-atr14")?.textContent);
+
+  const side =
+    (dirUse) ? dirUse :
+    (tpPx != null && curPx != null ? (tpPx > curPx ? "BUY" : (tpPx < curPx ? "SELL" : null)) : null);
+
+  // confiança derivada (simples) = microProbNow - 0.55*StopRisk
+  const microP = (microProbNow != null) ? Number(microProbNow) : null;
+  const sr     = (stopRiskPct != null) ? Number(stopRiskPct) : null;
+  const conf   = (microP != null && sr != null)
+    ? Math.max(0, Math.min(100, microP - (0.55 * sr)))
+    : null;
+
+  // status por proximidade do entry
+  const band = (atr != null && Number.isFinite(atr) && atr > 0) ? Math.max(0.02, atr * 0.04) : 0.05;
+  const near = (curPx != null && entryPx != null) ? (Math.abs(curPx - entryPx) <= band) : false;
+
+  let status = "WAIT";
+  if (near) {
+    if (microP != null && microP >= 70 && sr != null && sr <= 45) status = "GO";
+    else status = "READY";
+  }
+
+  // tipo do plano (heurística)
+  let planType = "CONTINUAÇÃO";
+  if (reversaoPct != null && Number(reversaoPct) >= 60) planType = "REVERSÃO";
+  else if (respiroPct != null && Number(respiroPct) >= 35) planType = "RETEST";
+
+  const planTxt = (side && entryPx != null)
+    ? `${planType} (confirmar) — ${side} @ ${fmt2(entryPx)} · Conf ${conf != null ? Math.round(conf) + "%" : "—"}`
+    : "—";
+
+  // zonas P25/P50/P75 (usando SL FLEX depths em ATR)
+  const d25 = asNum(el("slflex-depth-p25")?.textContent);
+  const d50 = asNum(el("slflex-depth-p50")?.textContent);
+  const d75 = asNum(el("slflex-depth-p75")?.textContent);
+
+  const zonePx = (d) => {
+    if (d == null || entryPx == null || atr == null || !Number.isFinite(atr) || !side) return null;
+    const delta = d * atr;
+    return (side === "BUY") ? (entryPx - delta) : (entryPx + delta);
+  };
+
+  const z25 = zonePx(d25), z50 = zonePx(d50), z75 = zonePx(d75);
+  const zonesTxt = (z25 != null && z50 != null && z75 != null)
+    ? `P25 ${fmt2(z25)} · P50 ${fmt2(z50)} · P75 ${fmt2(z75)}`
+    : "—";
+
+  // gatilho + cancelamento (0.06*ATR ~ “confirmar candle”)
+  const step = (atr != null && Number.isFinite(atr)) ? Math.max(0.01, Math.round((atr * 0.06) * 100) / 100) : null;
+
+  const confPx = (side && entryPx != null && step != null)
+    ? (side === "BUY" ? (entryPx + step) : (entryPx - step))
+    : null;
+
+  const cancelPx = (side && entryPx != null && step != null)
+    ? (side === "BUY" ? (entryPx - step) : (entryPx + step))
+    : null;
+
+  const triggerTxt = (side && entryPx != null && confPx != null)
+    ? (side === "BUY"
+        ? `Touch ${fmt2(entryPx)} → entrar se fechar acima de ${fmt2(confPx)}`
+        : `Touch ${fmt2(entryPx)} → entrar se fechar abaixo de ${fmt2(confPx)}`)
+    : "—";
+
+  const cancelTxt = (side && cancelPx != null)
+    ? (side === "BUY"
+        ? `Cancelar se fechar abaixo de ${fmt2(cancelPx)} (falha retest)`
+        : `Cancelar se fechar acima de ${fmt2(cancelPx)} (falha retest)`)
+    : "—";
+
+  const etaTxt = (etaMin != null && Number.isFinite(etaMin)) ? `~${Math.round(Number(etaMin))}m` : "—";
+  const footTxt =
+    `Target: ${tpPx != null ? fmt2(tpPx) : "—"} · ETA: ${etaTxt} · StopRisk: ${sr != null ? Math.round(sr) + "%" : "—"} · Respiro: ${respiroPct != null ? Math.round(Number(respiroPct)) + "%" : "—"} · Reversão: ${reversaoPct != null ? Math.round(Number(reversaoPct)) + "%" : "—"}`;
+
+  if (el("ee-plan"))    el("ee-plan").textContent    = planTxt;
+  if (el("ee-zones"))   el("ee-zones").textContent   = zonesTxt;
+  if (el("ee-trigger")) el("ee-trigger").textContent = triggerTxt;
+  if (el("ee-cancel"))  el("ee-cancel").textContent  = cancelTxt;
+  if (el("ee-foot"))    el("ee-foot").textContent    = footTxt;
+
+  const badge = el("ee-status");
+  if (badge) {
+    badge.textContent = status;
+    badge.classList.remove("ee-wait","ee-ready","ee-go");
+    badge.classList.add(status === "GO" ? "ee-go" : (status === "READY" ? "ee-ready" : "ee-wait"));
+  }
+})();
+// ===== /EE BRAIN =====
     } else if (a > b) {
       dom = "RESPIRO";
       read = "Pullback provável → melhor entrada é no respiro (Optimal Entry).";
