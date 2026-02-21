@@ -2896,7 +2896,7 @@
 .ee-engine-top{
   display:flex;
   align-items:flex-start;
-  justify-content:space-between;
+  justify-content:flex-start;
   gap: 14px;
   flex-wrap: wrap;
 }
@@ -2967,12 +2967,13 @@
 
 /* layout (como no mockup) */
 .ee-engine-right{
-  flex: 1 1 560px;
-  display:grid;
-  grid-template-columns: 1.25fr 0.75fr;
-  gap: 12px;
+  flex: 0 0 auto;                 /* não estica */
+  width: fit-content;             /* encaixa no conteúdo */
+  display: grid;
+  grid-template-columns: max-content max-content; /* colunas “justas” */
+  gap: 10px;                      /* um pouco mais compacto */
   align-items: stretch;
-  min-width: 520px;
+  min-width: 0;                   /* remove a trava dos 520px */
 }
 
 .ee-engine-stack{
@@ -3014,7 +3015,12 @@
 .ee-engine-box.stack .v{ font-size: 46px; }
 
 @media (max-width: 980px){
-  .ee-engine-right{ grid-template-columns: 1fr; min-width: 0; width: 100%; }
+  .ee-engine-right{
+  flex: 1 1 100%;
+  width: 100%;
+  grid-template-columns: 1fr;
+  min-width: 0;
+}
   .ee-engine-stack{ flex-direction: row; }
   .ee-engine-box.stack{ flex: 1 1 0; }
   .ee-engine-box.big .v{ font-size: 64px; }
