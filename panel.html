@@ -2928,7 +2928,24 @@
 .ee-engine-pill.failed{ color: #fb7185; border-color: rgba(251,113,133,.32); background: rgba(251,113,133,.10); box-shadow: 0 0 18px rgba(251,113,133,.10); }
 
 .ee-engine-meta{ display:flex; gap: 10px; align-items:center; }
+.ee-engine-mode{
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .90;
+}
 
+.ee-engine-mode.strong{ color: rgba(52,211,153,.95); }
+.ee-engine-mode.noise{ color: rgba(255,208,64,.95); }
+.ee-engine-mode.notrade{ color: rgba(226,232,240,.70); }
+
+.ee-engine-rule{
+  font-size: 11px;
+  font-weight: 900;
+  opacity: .78;
+  letter-spacing: .06em;
+}
 .ee-engine-dir{
   padding: 4px 10px;
   border-radius: 999px;
@@ -4289,6 +4306,8 @@
         <span class="ee-engine-dir" id="ee-engine-dir">—</span>
         <span class="ee-engine-prob" id="ee-engine-prob">—</span>
       </div>
+            <div class="ee-engine-mode" id="ee-engine-mode">—</div>
+      <div class="ee-engine-rule" id="ee-engine-rule">—</div>
     </div>
 
     <div class="ee-engine-kv">
@@ -14250,17 +14269,23 @@ if ($("ee-engine-card")) {
   const confirmPx = (dir === "BUY") ? (entry + zConf) : (entry - zConf);
   const cancelPx  = (dir === "BUY") ? (entry - zConf) : (entry + zConf);
 
+  // micro prob (Premonition Micro Live) — vem do targetPct (já calculado acima)
+  const microP = (targetPct != null && Number.isFinite(targetPct)) ? targetPct : null;
+  const armP = (microP != null) ? microP : conf;
+
+  // status do gate (price-based + arm)
   let st = "LOADING";
   if (dir === "BUY") {
     if (current <= cancelPx) st = "FAILED";
     else if (current >= confirmPx) st = "CONFIRMED";
-    else if (conf >= 55) st = "ARMED";
+    else if (armP >= 55) st = "ARMED";
   } else {
     if (current >= cancelPx) st = "FAILED";
     else if (current <= confirmPx) st = "CONFIRMED";
-    else if (conf >= 55) st = "ARMED";
+    else if (armP >= 55) st = "ARMED";
   }
 
+  // pill
   const pill = $("ee-engine-pill");
   if (pill){
     pill.classList.remove("loading","armed","confirmed","failed");
@@ -14271,8 +14296,37 @@ if ($("ee-engine-card")) {
   }
 
   if ($("ee-engine-dir")) $("ee-engine-dir").textContent = dir;
-  if ($("ee-engine-prob")) $("ee-engine-prob").textContent = fmtPct(conf);
 
+  // mostra micro prob (se não tiver, cai pro conf)
+  if ($("ee-engine-prob")) $("ee-engine-prob").textContent = fmtPct(microP ?? conf);
+
+  // ===== MODE + RULE =====
+  const p = (microP ?? conf);
+
+  let modeText = "NOISE ZONE ⚠️";
+  let ruleText = "ENTER ONLY ON CONFIRM CLOSE";
+  let modeClass = "noise";
+
+  if (p != null && p >= 70) {
+    modeText = "AARON STRONG ✅";
+    ruleText = "TOUCH OK · HOLD UNTIL CANCEL";
+    modeClass = "strong";
+  } else if (p != null && p <= 49) {
+    modeText = "NO TRADE ⛔";
+    ruleText = "WAIT";
+    modeClass = "notrade";
+  }
+
+  const modeEl = $("ee-engine-mode");
+  if (modeEl){
+    modeEl.classList.remove("strong","noise","notrade");
+    modeEl.classList.add(modeClass);
+    modeEl.textContent = `MODE: ${modeText}`;
+  }
+  if ($("ee-engine-rule")) $("ee-engine-rule").textContent = ruleText;
+  // ===== /MODE + RULE =====
+
+  // numbers
   if ($("ee-engine-touch")) $("ee-engine-touch").textContent = fmt2(touchPx);
   if ($("ee-engine-confirm")) $("ee-engine-confirm").textContent = fmt2(confirmPx);
   if ($("ee-engine-cancel")) $("ee-engine-cancel").textContent = fmt2(cancelPx);
