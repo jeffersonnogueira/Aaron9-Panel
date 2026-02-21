@@ -14333,27 +14333,39 @@ if ($("ee-engine-card")) {
   // ===== MODE + RULE =====
   const p = (microP ?? conf);
 
-  let modeText = "NOISE ZONE ⚠️";
+    let modeText = "NOISE ZONE ⚠️";
   let ruleText = "ENTER ONLY ON CONFIRM CLOSE";
   let modeClass = "noise";
 
+  // NOVO: range da prob (mostra junto do MODE)
+  let rangeText = "(Prob —)";
+
   if (p != null && p >= 70) {
+    rangeText = "(Prob ≥ 70%)";
     modeText = "AARON STRONG ✅";
     ruleText = "TOUCH OK · HOLD UNTIL CANCEL";
     modeClass = "strong";
   } else if (p != null && p <= 49) {
+    rangeText = "(Prob ≤ 49%)";
     modeText = "NO TRADE ⛔";
     ruleText = "WAIT";
     modeClass = "notrade";
+  } else if (p != null) {
+    rangeText = "(Prob 50%–69%)";
+    modeText = "NOISE ZONE ⚠️";
+    ruleText = "ENTER ONLY ON CONFIRM CLOSE";
+    modeClass = "noise";
   }
 
   const modeEl = $("ee-engine-mode");
   if (modeEl){
     modeEl.classList.remove("strong","noise","notrade");
     modeEl.classList.add(modeClass);
-    modeEl.textContent = `MODE: ${modeText}`;
+    modeEl.textContent = `MODE: ${rangeText} ${modeText}`;
   }
-  if ($("ee-engine-rule")) $("ee-engine-rule").textContent = ruleText;
+
+  const ruleEl = $("ee-engine-rule");
+  if (ruleEl) ruleEl.textContent = `Rule line: ${ruleText}`;
   // ===== /MODE + RULE =====
 
   // numbers
