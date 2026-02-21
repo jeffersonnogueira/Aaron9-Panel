@@ -2897,7 +2897,7 @@
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -2928,6 +2928,7 @@
 .ee-engine-pill.failed{ color: #fb7185; border-color: rgba(251,113,133,.32); background: rgba(251,113,133,.10); box-shadow: 0 0 18px rgba(251,113,133,.10); }
 
 .ee-engine-meta{ display:flex; gap: 10px; align-items:center; }
+
 .ee-engine-mode{
   font-size: 11px;
   font-weight: 950;
@@ -2935,7 +2936,6 @@
   text-transform: uppercase;
   opacity: .90;
 }
-
 .ee-engine-mode.strong{ color: rgba(52,211,153,.95); }
 .ee-engine-mode.noise{ color: rgba(255,208,64,.95); }
 .ee-engine-mode.notrade{ color: rgba(226,232,240,.70); }
@@ -2946,6 +2946,7 @@
   opacity: .78;
   letter-spacing: .06em;
 }
+
 .ee-engine-dir{
   padding: 4px 10px;
   border-radius: 999px;
@@ -2964,41 +2965,59 @@
   letter-spacing: .02em;
 }
 
-.ee-engine-kv{
+/* layout (como no mockup) */
+.ee-engine-right{
+  flex: 1 1 560px;
   display:grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: 10px;
-  min-width: 420px;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 12px;
+  align-items: stretch;
+  min-width: 520px;
 }
-@media (max-width: 980px){
-  .ee-engine-kv{ grid-template-columns: 1fr; min-width: 0; width: 100%; }
+
+.ee-engine-stack{
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
 }
 
 .ee-engine-box{
   border: 1px solid rgba(255,255,255,.10);
-  border-radius: 14px;
+  border-radius: 16px;
   background: rgba(255,255,255,.02);
-  padding: 10px 12px;
+  padding: 12px 14px;
 }
 
 .ee-engine-box .k{
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: .16em;
   text-transform: uppercase;
-  opacity: .62;
-  margin-bottom: 4px;
+  opacity: .70;
+  margin-bottom: 6px;
+  font-weight: 900;
 }
 
 .ee-engine-box .v{
-  font-size: 34px;
+  font-size: 46px;
   font-weight: 950;
   line-height: 1.05;
-  border-radius: 14px;
-  padding: 2px 8px;
+  border-radius: 16px;
+  padding: 6px 12px;
   display:inline-block;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.10);
   box-shadow: 0 0 18px rgba(0,0,0,.35);
+}
+
+.ee-engine-box.big{ padding: 16px 16px; border-radius: 18px; }
+.ee-engine-box.big .v{ font-size: 84px; padding: 10px 14px; }
+.ee-engine-box.stack .v{ font-size: 46px; }
+
+@media (max-width: 980px){
+  .ee-engine-right{ grid-template-columns: 1fr; min-width: 0; width: 100%; }
+  .ee-engine-stack{ flex-direction: row; }
+  .ee-engine-box.stack{ flex: 1 1 0; }
+  .ee-engine-box.big .v{ font-size: 64px; }
 }
 
 #ee-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
@@ -4302,28 +4321,32 @@
   <div class="ee-engine-top">
     <div class="ee-engine-left">
       <div class="ee-engine-pill loading" id="ee-engine-pill">LOADING</div>
+
       <div class="ee-engine-meta">
         <span class="ee-engine-dir" id="ee-engine-dir">—</span>
         <span class="ee-engine-prob" id="ee-engine-prob">—</span>
       </div>
-            <div class="ee-engine-mode" id="ee-engine-mode">—</div>
+
+      <div class="ee-engine-mode" id="ee-engine-mode">—</div>
       <div class="ee-engine-rule" id="ee-engine-rule">—</div>
     </div>
 
-    <div class="ee-engine-kv">
-      <div class="ee-engine-box">
+    <div class="ee-engine-right">
+      <div class="ee-engine-box big">
         <div class="k">TOUCH</div>
         <div class="v" id="ee-engine-touch">—</div>
       </div>
 
-      <div class="ee-engine-box">
-        <div class="k">CONFIRM CLOSE</div>
-        <div class="v" id="ee-engine-confirm">—</div>
-      </div>
+      <div class="ee-engine-stack">
+        <div class="ee-engine-box stack">
+          <div class="k">CONFIRM CLOSE</div>
+          <div class="v" id="ee-engine-confirm">—</div>
+        </div>
 
-      <div class="ee-engine-box">
-        <div class="k">CANCEL CLOSE</div>
-        <div class="v" id="ee-engine-cancel">—</div>
+        <div class="ee-engine-box stack">
+          <div class="k">CANCEL CLOSE</div>
+          <div class="v" id="ee-engine-cancel">—</div>
+        </div>
       </div>
     </div>
   </div>
