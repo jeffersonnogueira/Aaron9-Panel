@@ -2939,7 +2939,33 @@
 .ee-engine-mode.strong{ color: rgba(52,211,153,.95); }
 .ee-engine-mode.noise{ color: rgba(255,208,64,.95); }
 .ee-engine-mode.notrade{ color: rgba(226,232,240,.70); }
+/* === EE: highlight do range (PROB ...) === */
+.ee-prob-range{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 950;
+  letter-spacing: .10em;
 
+  /* default = BLUE (para 50–69%) */
+  color: #60a5fa;
+  border: 1px solid rgba(96,165,250,.35);
+  background: rgba(96,165,250,.10);
+}
+
+.ee-prob-range.green{
+  color:#34d399;
+  border-color: rgba(52,211,153,.35);
+  background: rgba(52,211,153,.10);
+}
+
+.ee-prob-range.gray{
+  color: rgba(226,232,240,.82);
+  border-color: rgba(226,232,240,.18);
+  background: rgba(226,232,240,.06);
+}
 .ee-engine-rule{
   font-size: 24px;
   font-weight: 900;
@@ -2988,6 +3014,11 @@
   border-radius: 16px;
   background: rgba(255,255,255,.02);
   padding: 12px 14px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .ee-engine-box .k{
@@ -14359,10 +14390,16 @@ if ($("ee-engine-card")) {
 
   const modeEl = $("ee-engine-mode");
   if (modeEl){
-    modeEl.classList.remove("strong","noise","notrade");
-    modeEl.classList.add(modeClass);
-    modeEl.textContent = `MODE: ${rangeText} ${modeText}`;
-  }
+  modeEl.classList.remove("strong","noise","notrade");
+  modeEl.classList.add(modeClass);
+
+  const rangeClass =
+    (p != null && p >= 70) ? "ee-prob-range green" :
+    (p != null && p <= 49) ? "ee-prob-range gray"  :
+    "ee-prob-range"; // 50–69 = azul (default)
+
+  modeEl.innerHTML = `MODE: <span class="${rangeClass}">${rangeText}</span> ${modeText}`;
+}
 
   const ruleEl = $("ee-engine-rule");
   if (ruleEl) ruleEl.textContent = `Rule line: ${ruleText}`;
