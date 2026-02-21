@@ -2890,6 +2890,111 @@
   color: rgba(255,255,255,.88);
 }
 .ee-strong{ font-weight:950; }
+/* ===== ENTRY ENGINE (AARON) — acima do EE BRAIN ===== */
+#ee-engine-card{ padding: 12px 14px; }
+
+.ee-engine-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ee-engine-left{
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.ee-engine-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 950;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+}
+
+.ee-engine-pill.loading{ color: rgba(226,232,240,.92); border-color: rgba(148,163,184,.28); background: rgba(148,163,184,.10); }
+.ee-engine-pill.armed{ color: #facc15; border-color: rgba(250,204,21,.30); background: rgba(250,204,21,.12); box-shadow: 0 0 18px rgba(250,204,21,.12); }
+.ee-engine-pill.confirmed{ color: #34d399; border-color: rgba(52,211,153,.30); background: rgba(52,211,153,.10); box-shadow: 0 0 18px rgba(52,211,153,.10); }
+.ee-engine-pill.failed{ color: #fb7185; border-color: rgba(251,113,133,.32); background: rgba(251,113,133,.10); box-shadow: 0 0 18px rgba(251,113,133,.10); }
+
+.ee-engine-meta{ display:flex; gap: 10px; align-items:center; }
+
+.ee-engine-dir{
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.22);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .10em;
+  opacity: .88;
+}
+
+.ee-engine-prob{
+  font-size: 18px;
+  font-weight: 950;
+  color: #ffcc66;
+  letter-spacing: .02em;
+}
+
+.ee-engine-kv{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 10px;
+  min-width: 420px;
+}
+@media (max-width: 980px){
+  .ee-engine-kv{ grid-template-columns: 1fr; min-width: 0; width: 100%; }
+}
+
+.ee-engine-box{
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  background: rgba(255,255,255,.02);
+  padding: 10px 12px;
+}
+
+.ee-engine-box .k{
+  font-size: 9px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  opacity: .62;
+  margin-bottom: 4px;
+}
+
+.ee-engine-box .v{
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 1.05;
+  border-radius: 14px;
+  padding: 2px 8px;
+  display:inline-block;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 0 18px rgba(0,0,0,.35);
+}
+
+#ee-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
+#ee-engine-touch{ color: #60a5fa; border-color: rgba(96,165,250,.28); background: rgba(96,165,250,.08); }
+#ee-engine-cancel{ color: #fb7185; border-color: rgba(251,113,133,.28); background: rgba(251,113,133,.08); }
+
+.ee-engine-note{
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: .78;
+  letter-spacing: .02em;
+}
+/* ===== /ENTRY ENGINE ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
 
@@ -4173,6 +4278,40 @@
             Filtro: AÇÃO=— • Micro=— (≥75%)
           </div>
         </div>
+        <!-- ===== ENTRY ENGINE (AARON) — acima do EE BRAIN ===== -->
+<div class="prem-breakout-wrap" id="ee-engine-card" style="margin-top:10px;">
+  <div class="prem-breakout-title">ENTRY ENGINE · (Touch → Confirm → Cancel)</div>
+
+  <div class="ee-engine-top">
+    <div class="ee-engine-left">
+      <div class="ee-engine-pill loading" id="ee-engine-pill">LOADING</div>
+      <div class="ee-engine-meta">
+        <span class="ee-engine-dir" id="ee-engine-dir">—</span>
+        <span class="ee-engine-prob" id="ee-engine-prob">—</span>
+      </div>
+    </div>
+
+    <div class="ee-engine-kv">
+      <div class="ee-engine-box">
+        <div class="k">TOUCH</div>
+        <div class="v" id="ee-engine-touch">—</div>
+      </div>
+
+      <div class="ee-engine-box">
+        <div class="k">CONFIRM CLOSE</div>
+        <div class="v" id="ee-engine-confirm">—</div>
+      </div>
+
+      <div class="ee-engine-box">
+        <div class="k">CANCEL CLOSE</div>
+        <div class="v" id="ee-engine-cancel">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ee-engine-note" id="ee-engine-note">—</div>
+</div>
+<!-- ===== /ENTRY ENGINE ===== -->
                 <!-- ===== EE BRAIN (Entry Brain) — abaixo do botão "NÃO FAÇA NADA" ===== -->
   <div class="prem-breakout-wrap" id="ee-brain-card" style="margin-top:12px;">
     <div class="prem-breakout-title">EE BRAIN · ENTRY (Micro Live)</div>
@@ -14105,7 +14244,45 @@ const reentry = (slPrice != null && k != null && dirUse)
       if (dir === "BUY" && entry > tp) entry = tp - 0.05 * atr14;
       if (dir === "SELL" && entry < tp) entry = tp + 0.05 * atr14;
     }
+// ===== ENTRY ENGINE (AARON) — usa a MESMA fórmula (entry ± zConf) =====
+if ($("ee-engine-card")) {
+  const touchPx = entry;
+  const confirmPx = (dir === "BUY") ? (entry + zConf) : (entry - zConf);
+  const cancelPx  = (dir === "BUY") ? (entry - zConf) : (entry + zConf);
 
+  let st = "LOADING";
+  if (dir === "BUY") {
+    if (current <= cancelPx) st = "FAILED";
+    else if (current >= confirmPx) st = "CONFIRMED";
+    else if (conf >= 55) st = "ARMED";
+  } else {
+    if (current >= cancelPx) st = "FAILED";
+    else if (current <= confirmPx) st = "CONFIRMED";
+    else if (conf >= 55) st = "ARMED";
+  }
+
+  const pill = $("ee-engine-pill");
+  if (pill){
+    pill.classList.remove("loading","armed","confirmed","failed");
+    if (st === "ARMED"){ pill.classList.add("armed"); pill.textContent = "ARMED"; }
+    else if (st === "CONFIRMED"){ pill.classList.add("confirmed"); pill.textContent = "CONFIRMED"; }
+    else if (st === "FAILED"){ pill.classList.add("failed"); pill.textContent = "FAILED"; }
+    else { pill.classList.add("loading"); pill.textContent = "LOADING"; }
+  }
+
+  if ($("ee-engine-dir")) $("ee-engine-dir").textContent = dir;
+  if ($("ee-engine-prob")) $("ee-engine-prob").textContent = fmtPct(conf);
+
+  if ($("ee-engine-touch")) $("ee-engine-touch").textContent = fmt2(touchPx);
+  if ($("ee-engine-confirm")) $("ee-engine-confirm").textContent = fmt2(confirmPx);
+  if ($("ee-engine-cancel")) $("ee-engine-cancel").textContent = fmt2(cancelPx);
+
+  const note = (dir === "BUY")
+    ? `Touch ${fmt2(touchPx)} · Confirm close ≥ ${fmt2(confirmPx)} · Cancel close ≤ ${fmt2(cancelPx)}`
+    : `Touch ${fmt2(touchPx)} · Confirm close ≤ ${fmt2(confirmPx)} · Cancel close ≥ ${fmt2(cancelPx)}`;
+
+  if ($("ee-engine-note")) $("ee-engine-note").textContent = note;
+}
     // preencher UI
     if ($("ee-plan")) $("ee-plan").textContent = plan;
     if ($("ee-entry")) $("ee-entry").textContent = fmt2(entry);
