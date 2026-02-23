@@ -13755,12 +13755,30 @@ const atrMap =
     asNum(mp?.respiro?.depth_p75_atr) ??
     asNum(exec1x1SL?.respiro_depth_atr?.p75) ??
     null;
+// ✅ SANITY: se o matcher mandar p75.price do lado errado, corrigir
+if (respiroPrice != null && microOk && dirMap && curMap != null) {
+  const wrongSide =
+    (dirMap === "BUY"  && respiroPrice > curMap) ||
+    (dirMap === "SELL" && respiroPrice < curMap);
 
-  if (respiroPrice == null && microOk && dirMap && atrMap != null && depthP75 != null) {
-    respiroPrice = (dirMap === "SELL")
-      ? (curMap + depthP75 * atrMap)
-      : (curMap - depthP75 * atrMap);
+  if (wrongSide) {
+    if (atrMap != null && depthP75 != null) {
+      const dP75 = Math.abs(Number(depthP75));
+      respiroPrice = (dirMap === "SELL")
+        ? (curMap + dP75 * atrMap)
+        : (curMap - dP75 * atrMap);
+    } else {
+      const delta = Math.abs(respiroPrice - curMap);
+      respiroPrice = (dirMap === "SELL") ? (curMap + delta) : (curMap - delta);
+    }
   }
+}
+  if (respiroPrice == null && microOk && dirMap && atrMap != null && depthP75 != null) {
+  const dP75 = Math.abs(Number(depthP75));
+  respiroPrice = (dirMap === "SELL")
+    ? (curMap + dP75 * atrMap)
+    : (curMap - dP75 * atrMap);
+}
 
   const respiroProb =
     asNum(p75Obj?.prob_touch_pct) ??
