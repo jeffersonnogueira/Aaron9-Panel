@@ -6237,13 +6237,18 @@ function a10LiveHandleMessage(payloadOrEvent) {
     }
 
     // 2) TRADE tick (p/t)
-    const tr = normTrade(msg);
-    if (tr) {
-      window.__A10_LIVE_LAST_45__ = tr;
-      const bar = buildAggBar(tr);
-      pushAggBar(bar);
-      return;
-    }
+const tr = normTrade(msg);
+if (tr) {
+  window.__A10_LIVE_LAST_45__ = tr;
+
+  // ✅ FEED do preço real-time pro Entry Engine (confirm/cancel)
+  window.__A10_LAST_TRADE_PRICE__ = Number(tr.close);
+  window.__A10_LAST_TRADE_AT__ = Date.now();
+
+  const bar = buildAggBar(tr);
+  pushAggBar(bar);
+  return;
+}
 
     // fallback debug
     window.__A10_LIVE_LAST_OBJ__ = msg;
