@@ -6169,6 +6169,9 @@ function a10LiveHandleMessage(payloadOrEvent) {
       c = norm.close;
       v = (Number(last.volume) || 0) + (Number(norm.volume) || 0);
     } else if (last && bucketTime > last.time) {
+            // ✅ candle anterior FECHOU (para regras CONFIRM/CANCEL CLOSE)
+      window.__A10_LAST_CLOSED_T__ = last.time;
+      window.__A10_LAST_CLOSED_CLOSE__ = Number(last.close);
       o = norm.open;
       h = norm.high;
       l = norm.low;
@@ -6269,6 +6272,8 @@ function a10LiveConnect(symbol, timeframe) {
 
   // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
+    window.__A10_LAST_CLOSED_T__ = 0;
+  window.__A10_LAST_CLOSED_CLOSE__ = null;
     window.__A10_LAST_TRADE_PRICE__ = null;
   window.__A10_LAST_TRADE_AT__ = 0;
     window.__A10_LIVE_HAS_BARS__ = false;
@@ -14357,15 +14362,22 @@ const livePx =
 
 const currentPx = Number.isFinite(livePx) ? livePx : current;
 
-// status do gate (price-based + arm)
+// status do gate (CLOSE-based + arm)
+// usa o close do candle anterior quando disponível; senão cai pro live
+const lastClosePx = (window.__A10_LAST_CLOSED_CLOSE__ != null)
+  ? Number(window.__A10_LAST_CLOSED_CLOSE__)
+  : NaN;
+
+const refPx = Number.isFinite(lastClosePx) ? lastClosePx : currentPx;
+
 let st = "LOADING";
 if (dir === "BUY") {
-  if (currentPx <= cancelPx) st = "FAILED";
-  else if (currentPx >= confirmPx) st = "CONFIRMED";
+  if (refPx <= cancelPx) st = "FAILED";
+  else if (refPx >= confirmPx) st = "CONFIRMED";
   else if (armP >= 55) st = "ARMED";
 } else {
-  if (currentPx >= cancelPx) st = "FAILED";
-  else if (currentPx <= confirmPx) st = "CONFIRMED";
+  if (refPx >= cancelPx) st = "FAILED";
+  else if (refPx <= confirmPx) st = "CONFIRMED";
   else if (armP >= 55) st = "ARMED";
 }
 
