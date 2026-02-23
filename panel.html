@@ -13659,11 +13659,7 @@ const atrMap =
   asNum(payload?.micro_path_live?.atr14) ??
   asNum(atr14);
 
-  const microTarget =
-  asNum(microTake) ??
-  asNum(mp?.micro_live_target) ??
-  asNum(mp?.micro_live?.target) ??
-  null;
+  const microTarget = asNum(mp?.micro_live_target) ?? asNum(microTake);
   const microOk = (curMap != null && microTarget != null);
 
   const dirMap = (() => {
@@ -13676,23 +13672,9 @@ const atrMap =
   const arrowMicro = (dirMap === "BUY") ? "↑" : (dirMap === "SELL") ? "↓" : "";
   const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
 
-  // micro prob/eta — SEM MEXER no Premonition Micro LIVE:
-// aqui a gente só “espelha” os mesmos números no Micro Map (NOW)
-const premMicroTxt = String(document.getElementById("prem-micro")?.textContent || "");
-
-const microProb =
-  asNum(window.__A10_PREM_MICRO_PCT) ??
-  asNum(extractPct(premMicroTxt)) ??
-  asNum(mp?.micro_live_prob_pct) ??
-  asNum(mp?.micro_live?.prob_pct) ??
-  null;
-
-const microEta =
-  asNum(etaMin) ??
-  asNum(extractMinutes(premMicroTxt)) ??
-  asNum(mp?.micro_live_eta_min) ??
-  asNum(mp?.micro_live?.eta_min) ??
-  null;
+  // micro prob/eta — usa micro_path_v1 se tiver, senão cai no que já existe
+  const microProb = asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
+  const microEta  = asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
 
   const microLine = microOk
     ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}`
