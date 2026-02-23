@@ -7382,12 +7382,17 @@ const t = splitTimeLabel(tLab);
 // ✅ KPI: depois da % mostrar preço + minutos (mesma linha)
 const kpiPriceNum = (() => {
   const s = String(microTxt || "");
-  // tenta pegar preço depois de "tocar/touch/High/Low"
-  let m = s.match(/(?:tocar|touch|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
-  if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/); // pega o 1º com decimal (evita 88%)
+
+  // pega depois de tocar/touch/target/alvo/High/Low
+  let m = s.match(/(?:tocar|touch|target|alvo|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
+
+  // fallback: pega o 1º decimal (evita capturar "88%")
+  if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/);
+
   if (!m) return null;
+
   const n = Number(String(m[1]).replace(",", "."));
-  return isFinite(n) ? n : null;
+  return Number.isFinite(n) ? n : null;
 })() ?? ((bw?.trigger_price != null && isFinite(Number(bw.trigger_price))) ? Number(bw.trigger_price) : null);
 
 
