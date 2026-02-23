@@ -6231,6 +6231,9 @@ function a10LiveHandleMessage(payloadOrEvent) {
     const ohlc = normOHLC(msg);
     if (ohlc) {
       window.__A10_LIVE_LAST_45__ = ohlc;
+            window.__A10_LAST_TRADE_PRICE__ = Number(ohlc.close);
+      window.__A10_LAST_TRADE_AT__ = Date.now();
+      try { apMarketPrice = window.__A10_LAST_TRADE_PRICE__; } catch(e) {}
       const bar = buildAggBar(ohlc);
       pushAggBar(bar);
       return;
@@ -6240,7 +6243,9 @@ function a10LiveHandleMessage(payloadOrEvent) {
 const tr = normTrade(msg);
 if (tr) {
   window.__A10_LIVE_LAST_45__ = tr;
-
+      window.__A10_LAST_TRADE_PRICE__ = Number(tr.close);
+      window.__A10_LAST_TRADE_AT__ = Date.now();
+      try { apMarketPrice = window.__A10_LAST_TRADE_PRICE__; } catch(e) {}
   // ✅ FEED do preço real-time pro Entry Engine (confirm/cancel)
   window.__A10_LAST_TRADE_PRICE__ = Number(tr.close);
   window.__A10_LAST_TRADE_AT__ = Date.now();
@@ -6264,6 +6269,8 @@ function a10LiveConnect(symbol, timeframe) {
 
   // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
+    window.__A10_LAST_TRADE_PRICE__ = null;
+  window.__A10_LAST_TRADE_AT__ = 0;
     window.__A10_LIVE_HAS_BARS__ = false;
   window.__A10_LIVE_LAST_BAR_AT__ = 0;
   window.__A10_LIVE_LAST_BAR_T__ = 0;
@@ -14230,7 +14237,10 @@ const reentry = (slPrice != null && k != null && dirUse)
     if (!$("ee-brain-card")) return;
 
     // fontes confiáveis do seu painel (já existem)
-    const current = num($("mpl-current")?.textContent) ?? num($("prem-right-current-price")?.textContent);
+    const current =
+  num(window.__A10_LAST_TRADE_PRICE__) ??
+  num($("mpl-current")?.textContent) ??
+  num($("prem-right-current-price")?.textContent);
     const atr14   = num($("mpl-atr14")?.textContent);
 
     const target     = num($("mpl-a1-price")?.textContent) ?? num($("slr-tp")?.textContent);
