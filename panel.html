@@ -14334,17 +14334,25 @@ if ($("ee-engine-card")) {
   const microP = (targetPct != null && Number.isFinite(targetPct)) ? targetPct : null;
   const armP = (microP != null) ? microP : conf;
 
-  // status do gate (price-based + arm)
-  let st = "LOADING";
-  if (dir === "BUY") {
-    if (current <= cancelPx) st = "FAILED";
-    else if (current >= confirmPx) st = "CONFIRMED";
-    else if (armP >= 55) st = "ARMED";
-  } else {
-    if (current >= cancelPx) st = "FAILED";
-    else if (current <= confirmPx) st = "CONFIRMED";
-    else if (armP >= 55) st = "ARMED";
-  }
+  // ✅ preço vivo (WS/autopilot) + fallback pro `current`
+const livePx =
+  (typeof apGetMarketPrice === "function" && apGetMarketPrice() != null)
+    ? Number(apGetMarketPrice())
+    : (window.__A10_LAST_TRADE_PRICE__ != null ? Number(window.__A10_LAST_TRADE_PRICE__) : NaN);
+
+const currentPx = Number.isFinite(livePx) ? livePx : current;
+
+// status do gate (price-based + arm)
+let st = "LOADING";
+if (dir === "BUY") {
+  if (currentPx <= cancelPx) st = "FAILED";
+  else if (currentPx >= confirmPx) st = "CONFIRMED";
+  else if (armP >= 55) st = "ARMED";
+} else {
+  if (currentPx >= cancelPx) st = "FAILED";
+  else if (currentPx <= confirmPx) st = "CONFIRMED";
+  else if (armP >= 55) st = "ARMED";
+}
 
   // pill
   const pill = $("ee-engine-pill");
