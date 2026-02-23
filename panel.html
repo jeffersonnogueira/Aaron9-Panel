@@ -2433,54 +2433,7 @@
   flex: 0 1 330px;
   min-width: 300px;
 }
-/* ===== MICRO MAP (NOW) — PREMIUM (match Entry Engine typography) ===== */
-.micro-map-card{
-  min-height: 380px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.10);
-  background:
-    radial-gradient(900px 280px at 0% 0%, rgba(255,208,64,.12), rgba(0,0,0,0) 60%),
-    rgba(0,0,0,.18);
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
-.micro-map-title{
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: .85;
-  margin-bottom: 2px;
-}
-
-/* As 3 linhas viram “cards” no estilo do Entry Engine */
-.micro-map-line{
-  font-size: 18px;          /* <<< AQUI é o “tamanho Entry Engine” que você quer */
-  font-weight: 900;
-  line-height: 1.28;
-  padding: 10px 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.10);
-  box-shadow: 0 0 18px rgba(0,0,0,.35);
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.micro-map-foot{
-  margin-top: auto;
-  font-size: 11px;
-  opacity: .65;
-  line-height: 1.35;
-}
-
-@media (max-width: 980px){
-  .micro-map-line{ font-size: 15px; }
-}
-/* ===== /MICRO MAP (NOW) ===== */
 /* NOVO: WINDOWS card */
 .windows-card{
   flex: 1 1 260px;
@@ -13706,19 +13659,7 @@ const atrMap =
   asNum(payload?.micro_path_live?.atr14) ??
   asNum(atr14);
 
-  c// ✅ Micro Map deve ESPELHAR o texto do PREMONITION MICRO LIVE (sem mexer nele)
-const microTxtDom = String(document.getElementById("prem-micro")?.textContent || "");
-
-// mesmo extrator do KPI (touch/tocar/High/Low)
-const kpiTargetFromTxt = (() => {
-  let m = microTxtDom.match(/(?:tocar|touch|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
-  if (!m) m = microTxtDom.match(/(\d{1,6}[.,]\d{1,6})/); // 1º decimal
-  if (!m) return null;
-  const n = Number(String(m[1]).replace(",", "."));
-  return isFinite(n) ? n : null;
-})();
-
-const microTarget = asNum(kpiTargetFromTxt) ?? asNum(mp?.micro_live_target) ?? asNum(microTake);
+  const microTarget = asNum(mp?.micro_live_target) ?? asNum(microTake);
   const microOk = (curMap != null && microTarget != null);
 
   const dirMap = (() => {
@@ -13732,8 +13673,8 @@ const microTarget = asNum(kpiTargetFromTxt) ?? asNum(mp?.micro_live_target) ?? a
   const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
 
   // micro prob/eta — usa micro_path_v1 se tiver, senão cai no que já existe
-  const microProb = asNum(extractPct(microTxtDom)) ?? asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
-  const microEta  = asNum(extractMinutes(microTxtDom)) ?? asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
+  const microProb = asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
+  const microEta  = asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
 
   const microLine = microOk
     ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}`
