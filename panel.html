@@ -13706,7 +13706,19 @@ const atrMap =
   asNum(payload?.micro_path_live?.atr14) ??
   asNum(atr14);
 
-  const microTarget = asNum(mp?.micro_live_target) ?? asNum(microTake);
+  c// ✅ Micro Map deve ESPELHAR o texto do PREMONITION MICRO LIVE (sem mexer nele)
+const microTxtDom = String(document.getElementById("prem-micro")?.textContent || "");
+
+// mesmo extrator do KPI (touch/tocar/High/Low)
+const kpiTargetFromTxt = (() => {
+  let m = microTxtDom.match(/(?:tocar|touch|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
+  if (!m) m = microTxtDom.match(/(\d{1,6}[.,]\d{1,6})/); // 1º decimal
+  if (!m) return null;
+  const n = Number(String(m[1]).replace(",", "."));
+  return isFinite(n) ? n : null;
+})();
+
+const microTarget = asNum(kpiTargetFromTxt) ?? asNum(mp?.micro_live_target) ?? asNum(microTake);
   const microOk = (curMap != null && microTarget != null);
 
   const dirMap = (() => {
@@ -13720,8 +13732,8 @@ const atrMap =
   const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
 
   // micro prob/eta — usa micro_path_v1 se tiver, senão cai no que já existe
-  const microProb = asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
-  const microEta  = asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
+  const microProb = asNum(extractPct(microTxtDom)) ?? asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
+  const microEta  = asNum(extractMinutes(microTxtDom)) ?? asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
 
   const microLine = microOk
     ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}`
