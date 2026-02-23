@@ -2433,7 +2433,53 @@
   flex: 0 1 330px;
   min-width: 300px;
 }
+/* ===== MICRO MAP (NOW) — STYLE igual ENTRY ENGINE (tipografia + card premium) ===== */
+.micro-map-card{
+  min-height: 380px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
 
+/* Título no estilo “K” do Entry Engine */
+.micro-map-title{
+  font-size: 24px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  opacity: .70;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+/* Linhas grandes (como leitura principal do Entry Engine) */
+.micro-map-line{
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Rodapé discreto (como note) */
+.micro-map-foot{
+  margin-top: auto;
+  font-size: 12px;
+  opacity: .60;
+  letter-spacing: .06em;
+  line-height: 1.35;
+}
+
+/* Responsivo: segura em telas menores */
+@media (max-width: 1100px){
+  .micro-map-title{ font-size: 18px; }
+  .micro-map-line{ font-size: 16px; }
+}
+/* ===== /MICRO MAP (NOW) ===== */
 /* NOVO: WINDOWS card */
 .windows-card{
   flex: 1 1 260px;
