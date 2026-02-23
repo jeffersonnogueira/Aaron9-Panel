@@ -2939,33 +2939,7 @@
 .ee-engine-mode.strong{ color: rgba(52,211,153,.95); }
 .ee-engine-mode.noise{ color: rgba(255,208,64,.95); }
 .ee-engine-mode.notrade{ color: rgba(226,232,240,.70); }
-/* === EE: highlight do range (PROB ...) === */
-.ee-prob-range{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-weight: 950;
-  letter-spacing: .10em;
 
-  /* default = BLUE (para 50–69%) */
-  color: #60a5fa;
-  border: 1px solid rgba(96,165,250,.35);
-  background: rgba(96,165,250,.10);
-}
-
-.ee-prob-range.green{
-  color:#34d399;
-  border-color: rgba(52,211,153,.35);
-  background: rgba(52,211,153,.10);
-}
-
-.ee-prob-range.gray{
-  color: rgba(226,232,240,.82);
-  border-color: rgba(226,232,240,.18);
-  background: rgba(226,232,240,.06);
-}
 .ee-engine-rule{
   font-size: 24px;
   font-weight: 900;
@@ -3014,11 +2988,6 @@
   border-radius: 16px;
   background: rgba(255,255,255,.02);
   padding: 12px 14px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
 }
 
 .ee-engine-box .k{
@@ -3515,68 +3484,6 @@
   font-size: 16px;
   opacity: .75;
 }
-/* ===== MICRO KPI (Entry Engine style) ===== */
-.micro-kpi-grid{
-  flex: 1 1 100%;
-  width: 100%;
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  align-items: stretch;
-}
-
-.micro-kpi-grid .ee-engine-box.stack{
-  padding: 10px 10px;
-  border-radius: 16px;
-}
-
-.micro-kpi-grid .ee-engine-box.stack .k{
-  font-size: 9px;
-  opacity: .65;
-}
-
-.micro-kpi-grid .ee-engine-box.stack .v{
-  font-size: 28px;
-  padding: 8px 10px;
-  border-radius: 14px;
-}
-
-.micro-kpi-grid #prem-right-time{ font-size: 28px; }
-.micro-kpi-grid #prem-right-ampm{ font-size: 12px; margin-left: 6px; opacity: .85; }
-.micro-kpi-grid #prem-right-prob{ font-size: 28px; }
-
-.micro-kpi-grid #prem-right-prob.is-buy{
-  color: #34d399;
-  border-color: rgba(52,211,153,.28);
-  background: rgba(52,211,153,.08);
-}
-.micro-kpi-grid #prem-right-prob.is-sell{
-  color: #fb7185;
-  border-color: rgba(251,113,133,.28);
-  background: rgba(251,113,133,.08);
-}
-.micro-kpi-grid #prem-right-prob.is-neutral{
-  color: #facc15;
-  border-color: rgba(250,204,21,.25);
-  background: rgba(250,204,21,.08);
-}
-
-.micro-kpi-grid #mkpi-target{
-  color: var(--success);
-  border-color: rgba(74,222,128,.28);
-  background: rgba(74,222,128,.08);
-}
-.micro-kpi-grid #mkpi-eta{
-  color: #facc15;
-  border-color: rgba(250,204,21,.25);
-  background: rgba(250,204,21,.08);
-}
-
-@media (max-width: 980px){
-  .micro-kpi-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-}
-/* ===== /MICRO KPI ===== */
 /* ===== QUICK P&L (Premonição) ===== */
 .prem-pnlcalc{
   margin-top: 10px;
@@ -4651,31 +4558,9 @@
     <span class="prem-kpi-right-time prem-kpi-right-current-price" id="prem-right-current-price">—</span>
   </div>
 
-        <!-- MICRO KPI (Entry Engine style) -->
-    <div class="micro-kpi-grid" id="micro-kpi-grid">
-      <div class="ee-engine-box stack micro-kpi-box">
-        <div class="k">TIME (MT)</div>
-        <div class="v">
-          <span class="prem-kpi-right-time" id="prem-right-time">—</span>
-          <span class="prem-kpi-right-ampm" id="prem-right-ampm"></span>
-        </div>
-      </div>
-
-      <div class="ee-engine-box stack micro-kpi-box">
-        <div class="k">SIGNAL</div>
-        <div class="v prem-kpi-right-prob" id="prem-right-prob">—</div>
-      </div>
-
-      <div class="ee-engine-box stack micro-kpi-box">
-        <div class="k">TARGET</div>
-        <div class="v" id="mkpi-target">—</div>
-      </div>
-
-      <div class="ee-engine-box stack micro-kpi-box">
-        <div class="k">ETA</div>
-        <div class="v" id="mkpi-eta">—</div>
-      </div>
-    </div>
+    <span class="prem-kpi-right-time" id="prem-right-time">--:--</span>
+    <span class="prem-kpi-right-ampm" id="prem-right-ampm"></span>
+    <span class="prem-kpi-right-prob" id="prem-right-prob">--%</span>
   </div>
 
   <div class="prem-kpi-right-sub" id="prem-right-eta">—</div>
@@ -6253,9 +6138,6 @@ function a10LiveHandleMessage(payloadOrEvent) {
       c = norm.close;
       v = (Number(last.volume) || 0) + (Number(norm.volume) || 0);
     } else if (last && bucketTime > last.time) {
-            // ✅ candle anterior FECHOU (para regras CONFIRM/CANCEL CLOSE)
-      window.__A10_LAST_CLOSED_T__ = last.time;
-      window.__A10_LAST_CLOSED_CLOSE__ = Number(last.close);
       o = norm.open;
       h = norm.high;
       l = norm.low;
@@ -6318,29 +6200,19 @@ function a10LiveHandleMessage(payloadOrEvent) {
     const ohlc = normOHLC(msg);
     if (ohlc) {
       window.__A10_LIVE_LAST_45__ = ohlc;
-            window.__A10_LAST_TRADE_PRICE__ = Number(ohlc.close);
-      window.__A10_LAST_TRADE_AT__ = Date.now();
-      try { apMarketPrice = window.__A10_LAST_TRADE_PRICE__; } catch(e) {}
       const bar = buildAggBar(ohlc);
       pushAggBar(bar);
       return;
     }
 
     // 2) TRADE tick (p/t)
-const tr = normTrade(msg);
-if (tr) {
-  window.__A10_LIVE_LAST_45__ = tr;
-      window.__A10_LAST_TRADE_PRICE__ = Number(tr.close);
-      window.__A10_LAST_TRADE_AT__ = Date.now();
-      try { apMarketPrice = window.__A10_LAST_TRADE_PRICE__; } catch(e) {}
-  // ✅ FEED do preço real-time pro Entry Engine (confirm/cancel)
-  window.__A10_LAST_TRADE_PRICE__ = Number(tr.close);
-  window.__A10_LAST_TRADE_AT__ = Date.now();
-
-  const bar = buildAggBar(tr);
-  pushAggBar(bar);
-  return;
-}
+    const tr = normTrade(msg);
+    if (tr) {
+      window.__A10_LIVE_LAST_45__ = tr;
+      const bar = buildAggBar(tr);
+      pushAggBar(bar);
+      return;
+    }
 
     // fallback debug
     window.__A10_LIVE_LAST_OBJ__ = msg;
@@ -6356,10 +6228,6 @@ function a10LiveConnect(symbol, timeframe) {
 
   // guarda o "desejado" (pra reconectar certo)
   a10LiveWanted = { symbol, timeframe };
-    window.__A10_LAST_CLOSED_T__ = 0;
-  window.__A10_LAST_CLOSED_CLOSE__ = null;
-    window.__A10_LAST_TRADE_PRICE__ = null;
-  window.__A10_LAST_TRADE_AT__ = 0;
     window.__A10_LIVE_HAS_BARS__ = false;
   window.__A10_LIVE_LAST_BAR_AT__ = 0;
   window.__A10_LIVE_LAST_BAR_T__ = 0;
@@ -7506,40 +7374,10 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("prem-chart-current-price", currentPxTxt);
 
     setText("prem-right-time", t.hhmm || "—");
-setText("prem-right-ampm", t.ampm || "");
+    setText("prem-right-ampm", t.ampm || "");
+    (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span class="pulse-micro" style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
+    setText("prem-right-eta", (etaMin != null) ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`) : "—");
 
-// Target (preferindo kpiPriceNum; fallback para digest/panel/ui)
-const targetRaw = (kpiPriceNum != null) ? kpiPriceNum : pickFirst(
-  digest.micro_target, digest.micro_take, digest.microTake,
-  panel.micro_target, panel.micro_take, panel.microTake,
-  ui.micro_target, ui.micro_take, ui.microTake
-);
-const targetNum = (targetRaw != null && isFinite(Number(targetRaw))) ? Number(targetRaw) : null;
-const targetTxt = (targetNum != null) ? targetNum.toFixed(2) : "—";
-
-// Direção (BUY/SELL) baseada em Target vs Current
-const curNum = (currentPxRaw != null && isFinite(Number(currentPxRaw))) ? Number(currentPxRaw) : null;
-const microDir = (targetNum != null && curNum != null) ? (targetNum >= curNum ? "BUY" : "SELL") : "";
-
-// SIGNAL = "SELL 70%" ou "BUY 70%"
-const sigEl = document.getElementById("prem-right-prob");
-if (sigEl){
-  sigEl.textContent = microDir ? `${microDir} ${prob}` : prob;
-  sigEl.classList.remove("is-buy","is-sell","is-neutral");
-  if (microDir === "BUY") sigEl.classList.add("is-buy");
-  else if (microDir === "SELL") sigEl.classList.add("is-sell");
-  else sigEl.classList.add("is-neutral");
-}
-
-// Boxes (Entry Engine style)
-setText("mkpi-target", targetTxt);
-setText("mkpi-eta", (etaMin != null) ? `~${Math.round(etaMin)}m` : "—");
-
-// Mantém a linha descritiva (se você ainda usa em outro lugar)
-setText("prem-right-eta", (etaMin != null)
-  ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`)
-  : "—"
-);
 
     const wLine = (bw?.window_start_label || bw?.window_end_label)
       ? `${bw.window_start_label || "—"} – ${bw.window_end_label || "—"} (MT)`
@@ -7554,7 +7392,7 @@ setText("prem-right-eta", (etaMin != null)
     setText("prem-miss", bw?.miss_line || "—");
         setText("prem-macro", macroTxt || "—");
     setText("prem-micro", microTxt || "—");
-    try{ a10UpdateExecGateMicroSizing(payload, { microTake: (targetNum ?? kpiPriceNum), etaMin }); }catch(_e){}
+    try{ a10UpdateExecGateMicroSizing(payload, { microTake: kpiPriceNum, etaMin }); }catch(_e){}
 
     const score = (payload?.digest?.shape_focus?.score ?? bw?.score);
     const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
@@ -14356,10 +14194,7 @@ const reentry = (slPrice != null && k != null && dirUse)
     if (!$("ee-brain-card")) return;
 
     // fontes confiáveis do seu painel (já existem)
-    const current =
-  num(window.__A10_LAST_TRADE_PRICE__) ??
-  num($("mpl-current")?.textContent) ??
-  num($("prem-right-current-price")?.textContent);
+    const current = num($("mpl-current")?.textContent) ?? num($("prem-right-current-price")?.textContent);
     const atr14   = num($("mpl-atr14")?.textContent);
 
     const target     = num($("mpl-a1-price")?.textContent) ?? num($("slr-tp")?.textContent);
@@ -14468,32 +14303,17 @@ if ($("ee-engine-card")) {
   const microP = (targetPct != null && Number.isFinite(targetPct)) ? targetPct : null;
   const armP = (microP != null) ? microP : conf;
 
-  // ✅ preço vivo (WS/autopilot) + fallback pro `current`
-const livePx =
-  (typeof apGetMarketPrice === "function" && apGetMarketPrice() != null)
-    ? Number(apGetMarketPrice())
-    : (window.__A10_LAST_TRADE_PRICE__ != null ? Number(window.__A10_LAST_TRADE_PRICE__) : NaN);
-
-const currentPx = Number.isFinite(livePx) ? livePx : current;
-
-// status do gate (CLOSE-based + arm)
-// usa o close do candle anterior quando disponível; senão cai pro live
-const lastClosePx = (window.__A10_LAST_CLOSED_CLOSE__ != null)
-  ? Number(window.__A10_LAST_CLOSED_CLOSE__)
-  : NaN;
-
-const refPx = Number.isFinite(lastClosePx) ? lastClosePx : currentPx;
-
-let st = "LOADING";
-if (dir === "BUY") {
-  if (refPx <= cancelPx) st = "FAILED";
-  else if (refPx >= confirmPx) st = "CONFIRMED";
-  else if (armP >= 55) st = "ARMED";
-} else {
-  if (refPx >= cancelPx) st = "FAILED";
-  else if (refPx <= confirmPx) st = "CONFIRMED";
-  else if (armP >= 55) st = "ARMED";
-}
+  // status do gate (price-based + arm)
+  let st = "LOADING";
+  if (dir === "BUY") {
+    if (current <= cancelPx) st = "FAILED";
+    else if (current >= confirmPx) st = "CONFIRMED";
+    else if (armP >= 55) st = "ARMED";
+  } else {
+    if (current >= cancelPx) st = "FAILED";
+    else if (current <= confirmPx) st = "CONFIRMED";
+    else if (armP >= 55) st = "ARMED";
+  }
 
   // pill
   const pill = $("ee-engine-pill");
@@ -14539,16 +14359,10 @@ if (dir === "BUY") {
 
   const modeEl = $("ee-engine-mode");
   if (modeEl){
-  modeEl.classList.remove("strong","noise","notrade");
-  modeEl.classList.add(modeClass);
-
-  const rangeClass =
-    (p != null && p >= 70) ? "ee-prob-range green" :
-    (p != null && p <= 49) ? "ee-prob-range gray"  :
-    "ee-prob-range"; // 50–69 = azul (default)
-
-  modeEl.innerHTML = `MODE: <span class="${rangeClass}">${rangeText}</span> ${modeText}`;
-}
+    modeEl.classList.remove("strong","noise","notrade");
+    modeEl.classList.add(modeClass);
+    modeEl.textContent = `MODE: ${rangeText} ${modeText}`;
+  }
 
   const ruleEl = $("ee-engine-rule");
   if (ruleEl) ruleEl.textContent = `Rule line: ${ruleText}`;
