@@ -13659,7 +13659,10 @@ const atrMap =
   asNum(payload?.micro_path_live?.atr14) ??
   asNum(atr14);
 
-  const microTarget = asNum(mp?.micro_live_target) ?? asNum(microTake);
+    const microTarget =
+    asNum(window.__A10_EG_CTX?.microTake) ??   // <- vem do Premonition Micro Live (kpiPriceNum)
+    asNum(microTake) ??
+    asNum(mp?.micro_live_target);
   const microOk = (curMap != null && microTarget != null);
 
   const dirMap = (() => {
