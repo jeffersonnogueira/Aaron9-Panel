@@ -13676,8 +13676,17 @@ const atrMap =
   const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
 
   // micro prob/eta — usa micro_path_v1 se tiver, senão cai no que já existe
-  const microProb = asNum(mp?.micro_live_prob_pct ?? mp?.micro_live?.prob_pct ?? prob);
-  const microEta  = asNum(mp?.micro_live_eta_min ?? mp?.micro_live?.eta_min ?? etaMin);
+    const microProb = asNum(
+    window.__A10_PREM_MICRO_PCT ??            // <- mesma % do Premonition Micro Live
+    prob ??                                  // <- fallback (string tipo "84%")
+    mp?.micro_live_prob_pct ??
+    mp?.micro_live?.prob_pct
+  );
+    const microEta  = asNum(
+    etaMin ??                                // <- mesmo ETA do Premonition Micro Live
+    mp?.micro_live_eta_min ??
+    mp?.micro_live?.eta_min
+  );
 
   const microLine = microOk
     ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}`
