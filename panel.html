@@ -11943,14 +11943,15 @@ function a10CandleParts(c) {
 }
 
 function a10GetMicroCtx(payload, candles) {
-  const raw   = payload?.raw || payload?.data || payload || {};
-  const panel = payload?.panel || raw?.panel || raw || {};
-  const digest = payload?.digest || panel?.digest || raw?.digest || {};
+  const root  = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
+  const raw   = root?.raw || root?.data || root || {};
+  const panel = root?.panel || raw?.panel || raw || {};
+  const digest = root?.digest || panel?.digest || raw?.digest || {};
 
   const mp = digest?.micro_path_live || panel?.micro_path_live || payload?.micro_path_live || null;
 
   const current =
-    a10Num(panel.price_now ?? panel.last_price ?? payload.price_now ?? payload.last_price) ??
+    a10Num(panel.price_now ?? panel.last_price ?? root.price_now ?? root.last_price) ??
     a10Num(candles?.[candles.length - 1]?.close);
 
   const microTarget =
@@ -11958,13 +11959,13 @@ function a10GetMicroCtx(payload, candles) {
     a10Num(panel?.premonition_micro?.micro_take ?? panel?.premonition_micro?.take_profit) ??
     a10Num(panel?.micro_take ?? panel?.micro_target_price) ??
     a10Num(digest?.premonition?.micro_target_price) ??
-    a10Num(payload?.micro_take ?? payload?.micro_target_price);
+    a10Num(root?.micro_take ?? root?.micro_target_price);
 
   const microProb =
     a10Num(mp?.micro_live_prob_pct) ??
     a10Num(panel?.premonition_micro?.micro_prob_pct ?? panel?.micro_prob_pct) ??
     a10Num(digest?.premonition?.micro_prob_pct) ??
-    a10Num(payload?.micro_prob_pct);
+    a10Num(root?.micro_prob_pct);
 
   const dir =
     (current != null && microTarget != null)
@@ -11973,7 +11974,7 @@ function a10GetMicroCtx(payload, candles) {
 
   const tf =
     panel.timeframe ||
-    payload.timeframe ||
+    root.timeframe ||
     (window.a10LiveWanted && window.a10LiveWanted.timeframe) ||
     "1m";
 
@@ -12116,7 +12117,7 @@ function a10UpdateWindowsCardFromPayload(payload) {
       }
     };
 
-    const root   = payload || {};
+    const root   = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
     const panel  = root.panel || root.raw?.panel || root.data?.panel || root || {};
     const digest = root.digest || panel.digest || root.raw?.digest || root.data?.digest || {};
 
