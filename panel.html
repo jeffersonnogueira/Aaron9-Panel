@@ -8197,7 +8197,7 @@ function updateIndicatorPremonitionPanel(payload){
     };
 
     // UPDATED
-    set("indip-updated", fmtClock(attachedAt));
+    set("indip-updated", (panel && panel.updated_at) ? String(panel.updated_at) : fmtClock(attachedAt));
 
     // se não tem indicador, zera e sai
     if (!ip || ip.enabled !== true){
@@ -8225,11 +8225,11 @@ function updateIndicatorPremonitionPanel(payload){
 
     const vCross = (v.cross && v.cross.highlight_5min) ? v.cross.highlight_5min : null;
     set("indip-vwap-cross-dir", v.cross?.direction || "—");
-    set("indip-vwap-cross-pct", fmtPct(vCross?.prob_hit_pct));
+    set("indip-vwap-cross-pct", fmtPct(vCross?.prob_hit_pct_dyn ?? vCross?.prob_hit_pct ?? vCross?.prob_hit_pct_base));
     set("indip-vwap-cross-eta", fmtEta(vCross?.eta_p50_min));
 
     const vHold = (v.hold && v.hold.highlight_5min) ? v.hold.highlight_5min : null;
-    set("indip-vwap-hold-pct", fmtPct(vHold?.prob_hold_pct));
+    set("indip-vwap-hold-pct", fmtPct(vHold?.prob_hold_pct_dyn ?? vHold?.prob_hold_pct ?? vHold?.prob_hold_pct_base));
 
     // ===== RSI =====
     const r = ip.rsi || {};
@@ -8240,7 +8240,7 @@ function updateIndicatorPremonitionPanel(payload){
 
     const rCross = (r.cross_50 && r.cross_50.highlight_5min) ? r.cross_50.highlight_5min : null;
     set("indip-rsi-cross-dir", r.cross_50?.direction || "—");
-    set("indip-rsi-cross-pct", fmtPct(rCross?.prob_hit_pct));
+    set("indip-rsi-cross-pct", fmtPct(rCross?.prob_hit_pct_dyn ?? rCross?.prob_hit_pct ?? rCross?.prob_hit_pct_base));
     set("indip-rsi-cross-eta", fmtEta(rCross?.eta_p50_min));
 
     const rHold = (r.hold_50 && r.hold_50.highlight_5min) ? r.hold_50.highlight_5min : null;
@@ -8256,11 +8256,11 @@ function updateIndicatorPremonitionPanel(payload){
 
     const eCross = (e.cross && e.cross.highlight_5min) ? e.cross.highlight_5min : null;
     set("indip-ema-cross-dir", e.cross?.direction || "—");
-    set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct));
+    set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct_dyn ?? eCross?.prob_hit_pct ?? eCross?.prob_hit_pct_base));
     set("indip-ema-cross-eta", fmtEta(eCross?.eta_p50_min));
 
     const eHold = (e.hold && e.hold.highlight_5min) ? e.hold.highlight_5min : null;
-    set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct));
+    set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct_dyn ?? eHold?.prob_hold_pct ?? eHold?.prob_hold_pct_base));
 
   }catch(e){
     // não quebra o painel
