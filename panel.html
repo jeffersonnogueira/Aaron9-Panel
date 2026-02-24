@@ -11203,6 +11203,10 @@ if (typeof updateAaronCommentaryBlock === "function") {
 if (typeof updateIndicatorPremonitionPanel === "function") {
   updateIndicatorPremonitionPanel(payload);
 }
+// ✅ WINDOWS: sempre preencher pelo payload (mesmo sem candles)
+if (typeof a10UpdateWindowsCardFromPayload === "function") {
+  a10UpdateWindowsCardFromPayload(payload);
+}
 // ✅ 3) Mini-resumo dentro do Trade Card (se o anchor existir)
 if (typeof renderResponderInline === "function") {
   renderResponderInline(payload);
@@ -12077,7 +12081,116 @@ function a10UpdateWindowsCardFromCandles(payload, candles) {
     console.warn("[WINDOWS] falhou sem quebrar o painel:", e);
   }
 }
+// WINDOWS fallback: se NÃO vier candles no payload (cache/polling), ainda mostra números (confiança % etc.)
+function a10UpdateWindowsCardFromPayload(payload) {
+  try {
+    const elStatus = document.getElementById("win-status");
+    const elPred   = document.getElementById("win-predicted");
+    const elConf   = document.getElementById("win-confidence");
+    const elRule   = document.getElementById("win-rule");
 
+    if (!elStatus && !elPred && !elConf && !elRule) return;
+
+    const clampPct = (v) => {
+      const n = Number(v);
+      if (!Number.isFinite(n)) return null;
+      return Math.max(0, Math.min(100, n));
+    };
+
+    const fmtTimeMT = (isoOrMs) => {
+      if (!isoOrMs) return null;
+      const d = (typeof isoOrMs === "number") ? new Date(isoOrMs) : new Date(String(isoOrMs));
+      if (Number.isNaN(d.getTime())) return null;
+      try {
+        return new Intl.DateTimeFormat("en-US", {
+          timeZone: "America/Denver",
+          hour: "numeric",
+          minute: "2-digit"
+        }).format(d);
+      } catch (_e) {
+        let hh = d.getHours();
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        const ampm = (hh >= 12) ? "PM" : "AM";
+        hh = hh % 12; if (hh === 0) hh = 12;
+        return `${hh}:${mm} ${ampm}`;
+      }
+    };
+
+    const root   = payload || {};
+    const panel  = root.panel || root.raw?.panel || root.data?.panel || root || {};
+    const digest = root.digest || panel.digest || root.raw?.digest || root.data?.digest || {};
+
+    // tenta achar premonition_hours (se existir no payload)
+    const ph =
+      root.premonition_hours ||
+      panel.premonition_hours ||
+      digest.premonition_hours ||
+      root.raw?.premonition_hours ||
+      null;
+
+    // micro ctx (dir + microProb) com candles vazio
+    const ctx = (typeof a10GetMicroCtx === "function") ? a10GetMicroCtx(payload, []) : {};
+    const dir = ctx.dir || null;
+    const tfMin = Number.isFinite(Number(ctx.tfMin)) ? Number(ctx.tfMin) : 1;
+    const microProb = clampPct(ctx.microProb);
+
+    let status = "WAIT";
+    let predicted = (dir ? `~1 candle (${tfMin}m)` : "—");
+    let confidence = (microProb != null) ? `${Math.round(microProb)}%` : "—";
+    let rule = (dir === "BUY")
+      ? "Regra: close acima do candle anterior + confirmação no próximo"
+      : "Regra: close abaixo do candle anterior + confirmação no próximo";
+
+    // se tiver premonition_hours, melhora a previsão e a confiança
+    if (ph && typeof ph === "object") {
+      const t1 = fmtTimeMT(ph.eta_p25 || ph.eta_median || ph.eta_now);
+      const t2 = fmtTimeMT(ph.eta_p90 || ph.eta_p75);
+
+      if (t1 && t2) {
+        predicted = `${t1} — ${t2} (MT)`;
+      } else if (Number.isFinite(Number(ph.p25_minutes)) && Number.isFinite(Number(ph.p90_minutes))) {
+        predicted = `~${Math.round(Number(ph.p25_minutes))}m — ~${Math.round(Number(ph.p90_minutes))}m`;
+      }
+
+      const confPct = clampPct(
+        ph.cond_prob_median_to_p90_pct ??
+        ph.cond_prob_p25_to_p90_pct ??
+        ph.prob_between_p25_p90_pct ??
+        ph.prob_until_p90_pct ??
+        ph.prob_until_p75_pct ??
+        ph.prob_until_median_pct ??
+        ph.prob_until_p25_pct
+      );
+      if (confPct != null) confidence = `${Math.round(confPct)}%`;
+
+      // status por elapsed (se vier)
+      const elapsed = Number(ph.setup_elapsed_minutes);
+      const p25m = Number(ph.p25_minutes);
+      const p90m = Number(ph.p90_minutes);
+      if (Number.isFinite(elapsed) && Number.isFinite(p25m) && Number.isFinite(p90m)) {
+        if (elapsed >= p25m && elapsed <= p90m) status = "NOW";
+        else if (elapsed > p90m) status = "WARN";
+        else status = "WAIT";
+      }
+
+      const bdir = String(ph.breakout_dir || "").toLowerCase();
+      if (bdir === "up") rule = "Regra: close acima do candle anterior + confirmação no próximo";
+      if (bdir === "down") rule = "Regra: close abaixo do candle anterior + confirmação no próximo";
+    }
+
+    if (elStatus) {
+      elStatus.textContent = status;
+      elStatus.classList.remove("win-wait", "win-now", "win-warn");
+      elStatus.classList.add(status === "NOW" ? "win-now" : (status === "WARN" ? "win-warn" : "win-wait"));
+    }
+    if (elPred) elPred.textContent = `Window prevista: ${predicted}`;
+    if (elConf) elConf.textContent = `Confiança: ${confidence}`;
+    if (elRule) elRule.textContent = rule;
+
+  } catch (e) {
+    console.warn("[WINDOWS] fallback payload falhou sem quebrar o painel:", e);
+  }
+}
 function a10UpdateChartFromPayload(payload) {
   try {
     if (!payload) return;
