@@ -8149,16 +8149,42 @@ a10UpdatePremSignalCTA();
 
 function updateIndicatorPremonitionPanel(payload){
   try{
-    const root  = payload || {};
-    const panel = root.panel || root || {};
-    const ui    = root.ui || panel.ui || {};
-    const digest= root.digest || panel.digest || {};
+        const root  = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
+    const panel = root.panel || root.raw?.panel || root.data?.panel || root || {};
+    const ui0   = root.ui || panel.ui || root.raw?.ui || root.data?.ui || {};
+    const ui    = (ui0 && typeof ui0 === "object" && ui0.ui && typeof ui0.ui === "object") ? ui0.ui : ui0;
+    const digest0 = root.digest || panel.digest || root.raw?.digest || root.data?.digest || {};
+    const digest  = (digest0 && typeof digest0 === "object" && digest0.digest && typeof digest0.digest === "object") ? digest0.digest : digest0;
+
+    // debug: permite inspecionar o payload no console
+    window.__A10_LAST_PAYLOAD__ = root;
+
+    const deepFind = (obj, key, maxDepth = 6) => {
+      try{
+        const seen = new Set();
+        const q = [{ v: obj, d: 0 }];
+        while (q.length){
+          const { v, d } = q.shift();
+          if (!v || typeof v !== "object") continue;
+          if (seen.has(v)) continue;
+          seen.add(v);
+          if (Object.prototype.hasOwnProperty.call(v, key)) return v[key];
+          if (d >= maxDepth) continue;
+          for (const k of Object.keys(v)){
+            const child = v[k];
+            if (child && typeof child === "object") q.push({ v: child, d: d + 1 });
+          }
+        }
+      }catch(e){}
+      return null;
+    };
 
     const ip =
       ui.indicator_premonition ||
       digest.indicator_premonition ||
       panel.indicator_premonition ||
       root.indicator_premonition ||
+      deepFind(root, "indicator_premonition") ||
       null;
 
     const attachedAt =
@@ -8166,6 +8192,8 @@ function updateIndicatorPremonitionPanel(payload){
       ui.indicator_premonition_v1_attached_at ||
       digest.indicator_premonition_v1_ema_attached_at ||
       digest.indicator_premonition_v1_attached_at ||
+      deepFind(root, "indicator_premonition_v1_ema_attached_at") ||
+      deepFind(root, "indicator_premonition_v1_attached_at") ||
       null;
 
     const fmt2 = (n) => (Number.isFinite(Number(n)) ? Number(n).toFixed(2) : "—");
@@ -8197,10 +8225,12 @@ function updateIndicatorPremonitionPanel(payload){
     };
 
     // UPDATED
-    set("indip-updated", (panel && panel.updated_at) ? String(panel.updated_at) : fmtClock(attachedAt));
+        // UPDATED (prioriza o timestamp do indicator_premonition; fallback: panel.updated_at)
+    const updTxt = fmtClock(attachedAt);
+    set("indip-updated", (updTxt !== "—") ? updTxt : fmtClock(panel?.updated_at));
 
     // se não tem indicador, zera e sai
-    if (!ip || ip.enabled !== true){
+    if (!ip || (ip.enabled === false && !ip.vwap && !ip.rsi && !ip.ema)){
       setBadge("indip-vwap-state","—","win-wait");
       set("indip-vwap-price","—"); set("indip-vwap-vwap","—"); set("indip-vwap-diff","—");
       set("indip-vwap-cross-dir","—"); set("indip-vwap-cross-pct","—"); set("indip-vwap-cross-eta","—"); set("indip-vwap-hold-pct","—");
