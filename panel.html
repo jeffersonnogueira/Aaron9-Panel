@@ -8135,7 +8135,125 @@ a10UpdatePremSignalCTA();
   }
 }
 
+function updateIndicatorPremonitionPanel(payload){
+  try{
+    const root  = payload || {};
+    const panel = root.panel || root || {};
+    const ui    = root.ui || panel.ui || {};
+    const digest= root.digest || panel.digest || {};
 
+    const ip =
+      ui.indicator_premonition ||
+      digest.indicator_premonition ||
+      panel.indicator_premonition ||
+      root.indicator_premonition ||
+      null;
+
+    const attachedAt =
+      ui.indicator_premonition_v1_ema_attached_at ||
+      ui.indicator_premonition_v1_attached_at ||
+      digest.indicator_premonition_v1_ema_attached_at ||
+      digest.indicator_premonition_v1_attached_at ||
+      null;
+
+    const fmt2 = (n) => (Number.isFinite(Number(n)) ? Number(n).toFixed(2) : "—");
+    const fmt4 = (n) => (Number.isFinite(Number(n)) ? Number(n).toFixed(4) : "—");
+    const fmtPct = (n) => (Number.isFinite(Number(n)) ? `${Number(n).toFixed(2)}%` : "—");
+    const fmtEta = (min) => (Number.isFinite(Number(min)) ? `~${Number(min)}m` : "—");
+
+    const fmtClock = (ts) => {
+      try{
+        if (!ts) return "—";
+        const d = new Date(ts);
+        if (Number.isNaN(d.getTime())) return "—";
+        return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      }catch(e){ return "—"; }
+    };
+
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = (val === null || val === undefined || val === "") ? "—" : String(val);
+    };
+
+    const setBadge = (id, txt, mode) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove("win-now","win-warn","win-wait");
+      el.classList.add(mode || "win-wait");
+      el.textContent = txt || "—";
+    };
+
+    // UPDATED
+    set("indip-updated", fmtClock(attachedAt));
+
+    // se não tem indicador, zera e sai
+    if (!ip || ip.enabled !== true){
+      setBadge("indip-vwap-state","—","win-wait");
+      set("indip-vwap-price","—"); set("indip-vwap-vwap","—"); set("indip-vwap-diff","—");
+      set("indip-vwap-cross-dir","—"); set("indip-vwap-cross-pct","—"); set("indip-vwap-cross-eta","—"); set("indip-vwap-hold-pct","—");
+
+      setBadge("indip-rsi-state","—","win-wait");
+      set("indip-rsi-val","—"); set("indip-rsi-50","—");
+      set("indip-rsi-cross-dir","—"); set("indip-rsi-cross-pct","—"); set("indip-rsi-cross-eta","—"); set("indip-rsi-hold-pct","—");
+
+      setBadge("indip-ema-state","—","win-wait");
+      set("indip-ema-fast","—"); set("indip-ema-slow","—"); set("indip-ema-diff","—");
+      set("indip-ema-cross-dir","—"); set("indip-ema-cross-pct","—"); set("indip-ema-cross-eta","—"); set("indip-ema-hold-pct","—");
+      return;
+    }
+
+    // ===== VWAP =====
+    const v = ip.vwap || {};
+    const vState = String(v.state || "").toLowerCase();
+    setBadge("indip-vwap-state", (vState ? vState.toUpperCase() : "—"), vState === "above" ? "win-now" : (vState === "below" ? "win-warn" : "win-wait"));
+    set("indip-vwap-price", fmt2(v.price ?? panel.price_now ?? panel.last_price));
+    set("indip-vwap-vwap",  fmt2(v.vwap));
+    set("indip-vwap-diff",  fmt4(v.diff));
+
+    const vCross = (v.cross && v.cross.highlight_5min) ? v.cross.highlight_5min : null;
+    set("indip-vwap-cross-dir", v.cross?.direction || "—");
+    set("indip-vwap-cross-pct", fmtPct(vCross?.prob_hit_pct));
+    set("indip-vwap-cross-eta", fmtEta(vCross?.eta_p50_min));
+
+    const vHold = (v.hold && v.hold.highlight_5min) ? v.hold.highlight_5min : null;
+    set("indip-vwap-hold-pct", fmtPct(vHold?.prob_hold_pct));
+
+    // ===== RSI =====
+    const r = ip.rsi || {};
+    const rState = String(r.state_50 || "").toLowerCase();
+    setBadge("indip-rsi-state", (rState ? rState.toUpperCase() : "—"), rState === "above" ? "win-now" : (rState === "below" ? "win-warn" : "win-wait"));
+    set("indip-rsi-val", fmt2(r.rsi));
+    set("indip-rsi-50", "50");
+
+    const rCross = (r.cross_50 && r.cross_50.highlight_5min) ? r.cross_50.highlight_5min : null;
+    set("indip-rsi-cross-dir", r.cross_50?.direction || "—");
+    set("indip-rsi-cross-pct", fmtPct(rCross?.prob_hit_pct));
+    set("indip-rsi-cross-eta", fmtEta(rCross?.eta_p50_min));
+
+    const rHold = (r.hold_50 && r.hold_50.highlight_5min) ? r.hold_50.highlight_5min : null;
+    set("indip-rsi-hold-pct", fmtPct(rHold?.prob_hold_pct));
+
+    // ===== EMA =====
+    const e = ip.ema || {};
+    const eState = String(e.state || "").toLowerCase();
+    setBadge("indip-ema-state", (eState ? eState.toUpperCase() : "—"), eState === "above" ? "win-now" : (eState === "below" ? "win-warn" : "win-wait"));
+    set("indip-ema-fast", fmt2(e.ema_fast));
+    set("indip-ema-slow", fmt2(e.ema_slow));
+    set("indip-ema-diff", fmt4(e.diff));
+
+    const eCross = (e.cross && e.cross.highlight_5min) ? e.cross.highlight_5min : null;
+    set("indip-ema-cross-dir", e.cross?.direction || "—");
+    set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct));
+    set("indip-ema-cross-eta", fmtEta(eCross?.eta_p50_min));
+
+    const eHold = (e.hold && e.hold.highlight_5min) ? e.hold.highlight_5min : null;
+    set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct));
+
+  }catch(e){
+    // não quebra o painel
+  }
+}
 let __AARON_MATCHER_REQ_ID = 0;
 
 function applyResponderIntoTradeCard(data){
@@ -11040,7 +11158,9 @@ if (typeof updateRespiroReversaoPanel === "function") {
 if (typeof updateAaronCommentaryBlock === "function") {
   updateAaronCommentaryBlock(payload);
 }
-
+if (typeof updateIndicatorPremonitionPanel === "function") {
+  updateIndicatorPremonitionPanel(payload);
+}
 // ✅ 3) Mini-resumo dentro do Trade Card (se o anchor existir)
 if (typeof renderResponderInline === "function") {
   renderResponderInline(payload);
