@@ -14859,16 +14859,25 @@ if ($("ee-engine-card")) {
   const microP = (targetPct != null && Number.isFinite(targetPct)) ? targetPct : null;
   const armP = (microP != null) ? microP : conf;
 
-  // status do gate (price-based + arm)
-  let st = "LOADING";
-  if (dir === "BUY") {
-    if (current <= cancelPx) st = "FAILED";
-    else if (current >= confirmPx) st = "CONFIRMED";
-    else if (armP >= 55) st = "ARMED";
-  } else {
-    if (current >= cancelPx) st = "FAILED";
-    else if (current <= confirmPx) st = "CONFIRMED";
-    else if (armP >= 55) st = "ARMED";
+    // status do gate (TOUCH primeiro; confirm/cancel só depois)
+  const touchOK =
+    (Number.isFinite(current) && Number.isFinite(touchPx) && Number.isFinite(zone))
+      ? (Math.abs(current - touchPx) <= zone)   // só “ativa” o gate quando estiver na zona do TOUCH
+      : false;
+
+  let st = (armP >= 55) ? "ARMED" : "LOADING";
+
+  if (touchOK) {
+    // depois do TOUCH, aí sim vale CONFIRM/CANCEL
+    if (dir === "BUY") {
+      if (current <= cancelPx) st = "FAILED";
+      else if (current >= confirmPx) st = "CONFIRMED";
+      else st = "ARMED";
+    } else {
+      if (current >= cancelPx) st = "FAILED";
+      else if (current <= confirmPx) st = "CONFIRMED";
+      else st = "ARMED";
+    }
   }
 
   // pill
