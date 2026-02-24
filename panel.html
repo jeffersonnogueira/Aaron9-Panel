@@ -4409,6 +4409,7 @@
                 <div><span style="opacity:.7;">CROSS</span> <span id="indip-vwap-cross-dir">—</span> · <span id="indip-vwap-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
                 <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-vwap-cross-eta">—</span></div>
                 <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-vwap-hold-pct" style="font-weight:950;">—</span></div>
+                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-vwap-hold-phrase">—</div>
               </div>
             </div>
 
@@ -4429,6 +4430,7 @@
                 <div><span style="opacity:.7;">CROSS 50</span> <span id="indip-rsi-cross-dir">—</span> · <span id="indip-rsi-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
                 <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-rsi-cross-eta">—</span></div>
                 <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-rsi-hold-pct" style="font-weight:950;">—</span></div>
+                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-vwap-hold-phrase">—</div>
               </div>
             </div>
 
@@ -4451,6 +4453,7 @@
                 <div><span style="opacity:.7;">CROSS</span> <span id="indip-ema-cross-dir">—</span> · <span id="indip-ema-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
                 <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-ema-cross-eta">—</span></div>
                 <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-ema-hold-pct" style="font-weight:950;">—</span></div>
+                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-ema-hold-phrase">—</div>
               </div>
             </div>
 
@@ -8242,7 +8245,9 @@ function updateIndicatorPremonitionPanel(payload){
     const liveRsi14   = num(ui?.live_rsi14   ?? panel?.live_rsi14   ?? digest?.live_rsi14   ?? root?.live_rsi14);
     const liveEmaFast = num(ui?.live_ema_fast?? panel?.live_ema_fast?? digest?.live_ema_fast?? root?.live_ema_fast);
     const liveEmaSlow = num(ui?.live_ema_slow?? panel?.live_ema_slow?? digest?.live_ema_slow?? root?.live_ema_slow);
-
+set("indip-vwap-hold-phrase","—");
+set("indip-rsi-hold-phrase","—");
+set("indip-ema-hold-phrase","—");
     const pxLive =
       num(panel?.price_now ?? panel?.last_price ?? payload?.price_now ?? payload?.last_price);
 
@@ -8260,6 +8265,12 @@ function updateIndicatorPremonitionPanel(payload){
         set("indip-vwap-price", fmt2(pxLive));
         set("indip-vwap-vwap",  fmt2(liveVwap));
         set("indip-vwap-diff",  fmt4d(diff));
+        const vHoldTxt = document.getElementById("indip-vwap-hold-pct")?.textContent || "—";
+set("indip-vwap-hold-phrase",
+  (vState === "above") ? `HOLD ${vHoldTxt} → Price likely stays ABOVE VWAP (~5m).` :
+  (vState === "below") ? `HOLD ${vHoldTxt} → Price likely stays BELOW VWAP (~5m).` :
+  `HOLD ${vHoldTxt} → Price likely stays in the current VWAP state (~5m).`
+);
         set("indip-vwap-cross-dir", state.toUpperCase());
       } else {
         setBadge("indip-vwap-state","—","win-wait");
@@ -8275,6 +8286,12 @@ function updateIndicatorPremonitionPanel(payload){
         const state50 = liveRsi14 >= 50 ? "above" : "below";
         setBadge("indip-rsi-state", state50.toUpperCase(), state50 === "above" ? "win-now" : "win-warn");
         set("indip-rsi-val", fmt2(liveRsi14));
+        const rHoldTxt = document.getElementById("indip-rsi-hold-pct")?.textContent || "—";
+set("indip-rsi-hold-phrase",
+  (rState === "above") ? `HOLD ${rHoldTxt} → RSI likely stays ABOVE 50 (~5m).` :
+  (rState === "below") ? `HOLD ${rHoldTxt} → RSI likely stays BELOW 50 (~5m).` :
+  `HOLD ${rHoldTxt} → RSI likely stays on the current side of 50 (~5m).`
+);
         set("indip-rsi-50", "50");
         set("indip-rsi-cross-dir", state50.toUpperCase());
       } else {
@@ -8291,6 +8308,12 @@ function updateIndicatorPremonitionPanel(payload){
         const diff = liveEmaFast - liveEmaSlow;
         const state = diff >= 0 ? "above" : "below";
         setBadge("indip-ema-state", state.toUpperCase(), state === "above" ? "win-now" : "win-warn");
+        const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
+set("indip-ema-hold-phrase",
+  (eState === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
+  (eState === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
+  `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
+);
 
         // labels (assumindo FAST=20 / SLOW=50)
         set("indip-ema-fast-span", "20");
