@@ -8228,7 +8228,83 @@ function updateIndicatorPremonitionPanel(payload){
         // UPDATED (prioriza o timestamp do indicator_premonition; fallback: panel.updated_at)
     const updTxt = fmtClock(attachedAt);
     set("indip-updated", (updTxt !== "—") ? updTxt : fmtClock(panel?.updated_at));
+    // ===== FALLBACK LIVE (quando indicator_premonition vem disabled/null) =====
+    const fmt4d = (n) => (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(4);
 
+    const liveVwap    = num(ui?.live_vwap);
+    const liveRsi14   = num(ui?.live_rsi14);
+    const liveEmaFast = num(ui?.live_ema_fast);
+    const liveEmaSlow = num(ui?.live_ema_slow);
+
+    const pxLive =
+      num(panel?.price_now ?? panel?.last_price ?? payload?.price_now ?? payload?.last_price);
+
+    const hasAnyLive =
+      Number.isFinite(liveVwap) || Number.isFinite(liveRsi14) ||
+      (Number.isFinite(liveEmaFast) && Number.isFinite(liveEmaSlow));
+
+    // Se o indicator_premonition não veio (ou veio disabled/vazio), mas temos live_*, preenche os cards
+    if ((!ip || ip.enabled === false) && hasAnyLive) {
+      // VWAP
+      if (Number.isFinite(pxLive) && Number.isFinite(liveVwap)) {
+        const diff = pxLive - liveVwap;
+        const state = diff >= 0 ? "above" : "below";
+        setBadge("indip-vwap-state", state.toUpperCase(), state === "above" ? "win-now" : "win-warn");
+        set("indip-vwap-price", fmt2(pxLive));
+        set("indip-vwap-vwap",  fmt2(liveVwap));
+        set("indip-vwap-diff",  fmt4d(diff));
+        set("indip-vwap-cross-dir", state.toUpperCase());
+      } else {
+        setBadge("indip-vwap-state","—","win-wait");
+        set("indip-vwap-price","—"); set("indip-vwap-vwap","—"); set("indip-vwap-diff","—");
+        set("indip-vwap-cross-dir","—");
+      }
+      set("indip-vwap-cross-pct","—");
+      set("indip-vwap-cross-eta","—");
+      set("indip-vwap-hold-pct","—");
+
+      // RSI
+      if (Number.isFinite(liveRsi14)) {
+        const state50 = liveRsi14 >= 50 ? "above" : "below";
+        setBadge("indip-rsi-state", state50.toUpperCase(), state50 === "above" ? "win-now" : "win-warn");
+        set("indip-rsi-val", fmt2(liveRsi14));
+        set("indip-rsi-50", "50");
+        set("indip-rsi-cross-dir", state50.toUpperCase());
+      } else {
+        setBadge("indip-rsi-state","—","win-wait");
+        set("indip-rsi-val","—"); set("indip-rsi-50","—");
+        set("indip-rsi-cross-dir","—");
+      }
+      set("indip-rsi-cross-pct","—");
+      set("indip-rsi-cross-eta","—");
+      set("indip-rsi-hold-pct","—");
+
+      // EMA
+      if (Number.isFinite(liveEmaFast) && Number.isFinite(liveEmaSlow)) {
+        const diff = liveEmaFast - liveEmaSlow;
+        const state = diff >= 0 ? "above" : "below";
+        setBadge("indip-ema-state", state.toUpperCase(), state === "above" ? "win-now" : "win-warn");
+
+        // labels (assumindo FAST=20 / SLOW=50)
+        set("indip-ema-fast-span", "20");
+        set("indip-ema-slow-span", "50");
+
+        set("indip-ema-fast", fmt2(liveEmaFast));
+        set("indip-ema-slow", fmt2(liveEmaSlow));
+        set("indip-ema-diff", fmt4d(diff));
+        set("indip-ema-cross-dir", diff >= 0 ? "UP" : "DOWN");
+      } else {
+        setBadge("indip-ema-state","—","win-wait");
+        set("indip-ema-fast-span","—"); set("indip-ema-slow-span","—");
+        set("indip-ema-fast","—"); set("indip-ema-slow","—"); set("indip-ema-diff","—");
+        set("indip-ema-cross-dir","—");
+      }
+      set("indip-ema-cross-pct","—");
+      set("indip-ema-cross-eta","—");
+      set("indip-ema-hold-pct","—");
+
+      return; // ✅ já preencheu via live_* (não deixa cair no "zera e sai")
+    }
     // se não tem indicador, zera e sai
     if (!ip || (ip.enabled === false && !ip.vwap && !ip.rsi && !ip.ema)){
       setBadge("indip-vwap-state","—","win-wait");
