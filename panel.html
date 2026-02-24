@@ -8229,12 +8229,19 @@ function updateIndicatorPremonitionPanel(payload){
     const updTxt = fmtClock(attachedAt);
     set("indip-updated", (updTxt !== "—") ? updTxt : fmtClock(panel?.updated_at));
     // ===== FALLBACK LIVE (quando indicator_premonition vem disabled/null) =====
+        // ===== FALLBACK LIVE (quando indicator_premonition vem disabled/null) =====
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
     const fmt4d = (n) => (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(4);
 
-    const liveVwap    = num(ui?.live_vwap);
-    const liveRsi14   = num(ui?.live_rsi14);
-    const liveEmaFast = num(ui?.live_ema_fast);
-    const liveEmaSlow = num(ui?.live_ema_slow);
+    // ⚠️ live_* está vindo em panel (no seu Test result), não em ui
+    const liveVwap    = num(ui?.live_vwap    ?? panel?.live_vwap    ?? digest?.live_vwap    ?? root?.live_vwap);
+    const liveRsi14   = num(ui?.live_rsi14   ?? panel?.live_rsi14   ?? digest?.live_rsi14   ?? root?.live_rsi14);
+    const liveEmaFast = num(ui?.live_ema_fast?? panel?.live_ema_fast?? digest?.live_ema_fast?? root?.live_ema_fast);
+    const liveEmaSlow = num(ui?.live_ema_slow?? panel?.live_ema_slow?? digest?.live_ema_slow?? root?.live_ema_slow);
 
     const pxLive =
       num(panel?.price_now ?? panel?.last_price ?? payload?.price_now ?? payload?.last_price);
