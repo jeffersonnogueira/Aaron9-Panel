@@ -4295,7 +4295,88 @@
       <div class="premonition-badge" id="prem-badge">—</div>
     </div>
 
-    <div class="premonition-grid">
+    <div class="premonition-chart">
+      <!-- ===== INDICATORS (EMA / VWAP / RSI) — ABOVE ENTRY ENGINE ===== -->
+        <div class="prem-breakout-wrap" id="indicator-prem-card" style="margin-top:10px; grid-column: 1 / -1;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div class="prem-breakout-title">INDICATORS · EMA · VWAP · RSI</div>
+            <div style="font-size:11px; opacity:.65; letter-spacing:.08em; text-transform:uppercase;">
+              Updated: <span id="indip-updated">—</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; margin-top:10px;">
+
+            <!-- VWAP -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">VWAP</div>
+                <span id="indip-vwap-state" class="win-badge win-wait">—</span>
+              </div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                Price <span id="indip-vwap-price" style="color:#ffcc66;">—</span>
+                <span style="opacity:.55;">|</span>
+                VWAP <span id="indip-vwap-vwap">—</span>
+                <span style="opacity:.55;">|</span>
+                Δ <span id="indip-vwap-diff" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CROSS</span> <span id="indip-vwap-cross-dir">—</span> · <span id="indip-vwap-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-vwap-cross-eta">—</span></div>
+                <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-vwap-hold-pct" style="font-weight:950;">—</span></div>
+                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-vwap-hold-phrase">—</div>
+              </div>
+            </div>
+
+            <!-- RSI -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">RSI</div>
+                <span id="indip-rsi-state" class="win-badge win-wait">—</span>
+              </div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                RSI <span id="indip-rsi-val" style="color:#ffcc66;">—</span>
+                <span style="opacity:.55;">|</span>
+                50-line <span id="indip-rsi-50" style="opacity:.85;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CROSS 50</span> <span id="indip-rsi-cross-dir">—</span> · <span id="indip-rsi-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-rsi-cross-eta">—</span></div>
+                <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-rsi-hold-pct" style="font-weight:950;">—</span></div>
+                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-rsi-hold-phrase">—</div>
+              </div>
+            </div>
+
+            <!-- EMA -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">EMA</div>
+                <span id="indip-ema-state" class="win-badge win-wait">—</span>
+              </div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                EMA<span id="indip-ema-fast-span">—</span> <span id="indip-ema-fast" style="color:#ffcc66;">—</span>
+                <span style="opacity:.55;">|</span>
+                EMA<span id="indip-ema-slow-span">—</span> <span id="indip-ema-slow">—</span>
+                <span style="opacity:.55;">|</span>
+                Δ <span id="indip-ema-diff" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CROSS</span> <span id="indip-ema-cross-dir">—</span> · <span id="indip-ema-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-ema-cross-eta">—</span></div>
+                <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-ema-hold-pct" style="font-weight:950;">—</span></div>
+                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-ema-hold-phrase">—</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- ===== /INDICATORS ===== -->
       <div class="premonition-chart">
        
 
@@ -4380,87 +4461,7 @@
   <div class="micro-map-foot">Base: Micro Live + Continuação (A2) + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
 </div>
         </div>
-                <!-- ===== INDICATORS (EMA / VWAP / RSI) — ABOVE ENTRY ENGINE ===== -->
-        <div class="prem-breakout-wrap" id="indicator-prem-card" style="margin-top:10px;">
-          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-            <div class="prem-breakout-title">INDICATORS · EMA · VWAP · RSI</div>
-            <div style="font-size:11px; opacity:.65; letter-spacing:.08em; text-transform:uppercase;">
-              Updated: <span id="indip-updated">—</span>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; margin-top:10px;">
-
-            <!-- VWAP -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">VWAP</div>
-                <span id="indip-vwap-state" class="win-badge win-wait">—</span>
-              </div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                Price <span id="indip-vwap-price" style="color:#ffcc66;">—</span>
-                <span style="opacity:.55;">|</span>
-                VWAP <span id="indip-vwap-vwap">—</span>
-                <span style="opacity:.55;">|</span>
-                Δ <span id="indip-vwap-diff" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CROSS</span> <span id="indip-vwap-cross-dir">—</span> · <span id="indip-vwap-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-vwap-cross-eta">—</span></div>
-                <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-vwap-hold-pct" style="font-weight:950;">—</span></div>
-                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-vwap-hold-phrase">—</div>
-              </div>
-            </div>
-
-            <!-- RSI -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">RSI</div>
-                <span id="indip-rsi-state" class="win-badge win-wait">—</span>
-              </div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                RSI <span id="indip-rsi-val" style="color:#ffcc66;">—</span>
-                <span style="opacity:.55;">|</span>
-                50-line <span id="indip-rsi-50" style="opacity:.85;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CROSS 50</span> <span id="indip-rsi-cross-dir">—</span> · <span id="indip-rsi-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-rsi-cross-eta">—</span></div>
-                <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-rsi-hold-pct" style="font-weight:950;">—</span></div>
-                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-rsi-hold-phrase">—</div>
-              </div>
-            </div>
-
-            <!-- EMA -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">EMA</div>
-                <span id="indip-ema-state" class="win-badge win-wait">—</span>
-              </div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                EMA<span id="indip-ema-fast-span">—</span> <span id="indip-ema-fast" style="color:#ffcc66;">—</span>
-                <span style="opacity:.55;">|</span>
-                EMA<span id="indip-ema-slow-span">—</span> <span id="indip-ema-slow">—</span>
-                <span style="opacity:.55;">|</span>
-                Δ <span id="indip-ema-diff" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CROSS</span> <span id="indip-ema-cross-dir">—</span> · <span id="indip-ema-cross-pct" style="font-weight:950; color:#ffcc66;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="indip-ema-cross-eta">—</span></div>
-                <div style="margin-top:6px;"><span style="opacity:.7;">HOLD</span> <span id="indip-ema-hold-pct" style="font-weight:950;">—</span></div>
-                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="indip-ema-hold-phrase">—</div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        <!-- ===== /INDICATORS ===== -->
+                
         <!-- ===== ENTRY ENGINE (AARON) — acima do EE BRAIN ===== -->
 <div class="prem-breakout-wrap" id="ee-engine-card" style="margin-top:10px;">
   <div class="prem-breakout-title">ENTRY ENGINE · (Touch → Confirm → Cancel)</div>
