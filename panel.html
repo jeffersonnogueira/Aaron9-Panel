@@ -2259,8 +2259,6 @@
 }
 
 /* ================== PREMONIÇÃO (Breakout Window Card) ================== */
-/* HIDE helper */
-.is-hidden{ display:none !important; }
 .premonition-banner{
   margin: 14px 0 12px;
 }
@@ -4277,7 +4275,7 @@
 </section>
 <!-- ================== FIM COMENTÁRIO DO AARON ================== -->
 
-<section id="premonition-section" class="premonition-banner is-hidden">
+<section id="premonition-section" class="premonition-banner">
   <div class="premonition-container">
     <div class="premonition-head">
       <div>
@@ -7562,22 +7560,15 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
 // const cssH = Math.max(300, Math.min(520, 380));
 
 
-      const dpr = Math.min(1.25, window.devicePixelRatio || 1); // CAPA DPR (4K/150% explode CPU)
+      const dpr = window.devicePixelRatio || 1;
+      canvas.style.width = "100%";
+      canvas.style.height = cssH + "px";
+      canvas.width  = Math.floor(cssW * dpr);
+      canvas.height = Math.floor(cssH * dpr);
 
-const nextW = Math.floor(cssW * dpr);
-const nextH = Math.floor(cssH * dpr);
-
-// ✅ só resize se mudou (evita realloc + travadas)
-if (canvas.width !== nextW || canvas.height !== nextH) {
-  canvas.style.width = "100%";
-  canvas.style.height = cssH + "px";
-  canvas.width  = nextW;
-  canvas.height = nextH;
-}
-
-const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
-ctx.setTransform(1,0,0,1,0,0);
-ctx.scale(dpr, dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(dpr, dpr);
 
             const W = cssW, H = cssH;
 
@@ -7609,26 +7600,22 @@ ctx.fillRect(0, 0, W, H);
         return isFinite(ms) ? ms : NaN;
       };
 
-      let __A10_FMT_MT = null;
-try {
-  __A10_FMT_MT = new Intl.DateTimeFormat("en-US", {
-    timeZone: tz,
-    hour: "numeric",
-    minute: "2-digit"
-  });
-} catch(e) {}
-
-const fmtTimeMT = (ms) => {
-  if (__A10_FMT_MT) return __A10_FMT_MT.format(new Date(ms));
-
-  // fallback simples
-  const d = new Date(ms);
-  let hh = d.getHours();
-  const mm = String(d.getMinutes()).padStart(2, "0");
-  const ampm = (hh >= 12) ? "PM" : "AM";
-  hh = hh % 12; if (hh === 0) hh = 12;
-  return `${hh}:${mm} ${ampm}`;
-};
+      const fmtTimeMT = (ms) => {
+        try {
+          return new Intl.DateTimeFormat("en-US", {
+            timeZone: tz,
+            hour: "numeric",
+            minute: "2-digit"
+          }).format(new Date(ms));
+        } catch (e) {
+          const d = new Date(ms);
+          let hh = d.getHours();
+          const mm = String(d.getMinutes()).padStart(2, "0");
+          const ampm = (hh >= 12) ? "PM" : "AM";
+          hh = hh % 12; if (hh === 0) hh = 12;
+          return `${hh}:${mm} ${ampm}`;
+        }
+      };
 
       const roundRectPath = (x, y, w, h, r) => {
         const rr = Math.min(r, w / 2, h / 2);
@@ -7703,17 +7690,7 @@ if (etaMin == null || !isFinite(Number(etaMin))) {
 if (etaMin == null || !isFinite(Number(etaMin))) {
   etaMin = extractMinutes(macroTxt) ?? 0;
 }
-// ✅ se nada mudou, não redesenha o canvas
-const lastC = candles[candles.length - 1];
-const __k = [
-  lastC?.t, lastC?.close,
-  etaMin, targetPrice,
-  cssW, cssH,
-  Math.min(1.25, window.devicePixelRatio || 1)
-].join("|");
 
-if (canvas.__a10Key === __k) return;
-canvas.__a10Key = __k;
 
 
       const lows = candles.map(c => c.low);
@@ -13726,7 +13703,7 @@ renderOptions("");
       return `${hh}:${mm}`;
     }
   }
-let __execMicroLastKey = "";
+
   function updateExecMicroBox(){
     if (!el("prem-exec-micro")) return;
     // Current (pega do KPI da direita ou do header)
