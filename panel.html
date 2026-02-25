@@ -2608,7 +2608,23 @@
   flex-direction: column;
   gap: 8px;
 }
-
+/* ===== MICRO vs MACRO (DUAL COLUMN) ===== */
+.mm-dual-grid{
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 14px;
+  width: 100%;
+}
+.mm-col{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+@media (max-width: 1180px){
+  .mm-dual-grid{ grid-template-columns: 1fr; }
+}
+/* ===== /MICRO vs MACRO ===== */
 .prem-signal-btn{
   width: 100%;
   border-radius: 999px;
@@ -3076,7 +3092,9 @@
 #ee-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
 #ee-engine-touch{ color: #60a5fa; border-color: rgba(96,165,250,.28); background: rgba(96,165,250,.08); }
 #ee-engine-cancel{ color: #fb7185; border-color: rgba(251,113,133,.28); background: rgba(251,113,133,.08); }
-
+#ee-macro-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
+#ee-macro-engine-touch{ color: #60a5fa; border-color: rgba(96,165,250,.28); background: rgba(96,165,250,.08); }
+#ee-macro-engine-cancel{ color: #fb7185; border-color: rgba(251,113,133,.28); background: rgba(251,113,133,.08); }
 .ee-engine-note{
   margin-top: 6px;
   font-size: 14px;
@@ -4451,6 +4469,156 @@
           <div class="prem-signal-hint" id="prem-signal-hint" style="display:none;">
             Filtro: AÇÃO=— • Micro=— (≥75%)
           </div>
+          <!-- ===== MICRO vs MACRO (DUAL) — container ===== -->
+<div class="mm-dual-grid" id="mm-dual-grid">
+  <!-- Coluna MICRO (vai receber os blocos reais via JS dock, sem mexer em nada) -->
+  <div class="mm-col" id="mm-col-micro"></div>
+
+  <!-- Coluna MACRO (novo) -->
+  <div class="mm-col" id="mm-col-macro">
+
+    <!-- ===== MACRO MAP (NOW) ===== -->
+    <div class="micro-map-card" id="macro-map-card" style="margin-top:10px;">
+      <div class="micro-map-title">MACRO MAP (NOW)</div>
+      <div class="micro-map-line" id="mmac-macro-line">MACRO LIVE — NOW: —</div>
+      <div class="micro-map-line" id="mmac-cont-line">CONTINUAÇÃO (A2): —</div>
+      <div class="micro-map-line" id="mmac-respiro-line">RANGE / FAIL (B): —</div>
+      <div class="micro-map-line" id="mmac-reversao-line">INVALIDAÇÃO (SL 1x1): —</div>
+      <div class="micro-map-foot">Base: Macro Path (A/A2/B) + Macro Engine (SL 1x1)</div>
+    </div>
+
+    <!-- ===== MACRO KPI + QUICK P&L + linhas ===== -->
+    <div class="premonition-panel" id="macro-premonition-panel">
+
+      <div class="prem-kpi-right" id="prem-macro-kpi-right">
+        <div class="prem-kpi-right-main">
+          <div class="prem-kpi-right-current">
+            <span class="prem-kpi-right-time prem-kpi-right-current-label">Current Price:</span>
+            <span class="prem-kpi-right-time prem-kpi-right-current-price" id="prem-macro-current-price">—</span>
+          </div>
+
+          <span class="prem-kpi-right-time" id="prem-macro-time">--:--</span>
+          <span class="prem-kpi-right-ampm" id="prem-macro-ampm"></span>
+          <span class="prem-kpi-right-prob" id="prem-macro-prob">--%</span>
+        </div>
+
+        <div class="prem-kpi-right-sub" id="prem-macro-eta">—</div>
+      </div>
+
+      <div class="prem-pnlcalc" id="macro-pnlcalc">
+        <div class="pnl-h">QUICK P&L (simulação)</div>
+
+        <div class="pnl-controls">
+          <div class="pnl-field">
+            <span class="pnl-l">Montante</span>
+            <input id="mpnl-capital" class="pnl-in" type="number" inputmode="decimal" step="1000" value="100000" />
+          </div>
+
+          <div class="pnl-field">
+            <span class="pnl-l">Entrada</span>
+            <select id="mpnl-entrymode" class="pnl-sel">
+              <option value="now">NOW (Current)</option>
+              <option value="opt">Most optimal entry</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pnl-grid">
+          <div class="pnl-k">ΔTP/share</div>
+          <div class="pnl-v">
+            <span id="mpnl-delta">—</span>
+            <span class="pnl-muted" id="mpnl-delta-cents"></span>
+          </div>
+
+          <div class="pnl-k">Qtd</div>
+          <div class="pnl-v">
+            <span id="mpnl-shares">—</span> <span class="pnl-muted">shares</span>
+          </div>
+
+          <div class="pnl-k">P/L no TP</div>
+          <div class="pnl-v" id="mpnl-profit">—</div>
+
+          <div class="pnl-k">P/L no SL</div>
+          <div class="pnl-v pnl-loss" id="mpnl-loss">—</div>
+        </div>
+
+        <div class="pnl-foot pnl-muted" id="mpnl-foot">—</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Janela estimada</div>
+        <div class="value" id="macro-prem-window">—</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Tempo típico</div>
+        <div class="value" id="macro-prem-median">—</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Se não romper.</div>
+        <div class="value muted" id="macro-prem-miss">—</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Premonição Macro</div>
+        <div class="value" id="macro-prem-macro">—</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Premonição Micro</div>
+        <div class="value" id="macro-prem-micro">—</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Base</div>
+        <div class="value muted" id="macro-prem-base">—</div>
+      </div>
+    </div>
+
+    <!-- ===== ENTRY ENGINE (MACRO) ===== -->
+    <div class="prem-breakout-wrap" id="ee-macro-engine-card" style="margin-top:10px;">
+      <div class="prem-breakout-title">ENTRY ENGINE · (Touch → Confirm → Cancel)</div>
+
+      <div class="ee-engine-top">
+        <div class="ee-engine-left">
+          <div class="ee-engine-pill loading" id="ee-macro-engine-pill">LOADING</div>
+
+          <div class="ee-engine-meta">
+            <span class="ee-engine-dir" id="ee-macro-engine-dir">—</span>
+            <span class="ee-engine-prob" id="ee-macro-engine-prob">—</span>
+          </div>
+
+          <div class="ee-engine-mode" id="ee-macro-engine-mode">—</div>
+          <div class="ee-engine-rule" id="ee-macro-engine-rule">—</div>
+        </div>
+
+        <div class="ee-engine-right">
+          <div class="ee-engine-box big">
+            <div class="k">TOUCH (Most Optimal Entry)</div>
+            <div class="v" id="ee-macro-engine-touch">—</div>
+          </div>
+
+          <div class="ee-engine-stack">
+            <div class="ee-engine-box stack">
+              <div class="k">CONFIRM CLOSE</div>
+              <div class="v" id="ee-macro-engine-confirm">—</div>
+            </div>
+
+            <div class="ee-engine-box stack">
+              <div class="k">CANCEL CLOSE</div>
+              <div class="v" id="ee-macro-engine-cancel">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ee-engine-note" id="ee-macro-engine-note">—</div>
+    </div>
+
+  </div>
+</div>
+<!-- ===== /MICRO vs MACRO (DUAL) ===== -->
           <!-- ===== MICRO MAP (NOW) — ABOVE INDICATORS ===== -->
 <div class="micro-map-card" id="micro-map-card" style="margin-top:10px;">
   <div class="micro-map-title">MICRO MAP (NOW)</div>
@@ -7545,6 +7713,60 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
     const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
     const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
+        // ===== MACRO COL (KPI + linhas) =====
+    const macroProbPct = pickFirst(
+      digest.macro_prob_pct,
+      digest.macro_entry_engine?.prob_pct
+    );
+    const macroEtaMin = pickFirst(
+      digest.macro_eta_min,
+      digest.macro_entry_engine?.eta_median_min
+    );
+    const macroTakeNum = pickFirst(
+      digest.macro_take,
+      digest.macro_entry_engine?.target_price
+    );
+
+    const macroTimeLab = (macroEtaMin != null)
+      ? fmtMT(new Date(Date.now() + Number(macroEtaMin) * 60 * 1000))
+      : "—";
+    const mt = splitTimeLabel(macroTimeLab);
+
+    const macroProbTxt = (macroProbPct != null && isFinite(Number(macroProbPct)))
+      ? `${Math.round(Number(macroProbPct))}%`
+      : "—";
+    const macroTakeTxt = (macroTakeNum != null && isFinite(Number(macroTakeNum)))
+      ? Number(macroTakeNum).toFixed(2)
+      : null;
+    const macroMinTxt = (macroEtaMin != null && isFinite(Number(macroEtaMin)))
+      ? `(~${Math.round(Number(macroEtaMin))}m)`
+      : null;
+
+    // Current Price (mesmo atual)
+    setText("prem-macro-current-price", currentPxTxt);
+
+    // Hora do MACRO = agora + ETA do macro
+    setText("prem-macro-time", mt.hhmm || "—");
+    setText("prem-macro-ampm", mt.ampm || "");
+    (document.getElementById("prem-macro-prob") || {}).innerHTML =
+      macroProbTxt +
+      (macroTakeTxt ? ' <span class="pulse-micro" style="color:#facc15">' + macroTakeTxt + '</span>' : '') +
+      (macroMinTxt ? ' ' + macroMinTxt : '');
+
+    setText("prem-macro-eta",
+      (macroEtaMin != null)
+        ? ((lang==="en") ? `In ~${Math.round(Number(macroEtaMin))} min` : `Em ~${Math.round(Number(macroEtaMin))} min`)
+        : "—"
+    );
+
+    // Linhas iguais (janela/mediana/miss/base) na coluna MACRO
+    setText("macro-prem-window", wLine);
+    setText("macro-prem-median", mLine);
+    setText("macro-prem-miss", bw?.miss_line || "—");
+    setText("macro-prem-macro", macroTxt || "—");
+    setText("macro-prem-micro", microTxt || "—");
+    setText("macro-prem-base", `${nTxt} casos similares${scTxt}${confTxt}`);
+    // ===== /MACRO COL =====
     setText("prem-base", `${nTxt} casos similares${scTxt}${confTxt}`);
 
     const badge = bw?.source ? `${bw.source} · ${dir || "—"}` : (dir || "—");
@@ -13681,6 +13903,21 @@ renderOptions("");
     const card = document.getElementById("slflex-card");
     if (dock && card && card.parentElement !== dock) dock.appendChild(card);
   }
+    // MICRO/MACRO dock: coloca os 3 blocos reais do MICRO na coluna MICRO (sem alterar nada do micro)
+  function dockMicroMacro(){
+    const microCol = document.getElementById("mm-col-micro");
+    if (!microCol) return;
+
+    const microMap = document.getElementById("micro-map-card");
+    const premPanel = document.querySelector('.premonition-panel:not(#macro-premonition-panel)');
+    const entryEngine = document.getElementById("ee-engine-card");
+
+    // ordem final (igual seu mockup): Micro Map -> Prem Panel -> Entry Engine
+    if (microMap) microCol.appendChild(microMap);
+    if (premPanel) microCol.appendChild(premPanel);
+    if (entryEngine) microCol.appendChild(entryEngine);
+  }
+  window.addEventListener("DOMContentLoaded", dockMicroMacro);
   window.addEventListener("DOMContentLoaded", dockSLFlex);
 
   function t(id){ return (el(id)?.textContent || "").trim(); }
@@ -14364,6 +14601,64 @@ if (respiroPrice != null && microOk && dirMap && curMap != null) {
   if (mm3) {
     mm3.textContent = reversaoLine;
     mm3.style.color = "var(--danger)";
+      // ===== MACRO MAP (NOW) =====
+  const mpMacro =
+    payloadSL?.macro_path_live ||
+    payloadSL?.digest?.macro_path_live ||
+    payload?.digest?.macro_path_live ||
+    digest?.macro_path_live ||
+    payload?.macro_path_live ||
+    null;
+
+  const meMacro =
+    payload?.digest?.macro_entry_engine ||
+    digest?.macro_entry_engine ||
+    null;
+
+  const mSide =
+    (meMacro?.side === "BUY" || meMacro?.side === "SELL") ? meMacro.side :
+    (mpMacro?.side === "BUY" || mpMacro?.side === "SELL") ? mpMacro.side :
+    null;
+
+  const arrowM = (mSide === "BUY") ? "↑" : (mSide === "SELL") ? "↓" : "";
+
+  const A = mpMacro?.path_a || null;
+  const B = mpMacro?.path_b || null;
+
+  const macroLine =
+    (A?.touch_price != null)
+      ? `MACRO LIVE — NOW: ${fmtEta(A.touch_eta_min)} • ${fmtPct2d(A.touch_prob_pct)} • Target ${fmt2(A.touch_price)} ${arrowM}`
+      : `MACRO LIVE — NOW: —`;
+
+  const contLineM =
+    (A?.extend_price != null)
+      ? `CONTINUAÇÃO (A2): ${fmtEta(A.extend_eta_min)} • ${fmtPct2d(A.extend_prob_pct)} • Depois do target pode estender até ${fmt2(A.extend_price)} ${arrowM}`
+      : `CONTINUAÇÃO (A2): —`;
+
+  const failLineM =
+    (B?.fail_before_price != null)
+      ? `RANGE / FAIL (B): ${fmtEta(B.fail_eta_min)} • ${fmtPct2d(B.fail_prob_pct)} • Pode falhar antes → ${fmt2(B.fail_before_price)}`
+      : `RANGE / FAIL (B): —`;
+
+  const stopM = asNum(meMacro?.stop_1x1_price);
+  const invalLineM =
+    (stopM != null && mSide)
+      ? `INVALIDAÇÃO (SL 1x1): se tocar ${fmt2(stopM)} → invalida o macro ${mSide}`
+      : `INVALIDAÇÃO (SL 1x1): —`;
+
+  const m1 = el("mmac-macro-line");
+  const m2 = el("mmac-cont-line");
+  const m3 = el("mmac-respiro-line");
+  const m4 = el("mmac-reversao-line");
+
+  if (m1){
+    m1.textContent = macroLine;
+    m1.style.color = (mSide === "BUY") ? "var(--success)" : (mSide === "SELL") ? "#fb7185" : "";
+  }
+  if (m2){ m2.textContent = contLineM; m2.style.color = "#60a5fa"; }
+  if (m3){ m3.textContent = failLineM; m3.style.color = "#facc15"; }
+  if (m4){ m4.textContent = invalLineM; m4.style.color = "var(--danger)"; }
+  // ===== /MACRO MAP =====
   }
     // preço + horário estimado do RESPIRO / REVERSÃO (no card)
   const nowMs = Date.now();
@@ -14685,6 +14980,150 @@ const reentry = (slPrice != null && k != null && dirUse)
   // acompanha o painel (mesma cadência do exec micro)
   setInterval(updatePnL, 750);
 })();
+// ===== QUICK P&L (MACRO) =====
+(function(){
+  const $ = (id) => document.getElementById(id);
+
+  const num = (s) => {
+    if (s == null) return null;
+    const raw = String(s).trim();
+    if (!raw || raw === "—") return null;
+    const cleaned = raw.replace(/[^\d.,-]/g, "").replace(",", ".");
+    const n = Number(cleaned);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const fmt2 = (n) => (n == null || !Number.isFinite(n)) ? "—" : n.toFixed(2);
+
+  const fmtMoney = (n) => {
+    if (n == null || !Number.isFinite(n)) return "—";
+    const abs = Math.abs(n);
+    const txt = abs.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (n < 0 ? "-$" : "$") + txt;
+  };
+
+  const fmtInt = (n) => (n == null || !Number.isFinite(n)) ? "—" : Math.round(n).toLocaleString("en-US");
+
+  function updateMPnL(){
+    const box = $("macro-pnlcalc");
+    if (!box) return;
+
+    const capEl  = $("mpnl-capital");
+    const modeEl = $("mpnl-entrymode");
+
+    const cap  = num(capEl?.value);
+    const mode = modeEl?.value || "now";
+
+    const current = num($("prem-right-current-price")?.textContent) ?? num($("prem-head-current-price")?.textContent);
+
+    const payload = window.__AARON_LAST_PAYLOAD__ || {};
+    const digest  = payload.digest || {};
+    const me = digest.macro_entry_engine || {};
+
+    const opt = (me.entry_price != null && Number.isFinite(Number(me.entry_price))) ? Number(me.entry_price) : null;
+    const tp  = (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
+              : (digest.macro_take != null && Number.isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
+              : null;
+    const sl  = (me.stop_1x1_price != null && Number.isFinite(Number(me.stop_1x1_price))) ? Number(me.stop_1x1_price) : null;
+
+    const entry = (mode === "opt") ? opt : current;
+
+    let dir = null;
+    if (entry != null && tp != null){
+      if (tp > entry) dir = "BUY";
+      else if (tp < entry) dir = "SELL";
+    }
+
+    let delta = null;
+    if (entry != null && tp != null && dir){
+      delta = (dir === "BUY") ? (tp - entry) : (entry - tp);
+    }
+
+    let lossPer = null;
+    if (entry != null && sl != null && dir){
+      lossPer = (dir === "BUY") ? (entry - sl) : (sl - entry);
+      if (lossPer != null) lossPer = Math.abs(lossPer);
+    }
+
+    const shares = (cap != null && entry != null && cap > 0 && entry > 0)
+      ? Math.floor(cap / entry)
+      : null;
+
+    const profit = (shares != null && delta != null)   ? (shares * delta)   : null;
+    const loss   = (shares != null && lossPer != null) ? (shares * lossPer) : null;
+    const rr     = (profit != null && loss != null && loss > 0) ? (profit / loss) : null;
+
+    if ($("mpnl-delta")) $("mpnl-delta").textContent = (delta != null) ? fmt2(delta) : "—";
+    if ($("mpnl-delta-cents")) $("mpnl-delta-cents").textContent = (delta != null) ? `(${Math.round(delta * 100)}¢)` : "";
+
+    if ($("mpnl-shares")) $("mpnl-shares").textContent = (shares != null) ? fmtInt(shares) : "—";
+
+    const pEl = $("mpnl-profit");
+    if (pEl){
+      pEl.textContent = (profit != null) ? fmtMoney(profit) : "—";
+      pEl.style.color = (profit != null) ? "#34d399" : "";
+    }
+
+    const lEl = $("mpnl-loss");
+    if (lEl){
+      lEl.textContent = (loss != null) ? fmtMoney(-Math.abs(loss)) : "—";
+    }
+
+    const foot = $("mpnl-foot");
+    if (foot){
+      const bits = [];
+      if (dir) bits.push(`Dir: ${dir}`);
+      if (entry != null) bits.push(`Entrada: ${fmt2(entry)}`);
+      if (tp != null) bits.push(`TP: ${fmt2(tp)}`);
+      if (sl != null) bits.push(`SL: ${fmt2(sl)}`);
+      if (rr != null) bits.push(`RR≈${rr.toFixed(2)}x`);
+      foot.textContent = bits.length ? bits.join(" · ") : "—";
+    }
+  }
+
+  function loadMPnL(){
+    try{
+      const capSaved  = localStorage.getItem("a10_mpnl_capital");
+      const modeSaved = localStorage.getItem("a10_mpnl_entrymode");
+      if ($("mpnl-capital") && capSaved) $("mpnl-capital").value = capSaved;
+      if ($("mpnl-entrymode") && modeSaved) $("mpnl-entrymode").value = modeSaved;
+    }catch(_e){}
+  }
+
+  function bindMPnL(){
+    const capEl  = $("mpnl-capital");
+    const modeEl = $("mpnl-entrymode");
+
+    if (capEl){
+      capEl.addEventListener("input", () => {
+        try{ localStorage.setItem("a10_mpnl_capital", capEl.value); }catch(_e){}
+        updateMPnL();
+      });
+    }
+
+    if (modeEl){
+      modeEl.addEventListener("change", () => {
+        try{ localStorage.setItem("a10_mpnl_entrymode", modeEl.value); }catch(_e){}
+        updateMPnL();
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      loadMPnL();
+      bindMPnL();
+      updateMPnL();
+    });
+  } else {
+    loadMPnL();
+    bindMPnL();
+    updateMPnL();
+  }
+
+  setInterval(updateMPnL, 750);
+})();
+// ===== /QUICK P&L (MACRO) =====
 /* ===== EE BRAIN (Entry Brain) — onde/quando entrar (Target = Micro Live) ===== */
 (function(){
   const $ = (id) => document.getElementById(id);
@@ -14967,6 +15406,109 @@ if ($("ee-engine-card")) {
 
   if ($("ee-engine-note")) $("ee-engine-note").textContent = note;
 }
+// ===== ENTRY ENGINE (MACRO) — mesma fórmula (entry ± zConf) =====
+if ($("ee-macro-engine-card")) {
+  const payloadM = window.__AARON_LAST_PAYLOAD__ || {};
+  const digestM  = payloadM.digest || {};
+  const me = digestM.macro_entry_engine || {};
+
+  const entryM = (me.entry_price != null && Number.isFinite(Number(me.entry_price))) ? Number(me.entry_price) : null;
+  const tpM = (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
+           : (digestM.macro_take != null && Number.isFinite(Number(digestM.macro_take))) ? Number(digestM.macro_take)
+           : null;
+
+  if (entryM != null && atr14 != null && Number.isFinite(atr14)) {
+    const dirM =
+      (me.side === "BUY" || me.side === "SELL") ? me.side :
+      (tpM != null ? (tpM > entryM ? "BUY" : "SELL") : null);
+
+    const macroP = (me.prob_pct != null && Number.isFinite(Number(me.prob_pct))) ? Number(me.prob_pct) : null;
+
+    const zoneM  = 0.10 * atr14;
+    const zConfM = 0.06 * atr14;
+
+    const touchPx = entryM;
+    const confirmPx = (dirM === "BUY") ? (entryM + zConfM) : (entryM - zConfM);
+    const cancelPx  = (dirM === "BUY") ? (entryM - zConfM) : (entryM + zConfM);
+
+    const touchOK =
+      (Number.isFinite(current) && Number.isFinite(touchPx) && Number.isFinite(zoneM))
+        ? (Math.abs(current - touchPx) <= zoneM)
+        : false;
+
+    let st = ((macroP ?? 60) >= 55) ? "ARMED" : "LOADING";
+
+    if (touchOK) {
+      if (dirM === "BUY") {
+        if (current <= cancelPx) st = "FAILED";
+        else if (current >= confirmPx) st = "CONFIRMED";
+        else st = "ARMED";
+      } else if (dirM === "SELL") {
+        if (current >= cancelPx) st = "FAILED";
+        else if (current <= confirmPx) st = "CONFIRMED";
+        else st = "ARMED";
+      }
+    }
+
+    const pill = $("ee-macro-engine-pill");
+    if (pill){
+      pill.classList.remove("loading","armed","confirmed","failed");
+      if (st === "ARMED"){ pill.classList.add("armed"); pill.textContent = "ARMED"; }
+      else if (st === "CONFIRMED"){ pill.classList.add("confirmed"); pill.textContent = "CONFIRMED"; }
+      else if (st === "FAILED"){ pill.classList.add("failed"); pill.textContent = "FAILED"; }
+      else { pill.classList.add("loading"); pill.textContent = "LOADING"; }
+    }
+
+    if ($("ee-macro-engine-dir")) $("ee-macro-engine-dir").textContent = dirM || "—";
+    if ($("ee-macro-engine-prob")) $("ee-macro-engine-prob").textContent = fmtPct(macroP ?? 60);
+
+    // MODE + RULE (igual micro)
+    const p = (macroP ?? 60);
+
+    let modeText = "NOISE ZONE ⚠️";
+    let ruleText = "ENTER ONLY ON CONFIRM CLOSE";
+    let modeClass = "noise";
+    let rangeText = "(Prob —)";
+
+    if (p != null && p >= 70) {
+      rangeText = "(Prob ≥ 70%)";
+      modeText = "AARON STRONG ✅";
+      ruleText = "TOUCH OK · HOLD UNTIL CANCEL";
+      modeClass = "strong";
+    } else if (p != null && p <= 49) {
+      rangeText = "(Prob ≤ 49%)";
+      modeText = "NO TRADE ⛔";
+      ruleText = "WAIT";
+      modeClass = "notrade";
+    } else if (p != null) {
+      rangeText = "(Prob 50%–69%)";
+      modeText = "NOISE ZONE ⚠️";
+      ruleText = "ENTER ONLY ON CONFIRM CLOSE";
+      modeClass = "noise";
+    }
+
+    const modeEl = $("ee-macro-engine-mode");
+    if (modeEl){
+      modeEl.classList.remove("strong","noise","notrade");
+      modeEl.classList.add(modeClass);
+      modeEl.textContent = `MODE: ${rangeText} ${modeText}`;
+    }
+
+    const ruleEl = $("ee-macro-engine-rule");
+    if (ruleEl) ruleEl.textContent = `Rule line: ${ruleText}`;
+
+    if ($("ee-macro-engine-touch")) $("ee-macro-engine-touch").textContent = fmt2(touchPx);
+    if ($("ee-macro-engine-confirm")) $("ee-macro-engine-confirm").textContent = fmt2(confirmPx);
+    if ($("ee-macro-engine-cancel")) $("ee-macro-engine-cancel").textContent = fmt2(cancelPx);
+
+    const note = (dirM === "BUY")
+      ? `Touch ${fmt2(touchPx)} · Confirm close ≥ ${fmt2(confirmPx)} · Cancel close ≤ ${fmt2(cancelPx)}`
+      : `Touch ${fmt2(touchPx)} · Confirm close ≤ ${fmt2(confirmPx)} · Cancel close ≥ ${fmt2(cancelPx)}`;
+
+    if ($("ee-macro-engine-note")) $("ee-macro-engine-note").textContent = note;
+  }
+}
+// ===== /ENTRY ENGINE (MACRO) =====
     // preencher UI
     if ($("ee-plan")) $("ee-plan").textContent = plan;
     if ($("ee-entry")) $("ee-entry").textContent = fmt2(entry);
