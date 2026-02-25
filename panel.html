@@ -4574,6 +4574,35 @@
         <div class="label">Base</div>
         <div class="value muted" id="macro-prem-base">—</div>
       </div>
+      <!-- ===== MACRO · MOST OPTIMAL ENTRY (1x1) ===== -->
+<div id="prem-exec-macro" style="padding-top:12px; margin-top:12px; border-top:1px solid rgba(255,255,255,.06);">
+  <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.80; margin-bottom:10px;">
+    MACRO PLAN · MOST OPTIMAL ENTRY (1x1)
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:10px; font-size:34px; line-height:1.25;">
+    <div>
+      <span style="font-weight:950;">Most optimal entry:</span>
+      <span id="mslr-optentry" style="color:#60a5fa; font-weight:900;">—</span>
+
+      <span style="opacity:.65; font-size:18px; margin-left:10px;">
+        @ <span id="mslr-entrytime" style="color:#facc15; font-weight:900;">—</span>
+        <span style="opacity:.55;">(MT)</span>
+      </span>
+    </div>
+
+    <div>
+      <span style="font-weight:950;">SL 1x1:</span>
+      <span id="mslr-sl" class="pulse-sl" style="color:var(--danger); font-weight:900;">—</span>
+      <span style="opacity:.55;"> | </span>
+      <span style="font-weight:950;">Status:</span>
+      <span id="mslr-status" style="font-weight:950;">—</span>
+    </div>
+
+    <div id="mslr-rule" style="font-size:16px; line-height:1.45; opacity:.78;">—</div>
+  </div>
+</div>
+<!-- ===== /MACRO PLAN ===== -->
     </div>
 
     <!-- ===== ENTRY ENGINE (MACRO) ===== -->
@@ -7715,9 +7744,10 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
         // ===== MACRO COL (KPI + linhas) =====
     const macroProbPct = pickFirst(
-      digest.macro_prob_pct,
-      digest.macro_entry_engine?.prob_pct
-    );
+  extractPct(macroTxt),              // <-- pega "85%" do texto Premonição Macro
+  digest.macro_prob_pct,
+  digest.macro_entry_engine?.prob_pct
+);
     const macroEtaMin = pickFirst(
       digest.macro_eta_min,
       digest.macro_entry_engine?.eta_median_min
@@ -7766,6 +7796,67 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("macro-prem-macro", macroTxt || "—");
     setText("macro-prem-micro", microTxt || "—");
     setText("macro-prem-base", `${nTxt} casos similares${scTxt}${confTxt}`);
+    // ===== MACRO PLAN (Most Optimal Entry + SL 1x1 + Status) =====
+try{
+  const me = digest.macro_entry_engine || {};
+
+  const fmtP = (n) => (n != null && Number.isFinite(Number(n))) ? Number(n).toFixed(2) : "—";
+
+  const entry = (me.entry_price != null && Number.isFinite(Number(me.entry_price)))
+    ? Number(me.entry_price)
+    : null;
+
+  const sl1x1 = (me.stop_1x1_price != null && Number.isFinite(Number(me.stop_1x1_price)))
+    ? Number(me.stop_1x1_price)
+    : null;
+
+  // direção do MACRO (preferir o que vier pronto; senão inferir por target vs entry)
+  let dirUse = String(me.side || me.dir || me.direction || "").toUpperCase();
+  if (dirUse.includes("BUY") || dirUse.includes("LONG")) dirUse = "BUY";
+  else if (dirUse.includes("SELL") || dirUse.includes("SHORT")) dirUse = "SELL";
+  else dirUse = null;
+
+  if (!dirUse){
+    const tgt = (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
+              : (digest.macro_take != null && Number.isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
+              : null;
+
+    if (tgt != null && entry != null){
+      if (tgt > entry) dirUse = "BUY";
+      else if (tgt < entry) dirUse = "SELL";
+    }
+  }
+
+  const cur = (currentPxRaw != null && Number.isFinite(Number(currentPxRaw))) ? Number(currentPxRaw) : null;
+
+  let slHit = null;
+  if (cur != null && sl1x1 != null && dirUse){
+    slHit = (dirUse === "SELL") ? (cur >= sl1x1) : (cur <= sl1x1);
+  }
+
+  const statusTxt = (!dirUse || slHit == null)
+    ? "—"
+    : (slHit ? "⚠️ SL atingido — executar reentrada" : "✅ SL não atingido — continuar");
+
+  const ruleTxt = (sl1x1 != null && dirUse)
+    ? (dirUse === "SELL"
+        ? `Se current < ${fmtP(sl1x1)} → ✅ SL não atingido — continuar · Se current ≥ ${fmtP(sl1x1)} → ⚠️ SL atingido — executar reentrada`
+        : `Se current > ${fmtP(sl1x1)} → ✅ SL não atingido — continuar · Se current ≤ ${fmtP(sl1x1)} → ⚠️ SL atingido — executar reentrada`)
+    : "—";
+
+  // injeta DOM
+  setText("mslr-optentry", (entry != null) ? fmtP(entry) : "—");
+  setText("mslr-sl",       (sl1x1 != null) ? fmtP(sl1x1) : "—");
+  setText("mslr-entrytime", macroTimeLab || "—");
+  setText("mslr-rule", ruleTxt);
+
+  const sEl = document.getElementById("mslr-status");
+  if (sEl){
+    sEl.textContent = statusTxt;
+    sEl.style.color = (slHit === true) ? "#fb7185" : (slHit === false) ? "#34d399" : "";
+  }
+}catch(_e){}
+// ===== /MACRO PLAN =====
     // ===== /MACRO COL =====
     setText("prem-base", `${nTxt} casos similares${scTxt}${confTxt}`);
 
