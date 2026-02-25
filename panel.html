@@ -14083,7 +14083,19 @@ renderOptions("");
 
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
     const atr14     = numPick(ctx.atr14, digest.atr14, panel.atr14, digest.indicators?.atr14, panel.indicators?.atr14, exec1x1?.atr14);
-    const microTake = numPick(ctx.microTake, digest.micro_target, digest.micro_take, panel.micro_target, panel.micro_take, exec1x1?.micro_take, exec1x1?.microTake);
+    let microTake = numPick(ctx.microTake, digest.micro_target, digest.micro_take, panel.micro_target, panel.micro_take, exec1x1?.micro_take, exec1x1?.microTake);
+
+// fallback EXTRA: se o microTake vier só dentro do texto do MICRO MAP (NOW), extrai daqui.
+if (microTake == null) {
+  const mmLine = t("mm-micro-line") || "";
+  // ex: "MICRO LIVE — NOW: ~1m • 52.00% • Target 197.02 ↑"
+  let m = mmLine.match(/Target\s*\$?\s*(\d{1,6}(?:[.,]\d+)?)/i);
+  if (!m) m = mmLine.match(/\b(\d{1,6}[.,]\d{1,6})\b/);
+  if (m) {
+    const n = Number(String(m[1]).replace(",", "."));
+    if (Number.isFinite(n)) microTake = n;
+  }
+}
 
     // Prob / ETA (preferindo premonição)
     const prob = (window.__A10_PREM_MICRO_PCT != null && Number.isFinite(Number(window.__A10_PREM_MICRO_PCT)))
@@ -14748,11 +14760,14 @@ const macroTxtTake = (() => {
   return Number.isFinite(n) ? n : null;
 })();
 
-const macroTxtEta = extractMinutes(macroTxtSrc);
-const macroTxtPct = extractPct(macroTxtSrc);
-  const macroLine =
-  (macroTxtTake != null)
-    ? `MACRO LIVE — NOW: ${fmtEta(macroTxtEta)} • ${fmtPct2d(macroTxtPct)} • Target ${fmt2(macroTxtTake)} ${arrowM}`
+// Fonte principal do MACRO (sempre consistente com o KPI)
+const macroTakeD = asNum(digest?.macro_take ?? digest?.macro_target ?? digest?.macro_target_price);
+const macroEtaD  = asNum(digest?.macro_eta_min ?? digest?.eta_macro_min);
+const macroPctD  = asNum(digest?.macro_prob_pct ?? digest?.macro_prob);
+
+const macroLine =
+  (macroTakeD != null)
+    ? `MACRO LIVE — NOW: ${fmtEta(macroEtaD)} • ${fmtPct2d(macroPctD)} • Target ${fmt2(macroTakeD)} ${arrowM}`
     : (A?.touch_price != null)
         ? `MACRO LIVE — NOW: ${fmtEta(A.touch_eta_min)} • ${fmtPct2d(A.touch_prob_pct)} • Target ${fmt2(A.touch_price)} ${arrowM}`
         : `MACRO LIVE — NOW: —`;
