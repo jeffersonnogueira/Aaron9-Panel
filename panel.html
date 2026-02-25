@@ -7743,19 +7743,36 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
     const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
         // ===== MACRO COL (KPI + linhas) =====
-    const macroProbPct = pickFirst(
-  extractPct(macroTxt),              // <-- pega "85%" do texto Premonição Macro
+
+// (1) Prob%: SEMPRE prioriza o texto "PREMONIÇÃO MACRO..."
+const macroProbPct = pickFirst(
+  extractPct(macroTxt),
   digest.macro_prob_pct,
   digest.macro_entry_engine?.prob_pct
 );
-    const macroEtaMin = pickFirst(
-      digest.macro_eta_min,
-      digest.macro_entry_engine?.eta_median_min
-    );
-    const macroTakeNum = pickFirst(
-      digest.macro_take,
-      digest.macro_entry_engine?.target_price
-    );
+
+// (2) ETA(min): SEMPRE prioriza o texto "… em ~17 min"
+const macroEtaMin = pickFirst(
+  extractMinutes(macroTxt),
+  digest.macro_eta_min,
+  digest.macro_entry_engine?.eta_median_min
+);
+
+// (3) Target: SEMPRE prioriza o preço no texto "High/Low/Target/Alvo"
+const macroTakeFromTxt = (() => {
+  const s = String(macroTxt || "");
+  let m = s.match(/(?:tocar|touch|target|alvo|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
+  if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/); // fallback: primeiro decimal
+  if (!m) return null;
+  const n = Number(String(m[1]).replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+})();
+
+const macroTakeNum = pickFirst(
+  macroTakeFromTxt,
+  digest.macro_take,
+  digest.macro_entry_engine?.target_price
+);
 
     const macroTimeLab = (macroEtaMin != null)
       ? fmtMT(new Date(Date.now() + Number(macroEtaMin) * 60 * 1000))
@@ -7817,9 +7834,11 @@ try{
   else dirUse = null;
 
   if (!dirUse){
-    const tgt = (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
-              : (digest.macro_take != null && Number.isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
-              : null;
+    const tgt =
+  (macroTakeNum != null && isFinite(Number(macroTakeNum))) ? Number(macroTakeNum)
+  : (me.target_price != null && isFinite(Number(me.target_price))) ? Number(me.target_price)
+  : (digest.macro_take != null && isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
+  : null;
 
     if (tgt != null && entry != null){
       if (tgt > entry) dirUse = "BUY";
@@ -14715,11 +14734,28 @@ if (respiroPrice != null && microOk && dirMap && curMap != null) {
 
   const A = mpMacro?.path_a || null;
   const B = mpMacro?.path_b || null;
+const macroTxtSrc =
+  (el("macro-prem-macro")?.textContent) ||
+  (el("prem-macro")?.textContent) ||
+  "";
 
+const macroTxtTake = (() => {
+  const s = String(macroTxtSrc || "");
+  let m = s.match(/(?:tocar|touch|target|alvo|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
+  if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/);
+  if (!m) return null;
+  const n = Number(String(m[1]).replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+})();
+
+const macroTxtEta = extractMinutes(macroTxtSrc);
+const macroTxtPct = extractPct(macroTxtSrc);
   const macroLine =
-    (A?.touch_price != null)
-      ? `MACRO LIVE — NOW: ${fmtEta(A.touch_eta_min)} • ${fmtPct2d(A.touch_prob_pct)} • Target ${fmt2(A.touch_price)} ${arrowM}`
-      : `MACRO LIVE — NOW: —`;
+  (macroTxtTake != null)
+    ? `MACRO LIVE — NOW: ${fmtEta(macroTxtEta)} • ${fmtPct2d(macroTxtPct)} • Target ${fmt2(macroTxtTake)} ${arrowM}`
+    : (A?.touch_price != null)
+        ? `MACRO LIVE — NOW: ${fmtEta(A.touch_eta_min)} • ${fmtPct2d(A.touch_prob_pct)} • Target ${fmt2(A.touch_price)} ${arrowM}`
+        : `MACRO LIVE — NOW: —`;
 
   const contLineM =
     (A?.extend_price != null)
@@ -15110,11 +15146,21 @@ const reentry = (slPrice != null && k != null && dirUse)
     const payload = window.__AARON_LAST_PAYLOAD__ || {};
     const digest  = payload.digest || {};
     const me = digest.macro_entry_engine || {};
+const macroTxt = $("macro-prem-macro")?.textContent || $("prem-macro")?.textContent || "";
 
+const tpTxt = (() => {
+  const s = String(macroTxt || "");
+  let m = s.match(/(?:tocar|touch|target|alvo|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
+  if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/);
+  if (!m) return null;
+  const n = Number(String(m[1]).replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+})();
     const opt = (me.entry_price != null && Number.isFinite(Number(me.entry_price))) ? Number(me.entry_price) : null;
-    const tp  = (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
-              : (digest.macro_take != null && Number.isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
-              : null;
+    const tp  = (tpTxt != null) ? tpTxt
+          : (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
+          : (digest.macro_take != null && Number.isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
+          : null;
     const sl  = (me.stop_1x1_price != null && Number.isFinite(Number(me.stop_1x1_price))) ? Number(me.stop_1x1_price) : null;
 
     const entry = (mode === "opt") ? opt : current;
@@ -15501,19 +15547,32 @@ if ($("ee-engine-card")) {
 if ($("ee-macro-engine-card")) {
   const payloadM = window.__AARON_LAST_PAYLOAD__ || {};
   const digestM  = payloadM.digest || {};
+  const macroTxt = $("macro-prem-macro")?.textContent || $("prem-macro")?.textContent || "";
+
+const tpTxt = (() => {
+  const s = String(macroTxt || "");
+  let m = s.match(/(?:tocar|touch|target|alvo|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
+  if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/);
+  if (!m) return null;
+  const n = Number(String(m[1]).replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+})();
   const me = digestM.macro_entry_engine || {};
 
   const entryM = (me.entry_price != null && Number.isFinite(Number(me.entry_price))) ? Number(me.entry_price) : null;
-  const tpM = (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
-           : (digestM.macro_take != null && Number.isFinite(Number(digestM.macro_take))) ? Number(digestM.macro_take)
-           : null;
+  const tpM = (tpTxt != null) ? tpTxt
+         : (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
+         : (digestM.macro_take != null && Number.isFinite(Number(digestM.macro_take))) ? Number(digestM.macro_take)
+         : null;
 
   if (entryM != null && atr14 != null && Number.isFinite(atr14)) {
     const dirM =
       (me.side === "BUY" || me.side === "SELL") ? me.side :
       (tpM != null ? (tpM > entryM ? "BUY" : "SELL") : null);
 
-    const macroP = (me.prob_pct != null && Number.isFinite(Number(me.prob_pct))) ? Number(me.prob_pct) : null;
+    const macroP = (extractPct(macroTxt) != null) ? Number(extractPct(macroTxt))
+            : (me.prob_pct != null && Number.isFinite(Number(me.prob_pct))) ? Number(me.prob_pct)
+            : null;
 
     const zoneM  = 0.10 * atr14;
     const zConfM = 0.06 * atr14;
