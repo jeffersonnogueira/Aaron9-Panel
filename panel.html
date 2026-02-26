@@ -14559,7 +14559,11 @@ const atrMap =
     if (microTarget < curMap) return "SELL";
     return null;
   })();
-
+  // ===== MACRO bias (macro manda / micro reflete) =====
+  const meMacroBias = (digest?.macro_entry_engine || payload?.digest?.macro_entry_engine || payload?.macro_entry_engine || {});
+  const macroSideBias = (meMacroBias?.side === "BUY" || meMacroBias?.side === "SELL") ? meMacroBias.side : null;
+  const macroStopBias = asNum(meMacroBias?.stop_1x1_price ?? meMacroBias?.stop1x1_price ?? meMacroBias?.sl_1x1_price ?? meMacroBias?.sl1x1_price);
+  const macroBiasTag = (macroSideBias && dirMap && macroSideBias !== dirMap) ? ` ⚠️ Macro bias: ${macroSideBias}` : "";
   const arrowMicro = (dirMap === "BUY") ? "↑" : (dirMap === "SELL") ? "↓" : "";
   const arrowOpp  = (dirMap === "BUY") ? "↓" : (dirMap === "SELL") ? "↑" : "";
 
@@ -14577,7 +14581,7 @@ const atrMap =
   );
 
   const microLine = microOk
-    ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}`
+        ? `MICRO LIVE — NOW: ${fmtEta(microEta)} • ${fmtPct2d(microProb)} • Target ${fmt2(microTarget)} ${arrowMicro}${macroBiasTag}`
     : `MICRO LIVE — NOW: —`;
   // ===== CONTINUAÇÃO (A2) — extensão após o target =====
   const signCont = (dirMap === "BUY") ? 1 : (dirMap === "SELL") ? -1 : 0;
@@ -14643,7 +14647,9 @@ if (respiroPrice != null && microOk && dirMap && curMap != null) {
 
     // ===== REVERSÃO (gatilho) + SL duro (1x1) =====
   const slHard = microOk ? (2 * curMap - microTarget) : null; // SL 1x1 (DURO)
-
+  // Se o MACRO estiver ativo na MESMA direção, o Micro Map respeita o SL 1x1 do MACRO como "teto" de invalidação
+  const slCap = (macroSideBias && macroStopBias != null && macroSideBias === dirMap) ? macroStopBias : slHard;
+  const noteCap = (slCap === macroStopBias) ? " (capado pelo SL 1x1 MACRO)" : " (capado pelo SL 1x1)";
   // gatilho de reversão (SOFT). Se não vier do matcher, cai no SL duro.
   let revTrigger =
     asNum(mp?.reversal?.trigger_price) ??
@@ -14658,17 +14664,17 @@ if (respiroPrice != null && microOk && dirMap && curMap != null) {
     microEta;
 
   // ===== CLAMPS (pra nunca existir "RESPIRO passa do STOP") =====
-  const eps = (slHard != null && curMap != null)
-    ? Math.max(0.01, Math.min(0.05, Math.abs(Number(slHard) - Number(curMap)) * 0.05))
+    const eps = (slCap != null && curMap != null)
+    ? Math.max(0.01, Math.min(0.05, Math.abs(Number(slCap) - Number(curMap)) * 0.05))
     : 0.01;
 
   let noteRespiro = "";
   let noteRev = "";
 
   // 1) garante que o gatilho nunca fique além do SL duro
-  if (dirMap && revTrigger != null && slHard != null) {
-    if (dirMap === "SELL" && revTrigger > slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
-    if (dirMap === "BUY"  && revTrigger < slHard) { revTrigger = slHard; noteRev = " (capado pelo SL 1x1)"; }
+      if (dirMap && revTrigger != null && slCap != null) {
+    if (dirMap === "SELL" && revTrigger > slCap) { revTrigger = slCap; noteRev = noteCap; }
+    if (dirMap === "BUY"  && revTrigger < slCap) { revTrigger = slCap; noteRev = noteCap; }
   }
 
   // 2) RESPIRO não pode passar do REV gatilho e nem do SL duro
@@ -14699,7 +14705,7 @@ if (respiroPrice != null && microOk && dirMap && curMap != null) {
     : `RESPIRO (max / p75): —`;
 
   const reversaoLine = (revTrigger != null && dirMap)
-    ? `REVERSÃO (gatilho): ${fmtEta(revEta)} • ${fmtPct2d(revProb)} • Se tocar ${fmt2(revTrigger)} ${arrowOpp} → invalida o micro ${dirMap} • SL 1x1: ${fmt2(slHard)}${noteRev}`
+    ? `REVERSÃO (gatilho): ${fmtEta(revEta)} • ${fmtPct2d(revProb)} • Se tocar ${fmt2(revTrigger)} ${arrowOpp} → invalida o ${(macroSideBias && macroStopBias != null && macroSideBias === dirMap) ? "macro" : "micro"} ${dirMap} • SL 1x1${(slCap === macroStopBias) ? " (macro)" : ""}: ${fmt2(slCap)}${noteRev}`
     : `REVERSÃO (gatilho): —`;
 
 
@@ -15585,7 +15591,14 @@ const tpTxt = (() => {
       (me.side === "BUY" || me.side === "SELL") ? me.side :
       (tpM != null ? (tpM > entryM ? "BUY" : "SELL") : null);
 
-    const macroP = (extractPct(macroTxt) != null) ? Number(extractPct(macroTxt))
+        const pctTxt = (() => {
+      const m = String(macroTxt || "").match(/(\d+(?:\.\d+)?)\s*%/);
+      if (!m) return null;
+      const n = Number(m[1]);
+      return Number.isFinite(n) ? n : null;
+    })();
+
+    const macroP = (pctTxt != null) ? pctTxt
             : (me.prob_pct != null && Number.isFinite(Number(me.prob_pct))) ? Number(me.prob_pct)
             : null;
 
