@@ -14760,12 +14760,10 @@ if (respiroPrice != null && microOk && dirMap && curMap != null) {
     digest?.macro_entry_engine ||
     null;
 
-  const mSide =
+    const mSideEngine =
     (meMacro?.side === "BUY" || meMacro?.side === "SELL") ? meMacro.side :
     (mpMacro?.side === "BUY" || mpMacro?.side === "SELL") ? mpMacro.side :
     null;
-
-  const arrowM = (mSide === "BUY") ? "↑" : (mSide === "SELL") ? "↓" : "";
 
   const A = mpMacro?.path_a || null;
   const B = mpMacro?.path_b || null;
@@ -14793,7 +14791,25 @@ const macroTxtPct = (() => {
 const macroTakeD = asNum(
   macroTxtTake ?? digest?.macro_take ?? digest?.macro_target ?? digest?.macro_target_price ?? A?.touch_price
 );
+// Direção do MACRO MAP deve ser pelo PREÇO (Target vs Current), igual o Micro Map:
+const curMacro = asNum(current) ?? asNum(mpMacro?.current);
 
+const mSidePrice =
+  (curMacro != null && macroTakeD != null)
+    ? ((macroTakeD > curMacro) ? "BUY" : (macroTakeD < curMacro) ? "SELL" : null)
+    : null;
+
+// Side final usado no MAP (prioriza "por preço")
+const mSideUse = mSidePrice || mSideEngine || null;
+
+// Tag opcional pra debug quando engine vier ao contrário
+const biasTagM =
+  (mSideEngine && mSidePrice && mSideEngine !== mSidePrice)
+    ? ` ⚠️ Engine bias: ${mSideEngine}`
+    : "";
+
+// Flecha final do MAP
+const arrowM = (mSideUse === "BUY") ? "↑" : (mSideUse === "SELL") ? "↓" : "";
 const macroEtaD  = asNum(
   meMacro?.eta_min ?? meMacro?.touch_eta_min ?? digest?.macro_eta_min ?? digest?.eta_macro_min ?? A?.touch_eta_min
 );
@@ -14804,26 +14820,58 @@ const macroPctD  = asNum(
 
 const macroLine =
   (macroTakeD != null)
-    ? `MACRO LIVE — NOW: ${fmtEta(macroEtaD)} • ${fmtPct2d(macroPctD)} • Target ${fmt2(macroTakeD)} ${arrowM}`
+    ? `MACRO LIVE — NOW: ${fmtEta(macroEtaD)} • ${fmtPct2d(macroPctD)} • Target ${fmt2(macroTakeD)} ${arrowM}${biasTagM}`
     : (A?.touch_price != null)
         ? `MACRO LIVE — NOW: ${fmtEta(A.touch_eta_min)} • ${fmtPct2d(A.touch_prob_pct)} • Target ${fmt2(A.touch_price)} ${arrowM}`
         : `MACRO LIVE — NOW: —`;
 
-  const contLineM =
-    (A?.extend_price != null)
-      ? `CONTINUAÇÃO (A2): ${fmtEta(A.extend_eta_min)} • ${fmtPct2d(A.extend_prob_pct)} • Depois do target pode estender até ${fmt2(A.extend_price)} ${arrowM}`
-      : `CONTINUAÇÃO (A2): —`;
+  const atrMacro = asNum(atr14) ?? asNum(mpMacro?.atr14);
+const signContM = (mSideUse === "BUY") ? 1 : (mSideUse === "SELL") ? -1 : 0;
+
+// usa extend_price do matcher só se estiver "depois do target" na direção certa
+let contPriceM = asNum(A?.extend_price);
+if (contPriceM != null && macroTakeD != null && signContM !== 0) {
+  const wrong =
+    (signContM === 1  && contPriceM < macroTakeD) ||
+    (signContM === -1 && contPriceM > macroTakeD);
+  if (wrong) contPriceM = null;
+}
+
+// fallback calculado (igual Micro Map): target ± 0.125*ATR
+if (contPriceM == null && macroTakeD != null && atrMacro != null && signContM !== 0) {
+  contPriceM = macroTakeD + signContM * Number(atrMacro) * 0.125;
+}
+
+const contProbM = asNum(A?.extend_prob_pct) ?? ((macroPctD != null) ? Number(macroPctD) * 0.65 : null);
+const contEtaM  = asNum(A?.extend_eta_min)  ?? ((macroEtaD != null) ? Number(macroEtaD) + 2 : null);
+
+const contLineM = (contPriceM != null && mSideUse)
+  ? `CONTINUAÇÃO (A2): ${fmtEta(contEtaM)} • ${fmtPct2d(contProbM)} • Depois do target pode estender até ${fmt2(contPriceM)} ${arrowM}`
+  : `CONTINUAÇÃO (A2): —`;
 
   const failLineM =
     (B?.fail_before_price != null)
       ? `RANGE / FAIL (B): ${fmtEta(B.fail_eta_min)} • ${fmtPct2d(B.fail_prob_pct)} • Pode falhar antes → ${fmt2(B.fail_before_price)}`
       : `RANGE / FAIL (B): —`;
 
-  const stopM = asNum(meMacro?.stop_1x1_price);
+  const stopEngine = asNum(meMacro?.stop_1x1_price);
+
+// SL 1x1 “puro” baseado no movimento Target vs Current (igual Micro): stop = 2*cur - target
+const stopFromMove =
+  (curMacro != null && macroTakeD != null)
+    ? (2 * curMacro - macroTakeD)
+    : null;
+
+// Se engine estiver consistente com o "por preço", usa o stop do engine.
+// Se estiver invertido, usa o stop recalculado (pra invalidação fazer sentido).
+const stopM =
+  (stopEngine != null && (!mSidePrice || !mSideEngine || mSideEngine === mSidePrice))
+    ? stopEngine
+    : stopFromMove;
   const invalLineM =
-    (stopM != null && mSide)
-      ? `INVALIDAÇÃO (SL 1x1): se tocar ${fmt2(stopM)} → invalida o macro ${mSide}`
-      : `INVALIDAÇÃO (SL 1x1): —`;
+  (stopM != null && mSideUse)
+    ? `INVALIDAÇÃO (SL 1x1): se tocar ${fmt2(stopM)} → invalida o macro ${mSideUse}`
+    : `INVALIDAÇÃO (SL 1x1): —`;
 
   const m1 = el("mmac-macro-line");
   const m2 = el("mmac-cont-line");
@@ -14832,7 +14880,7 @@ const macroLine =
 
   if (m1){
     m1.textContent = macroLine;
-    m1.style.color = (mSide === "BUY") ? "var(--success)" : (mSide === "SELL") ? "#fb7185" : "";
+    m1.style.color = (mSideUse === "BUY") ? "var(--success)" : (mSideUse === "SELL") ? "#fb7185" : "";
   }
   if (m2){ m2.textContent = contLineM; m2.style.color = "#60a5fa"; }
   if (m3){ m3.textContent = failLineM; m3.style.color = "#facc15"; }
