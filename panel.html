@@ -3095,6 +3095,9 @@
 #ee-macro-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
 #ee-macro-engine-touch{ color: #60a5fa; border-color: rgba(96,165,250,.28); background: rgba(96,165,250,.08); }
 #ee-macro-engine-cancel{ color: #fb7185; border-color: rgba(251,113,133,.28); background: rgba(251,113,133,.08); }
+#ee-macro-min-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
+#ee-macro-min-engine-touch{ color: #60a5fa; border-color: rgba(96,165,250,.28); background: rgba(96,165,250,.08); }
+#ee-macro-min-engine-cancel{ color: #fb7185; border-color: rgba(251,113,133,.28); background: rgba(251,113,133,.08); }
 .ee-engine-note{
   margin-top: 6px;
   font-size: 14px;
@@ -4672,6 +4675,7 @@
           <span class="prem-kpi-right-time" id="prem-macro-min-time">--:--</span>
           <span class="prem-kpi-right-ampm" id="prem-macro-min-ampm"></span>
           <span class="prem-kpi-right-prob" id="prem-macro-min-prob">--%</span>
+          <span class="prem-kpi-right-prob" id="prem-macro-min-target-inline" style="color:#34d399;">—</span>
         </div>
 
         <div class="prem-kpi-right-sub" id="prem-macro-min-eta">—</div>
@@ -15728,7 +15732,12 @@ const line3 = (failBefore != null)
     // ===== KPI
     if ($("prem-macro-min-current-price")) $("prem-macro-min-current-price").textContent = (current != null) ? fmt2(current) : "—";
     if ($("prem-macro-min-prob")) $("prem-macro-min-prob").textContent = (prob != null) ? `${Math.round(prob)}%` : "--%";
-
+if ($("prem-macro-min-target-inline")){
+  const txt = (target != null)
+    ? `${fmt2(target)}${(eta != null ? ` (${fmtEta(eta)})` : "")}`
+    : "—";
+  $("prem-macro-min-target-inline").textContent = txt;
+}
     const nowMs = Date.now();
     const tMs = (eta != null) ? (nowMs + Math.max(0, eta) * 60000) : nowMs;
     const tp = fmtTimeMTParts(tMs);
@@ -15737,11 +15746,15 @@ const line3 = (failBefore != null)
     if ($("prem-macro-min-ampm")) $("prem-macro-min-ampm").textContent = tp.ampm || "";
 
     if ($("prem-macro-min-eta")){
-      $("prem-macro-min-eta").textContent =
-        (target != null)
-          ? `Target ${fmt2(target)} • ETA ${fmtEta(eta)}`
-          : "—";
-    }
+  const txt = (target != null)
+    ? `Target ${fmt2(target)} • ETA ${fmtEta(eta)}`
+    : "Target — • ETA —";
+  $("prem-macro-min-eta").textContent = txt;
+
+  // cor por side (opcional, mas ajuda muito visualmente)
+  $("prem-macro-min-eta").style.color =
+    (side === "BUY") ? "var(--success)" : (side === "SELL") ? "#fb7185" : "";
+}
 
     // ===== Linhas do painel
     if ($("macro-min-prem-window")) $("macro-min-prem-window").textContent = (eta != null) ? `~${Math.round(eta)}m (p50)` : "—";
@@ -15817,38 +15830,59 @@ const line3 = (failBefore != null)
     if ($("ee-macro-min-engine-dir")) $("ee-macro-min-engine-dir").textContent = side || "—";
     if ($("ee-macro-min-engine-prob")) $("ee-macro-min-engine-prob").textContent = (prob != null) ? `${Math.round(prob)}%` : "—";
 
-    // modo/pill (heurístico)
-    let pill = "LOADING";
-    let modeTxt = "—";
-    let ruleLine = "Rule line: ENTER ONLY ON CONFIRM CLOSE";
-    let note = "—";
+    // ===== Engine stage (WAIT → ARMED → CONFIRMED → FAILED) baseado em preço
+const pProb = (prob != null) ? Number(prob) : null;
+const modeKind = (pProb == null) ? null : (pProb >= 70) ? "strong" : (pProb >= 50) ? "noise" : "notrade";
 
-    if (prob != null){
-      if (prob >= 70){
-        pill = "ARMED";
-        modeTxt = "MODE: (PROB ≥ 70%) AARON STRONG ✅";
-        ruleLine = "Rule line: TOUCH ok · HOLD until cancel";
-        note = "High confidence (macro min) — gerado por macro_extremes_v1.";
-      } else if (prob >= 50){
-        pill = "WAIT";
-        modeTxt = "MODE: (PROB 50–69%) NOISE ZONE";
-        ruleLine = "Rule line: WAIT";
-        note = "Zona instável — aguarde confirmação do micro/fluxo.";
-      } else {
-        pill = "FAILED";
-        modeTxt = "MODE: (PROB ≤ 49%) NO TRADE ⛔";
-        ruleLine = "Rule line: WAIT";
-        note = "Prob baixa para tocar a mínima — evite forçar trade.";
-      }
-    }
+const touched = (current != null && touch != null && side)
+  ? (side === "BUY" ? (current >= touch) : (current <= touch))
+  : false;
+
+const confirmedHit = (touched && current != null && confirm != null && side)
+  ? (side === "BUY" ? (current >= confirm) : (current <= confirm))
+  : false;
+
+const canceledHit = (touched && current != null && cancel != null && side)
+  ? (side === "BUY" ? (current <= cancel) : (current >= cancel))
+  : false;
+
+// pill = estágio mecânico
+let pill = "LOADING";
+if (!side || touch == null) pill = "LOADING";
+else if (canceledHit) pill = "FAILED";
+else if (confirmedHit) pill = "CONFIRMED";
+else if (touched) pill = "ARMED";
+else pill = "WAIT";
+
+// texto do modo = permissão (prob)
+let modeTxt = "—";
+let note = "—";
+if (modeKind === "strong"){
+  modeTxt = "MODE: (PROB ≥ 70%) AARON STRONG ✅";
+  note = "High confidence (macro min) — gerado por macro_extremes_v1.";
+} else if (modeKind === "noise"){
+  modeTxt = "MODE: (PROB 50–69%) NOISE ZONE";
+  note = "Zona instável — aguarde confirmação do micro/fluxo.";
+} else if (modeKind === "notrade"){
+  modeTxt = "MODE: (PROB ≤ 49%) NO TRADE ⛔";
+  note = "Prob baixa para tocar a mínima — evite forçar trade.";
+}
+
+// rule line = estágio (não prob)
+let ruleLine = "Rule line: WAIT";
+if (pill === "WAIT") ruleLine = "Rule line: WAIT for TOUCH";
+else if (pill === "ARMED") ruleLine = "Rule line: TOUCH ok · wait CONFIRM close";
+else if (pill === "CONFIRMED") ruleLine = "Rule line: CONFIRMED · execute";
+else if (pill === "FAILED") ruleLine = "Rule line: CANCELLED · no trade";
 
     const pillEl = $("ee-macro-min-engine-pill");
 if (pillEl){
   pillEl.classList.remove("loading","armed","confirmed","failed");
 
   if (pill === "ARMED") pillEl.classList.add("armed");
+  else if (pill === "CONFIRMED") pillEl.classList.add("confirmed");
   else if (pill === "FAILED") pillEl.classList.add("failed");
-  else pillEl.classList.add("loading"); // WAIT / LOADING
+  else pillEl.classList.add("loading");
 
   pillEl.textContent = pill;
 }
@@ -15856,12 +15890,9 @@ if (pillEl){
 const modeEl = $("ee-macro-min-engine-mode");
 if (modeEl){
   modeEl.classList.remove("strong","noise","notrade");
-  const p = (prob != null) ? Number(prob) : null;
-
-  if (p != null && p >= 70) modeEl.classList.add("strong");
-  else if (p != null && p <= 49) modeEl.classList.add("notrade");
-  else if (p != null) modeEl.classList.add("noise");
-
+  if (modeKind === "strong") modeEl.classList.add("strong");
+  else if (modeKind === "noise") modeEl.classList.add("noise");
+  else if (modeKind === "notrade") modeEl.classList.add("notrade");
   modeEl.textContent = modeTxt;
 }
 
