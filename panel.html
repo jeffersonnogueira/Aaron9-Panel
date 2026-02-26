@@ -5152,7 +5152,18 @@
 </section>
 
 <!-- ================== FIM RESPIRO & REVERSÃO ================== -->
+<!-- ====== MINIMAL VIEW (hide abaixo do RR, manter só Matcher Symbol) ====== -->
+<style>
+  /* esconde tudo “da linha amarela pra baixo” */
+  #error-banner,
+  main.layout { display: none !important; }
+</style>
 
+<!-- slot onde o MATCHER • SYMBOL vai aparecer -->
+<div id="matcher-only-wrap" style="display:flex; justify-content:flex-end; width:100%;">
+  <div id="matcher-only-slot" style="width:min(560px, 100%);"></div>
+</div>
+<!-- ====== /MINIMAL VIEW ====== -->
 
 
     <div id="error-banner" class="error-banner">
@@ -13875,14 +13886,20 @@ if (typeof I18N !== 'undefined' && I18N.pt && I18N.en) {
 
     const row = buildBlock();
 
-    // âncora: COLUNA DIREITA, antes do primeiro card (Resumo institucional)
-    const cols = document.querySelectorAll("main.layout > section.column");
-    const rightCol = (cols && cols.length >= 2) ? cols[1] : null;
-    if (!rightCol) return;
+        // âncora preferida: slot minimal (logo abaixo do RR)
+    const slot = document.getElementById("matcher-only-slot");
+    if (slot) {
+      slot.appendChild(row);
+    } else {
+      // fallback antigo (caso o slot não exista)
+      const cols = document.querySelectorAll("main.layout > section.column");
+      const rightCol = (cols && cols.length >= 2) ? cols[1] : null;
+      if (!rightCol) return;
 
-    const firstCard = rightCol.querySelector(".card, .decision-card") || rightCol.firstElementChild;
-    if (firstCard) firstCard.insertAdjacentElement("beforebegin", row);
-    else rightCol.appendChild(row);
+      const firstCard = rightCol.querySelector(".card, .decision-card") || rightCol.firstElementChild;
+      if (firstCard) firstCard.insertAdjacentElement("beforebegin", row);
+      else rightCol.appendChild(row);
+    }
 
     const sel = row.querySelector("#mp-symbol");
     const priceEl = row.querySelector("#mp-price");
