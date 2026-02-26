@@ -14765,10 +14765,16 @@ const macroTxtTake = (() => {
   const n = Number(String(m[1]).replace(",", "."));
   return Number.isFinite(n) ? n : null;
 })();
-
+const macroTxtPct = (() => {
+  const s = String(macroTxtSrc || "");
+  const m = s.match(/(\d+(?:[.,]\d+)?)\s*%/);
+  if (!m) return null;
+  const n = Number(String(m[1]).replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+})();
 // Fonte principal do MACRO (sempre consistente com o KPI)
 const macroTakeD = asNum(
-  digest?.macro_take ?? digest?.macro_target ?? digest?.macro_target_price ?? A?.touch_price
+  macroTxtTake ?? digest?.macro_take ?? digest?.macro_target ?? digest?.macro_target_price ?? A?.touch_price
 );
 
 const macroEtaD  = asNum(
@@ -14776,7 +14782,7 @@ const macroEtaD  = asNum(
 );
 
 const macroPctD  = asNum(
-  meMacro?.prob_pct ?? meMacro?.prob ?? digest?.macro_prob_pct ?? digest?.macro_prob ?? A?.touch_prob_pct
+  macroTxtPct ?? meMacro?.prob_pct ?? meMacro?.prob ?? digest?.macro_prob_pct ?? digest?.macro_prob ?? A?.touch_prob_pct
 );
 
 const macroLine =
