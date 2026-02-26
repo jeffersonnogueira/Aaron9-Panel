@@ -15616,11 +15616,34 @@ const tpTxt = (() => {
   }
 
   function pickATR(payload, digest){
-    return num(digest?.macro_pack?.atr14)
-      ?? num(payload?.panel?.atr14)
-      ?? num(digest?.atr14)
-      ?? null;
-  }
+  const panel = payload?.panel || payload || {};
+  const raw   = payload?.raw || payload?.raw_eye || payload?.eye || {};
+  const ind   = raw?.indicators || panel?.indicators || {};
+  const atrBlock = panel?.atr || panel?.atr_info || panel?.atrInfo || {};
+
+  return (
+    num(digest?.macro_pack?.atr14) ??
+
+    // panel direto
+    num(panel?.atr14) ?? num(panel?.atr_14) ??
+    num(panel?.metrics?.atr14) ??
+    num(panel?.indicators?.atr14) ?? num(panel?.indicators?.atr_14) ?? num(panel?.indicators?.atr) ??
+
+    // panel.atr.value (muito comum no teu payload)
+    num(atrBlock?.value) ?? num(atrBlock?.atr14) ??
+
+    // digest / raw
+    num(digest?.atr14) ?? num(digest?.atr_14) ??
+    num(digest?.indicators?.atr14) ?? num(digest?.indicators?.atr) ??
+    num(ind?.atr14) ?? num(ind?.atr_14) ?? num(ind?.atr) ??
+
+    // inputs do Risk Manager (fallback)
+    num(document.getElementById("sb-atr-value")?.value) ??
+    num(document.getElementById("atr-value-input")?.value) ??
+
+    null
+  );
+}
 
   function updateMacroMinAll(){
     const payload = window.__AARON_LAST_PAYLOAD__ || {};
@@ -15662,7 +15685,19 @@ const tpTxt = (() => {
       ? `CONTINUAÇÃO (A2): ${fmtEta(contEta)} • ${fmtPct(contProb)} • Depois do target pode estender até ${fmt2(contPrice)} ${arrow}`
       : `CONTINUAÇÃO (A2): —`;
 
-    const line3 = `RANGE / FAIL (B): —`;
+    // RANGE/FAIL (B): fallback por ATR (igual filosofia do Macro Map)
+let failBefore = null;
+if (target != null && atr != null && side){
+  // "falhar antes" = voltar em direção ao current antes de tocar o target
+  failBefore = target + (side === "BUY" ? -1 : +1) * atr * 0.20;
+}
+
+const failProb = (prob != null) ? Math.max(0, Math.min(100, 100 - prob)) : null;
+const failEta  = (eta  != null) ? Math.max(0, Math.round(Number(eta) * 0.70)) : null;
+
+const line3 = (failBefore != null)
+  ? `RANGE / FAIL (B): ${fmtEta(failEta)} • ${fmtPct(failProb)} • Pode falhar antes → ${fmt2(failBefore)}`
+  : `RANGE / FAIL (B): —`;
 
     // ===== PLAN (entry + SL 1x1)
     // entry “esperável”: para SELL, puxa um pouco acima (bounce); para BUY, um pouco abaixo.
@@ -15714,7 +15749,9 @@ const tpTxt = (() => {
     if ($("macro-min-prem-miss")) $("macro-min-prem-miss").textContent = "—";
 
     // Premonição Macro = linha pronta do Digest V23
-    const macroLine = digest.macro_extremes_min_line || (target != null ? `MACRO MIN: Prob ${fmtPct(prob)} • Target ${fmt2(target)} • ETA ${fmtEta(eta)}` : "—");
+    const macroLine =
+  digest.macro_extremes_min_line ||
+  (target != null ? `PREMONITION MACRO MIN: ${fmtPct(prob)} chance de tocar ${fmt2(target)} em ${fmtEta(eta)}` : "—");
     if ($("macro-min-prem-macro")) $("macro-min-prem-macro").textContent = macroLine;
 
     // Premonição Micro: espelha do macro atual (não inventa nada)
@@ -15783,7 +15820,7 @@ const tpTxt = (() => {
     // modo/pill (heurístico)
     let pill = "LOADING";
     let modeTxt = "—";
-    let ruleLine = "Rule line: WAIT";
+    let ruleLine = "Rule line: ENTER ONLY ON CONFIRM CLOSE";
     let note = "—";
 
     if (prob != null){
@@ -15806,11 +15843,30 @@ const tpTxt = (() => {
     }
 
     const pillEl = $("ee-macro-min-engine-pill");
-    if (pillEl) pillEl.textContent = pill;
+if (pillEl){
+  pillEl.classList.remove("loading","armed","confirmed","failed");
 
-    if ($("ee-macro-min-engine-mode")) $("ee-macro-min-engine-mode").textContent = modeTxt;
-    if ($("ee-macro-min-engine-rule")) $("ee-macro-min-engine-rule").textContent = ruleLine;
-    if ($("ee-macro-min-engine-note")) $("ee-macro-min-engine-note").textContent = note;
+  if (pill === "ARMED") pillEl.classList.add("armed");
+  else if (pill === "FAILED") pillEl.classList.add("failed");
+  else pillEl.classList.add("loading"); // WAIT / LOADING
+
+  pillEl.textContent = pill;
+}
+
+const modeEl = $("ee-macro-min-engine-mode");
+if (modeEl){
+  modeEl.classList.remove("strong","noise","notrade");
+  const p = (prob != null) ? Number(prob) : null;
+
+  if (p != null && p >= 70) modeEl.classList.add("strong");
+  else if (p != null && p <= 49) modeEl.classList.add("notrade");
+  else if (p != null) modeEl.classList.add("noise");
+
+  modeEl.textContent = modeTxt;
+}
+
+if ($("ee-macro-min-engine-rule")) $("ee-macro-min-engine-rule").textContent = ruleLine;
+if ($("ee-macro-min-engine-note")) $("ee-macro-min-engine-note").textContent = note;
   }
 
   // ===== QUICK P&L (MACRO MIN)
