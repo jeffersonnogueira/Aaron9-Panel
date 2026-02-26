@@ -14767,9 +14767,17 @@ const macroTxtTake = (() => {
 })();
 
 // Fonte principal do MACRO (sempre consistente com o KPI)
-const macroTakeD = asNum(digest?.macro_take ?? digest?.macro_target ?? digest?.macro_target_price);
-const macroEtaD  = asNum(digest?.macro_eta_min ?? digest?.eta_macro_min);
-const macroPctD  = asNum(digest?.macro_prob_pct ?? digest?.macro_prob);
+const macroTakeD = asNum(
+  digest?.macro_take ?? digest?.macro_target ?? digest?.macro_target_price ?? A?.touch_price
+);
+
+const macroEtaD  = asNum(
+  meMacro?.eta_min ?? meMacro?.touch_eta_min ?? digest?.macro_eta_min ?? digest?.eta_macro_min ?? A?.touch_eta_min
+);
+
+const macroPctD  = asNum(
+  meMacro?.prob_pct ?? meMacro?.prob ?? digest?.macro_prob_pct ?? digest?.macro_prob ?? A?.touch_prob_pct
+);
 
 const macroLine =
   (macroTakeD != null)
