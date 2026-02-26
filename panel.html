@@ -7834,45 +7834,83 @@ try{
     ? Number(me.entry_price)
     : null;
 
-  const sl1x1 = (me.stop_1x1_price != null && Number.isFinite(Number(me.stop_1x1_price)))
+  const stopEngine = (me.stop_1x1_price != null && Number.isFinite(Number(me.stop_1x1_price)))
     ? Number(me.stop_1x1_price)
     : null;
 
-  // direção do MACRO (preferir o que vier pronto; senão inferir por target vs entry)
-  let dirUse = String(me.side || me.dir || me.direction || "").toUpperCase();
-  if (dirUse.includes("BUY") || dirUse.includes("LONG")) dirUse = "BUY";
-  else if (dirUse.includes("SELL") || dirUse.includes("SHORT")) dirUse = "SELL";
-  else dirUse = null;
+  // Target do MACRO
+  const tgt =
+    (macroTakeNum != null && Number.isFinite(Number(macroTakeNum))) ? Number(macroTakeNum)
+    : (me.target_price != null && Number.isFinite(Number(me.target_price))) ? Number(me.target_price)
+    : (digest.macro_take != null && Number.isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
+    : null;
 
-  if (!dirUse){
-    const tgt =
-  (macroTakeNum != null && isFinite(Number(macroTakeNum))) ? Number(macroTakeNum)
-  : (me.target_price != null && isFinite(Number(me.target_price))) ? Number(me.target_price)
-  : (digest.macro_take != null && isFinite(Number(digest.macro_take))) ? Number(digest.macro_take)
-  : null;
-
-    if (tgt != null && entry != null){
-      if (tgt > entry) dirUse = "BUY";
-      else if (tgt < entry) dirUse = "SELL";
-    }
-  }
-
+  // Current
   const cur = (currentPxRaw != null && Number.isFinite(Number(currentPxRaw))) ? Number(currentPxRaw) : null;
 
+  // Direção do engine (se vier)
+  let dirEngine = String(me.side || me.dir || me.direction || "").toUpperCase();
+  if (dirEngine.includes("BUY") || dirEngine.includes("LONG")) dirEngine = "BUY";
+  else if (dirEngine.includes("SELL") || dirEngine.includes("SHORT")) dirEngine = "SELL";
+  else dirEngine = null;
+
+  // ✅ Direção correta do MACRO PLAN: TARGET vs CURRENT (igual o MACRO MAP)
+  let dirPrice = null;
+  if (tgt != null && cur != null){
+    if (tgt > cur) dirPrice = "BUY";
+    else if (tgt < cur) dirPrice = "SELL";
+  }
+
+  // Side final do plano (prioriza “por preço”)
+  let dirUse = dirPrice || dirEngine || null;
+
+  // Fallback (só se não der pra decidir por preço): target vs entry
+  if (!dirUse && tgt != null && entry != null){
+    if (tgt > entry) dirUse = "BUY";
+    else if (tgt < entry) dirUse = "SELL";
+  }
+
+  // SL 1x1 recalculado pela geometria do trade: SL = 2*entry - target
+  const slFromMove = (entry != null && tgt != null) ? (2 * entry - tgt) : null;
+
+  // ✅ Escolha final do SL:
+  // - usa stop do engine se ele estiver coerente com o lado
+  // - se estiver invertido (ex: BUY com stop acima da entry), usa slFromMove
+  let sl1x1 = stopEngine;
+  if (sl1x1 != null && entry != null && dirUse){
+    const bad =
+      (dirUse === "BUY"  && sl1x1 >= entry) ||
+      (dirUse === "SELL" && sl1x1 <= entry);
+    if (bad && slFromMove != null) sl1x1 = slFromMove;
+  } else if (sl1x1 == null && slFromMove != null){
+    sl1x1 = slFromMove;
+  }
+
+  // ✅ Touch (só começa a avaliar SL depois que tocar a entry)
+  let touchHit = null;
+  if (cur != null && entry != null && dirUse){
+    touchHit = (dirUse === "BUY") ? (cur >= entry) : (cur <= entry);
+  }
+
+  // SL hit só depois do touch
   let slHit = null;
-  if (cur != null && sl1x1 != null && dirUse){
+  if (touchHit === true && cur != null && sl1x1 != null && dirUse){
     slHit = (dirUse === "SELL") ? (cur >= sl1x1) : (cur <= sl1x1);
   }
 
-  const statusTxt = (!dirUse || slHit == null)
-    ? "—"
-    : (slHit ? "⚠️ SL atingido — executar reentrada" : "✅ SL não atingido — continuar");
+  const statusTxt =
+    (!dirUse || entry == null || sl1x1 == null)
+      ? "—"
+      : (touchHit !== true)
+          ? "⏳ WAIT — aguarde TOUCH"
+          : (slHit ? "⚠️ SL atingido — executar reentrada" : "✅ SL não atingido — continuar");
 
-  const ruleTxt = (sl1x1 != null && dirUse)
-    ? (dirUse === "SELL"
-        ? `Se current < ${fmtP(sl1x1)} → ✅ SL não atingido — continuar · Se current ≥ ${fmtP(sl1x1)} → ⚠️ SL atingido — executar reentrada`
-        : `Se current > ${fmtP(sl1x1)} → ✅ SL não atingido — continuar · Se current ≤ ${fmtP(sl1x1)} → ⚠️ SL atingido — executar reentrada`)
-    : "—";
+  const ruleTxt =
+    (entry != null && sl1x1 != null && dirUse)
+      ? (dirUse === "BUY"
+          ? `Aguardar TOUCH: current ≥ ${fmtP(entry)}. Depois: se current > ${fmtP(sl1x1)} → ✅ SL não atingido · se current ≤ ${fmtP(sl1x1)} → ⚠️ SL atingido`
+          : `Aguardar TOUCH: current ≤ ${fmtP(entry)}. Depois: se current < ${fmtP(sl1x1)} → ✅ SL não atingido · se current ≥ ${fmtP(sl1x1)} → ⚠️ SL atingido`)
+      : "—";
 
   // injeta DOM
   setText("mslr-optentry", (entry != null) ? fmtP(entry) : "—");
@@ -7883,7 +7921,12 @@ try{
   const sEl = document.getElementById("mslr-status");
   if (sEl){
     sEl.textContent = statusTxt;
-    sEl.style.color = (slHit === true) ? "#fb7185" : (slHit === false) ? "#34d399" : "";
+    // cor: WAIT amarelo / SL hit vermelho / ok verde
+    sEl.style.color =
+      (touchHit !== true) ? "#facc15"
+      : (slHit === true) ? "#fb7185"
+      : (slHit === false) ? "#34d399"
+      : "";
   }
 }catch(_e){}
 // ===== /MACRO PLAN =====
