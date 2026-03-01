@@ -3656,7 +3656,99 @@
   margin-top: 10px;
   font-size: 11px;
 }
+/* ===== BREATH PREMONITION + RETRACE PLAN (Micro) — ABOVE QUICK P&L ===== */
+.breath-grid{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 980px){
+  .breath-grid{ grid-template-columns: 1fr; }
+}
 
+.breath-card{
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px;
+  background: rgba(0,0,0,.22);
+  padding: 10px 10px 12px;
+}
+
+.breath-h{
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .80;
+  margin-bottom: 8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+}
+
+.breath-tag{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  opacity: .92;
+  white-space: nowrap;
+}
+.breath-tag.buy{ color: #bbf7d0; border-color: rgba(74,222,128,.32); background: rgba(74,222,128,.10); }
+.breath-tag.sell{ color: #fecaca; border-color: rgba(248,113,113,.32); background: rgba(248,113,113,.10); }
+.breath-tag.neutral{ color: rgba(226,232,240,.90); border-color: rgba(148,163,184,.28); background: rgba(148,163,184,.08); }
+
+.breath-main{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap: 10px;
+}
+
+.breath-price{
+  font-size: 44px;
+  line-height: 1.05;
+  font-weight: 950;
+  letter-spacing: .02em;
+  color: #ffcc66;
+  text-shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+.breath-price.buy{ color: rgba(74,222,128,.95); }
+.breath-price.sell{ color: rgba(248,113,113,.95); }
+
+.breath-meta{
+  text-align:right;
+  font-size: 12px;
+  opacity: .85;
+}
+.breath-meta b{ color:#ffcc66; font-weight: 950; }
+
+.breath-kv{
+  margin-top: 10px;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+  font-size: 12px;
+}
+.breath-kv .k{
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+.breath-kv .v{
+  font-size: 14px;
+  font-weight: 900;
+  text-align:right;
+}
+
+.breath-muted{ opacity: .65; }
+.breath-warn{ color: #facc15; font-weight: 950; }
+/* ===== /BREATH PREMONITION ===== */
 /* PREMONIÇÃO: readout (REGIME/REVERSÃO/CONSOLIDAÇÃO/...) com hierarquia visual */
 .prem-kpi-right #prem-readout{
   margin: 10px 0 12px;
@@ -4910,6 +5002,65 @@
 
   <div class="prem-kpi-right-sub" id="prem-right-eta">—</div>
 </div>
+  <!-- ===== BREATH (RESPIRO) — Premonition + Retrace Plan (Micro) ===== -->
+  <div class="breath-grid" id="breath-grid" style="display:none;">
+
+    <!-- Breath Premonition -->
+    <div class="breath-card" id="breath-prem-card">
+      <div class="breath-h">
+        <span>BREATH PREMONITION · MICRO</span>
+        <span class="breath-tag neutral" id="breath-side-tag">—</span>
+      </div>
+
+      <div class="breath-main">
+        <div>
+          <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTRY ZONE (P50)</div>
+          <div class="breath-price" id="breath-p50-price">—</div>
+        </div>
+        <div class="breath-meta">
+          <div>Prob <b id="breath-p50-prob">—</b></div>
+          <div>ETA <b id="breath-p50-eta">—</b></div>
+        </div>
+      </div>
+
+      <div class="breath-kv">
+        <div class="k">Deep (P75)</div><div class="v" id="breath-p75-price">—</div>
+        <div class="k">Rev Trigger</div><div class="v breath-warn" id="breath-rev">—</div>
+        <div class="k">Break Risk</div><div class="v" id="breath-break">—</div>
+        <div class="k">Invalidate</div><div class="v" id="breath-inv">—</div>
+      </div>
+    </div>
+
+    <!-- Retrace Breath Plan -->
+    <div class="breath-card" id="breath-plan-card">
+      <div class="breath-h">
+        <span>RETRACE BREATH PLAN</span>
+        <span class="breath-tag neutral" id="breath-gate-tag">GATE —</span>
+      </div>
+
+      <div class="breath-main">
+        <div>
+          <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTER ON BREATH (P50)</div>
+          <div class="breath-price" id="be-entry">—</div>
+        </div>
+        <div class="breath-meta">
+          <div>Window <b id="be-window">—</b></div>
+          <div>RR <b id="be-rr">—</b></div>
+        </div>
+      </div>
+
+      <div class="breath-kv">
+        <div class="k">Stop (guard)</div><div class="v breath-warn" id="be-stop">—</div>
+        <div class="k">Take Profit (Micro)</div><div class="v" id="be-tp">—</div>
+        <div class="k">Rule</div>
+        <div class="v breath-muted" style="grid-column:1 / -1; text-align:left;" id="be-gate-line">
+          Only if micro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- ===== /BREATH (RESPIRO) ===== -->
   <!-- ===== QUICK P&L (simulação) — NÃO mexe no Premonition Micro Live ===== -->
   <div class="prem-pnlcalc" id="prem-pnlcalc">
     <div class="pnl-h">QUICK P&L (simulação)</div>
@@ -7910,7 +8061,94 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("prem-right-ampm", t.ampm || "");
     (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span class="pulse-micro" style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
     setText("prem-right-eta", (etaMin != null) ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`) : "—");
+    // ===== BREATH (RESPIRO) UI — above QUICK P&L =====
+    try{
+      const breath = pickFirst(
+        payload?.panel?.respiro_premonition_v1,
+        payload?.ui?.respiro_premonition_v1,
+        payload?.digest?.respiro_premonition_v1,
+        payload?.respiro_premonition_v1
+      ) || {};
 
+      const plan = pickFirst(
+        payload?.panel?.breath_entry_plan_v1,
+        payload?.ui?.breath_entry_plan_v1,
+        payload?.digest?.breath_entry_plan_v1,
+        payload?.breath_entry_plan_v1
+      ) || {};
+
+      const hasBreath = (breath && (breath.breath_p50_price != null || breath.p50_price != null || breath.entry_zone_p50 != null));
+      const hasPlan   = (plan && (plan.entry_zone_p50 != null || plan.entry_price != null));
+
+      const grid = document.getElementById("breath-grid");
+      if (grid) grid.style.display = (hasBreath || hasPlan) ? "" : "none";
+
+      const sideRaw = String(breath.side ?? plan.side ?? "").toUpperCase();
+      const side = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : "—";
+
+      const fmt2local = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : Number(n).toFixed(2);
+      const fmtPctLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `${Math.round(Number(n))}%`;
+      const fmtMinLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `~${Math.round(Number(n))}m`;
+
+      // tags
+      const sideTag = document.getElementById("breath-side-tag");
+      if (sideTag){
+        sideTag.textContent = side;
+        sideTag.classList.remove("buy","sell","neutral");
+        sideTag.classList.add(side === "BUY" ? "buy" : side === "SELL" ? "sell" : "neutral");
+      }
+
+      const gateTag = document.getElementById("breath-gate-tag");
+      if (gateTag){
+        const ok = plan.gate_ok;
+        gateTag.textContent = (ok === true) ? "GATE PASS" : (ok === false) ? "GATE BLOCK" : "GATE —";
+        gateTag.classList.remove("buy","sell","neutral");
+        gateTag.classList.add(ok === true ? "buy" : ok === false ? "sell" : "neutral");
+      }
+
+      // Breath Premonition values
+      const p50 = pickFirst(breath.breath_p50_price, breath.p50_price, plan.entry_zone_p50);
+      const p50Prob = pickFirst(breath.breath_p50_prob_pct, breath.p50_prob_pct, plan.prob_breath_pct);
+      const p50Eta = pickFirst(breath.breath_p50_eta_min, breath.p50_eta_min, plan.entry_window_min);
+
+      setText("breath-p50-price", fmt2local(p50));
+      setText("breath-p50-prob", fmtPctLocal(p50Prob));
+      setText("breath-p50-eta", fmtMinLocal(p50Eta));
+
+      setText("breath-p75-price", fmt2local(pickFirst(breath.breath_p75_price, breath.p75_price)));
+      setText("breath-rev", fmt2local(pickFirst(breath.reversal_trigger_price, breath.rev_trigger_price, plan.stop_guard)));
+      setText("breath-break", fmtPctLocal(pickFirst(breath.break_risk_pct, breath.break_risk)));
+
+      const inv = pickFirst(breath.invalidation_price, breath.invalidate_price);
+      setText("breath-inv", (inv != null && Number.isFinite(Number(inv))) ? `> ${Number(inv).toFixed(2)}` : "—");
+
+      // Retrace Breath Plan values
+      setText("be-entry", fmt2local(pickFirst(plan.entry_zone_p50, plan.entry_price, p50)));
+      setText("be-window", fmtMinLocal(pickFirst(plan.entry_window_min, p50Eta)));
+      setText("be-stop", fmt2local(pickFirst(plan.stop_guard, plan.stop_price, breath.reversal_trigger_price)));
+      setText("be-tp", fmt2local(pickFirst(plan.take_profit_micro, plan.tp_micro, kpiPriceNum)));
+
+      const rr = pickFirst(plan.rr_est, plan.rr);
+      setText("be-rr", (rr==null || !Number.isFinite(Number(rr))) ? "—" : Number(rr).toFixed(2));
+
+      setText("be-gate-line", plan.gate_line || "Only if micro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y");
+
+      // color big prices by side
+      const p50El = document.getElementById("breath-p50-price");
+      if (p50El){
+        p50El.classList.remove("buy","sell");
+        if (side === "BUY") p50El.classList.add("buy");
+        if (side === "SELL") p50El.classList.add("sell");
+      }
+      const beEntryEl = document.getElementById("be-entry");
+      if (beEntryEl){
+        beEntryEl.classList.remove("buy","sell");
+        if (side === "BUY") beEntryEl.classList.add("buy");
+        if (side === "SELL") beEntryEl.classList.add("sell");
+      }
+
+    }catch(_e){}
+    // ===== /BREATH (RESPIRO) UI =====
 
     const wLine = (bw?.window_start_label || bw?.window_end_label)
       ? `${bw.window_start_label || "—"} – ${bw.window_end_label || "—"} (MT)`
