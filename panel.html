@@ -8014,18 +8014,37 @@ const t = splitTimeLabel(tLab);
 
 // ✅ KPI: depois da % mostrar preço + minutos (mesma linha)
 const kpiPriceNum = (() => {
+
+  // 1) PRIORIDADE: número estruturado do JSON (premonition.micro_target_price)
+  const premObj =
+    payload?.premonition ||
+    panel?.premonition ||
+    digest?.premonition ||
+    ui?.premonition ||
+    payload?.panel?.premonition ||
+    payload?.digest?.premonition ||
+    payload?.ui?.premonition ||
+    null;
+
+  const fromJson = (
+    premObj && (premObj.micro_target_price ?? premObj.micro_take ?? premObj.micro_target)
+  );
+
+  if (fromJson != null && isFinite(Number(fromJson))) {
+    return Number(fromJson);
+  }
+
+  // 2) ÚLTIMO recurso: parse do texto (evita capturar "88%")
   const s = String(microTxt || "");
 
-  // pega depois de tocar/touch/target/alvo/High/Low
   let m = s.match(/(?:tocar|touch|target|alvo|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
-
-  // fallback: pega o 1º decimal (evita capturar "88%")
   if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/);
 
   if (!m) return null;
 
   const n = Number(String(m[1]).replace(",", "."));
   return Number.isFinite(n) ? n : null;
+
 })() ?? ((bw?.trigger_price != null && isFinite(Number(bw.trigger_price))) ? Number(bw.trigger_price) : null);
 
 
@@ -8083,8 +8102,17 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
       const grid = document.getElementById("breath-grid");
       if (grid) grid.style.display = (hasBreath || hasPlan) ? "" : "none";
 
-      const sideRaw = String(breath.side ?? plan.side ?? "").toUpperCase();
-      const side = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : "—";
+            // Regra: usa SOMENTE current vs micro target (kpiPriceNum)
+      const curPx = (currentPxRaw != null && isFinite(Number(currentPxRaw))) ? Number(currentPxRaw) : null;
+      const tgtPx = (kpiPriceNum   != null && isFinite(Number(kpiPriceNum)))   ? Number(kpiPriceNum)   : null;
+
+      let side = "—";
+      if (curPx != null && tgtPx != null){
+        side = (tgtPx > curPx) ? "BUY" : (tgtPx < curPx) ? "SELL" : "—";
+      } else {
+        const sideRaw = String(breath.side ?? plan.side ?? "").toUpperCase();
+        side = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : "—";
+      }
 
       const fmt2local = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : Number(n).toFixed(2);
       const fmtPctLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `${Math.round(Number(n))}%`;
@@ -8106,10 +8134,18 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
         gateTag.classList.add(ok === true ? "buy" : ok === false ? "sell" : "neutral");
       }
 
-      // Breath Premonition values
-      const p50 = pickFirst(breath?.levels?.p50?.price, breath.breath_p50_price, breath.p50_price, plan.entry_zone_p50, plan.entry_price);
+            // Breath Premonition values
+      let p50 = pickFirst(breath?.levels?.p50?.price, breath.breath_p50_price, breath.p50_price);
       const p50Prob = pickFirst(breath?.levels?.p50?.prob_touch_pct, breath.breath_p50_prob_pct, breath.p50_prob_pct, plan.prob_breath_pct);
-      const p50Eta = pickFirst(breath?.levels?.p50?.eta_min, breath.breath_p50_eta_min, breath.p50_eta_min, plan.entry_window_min);
+      const p50Eta  = pickFirst(breath?.levels?.p50?.eta_min, breath.breath_p50_eta_min, breath.p50_eta_min, plan.entry_window_min);
+
+      // FORÇA: se target vai subir => respiro tem que estar ABAIXO do current
+      //        se target vai cair  => respiro tem que estar ACIMA do current
+      if (curPx != null && tgtPx != null && p50 != null && Number.isFinite(Number(p50))){
+        const p50n = Number(p50);
+        if (tgtPx > curPx && p50n >= curPx) p50 = (curPx - Math.abs(p50n - curPx));
+        if (tgtPx < curPx && p50n <= curPx) p50 = (curPx + Math.abs(p50n - curPx));
+      }
 
       setText("breath-p50-price", fmt2local(p50));
       setText("breath-p50-prob", fmtPctLocal(p50Prob));
