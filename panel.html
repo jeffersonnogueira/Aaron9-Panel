@@ -8077,7 +8077,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
         payload?.breath_entry_plan_v1
       ) || {};
 
-      const hasBreath = (breath && (breath.breath_p50_price != null || breath.p50_price != null || breath.entry_zone_p50 != null));
+      const hasBreath = (breath && (breath?.levels?.p50?.price != null || breath?.levels?.p75?.price != null || breath?.reversal_trigger?.trigger_price != null || breath.breath_p50_price != null || breath.p50_price != null));
       const hasPlan   = (plan && (plan.entry_zone_p50 != null || plan.entry_price != null));
 
       const grid = document.getElementById("breath-grid");
@@ -8107,17 +8107,17 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
       }
 
       // Breath Premonition values
-      const p50 = pickFirst(breath.breath_p50_price, breath.p50_price, plan.entry_zone_p50);
-      const p50Prob = pickFirst(breath.breath_p50_prob_pct, breath.p50_prob_pct, plan.prob_breath_pct);
-      const p50Eta = pickFirst(breath.breath_p50_eta_min, breath.p50_eta_min, plan.entry_window_min);
+      const p50 = pickFirst(breath?.levels?.p50?.price, breath.breath_p50_price, breath.p50_price, plan.entry_zone_p50, plan.entry_price);
+      const p50Prob = pickFirst(breath?.levels?.p50?.prob_touch_pct, breath.breath_p50_prob_pct, breath.p50_prob_pct, plan.prob_breath_pct);
+      const p50Eta = pickFirst(breath?.levels?.p50?.eta_min, breath.breath_p50_eta_min, breath.p50_eta_min, plan.entry_window_min);
 
       setText("breath-p50-price", fmt2local(p50));
       setText("breath-p50-prob", fmtPctLocal(p50Prob));
       setText("breath-p50-eta", fmtMinLocal(p50Eta));
 
-      setText("breath-p75-price", fmt2local(pickFirst(breath.breath_p75_price, breath.p75_price)));
-      setText("breath-rev", fmt2local(pickFirst(breath.reversal_trigger_price, breath.rev_trigger_price, plan.stop_guard)));
-      setText("breath-break", fmtPctLocal(pickFirst(breath.break_risk_pct, breath.break_risk)));
+      setText("breath-p75-price", fmt2local(pickFirst(breath?.levels?.p75?.price, breath.breath_p75_price, breath.p75_price)));
+      setText("breath-rev", fmt2local(pickFirst(breath?.reversal_trigger?.trigger_price, breath.reversal_trigger_price, breath.rev_trigger_price, plan.stop_guard, plan.stop_price)));
+      setText("breath-break", fmtPctLocal(pickFirst(breath.break_risk_pct, breath.break_risk, breath?.reversal_trigger?.prob_stop_before_target_pct)));
 
       const inv = pickFirst(breath.invalidation_price, breath.invalidate_price);
       setText("breath-inv", (inv != null && Number.isFinite(Number(inv))) ? `> ${Number(inv).toFixed(2)}` : "—");
@@ -8125,8 +8125,8 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
       // Retrace Breath Plan values
       setText("be-entry", fmt2local(pickFirst(plan.entry_zone_p50, plan.entry_price, p50)));
       setText("be-window", fmtMinLocal(pickFirst(plan.entry_window_min, p50Eta)));
-      setText("be-stop", fmt2local(pickFirst(plan.stop_guard, plan.stop_price, breath.reversal_trigger_price)));
-      setText("be-tp", fmt2local(pickFirst(plan.take_profit_micro, plan.tp_micro, kpiPriceNum)));
+      setText("be-stop", fmt2local(pickFirst(plan.stop_guard, plan.stop_price, breath?.reversal_trigger?.trigger_price, breath.reversal_trigger_price)));
+      setText("be-tp", fmt2local(pickFirst(plan.take_profit_micro, plan.tp_micro_price, plan.tp_micro, kpiPriceNum)));
 
       const rr = pickFirst(plan.rr_est, plan.rr);
       setText("be-rr", (rr==null || !Number.isFinite(Number(rr))) ? "—" : Number(rr).toFixed(2));
