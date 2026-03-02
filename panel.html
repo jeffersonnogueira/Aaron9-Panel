@@ -4599,7 +4599,63 @@
 
         <div class="prem-kpi-right-sub" id="prem-macro-eta">—</div>
       </div>
+      <!-- ===== BREATH (RESPIRO) — Premonition + Retrace Plan (MACRO MAX) ===== -->
+      <div class="breath-grid" id="breath-grid-macro" style="display:none;">
 
+        <!-- Breath Premonition -->
+        <div class="breath-card" id="breath-prem-card-macro">
+          <div class="breath-h">
+            <span>BREATH PREMONITION · MACRO MAX</span>
+            <span class="breath-tag neutral" id="breath-side-tag-macro">—</span>
+          </div>
+
+          <div class="breath-main">
+            <div>
+              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTRY ZONE (P50)</div>
+              <div class="breath-price" id="breath-p50-price-macro">—</div>
+            </div>
+            <div class="breath-meta">
+              <div>Prob <b id="breath-p50-prob-macro">—</b></div>
+              <div>ETA <b id="breath-p50-eta-macro">—</b></div>
+            </div>
+          </div>
+
+          <div class="breath-kv">
+            <div class="k">Deep (P75)</div><div class="v" id="breath-p75-price-macro">—</div>
+            <div class="k">Rev Trigger</div><div class="v breath-warn" id="breath-rev-macro">—</div>
+            <div class="k">Break Risk</div><div class="v" id="breath-break-macro">—</div>
+            <div class="k">Invalidate</div><div class="v" id="breath-inv-macro">—</div>
+          </div>
+        </div>
+
+        <!-- Retrace Breath Plan -->
+        <div class="breath-card" id="breath-plan-card-macro">
+          <div class="breath-h">
+            <span>RETRACE BREATH PLAN</span>
+            <span class="breath-tag neutral" id="breath-gate-tag-macro">GATE —</span>
+          </div>
+
+          <div class="breath-main">
+            <div>
+              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTER ON BREATH (P50)</div>
+              <div class="breath-price" id="be-entry-macro">—</div>
+            </div>
+            <div class="breath-meta">
+              <div>Window <b id="be-window-macro">—</b></div>
+              <div>RR <b id="be-rr-macro">—</b></div>
+            </div>
+          </div>
+
+          <div class="breath-kv">
+            <div class="k">Stop (guard)</div><div class="v breath-warn" id="be-stop-macro">—</div>
+            <div class="k">Take Profit (Macro)</div><div class="v" id="be-tp-macro">—</div>
+          </div>
+
+          <div class="breath-gate" id="be-gate-line-macro">Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y</div>
+        </div>
+
+      </div>
+      <!-- ===== /BREATH (RESPIRO) — MACRO MAX ===== -->
       <div class="prem-pnlcalc" id="macro-pnlcalc">
         <div class="pnl-h">QUICK P&L (simulação)</div>
 
@@ -4772,7 +4828,63 @@
 
         <div class="prem-kpi-right-sub" id="prem-macro-min-eta">—</div>
       </div>
+      <!-- ===== BREATH (RESPIRO) — Premonition + Retrace Plan (MACRO MIN) ===== -->
+      <div class="breath-grid" id="breath-grid-min" style="display:none;">
 
+        <!-- Breath Premonition -->
+        <div class="breath-card" id="breath-prem-card-min">
+          <div class="breath-h">
+            <span>BREATH PREMONITION · MACRO MIN</span>
+            <span class="breath-tag neutral" id="breath-side-tag-min">—</span>
+          </div>
+
+          <div class="breath-main">
+            <div>
+              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTRY ZONE (P50)</div>
+              <div class="breath-price" id="breath-p50-price-min">—</div>
+            </div>
+            <div class="breath-meta">
+              <div>Prob <b id="breath-p50-prob-min">—</b></div>
+              <div>ETA <b id="breath-p50-eta-min">—</b></div>
+            </div>
+          </div>
+
+          <div class="breath-kv">
+            <div class="k">Deep (P75)</div><div class="v" id="breath-p75-price-min">—</div>
+            <div class="k">Rev Trigger</div><div class="v breath-warn" id="breath-rev-min">—</div>
+            <div class="k">Break Risk</div><div class="v" id="breath-break-min">—</div>
+            <div class="k">Invalidate</div><div class="v" id="breath-inv-min">—</div>
+          </div>
+        </div>
+
+        <!-- Retrace Breath Plan -->
+        <div class="breath-card" id="breath-plan-card-min">
+          <div class="breath-h">
+            <span>RETRACE BREATH PLAN</span>
+            <span class="breath-tag neutral" id="breath-gate-tag-min">GATE —</span>
+          </div>
+
+          <div class="breath-main">
+            <div>
+              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTER ON BREATH (P50)</div>
+              <div class="breath-price" id="be-entry-min">—</div>
+            </div>
+            <div class="breath-meta">
+              <div>Window <b id="be-window-min">—</b></div>
+              <div>RR <b id="be-rr-min">—</b></div>
+            </div>
+          </div>
+
+          <div class="breath-kv">
+            <div class="k">Stop (guard)</div><div class="v breath-warn" id="be-stop-min">—</div>
+            <div class="k">Take Profit (Macro)</div><div class="v" id="be-tp-min">—</div>
+          </div>
+
+          <div class="breath-gate" id="be-gate-line-min">Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y</div>
+        </div>
+
+      </div>
+      <!-- ===== /BREATH (RESPIRO) — MACRO MIN ===== -->
       <div class="prem-pnlcalc" id="macro-min-pnlcalc">
         <div class="pnl-h">QUICK P&L (simulação)</div>
 
@@ -8276,6 +8388,136 @@ const macroTakeNum = pickFirst(
     setText("macro-prem-macro", macroTxt || "—");
     setText("macro-prem-micro", microTxt || "—");
     setText("macro-prem-base", `${nTxt} casos similares${scTxt}${confTxt}`);
+        // ===== BREATH (RESPIRO) UI — MACRO MAX (above QUICK P&L) =====
+    try{
+      const mAll = pickFirst(
+        payload?.panel?.macro_respiro_premonition_v1,
+        payload?.ui?.macro_respiro_premonition_v1,
+        payload?.digest?.macro_respiro_premonition_v1,
+        payload?.macro_respiro_premonition_v1
+      ) || {};
+
+      const breath = (mAll && typeof mAll === "object") ? (mAll.max || mAll.macro_max || mAll.macroMax || {}) : {};
+
+      // Target do MACRO MAX (prioriza o alvo do próprio respiro macro)
+      const tpMacro = pickFirst(
+        breath?.macro?.target_price,
+        breath?.macro?.target,
+        macroTakeNum,
+        digest.macro_take,
+        digest.macro_entry_engine?.target_price
+      );
+
+      // (Opcional) se algum dia existir um plan macro vindo do Digest, usa; senão calcula aqui (determinístico)
+      const planIn = pickFirst(
+        payload?.panel?.macro_breath_entry_plan_v1?.max,
+        payload?.digest?.macro_breath_entry_plan_v1?.max,
+        payload?.panel?.breath_entry_plan_macro_max_v1,
+        payload?.digest?.breath_entry_plan_macro_max_v1
+      ) || null;
+
+      const p50 = pickFirst(breath?.levels?.p50?.price, breath?.breath_p50_price, breath?.p50_price);
+      const p50Prob = pickFirst(breath?.levels?.p50?.prob_touch_pct, breath?.breath_p50_prob_pct, breath?.p50_prob_pct);
+      const p50Eta  = pickFirst(breath?.levels?.p50?.eta_min, breath?.breath_p50_eta_min, breath?.p50_eta_min);
+      const p75     = pickFirst(breath?.levels?.p75?.price, breath?.breath_p75_price, breath?.p75_price);
+      const rev     = pickFirst(breath?.reversal_trigger?.trigger_price, breath?.reversal_trigger_price, breath?.rev_trigger_price);
+      const brkPct  = pickFirst(breath?.break_risk_pct, breath?.break_risk, breath?.reversal_trigger?.prob_stop_before_target_pct);
+
+      const cur = (currentPxRaw != null && isFinite(Number(currentPxRaw))) ? Number(currentPxRaw) : null;
+      const atr = pickFirst(breath?.atr14, digest?.atr14, payload?.digest?.atr14);
+
+      // Side
+      const sideRaw = String(breath?.side ?? planIn?.side ?? "").toUpperCase();
+      let side = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : "—";
+      if (side === "—" && tpMacro != null && cur != null && isFinite(Number(tpMacro))){
+        side = (Number(tpMacro) > cur) ? "BUY" : (Number(tpMacro) < cur) ? "SELL" : "—";
+      }
+
+      // Plan (fallback) — determinístico
+      let entry = (p50 != null && isFinite(Number(p50))) ? Number(p50) : null;
+      let tp = (tpMacro != null && isFinite(Number(tpMacro))) ? Number(tpMacro) : null;
+      const buf = (atr != null && isFinite(Number(atr)) && Number(atr) > 0) ? (Number(atr) * 0.10) : (cur != null ? (cur * 0.001) : 0);
+
+      let stop = (planIn?.stop_guard != null && isFinite(Number(planIn.stop_guard))) ? Number(planIn.stop_guard)
+              : (planIn?.stop_price != null && isFinite(Number(planIn.stop_price))) ? Number(planIn.stop_price)
+              : (rev != null && isFinite(Number(rev))) ? Number(rev)
+              : null;
+
+      if (stop == null && p75 != null && isFinite(Number(p75)) && (side === "BUY" || side === "SELL")){
+        stop = (side === "SELL") ? (Number(p75) + buf) : (Number(p75) - buf);
+      }
+      if (stop == null && entry != null && (side === "BUY" || side === "SELL")){
+        stop = (side === "SELL") ? (entry + buf) : (entry - buf);
+      }
+
+      let rr = null;
+      if (entry != null && tp != null && stop != null && (side === "BUY" || side === "SELL")){
+        const reward = (side === "SELL") ? (entry - tp) : (tp - entry);
+        const risk   = (side === "SELL") ? (stop - entry) : (entry - stop);
+        rr = (isFinite(reward) && isFinite(risk) && risk > 0) ? (reward / risk) : null;
+      }
+      const gateOk = (planIn && typeof planIn.gate_ok === "boolean") ? planIn.gate_ok : (rr == null ? null : (rr >= 0.90));
+
+      const hasBreath = (p50 != null || p75 != null || rev != null);
+      const hasPlan   = (entry != null && tp != null);
+
+      const grid = document.getElementById("breath-grid-macro");
+      if (grid) grid.style.display = (hasBreath || hasPlan) ? "" : "none";
+
+      const fmt2local = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : Number(n).toFixed(2);
+      const fmtPctLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `${Math.round(Number(n))}%`;
+      const fmtMinLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `~${Math.round(Number(n))}m`;
+
+      // tags
+      const sideTag = document.getElementById("breath-side-tag-macro");
+      if (sideTag){
+        sideTag.textContent = side;
+        sideTag.classList.remove("buy","sell","neutral");
+        sideTag.classList.add(side === "BUY" ? "buy" : side === "SELL" ? "sell" : "neutral");
+      }
+      const gateTag = document.getElementById("breath-gate-tag-macro");
+      if (gateTag){
+        gateTag.textContent = (gateOk === true) ? "GATE PASS" : (gateOk === false) ? "GATE BLOCK" : "GATE —";
+        gateTag.classList.remove("buy","sell","neutral");
+        gateTag.classList.add(gateOk === true ? "buy" : gateOk === false ? "sell" : "neutral");
+      }
+
+      // Breath Premonition values
+      setText("breath-p50-price-macro", fmt2local(p50));
+      setText("breath-p50-prob-macro", fmtPctLocal(p50Prob));
+      setText("breath-p50-eta-macro", fmtMinLocal(p50Eta));
+      setText("breath-p75-price-macro", fmt2local(p75));
+      setText("breath-rev-macro", fmt2local(rev));
+      setText("breath-break-macro", fmtPctLocal(brkPct));
+
+      // Invalidate: tenta usar pivot como referência (se existir)
+      const inv = pickFirst(breath?.invalidation_price, breath?.invalidate_price, (side === "SELL" ? breath?.sr?.pivot_res : (side === "BUY" ? breath?.sr?.pivot_sup : null)));
+      setText("breath-inv-macro", (inv != null && Number.isFinite(Number(inv))) ? `${Number(inv).toFixed(2)}` : "—");
+
+      // Retrace Breath Plan values
+      setText("be-entry-macro", fmt2local(pickFirst(planIn?.entry_zone_p50, planIn?.entry_price, entry)));
+      setText("be-window-macro", fmtMinLocal(pickFirst(planIn?.entry_window_min, planIn?.eta_entry_min, p50Eta)));
+      setText("be-stop-macro", fmt2local(pickFirst(planIn?.stop_guard, planIn?.stop_price, stop)));
+      setText("be-tp-macro", fmt2local(pickFirst(planIn?.take_profit_macro, planIn?.tp_macro_price, tp)));
+      setText("be-rr-macro", (rr==null || !Number.isFinite(Number(rr))) ? "—" : Number(rr).toFixed(2));
+      setText("be-gate-line-macro", planIn?.gate_line || "Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y");
+
+      // color big prices by side
+      const p50El = document.getElementById("breath-p50-price-macro");
+      if (p50El){
+        p50El.classList.remove("buy","sell");
+        if (side === "BUY") p50El.classList.add("buy");
+        if (side === "SELL") p50El.classList.add("sell");
+      }
+      const beEntryEl = document.getElementById("be-entry-macro");
+      if (beEntryEl){
+        beEntryEl.classList.remove("buy","sell");
+        if (side === "BUY") beEntryEl.classList.add("buy");
+        if (side === "SELL") beEntryEl.classList.add("sell");
+      }
+
+    }catch(_e){}
+    // ===== /BREATH (RESPIRO) UI — MACRO MAX =====
     // ===== MACRO PLAN (Most Optimal Entry + SL 1x1 + Status) =====
 try{
   const me = digest.macro_entry_engine || {};
@@ -16046,7 +16288,107 @@ if ($("prem-macro-min-target-inline")){
     if ($("macro-min-prem-micro")) $("macro-min-prem-micro").textContent = microMirror;
 
     if ($("macro-min-prem-base")) $("macro-min-prem-base").textContent = "macro_extremes_v1 (intraday 1m)";
+    // ===== BREATH (RESPIRO) UI — MACRO MIN (above QUICK P&L) =====
+    try{
+      const all = (payload?.panel?.macro_respiro_premonition_v1 ?? payload?.digest?.macro_respiro_premonition_v1 ?? payload?.macro_respiro_premonition_v1 ?? {});
+      const breath = (all && typeof all === "object") ? (all.min || all.macro_min || all.macroMin || {}) : {};
 
+      const grid = $("breath-grid-min");
+
+      const p50 = (breath?.levels?.p50?.price ?? breath?.breath_p50_price ?? breath?.p50_price ?? null);
+      const p50Prob = (breath?.levels?.p50?.prob_touch_pct ?? breath?.breath_p50_prob_pct ?? breath?.p50_prob_pct ?? null);
+      const p50Eta  = (breath?.levels?.p50?.eta_min ?? breath?.breath_p50_eta_min ?? breath?.p50_eta_min ?? null);
+      const p75     = (breath?.levels?.p75?.price ?? breath?.breath_p75_price ?? breath?.p75_price ?? null);
+      const rev     = (breath?.reversal_trigger?.trigger_price ?? breath?.reversal_trigger_price ?? breath?.rev_trigger_price ?? null);
+      const brkPct  = (breath?.break_risk_pct ?? breath?.break_risk ?? breath?.reversal_trigger?.prob_stop_before_target_pct ?? null);
+
+      // Target do macro min = o próprio target do Macro MIN
+      const tpMacro = (target != null) ? target : (breath?.macro?.target_price ?? breath?.macro?.target ?? null);
+
+      // side
+      const sideRaw = String(breath?.side || "").toUpperCase();
+      let sideLocal = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : (tpMacro != null && current != null ? ((tpMacro > current) ? "BUY" : (tpMacro < current) ? "SELL" : "—") : "—");
+
+      // plan determinístico
+      const cur = (current != null && Number.isFinite(Number(current))) ? Number(current) : null;
+      const entry = (p50 != null && Number.isFinite(Number(p50))) ? Number(p50) : null;
+      const tp = (tpMacro != null && Number.isFinite(Number(tpMacro))) ? Number(tpMacro) : null;
+      const buf = (atr != null && Number.isFinite(Number(atr)) && Number(atr) > 0) ? (Number(atr) * 0.10) : (cur != null ? (cur * 0.001) : 0);
+
+      let stop = (rev != null && Number.isFinite(Number(rev))) ? Number(rev) : null;
+      if (stop == null && p75 != null && Number.isFinite(Number(p75)) && (sideLocal === "BUY" || sideLocal === "SELL")){
+        stop = (sideLocal === "SELL") ? (Number(p75) + buf) : (Number(p75) - buf);
+      }
+      if (stop == null && entry != null && (sideLocal === "BUY" || sideLocal === "SELL")){
+        stop = (sideLocal === "SELL") ? (entry + buf) : (entry - buf);
+      }
+
+      let rr = null;
+      if (entry != null && tp != null && stop != null && (sideLocal === "BUY" || sideLocal === "SELL")){
+        const reward = (sideLocal === "SELL") ? (entry - tp) : (tp - entry);
+        const risk   = (sideLocal === "SELL") ? (stop - entry) : (entry - stop);
+        rr = (Number.isFinite(reward) && Number.isFinite(risk) && risk > 0) ? (reward / risk) : null;
+      }
+      const gateOk = (rr == null) ? null : (rr >= 0.90);
+
+      const hasBreath = (p50 != null || p75 != null || rev != null);
+      const hasPlan   = (entry != null && tp != null);
+      if (grid) grid.style.display = (hasBreath || hasPlan) ? "" : "none";
+
+      const set = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+      const fmt2l = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : Number(n).toFixed(2);
+      const fmtPctL = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `${Math.round(Number(n))}%`;
+      const fmtMinL = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `~${Math.round(Number(n))}m`;
+
+      // tags
+      const sideTag = $("breath-side-tag-min");
+      if (sideTag){
+        sideTag.textContent = sideLocal;
+        sideTag.classList.remove("buy","sell","neutral");
+        sideTag.classList.add(sideLocal === "BUY" ? "buy" : sideLocal === "SELL" ? "sell" : "neutral");
+      }
+      const gateTag = $("breath-gate-tag-min");
+      if (gateTag){
+        gateTag.textContent = (gateOk === true) ? "GATE PASS" : (gateOk === false) ? "GATE BLOCK" : "GATE —";
+        gateTag.classList.remove("buy","sell","neutral");
+        gateTag.classList.add(gateOk === true ? "buy" : gateOk === false ? "sell" : "neutral");
+      }
+
+      // Breath values
+      set("breath-p50-price-min", fmt2l(p50));
+      set("breath-p50-prob-min", fmtPctL(p50Prob));
+      set("breath-p50-eta-min", fmtMinL(p50Eta));
+      set("breath-p75-price-min", fmt2l(p75));
+      set("breath-rev-min", fmt2l(rev));
+      set("breath-break-min", fmtPctL(brkPct));
+
+      const inv = (breath?.invalidation_price ?? breath?.invalidate_price ?? (sideLocal === "SELL" ? breath?.sr?.pivot_res : (sideLocal === "BUY" ? breath?.sr?.pivot_sup : null)));
+      set("breath-inv-min", (inv != null && Number.isFinite(Number(inv))) ? `${Number(inv).toFixed(2)}` : "—");
+
+      // Plan values
+      set("be-entry-min", fmt2l(entry));
+      set("be-window-min", fmtMinL(p50Eta));
+      set("be-stop-min", fmt2l(stop));
+      set("be-tp-min", fmt2l(tp));
+      set("be-rr-min", (rr==null || !Number.isFinite(Number(rr))) ? "—" : Number(rr).toFixed(2));
+      set("be-gate-line-min", "Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y");
+
+      // color big prices by side
+      const p50El = $("breath-p50-price-min");
+      if (p50El){
+        p50El.classList.remove("buy","sell");
+        if (sideLocal === "BUY") p50El.classList.add("buy");
+        if (sideLocal === "SELL") p50El.classList.add("sell");
+      }
+      const beEntryEl = $("be-entry-min");
+      if (beEntryEl){
+        beEntryEl.classList.remove("buy","sell");
+        if (sideLocal === "BUY") beEntryEl.classList.add("buy");
+        if (sideLocal === "SELL") beEntryEl.classList.add("sell");
+      }
+
+    }catch(_e){}
+    // ===== /BREATH (RESPIRO) UI — MACRO MIN =====
     // ===== MACRO MIN PLAN (Most optimal entry / SL / status)
     if ($("mslrmin-optentry")) $("mslrmin-optentry").textContent = (entry != null) ? fmt2(entry) : "—";
     if ($("mslrmin-sl")) $("mslrmin-sl").textContent = (sl1x1 != null) ? fmt2(sl1x1) : "—";
