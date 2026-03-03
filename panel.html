@@ -2960,23 +2960,24 @@
   align-items:flex-start;
   justify-content:flex-start;
   gap: 14px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* <-- era wrap; isso colocava os números embaixo */
 }
 
 .ee-engine-left{
   display:flex;
   flex-direction:column;
   gap: 8px;
-  min-width: 180px;
+  min-width: 0;     /* <-- novo */
+  flex: 1 1 auto;   /* <-- novo */
 }
 
 .ee-engine-pill{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding: 8px 14px;
+  padding: 6px 12px;   /* <-- era 8px 14px */
   border-radius: 999px;
-  font-size: 36px;
+  font-size: 26px;     /* <-- era 36px */
   font-weight: 950;
   letter-spacing: .16em;
   text-transform: uppercase;
@@ -3029,14 +3030,15 @@
 
 /* layout (como no mockup) */
 .ee-engine-right{
-  flex: 0 0 auto;                 /* não estica */
+  flex: 0 1 560px;                 /* <-- permite encolher */
   margin-left: auto;
-  width: fit-content;             /* encaixa no conteúdo */
+  width: 560px;                    /* base */
+  max-width: 100%;                 /* nunca estoura o card */
   display: grid;
-  grid-template-columns: max-content max-content; /* colunas “justas” */
-  gap: 10px;                      /* um pouco mais compacto */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* <-- era max-content */
+  gap: 10px;
   align-items: stretch;
-  min-width: 0;                   /* remove a trava dos 520px */
+  min-width: 0;
 }
 
 .ee-engine-stack{
@@ -3050,6 +3052,7 @@
   border-radius: 16px;
   background: rgba(255,255,255,.02);
   padding: 12px 14px;
+  min-width: 0;
 }
 
 .ee-engine-box .k{
@@ -3071,6 +3074,9 @@
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.10);
   box-shadow: 0 0 18px rgba(0,0,0,.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ee-engine-box.big{ padding: 16px 16px; border-radius: 18px; }
