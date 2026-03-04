@@ -3111,23 +3111,32 @@
   letter-spacing: .02em;
 }
 /* ===== /ENTRY ENGINE ===== */
-/* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + BIGGER FONTS ===== */
+/* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
-  font-size: 15px !important;
-  opacity: .86 !important;
+  font-size: 28px !important;   /* era 15 */
+  opacity: .90 !important;
 }
 
 #indicator-prem-card .win-badge{
-  font-size: 12px !important;
-  padding: 6px 10px !important;
+  font-size: 22px !important;   /* era 12 */
+  padding: 10px 16px !important; /* era 6px 10px */
 }
 
-/* aumenta legibilidade geral (inline styles viram maiores) */
-#indicator-prem-card div[style*="font-size:11px"]{ font-size: 12px !important; }
-#indicator-prem-card div[style*="font-size:12px"]{ font-size: 13px !important; }
-#indicator-prem-card div[style*="font-size:14px"]{ font-size: 16px !important; }
+/* DOBRA legibilidade geral (os inline styles do HTML) */
+#indicator-prem-card div[style*="font-size:11px"]{ font-size: 22px !important; } /* era 12 */
+#indicator-prem-card div[style*="font-size:12px"]{ font-size: 24px !important; } /* era 13 */
+#indicator-prem-card div[style*="font-size:14px"]{ font-size: 30px !important; } /* era 16 */
 
-/* 5 cards em 1 linha: DAY + ZIGZAG maiores, VWAP/RSI/EMA mais squished */
+/* frase longa: aumenta mas não explode layout */
+#indicator-prem-card #indip-vwap-hold-phrase,
+#indicator-prem-card #indip-rsi-hold-phrase,
+#indicator-prem-card #indip-ema-hold-phrase{
+  font-size: 18px !important;
+  opacity: .75 !important;
+  line-height: 1.15 !important;
+}
+
+/* 5 cards em 1 linha: DAY + ZIGZAG maiores, VWAP/RSI/EMA squished */
 #indicator-prem-card > div[style*="display:grid"]{
   grid-template-columns: 1.25fr 1.25fr 0.85fr 0.85fr 0.85fr !important;
   gap: 6px !important;
@@ -3136,22 +3145,22 @@
 
 /* padding padrão dos cards */
 #indicator-prem-card > div[style*="display:grid"] > div{
-  padding: 9px 11px !important;
+  padding: 12px 14px !important;     /* era 9px 11px */
   border-radius: 14px !important;
 }
 
 /* squish extra só nos 3 últimos (VWAP/RSI/EMA) */
 #indicator-prem-card > div[style*="display:grid"] > div:nth-child(n+3){
-  padding: 7px 9px !important;
+  padding: 10px 12px !important;     /* era 7px 9px */
 }
 
 /* em tela menor, volta pro auto-fit (responsivo) */
 @media (max-width: 1400px){
   #indicator-prem-card > div[style*="display:grid"]{
-    grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)) !important;
+    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)) !important;
   }
   #indicator-prem-card > div[style*="display:grid"] > div:nth-child(n+3){
-    padding: 9px 11px !important;
+    padding: 12px 14px !important;
   }
 }
 /* ===== /INDICATORS TOP ROW ===== */
