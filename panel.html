@@ -3111,26 +3111,50 @@
   letter-spacing: .02em;
 }
 /* ===== /ENTRY ENGINE ===== */
-/* ===== INDICATORS (EMA / VWAP / RSI) — BIG FONTS (match Entry Engine) ===== */
+/* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
-  font-size: 14px !important;
-  opacity: .78;
+  font-size: 15px !important;
+  opacity: .86 !important;
 }
-#indicator-prem-card div[style*="font-size:11px"]{ font-size: 11px !important; }
-#indicator-prem-card div[style*="font-size:12px"]{ font-size: 11px !important; }
-#indicator-prem-card div[style*="font-size:14px"]{ font-size: 13px !important; }
-#indicator-prem-card .win-badge{ font-size: 11px !important; padding: 5px 8px !important; }
 
-/* grid compacto pra caber: DAY + ZIGZAG + VWAP + RSI + EMA */
+#indicator-prem-card .win-badge{
+  font-size: 12px !important;
+  padding: 6px 10px !important;
+}
+
+/* aumenta legibilidade geral (inline styles viram maiores) */
+#indicator-prem-card div[style*="font-size:11px"]{ font-size: 12px !important; }
+#indicator-prem-card div[style*="font-size:12px"]{ font-size: 13px !important; }
+#indicator-prem-card div[style*="font-size:14px"]{ font-size: 16px !important; }
+
+/* 5 cards em 1 linha: DAY + ZIGZAG maiores, VWAP/RSI/EMA mais squished */
 #indicator-prem-card > div[style*="display:grid"]{
-  grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)) !important;
-  gap: 8px !important;
+  grid-template-columns: 1.25fr 1.25fr 0.85fr 0.85fr 0.85fr !important;
+  gap: 6px !important;
   margin-top: 8px !important;
 }
+
+/* padding padrão dos cards */
 #indicator-prem-card > div[style*="display:grid"] > div{
-  padding: 8px 10px !important;
+  padding: 9px 11px !important;
+  border-radius: 14px !important;
 }
-/* ===== /INDICATORS BIG FONTS ===== */
+
+/* squish extra só nos 3 últimos (VWAP/RSI/EMA) */
+#indicator-prem-card > div[style*="display:grid"] > div:nth-child(n+3){
+  padding: 7px 9px !important;
+}
+
+/* em tela menor, volta pro auto-fit (responsivo) */
+@media (max-width: 1400px){
+  #indicator-prem-card > div[style*="display:grid"]{
+    grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)) !important;
+  }
+  #indicator-prem-card > div[style*="display:grid"] > div:nth-child(n+3){
+    padding: 9px 11px !important;
+  }
+}
+/* ===== /INDICATORS TOP ROW ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
 
