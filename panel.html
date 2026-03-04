@@ -9593,21 +9593,31 @@ set("indip-ema-hold-phrase",
 
     const dayBiasRaw = (pday?.bias || sfDay?.bias || sfDay?.trend_bias || "neutral");
     const dayBias = String(dayBiasRaw).toUpperCase();
-    const dayConf = (pday?.confidence_pct ?? sfDay?.confidence_pct ?? null);
+    const dayConf = (pday?.confidence_pct ?? sfDay?.confidence_pct ?? (Number.isFinite(sfDay?.score) ? (sfDay.score * 100) : null));
 
     const dayStructTxt = (dayConf != null && isFinite(dayConf))
       ? `${dayName} · ${String(dayBiasRaw)} · ${Math.round(dayConf)}%`
       : `${dayName} · ${String(dayBiasRaw)}`;
 
     set("pday-structure", dayStructTxt);
+// (FIX) Day window/ETA: fallback para premonition_hours / premonition_eod (payload real)
+const dayWin =
+  pday?.day_window || pday?.breakout_window || pday?.window ||
+  deepFind(root, "premonition_hours") ||
+  deepFind(root, "premonition_eod") ||
+  deepFind(digest, "premonition_hours") ||
+  deepFind(digest, "premonition_eod") ||
+  null;
 
-    const dayWin = pday?.day_window || pday?.breakout_window || pday?.window || null;
-    const dayDir = dayWin?.breakout_dir || dayWin?.dir || pday?.breakout_dir || "—";
-    const dayEtaMed = dayWin?.eta_median || dayWin?.eta_med || dayWin?.eta?.median || pday?.eta_median || "—";
-    const dayEtaP75 = dayWin?.eta_p75 || dayWin?.eta?.p75 || pday?.eta_p75 || "—";
+const dayDir = dayWin?.breakout_dir || dayWin?.dir || pday?.breakout_dir || "—";
+const dayEtaMedRaw = dayWin?.eta_median || dayWin?.eta_med || dayWin?.eta?.median || pday?.eta_median || "—";
+const dayEtaP75Raw = dayWin?.eta_p75 || dayWin?.eta?.p75 || pday?.eta_p75 || "—";
 
-    set("pday-window", (dayDir && dayDir !== "—") ? String(dayDir).toUpperCase() : "—");
-    set("pday-eta", `${dayEtaMed} → ${dayEtaP75}`);
+const _clock = (v)=> (typeof fmtClock === "function" ? fmtClock(v) : String(v ?? "—"));
+
+set("pday-window", (dayDir && dayDir !== "—") ? String(dayDir).toUpperCase() : "—");
+set("pday-eta", `${_clock(dayEtaMedRaw)} → ${_clock(dayEtaP75Raw)}`);
+    
 
     const biasLow = String(dayBiasRaw).toLowerCase();
     const dayMode =
