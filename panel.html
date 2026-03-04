@@ -3113,13 +3113,23 @@
 /* ===== /ENTRY ENGINE ===== */
 /* ===== INDICATORS (EMA / VWAP / RSI) — BIG FONTS (match Entry Engine) ===== */
 #indicator-prem-card .prem-breakout-title{
-  font-size: 24px !important;
-  opacity: .75;
+  font-size: 14px !important;
+  opacity: .78;
 }
-#indicator-prem-card div[style*="font-size:11px"]{ font-size: 20px !important; }
-#indicator-prem-card div[style*="font-size:12px"]{ font-size: 20px !important; }
-#indicator-prem-card div[style*="font-size:14px"]{ font-size: 24px !important; }
-#indicator-prem-card .win-badge{ font-size: 18px !important; }
+#indicator-prem-card div[style*="font-size:11px"]{ font-size: 11px !important; }
+#indicator-prem-card div[style*="font-size:12px"]{ font-size: 11px !important; }
+#indicator-prem-card div[style*="font-size:14px"]{ font-size: 13px !important; }
+#indicator-prem-card .win-badge{ font-size: 11px !important; padding: 5px 8px !important; }
+
+/* grid compacto pra caber: DAY + ZIGZAG + VWAP + RSI + EMA */
+#indicator-prem-card > div[style*="display:grid"]{
+  grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+}
+#indicator-prem-card > div[style*="display:grid"] > div{
+  padding: 8px 10px !important;
+}
 /* ===== /INDICATORS BIG FONTS ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
@@ -4425,7 +4435,45 @@
           </div>
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; margin-top:10px;">
+            <!-- PREMONITION DAY (NEW) -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">PREMONITION DAY</div>
+                <span id="pday-badge" class="win-badge win-wait">—</span>
+              </div>
 
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span style="opacity:.70;">STRUCTURE</span>
+                <span id="pday-structure" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">DAY WINDOW</span> <span id="pday-window" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="pday-eta" style="font-weight:950; color:#ffcc66;">—</span></div>
+              </div>
+            </div>
+
+            <!-- ZIGZAG PREMONITION (NEW) -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">ZIGZAG PREMONITION</div>
+                <span id="zz-badge" class="win-badge win-wait">—</span>
+              </div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span style="opacity:.70;">NEXT PIVOT</span>
+                <span id="zz-next" style="color:#ffcc66;">—</span>
+                <span style="opacity:.55;">|</span>
+                <span style="opacity:.70;">H ≤</span> <span id="zz-hz" style="font-weight:950;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CONF</span> <span id="zz-conf" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">PIVOT ZONE</span> <span id="zz-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="zz-eta" style="font-weight:950;">—</span></div>
+                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="zz-context">—</div>
+              </div>
+            </div>
             <!-- VWAP -->
             <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
               <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
@@ -9502,6 +9550,97 @@ set("indip-ema-hold-phrase",
   (eState === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
   `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
 );
+    // ===== PREMONITION DAY (NEW CARD) =====
+    const sfDay = digest?.shape_focus || deepFind(digest,"shape_focus") || deepFind(root,"shape_focus") || {};
+    const pday = deepFind(root, "premonition_day") || deepFind(root,"premonition_day_v1") || digest?.premonition_day || ui?.premonition_day || null;
+
+    const dayName =
+      (pday?.structure_name || pday?.structure || pday?.label ||
+       sfDay?.name_en || sfDay?.name_pt || sfDay?.family_en || sfDay?.family || "—");
+
+    const dayBiasRaw = (pday?.bias || sfDay?.bias || sfDay?.trend_bias || "neutral");
+    const dayBias = String(dayBiasRaw).toUpperCase();
+    const dayConf = (pday?.confidence_pct ?? sfDay?.confidence_pct ?? null);
+
+    const dayStructTxt = (dayConf != null && isFinite(dayConf))
+      ? `${dayName} · ${String(dayBiasRaw)} · ${Math.round(dayConf)}%`
+      : `${dayName} · ${String(dayBiasRaw)}`;
+
+    set("pday-structure", dayStructTxt);
+
+    const dayWin = pday?.day_window || pday?.breakout_window || pday?.window || null;
+    const dayDir = dayWin?.breakout_dir || dayWin?.dir || pday?.breakout_dir || "—";
+    const dayEtaMed = dayWin?.eta_median || dayWin?.eta_med || dayWin?.eta?.median || pday?.eta_median || "—";
+    const dayEtaP75 = dayWin?.eta_p75 || dayWin?.eta?.p75 || pday?.eta_p75 || "—";
+
+    set("pday-window", (dayDir && dayDir !== "—") ? String(dayDir).toUpperCase() : "—");
+    set("pday-eta", `${dayEtaMed} → ${dayEtaP75}`);
+
+    const biasLow = String(dayBiasRaw).toLowerCase();
+    const dayMode =
+      (biasLow.includes("up") || biasLow.includes("bull")) ? "win-now" :
+      (biasLow.includes("down") || biasLow.includes("bear")) ? "win-warn" :
+      "win-wait";
+
+    const dayBadgeTxt = (dayConf != null && isFinite(dayConf))
+      ? `DAY: ${dayBias} · ${Math.round(dayConf)}%`
+      : `DAY: ${dayBias}`;
+
+    setBadge("pday-badge", dayBadgeTxt, dayMode);
+
+    // ===== ZIGZAG PREMONITION (NEW CARD) =====
+    const zz =
+      root?.zigzag_premonition_v1 ||
+      ui?.zigzag_premonition_v1 ||
+      digest?.zigzag_premonition_v1 ||
+      panel?.zigzag_premonition_v1 ||
+      root?.exec_1x1?.zigzag_premonition_v1 ||
+      null;
+
+    if (zz){
+      const next = String(zz?.state?.next_pivot_kind || zz?.state?.next_pivot || "—").toUpperCase();
+      const hz = zz?.chosen?.highlight_horizon_bars ?? zz?.chosen?.horizon_bars ?? "—";
+      const hi = zz?.chosen?.highlight || zz?.chosen?.best || zz?.chosen || null;
+
+      const prob = hi?.prob_pivot_pct;
+      const eta50 = hi?.eta_p50_bars;
+      const eta75 = hi?.eta_p75_bars;
+      const p50 = hi?.target_price_p50;
+      const p75 = hi?.target_price_p75;
+
+      const legNow = String(zz?.state?.current_leg || "—").toUpperCase();
+      const dist = zz?.state?.dist_from_pivot_atr;
+
+      set("zz-next", next);
+      set("zz-hz", hz);
+      set("zz-conf", fmtPct(prob));
+      set("zz-zone", (p50 != null && p75 != null) ? `${fmt2(p50)} → ${fmt2(p75)}` : "—");
+      set("zz-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
+      set("zz-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
+
+      const pnum = Number(prob);
+      let mode = "win-wait";
+      let badgeTxt = "NOISE";
+
+      if (Number.isFinite(pnum)){
+        if (pnum >= 80){ mode="win-now";  badgeTxt="PRIMARY ROUTE"; }
+        else if (pnum >= 60){ mode="win-warn"; badgeTxt="CAUTION"; }
+        else { mode="win-wait"; badgeTxt="NOISE"; }
+      }
+
+      setBadge("zz-badge", badgeTxt, mode);
+
+      const zzb = document.getElementById("zz-badge");
+      if (zzb){
+        if (Number.isFinite(pnum) && pnum >= 80) zzb.classList.add("pulse-micro");
+        else zzb.classList.remove("pulse-micro");
+      }
+
+    } else {
+      setBadge("zz-badge", "—", "win-wait");
+      set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
+      set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
+    }
   }catch(e){
     // não quebra o painel
   }
