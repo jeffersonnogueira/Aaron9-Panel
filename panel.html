@@ -9650,32 +9650,57 @@ set("pday-eta", `${_clock(dayEtaMedRaw)} → ${_clock(dayEtaP75Raw)}`);
       const eta75 = hi?.eta_p75_bars;
       const p50 = hi?.target_price_p50;
       const p75 = hi?.target_price_p75;
-
+// [ADD] (after line 9652)
+const atr14 = Number(zz?.atr14);
+const zoneLo = (p50 != null && p75 != null) ? Math.min(p50, p75) : null;
+const zoneHi = (p50 != null && p75 != null) ? Math.max(p50, p75) : null;
+const zoneW  = (zoneLo != null && zoneHi != null) ? (zoneHi - zoneLo) : null;
+const zoneW_ATR = (Number.isFinite(zoneW) && Number.isFinite(atr14) && atr14 > 0) ? (zoneW / atr14) : null;
       const legNow = String(zz?.state?.current_leg || "—").toUpperCase();
       const dist = zz?.state?.dist_from_pivot_atr;
 
       set("zz-next", next);
       set("zz-hz", hz);
       set("zz-conf", fmtPct(prob));
-      set("zz-zone", (p50 != null && p75 != null) ? `${fmt2(p50)} → ${fmt2(p75)}` : "—");
+      // [REPLACE] line 9660
+set("zz-zone", (zoneLo != null && zoneHi != null) ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)}` : "—");
       set("zz-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
       set("zz-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
 
-      const pnum = Number(prob);
-      let mode = "win-wait";
-      let badgeTxt = "NOISE";
+      // [REPLACE] lines 9664–9674
+const pnum = Number(prob);
 
-      if (Number.isFinite(pnum)){
-        if (pnum >= 80){ mode="win-now";  badgeTxt="PRIMARY ROUTE"; }
-        else if (pnum >= 60){ mode="win-warn"; badgeTxt="CAUTION"; }
-        else { mode="win-wait"; badgeTxt="NOISE"; }
-      }
+// thresholds (ajuste se quiser)
+const STRONG_MIN   = 80;
+const NOISE_MAX    = 65;
+const ZONE_ATR_MAX = 1.50;  // zona “larga” acima disso vira NOISE
+
+const isWide = (zoneW_ATR != null && zoneW_ATR > ZONE_ATR_MAX);
+
+let mode = "win-wait";
+let badgeTxt = "NOISE ZONE";
+
+if (Number.isFinite(pnum)){
+  if (pnum >= STRONG_MIN && !isWide){
+    mode = "win-now";
+    badgeTxt = "STRONG PIVOT";
+  } else if (pnum < NOISE_MAX || isWide){
+    mode = "win-wait";
+    badgeTxt = "NOISE ZONE";
+  } else {
+    mode = "win-warn";
+    badgeTxt = "CAUTION";
+  }
+}
+
+setBadge("zz-badge", badgeTxt, mode);
 
       setBadge("zz-badge", badgeTxt, mode);
 
       const zzb = document.getElementById("zz-badge");
       if (zzb){
-        if (Number.isFinite(pnum) && pnum >= 80) zzb.classList.add("pulse-micro");
+        // [REPLACE] line 9678
+if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("pulse-micro");
         else zzb.classList.remove("pulse-micro");
       }
 
