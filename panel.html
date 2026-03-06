@@ -3164,6 +3164,42 @@
   }
 }
 /* ===== /INDICATORS TOP ROW ===== */
+/* ===== ZIGZAG ROUTE ENGINE — SAME FONT SIZE AS PREMONITION DAY ===== */
+#zz-route-card .prem-breakout-title{
+  font-size: 28px !important;
+  opacity: .90 !important;
+}
+
+#zz-route-card .win-badge{
+  font-size: 22px !important;
+  padding: 10px 16px !important;
+}
+
+/* segue o mesmo scaling do indicator-prem-card */
+#zz-route-card div[style*="font-size:11px"]{ font-size: 22px !important; }
+#zz-route-card div[style*="font-size:12px"]{ font-size: 24px !important; }
+#zz-route-card div[style*="font-size:14px"]{ font-size: 30px !important; }
+
+/* texto de rodapé / cancel */
+#zz-route-card #zzr-cancel{
+  font-size: 18px !important;
+  line-height: 1.15 !important;
+  opacity: .75 !important;
+}
+
+/* dá o mesmo respiro visual dos cards de cima */
+#zz-route-card > div[style*="display:grid"] > div{
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* responsivo */
+@media (max-width: 1400px){
+  #zz-route-card > div[style*="display:grid"]{
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  }
+}
+/* ===== /ZIGZAG ROUTE ENGINE ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
 
