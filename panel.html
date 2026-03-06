@@ -17573,21 +17573,25 @@ const tpTxt = (() => {
 })();
 (function(){
   function placeEntryEnginesInOwnColumns(){
-    // MICRO: vai para dentro da coluna micro
     const microCol = document.getElementById("mm-col-micro");
-    const microCard = document.getElementById("ee-engine-card");
-    if (microCol && microCard && microCol.firstElementChild !== microCard){
-      microCol.insertAdjacentElement("afterbegin", microCard);
+    const microMap = document.getElementById("micro-map-card");
+    const entryEngine = document.getElementById("ee-engine-card");
+
+    if (microCol && microMap && entryEngine){
+      if (microCol.firstElementChild !== entryEngine){
+        microCol.appendChild(entryEngine);
+      }
+      if (entryEngine.nextElementSibling !== microMap){
+        entryEngine.insertAdjacentElement("afterend", microMap);
+      }
     }
 
-    // MACRO MAX: continua acima do macro map correto
     const macroCard = document.getElementById("ee-macro-engine-card");
     const macroAnchor = document.getElementById("macro-map-card");
     if (macroCard && macroAnchor && macroCard.nextElementSibling !== macroAnchor){
       macroAnchor.insertAdjacentElement("beforebegin", macroCard);
     }
 
-    // MACRO MIN: continua acima do macro min map correto
     const macroMinCard = document.getElementById("ee-macro-min-engine-card");
     const macroMinAnchor = document.getElementById("macro-min-map-card");
     if (macroMinCard && macroMinAnchor && macroMinCard.nextElementSibling !== macroMinAnchor){
