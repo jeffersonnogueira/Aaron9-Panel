@@ -17572,37 +17572,41 @@ const tpTxt = (() => {
   else updateEEBrain();
 })();
 (function(){
-  function placeEntryEnginesInOwnColumns(){
-    const microCol = document.getElementById("mm-col-micro");
-    const microMap = document.getElementById("micro-map-card");
-    const entryEngine = document.getElementById("ee-engine-card");
+  function placeMicroAndEntryUnderZigzagRoute(){
+    // ===== MICRO: mover o bloco amarelo inteiro para a coluna micro =====
+    const microCol   = document.getElementById("mm-col-micro");
+    const microMap   = document.getElementById("micro-map-card");
+    const microPanel = document.querySelector("#micro-map-card + .premonition-panel");
+    const microEE    = document.getElementById("ee-engine-card");
 
-    if (microCol && microMap && entryEngine){
-      if (microCol.firstElementChild !== entryEngine){
-        microCol.appendChild(entryEngine);
-      }
-      if (entryEngine.nextElementSibling !== microMap){
-        entryEngine.insertAdjacentElement("afterend", microMap);
-      }
+    if (microCol) {
+      [microMap, microPanel, microEE].forEach((el) => {
+        if (!el) return;
+        if (el.parentElement !== microCol) {
+          microCol.appendChild(el);
+        }
+      });
     }
 
-    const macroCard = document.getElementById("ee-macro-engine-card");
-    const macroAnchor = document.getElementById("macro-map-card");
-    if (macroCard && macroAnchor && macroCard.nextElementSibling !== macroAnchor){
-      macroAnchor.insertAdjacentElement("beforebegin", macroCard);
+    // ===== MACRO MAX: engine acima do macro map =====
+    const macroEE = document.getElementById("ee-macro-engine-card");
+    const macroMap = document.getElementById("macro-map-card");
+    if (macroEE && macroMap && macroEE.nextElementSibling !== macroMap) {
+      macroMap.insertAdjacentElement("beforebegin", macroEE);
     }
 
-    const macroMinCard = document.getElementById("ee-macro-min-engine-card");
-    const macroMinAnchor = document.getElementById("macro-min-map-card");
-    if (macroMinCard && macroMinAnchor && macroMinCard.nextElementSibling !== macroMinAnchor){
-      macroMinAnchor.insertAdjacentElement("beforebegin", macroMinCard);
+    // ===== MACRO MIN: engine acima do macro min map =====
+    const macroMinEE = document.getElementById("ee-macro-min-engine-card");
+    const macroMinMap = document.getElementById("macro-min-map-card");
+    if (macroMinEE && macroMinMap && macroMinEE.nextElementSibling !== macroMinMap) {
+      macroMinMap.insertAdjacentElement("beforebegin", macroMinEE);
     }
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", placeEntryEnginesInOwnColumns);
+    document.addEventListener("DOMContentLoaded", placeMicroAndEntryUnderZigzagRoute);
   } else {
-    placeEntryEnginesInOwnColumns();
+    placeMicroAndEntryUnderZigzagRoute();
   }
 })();
 </script>
