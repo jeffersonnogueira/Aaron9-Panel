@@ -4684,6 +4684,9 @@
           </div>
         </div>
         <!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
+                 <!-- ===== ENTRY ENGINES DOCK — BELOW ZIGZAG ROUTE ===== -->
+        <div class="mm-dual-grid" id="ee-route-dock" style="margin-top:10px;"></div>
+        <!-- ===== /ENTRY ENGINES DOCK ===== -->
         <!-- ===== /INDICATORS ===== -->
       <div class="premonition-chart">
        
@@ -17569,6 +17572,31 @@ const tpTxt = (() => {
   setInterval(updateEEBrain, 750);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", updateEEBrain);
   else updateEEBrain();
+})();
+(function(){
+  function dockEntryEnginesBelowZigzagRoute(){
+    const dock = document.getElementById("ee-route-dock");
+    if (!dock) return;
+
+    const ids = [
+      "ee-engine-card",
+      "ee-macro-engine-card",
+      "ee-macro-min-engine-card"
+    ];
+
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.parentElement === dock) return;
+      dock.appendChild(el);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", dockEntryEnginesBelowZigzagRoute);
+  } else {
+    dockEntryEnginesBelowZigzagRoute();
+  }
 })();
 </script>
 
