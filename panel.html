@@ -4576,6 +4576,78 @@
 
           </div>
         </div>
+                <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
+        <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:10px; grid-column: 1 / -1;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
+            <span id="zzr-badge" class="win-badge win-wait">—</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px; margin-top:10px;">
+            <!-- MODE / STATUS -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">MODE</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-mode" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">STATUS</span> <span id="zzr-status" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">CURRENT</span> <span id="zzr-current" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">NEXT PIVOT</span> <span id="zzr-next" style="font-weight:950; color:#ffcc66;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 1 -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 1</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step1" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step1state" style="font-weight:950;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 2</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step2" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step2state" style="font-weight:950;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 3 / ARRIVE -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 3 / ARRIVE</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step3" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step3state" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ARRIVE ZONE</span> <span id="zzr-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px; font-size:12px; line-height:1.45;">
+            <div><span style="opacity:.7;">ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
+            <div style="margin-top:3px;"><span style="opacity:.7;">LAYER 2</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
+            <div style="margin-top:3px;"><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
+            <div style="margin-top:6px; font-size:11px; opacity:.72;" id="zzr-cancel">—</div>
+          </div>
+        </div>
+        <!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
         <!-- ===== /INDICATORS ===== -->
       <div class="premonition-chart">
        
@@ -9709,6 +9781,149 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
       set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
       set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
     }
+        // ===== ZIGZAG ROUTE ENGINE (NEW BLOCK) =====
+    {
+      const clearZZRoute = () => {
+        setBadge("zzr-badge", "—", "win-wait");
+        set("zzr-mode", "—");
+        set("zzr-status", "—");
+        set("zzr-current", "—");
+        set("zzr-next", "—");
+        set("zzr-step1", "—");
+        set("zzr-step1state", "—");
+        set("zzr-step2", "—");
+        set("zzr-step2state", "—");
+        set("zzr-step3", "—");
+        set("zzr-step3state", "—");
+        set("zzr-zone", "—");
+        set("zzr-eta", "—");
+        set("zzr-layer2", "—");
+        set("zzr-context", "—");
+        set("zzr-cancel", "—");
+      };
+
+      if (!zz) {
+        clearZZRoute();
+      } else {
+        const next = String(zz?.state?.next_pivot_kind || zz?.state?.next_pivot || "—").toUpperCase();
+        const hz = zz?.chosen?.highlight_horizon_bars ?? zz?.chosen?.horizon_bars ?? "—";
+        const hi = zz?.chosen?.highlight || zz?.chosen?.best || zz?.chosen || null;
+
+        const eta50 = hi?.eta_p50_bars;
+        const eta75 = hi?.eta_p75_bars;
+        const p50 = hi?.target_price_p50;
+        const p75 = hi?.target_price_p75;
+        const dist = zz?.state?.dist_from_pivot_atr;
+        const legNow = String(zz?.state?.current_leg || "—").toUpperCase();
+        const atr14 = Number(zz?.atr14);
+
+        const zoneLo = (p50 != null && p75 != null) ? Math.min(Number(p50), Number(p75)) : null;
+        const zoneHi = (p50 != null && p75 != null) ? Math.max(Number(p50), Number(p75)) : null;
+
+        const currentCandidates = [
+          panel?.price_now, panel?.last_price,
+          ui?.price_now, ui?.last_price,
+          digest?.price_now, digest?.last_price, digest?.price,
+          document.getElementById("prem-right-current-price")?.textContent,
+          document.getElementById("prem-head-current-price")?.textContent
+        ]
+          .map(v => Number(v))
+          .filter(v => Number.isFinite(v));
+
+        const current = currentCandidates.length ? currentCandidates[0] : null;
+
+        const isHigh = next.includes("HIGH");
+        const isLow  = next.includes("LOW");
+
+        const targetEdge =
+          (isHigh && zoneLo != null) ? zoneLo :
+          (isLow  && zoneHi != null) ? zoneHi :
+          null;
+
+        let step1 = null, step2 = null, step3 = null;
+
+        if (current != null && targetEdge != null) {
+          const routeDist = targetEdge - current;
+          step1 = current + (routeDist * 0.3333333333);
+          step2 = current + (routeDist * 0.6666666667);
+          step3 = targetEdge;
+        }
+
+        const eps = (Number.isFinite(atr14) && atr14 > 0) ? (atr14 * 0.03) : 0.01;
+
+        const arrived =
+          (current != null && zoneLo != null && zoneHi != null)
+            ? (current >= (zoneLo - eps) && current <= (zoneHi + eps))
+            : false;
+
+        const passed1 =
+          (current != null && step1 != null)
+            ? (isHigh ? current >= (step1 - eps) : isLow ? current <= (step1 + eps) : false)
+            : false;
+
+        const passed2 =
+          (current != null && step2 != null)
+            ? (isHigh ? current >= (step2 - eps) : isLow ? current <= (step2 + eps) : false)
+            : false;
+
+        const passed3 =
+          (current != null && step3 != null)
+            ? (isHigh ? current >= (step3 - eps) : isLow ? current <= (step3 + eps) : false)
+            : false;
+
+        let statusTxt = "ARMED";
+        if (arrived) statusTxt = "ARRIVED";
+        else if (passed3) statusTxt = "STEP 3 PASSED";
+        else if (passed2) statusTxt = "STEP 2 PASSED";
+        else if (passed1) statusTxt = "STEP 1 PASSED";
+
+        let badgeTxt = "ARMED";
+        let badgeMode = "win-wait";
+
+        if (arrived) {
+          badgeTxt = "ARRIVED";
+          badgeMode = "win-now";
+        } else if (passed2 || passed3) {
+          badgeTxt = "ROUTE LIVE";
+          badgeMode = "win-now";
+        } else if (passed1) {
+          badgeTxt = "ROUTE LIVE";
+          badgeMode = "win-warn";
+        }
+
+        const modeTxt =
+          isHigh ? "ROUTE TO PIVOT HIGH" :
+          isLow  ? "ROUTE TO PIVOT LOW"  :
+          "ROUTE —";
+
+        const layer2Txt =
+          isHigh ? "After arrival: PIVOT CONFIRM DOWN" :
+          isLow  ? "After arrival: PIVOT CONFIRM UP"   :
+          "After arrival: PIVOT CONFIRM —";
+
+        setBadge("zzr-badge", badgeTxt, badgeMode);
+        set("zzr-mode", modeTxt);
+        set("zzr-status", statusTxt);
+        set("zzr-current", fmt2(current));
+        set("zzr-next", `${next} | H≤ ${hz}`);
+
+        set("zzr-step1", fmt2(step1));
+        set("zzr-step1state", passed1 ? "PASSED ✅" : "WAIT ⏳");
+
+        set("zzr-step2", fmt2(step2));
+        set("zzr-step2state", passed2 ? "PASSED ✅" : "WAIT ⏳");
+
+        set("zzr-step3", fmt2(step3));
+        set("zzr-step3state", arrived ? "ARRIVED ✅" : (passed3 ? "PASSED ✅" : "WAIT ⏳"));
+
+        set("zzr-zone", (zoneLo != null && zoneHi != null) ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)}` : "—");
+        set("zzr-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
+        set("zzr-layer2", layer2Txt);
+        set("zzr-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
+        set("zzr-cancel", "Cancel if pivot flips, ETA P75 expires, or route is lost by > 0.35 ATR.");
+      }
+    }
+    // ===== /ZIGZAG ROUTE ENGINE =====
   }catch(e){
     // não quebra o painel
   }
