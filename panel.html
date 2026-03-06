@@ -17580,16 +17580,19 @@ const tpTxt = (() => {
     const microPanel = microMap ? microMap.nextElementSibling : null;
 
     if (microCol && microEE && microMap && microPanel) {
-      // limpa a ordem atual e recria na ordem certa
-      if (microEE.parentElement !== microCol) microCol.appendChild(microEE);
-      if (microMap.parentElement !== microCol) microCol.appendChild(microMap);
-      if (microPanel.parentElement !== microCol) microCol.appendChild(microPanel);
+  // move tudo para a coluna MICRO
+  if (microEE.parentElement !== microCol) microCol.appendChild(microEE);
+  if (microMap.parentElement !== microCol) microCol.appendChild(microMap);
+  if (microPanel.parentElement !== microCol) microCol.appendChild(microPanel);
 
-      // força a ordem correta:
-      microCol.appendChild(microEE);
-      microCol.appendChild(microMap);
-      microCol.appendChild(microPanel);
-    }
+  // ORDEM FINAL:
+  // 1) Entry Engine
+  // 2) Micro Map (Now)
+  // 3) Painel do Micro
+  microCol.appendChild(microEE);
+  microCol.appendChild(microMap);
+  microCol.appendChild(microPanel);
+}
 
     // ===== MACRO MAX =====
     const macroCol = document.getElementById("mm-col-macro");
