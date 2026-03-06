@@ -4684,9 +4684,7 @@
           </div>
         </div>
         <!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
-                 <!-- ===== ENTRY ENGINES DOCK — BELOW ZIGZAG ROUTE ===== -->
-        <div class="mm-dual-grid" id="ee-route-dock" style="margin-top:10px;"></div>
-        <!-- ===== /ENTRY ENGINES DOCK ===== -->
+                
         <!-- ===== /INDICATORS ===== -->
       <div class="premonition-chart">
        
@@ -17574,28 +17572,29 @@ const tpTxt = (() => {
   else updateEEBrain();
 })();
 (function(){
-  function dockEntryEnginesBelowZigzagRoute(){
-    const dock = document.getElementById("ee-route-dock");
-    if (!dock) return;
-
-    const ids = [
-      "ee-engine-card",
-      "ee-macro-engine-card",
-      "ee-macro-min-engine-card"
+  function placeEntryEnginesInOwnColumns(){
+    const placements = [
+      { cardId: "ee-engine-card",           anchorId: "micro-map-card" },
+      { cardId: "ee-macro-engine-card",     anchorId: "macro-map-card" },
+      { cardId: "ee-macro-min-engine-card", anchorId: "macro-min-map-card" }
     ];
 
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (el.parentElement === dock) return;
-      dock.appendChild(el);
+    placements.forEach(({ cardId, anchorId }) => {
+      const card = document.getElementById(cardId);
+      const anchor = document.getElementById(anchorId);
+      if (!card || !anchor) return;
+
+      // já está exatamente acima do bloco certo
+      if (card.nextElementSibling === anchor) return;
+
+      anchor.insertAdjacentElement("beforebegin", card);
     });
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", dockEntryEnginesBelowZigzagRoute);
+    document.addEventListener("DOMContentLoaded", placeEntryEnginesInOwnColumns);
   } else {
-    dockEntryEnginesBelowZigzagRoute();
+    placeEntryEnginesInOwnColumns();
   }
 })();
 </script>
