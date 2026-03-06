@@ -4577,6 +4577,46 @@
           </div>
         </div>
         <!-- ===== ZIGZAG ENGINE (Touch → Confirm → Cancel) — BELOW INDICATORS ===== -->
+         <!-- ===== ZIGZAG ROUTE ENGINE (Steps → Pivot Zone) — BELOW INDICATORS ===== -->
+<div class="prem-breakout-wrap" id="zz-engine-card" style="margin-top:10px; grid-column: 1 / -1;">
+  <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE · (Steps → Pivot Zone)</div>
+
+  <div class="ee-engine-top">
+    <div class="ee-engine-left">
+      <div class="ee-engine-pill loading" id="zz-engine-pill">LOADING</div>
+
+      <div class="ee-engine-meta">
+        <span class="ee-engine-dir" id="zz-engine-dir">—</span>
+        <span class="ee-engine-prob" id="zz-engine-prob">—</span>
+      </div>
+
+      <div class="ee-engine-mode" id="zz-engine-mode">—</div>
+      <div class="ee-engine-rule" id="zz-engine-rule">—</div>
+    </div>
+
+    <div class="ee-engine-right">
+      <div class="ee-engine-box big">
+        <div class="k">PIVOT ZONE (ARRIVE)</div>
+        <div class="v" id="zz-engine-touch">—</div>
+      </div>
+
+      <div class="ee-engine-stack">
+        <div class="ee-engine-box stack">
+          <div class="k">STEP 1</div>
+          <div class="v" id="zz-engine-confirm">—</div>
+        </div>
+
+        <div class="ee-engine-box stack">
+          <div class="k">STEP 2</div>
+          <div class="v" id="zz-engine-cancel">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ee-engine-note" id="zz-engine-note">—</div>
+</div>
+<!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
 <div class="prem-breakout-wrap" id="zz-engine-card" style="margin-top:10px; grid-column: 1 / -1;">
   <div class="prem-breakout-title">ZIGZAG ENGINE · (Touch → Confirm → Cancel)</div>
 
@@ -9703,6 +9743,153 @@ const zoneW_ATR = (Number.isFinite(zoneW) && Number.isFinite(atr14) && atr14 > 0
       set("zz-hz", hz);
       set("zz-conf", fmtPct(prob));
       // [REPLACE] line 9660
+      // ===== ZIGZAG ROUTE ENGINE (Steps → Pivot Zone) =====
+if (document.getElementById("zz-engine-card")) {
+  try {
+    const pivotKindRaw = String(zz?.state?.next_pivot_kind || zz?.state?.next_pivot || "").toLowerCase();
+    const isLow  = pivotKindRaw.includes("low");
+    const isHigh = pivotKindRaw.includes("high");
+
+    // BUY quando o próximo pivot é LOW (rota pra baixo). SELL quando o próximo pivot é HIGH (rota pra cima).
+    const side = isLow ? "BUY" : (isHigh ? "SELL" : "—");
+    const routeDir = isHigh ? "UP" : (isLow ? "DOWN" : "—"); // direção para ALCANÇAR a pivot zone
+
+    // Preço atual: usa o mesmo pxLive dos indicadores (fallbacks)
+    const priceNow = Number.isFinite(Number(pxLive))
+      ? Number(pxLive)
+      : Number(panel?.price_now ?? panel?.last_price ?? root?.price_now ?? root?.last_price ?? root?.candle?.close);
+
+    // Pivot zone (já calculada acima como zoneLo/zoneHi)
+    // Para chegar numa HIGH zone: "arrive" é tocar o limite de baixo (zoneLo).
+    // Para chegar numa LOW zone: "arrive" é tocar o limite de cima (zoneHi).
+    const arrivePx = (zoneLo != null && zoneHi != null)
+      ? (isHigh ? zoneLo : (isLow ? zoneHi : null))
+      : null;
+
+    // Candles index (pra timeout)
+    let lastIdx = null;
+    if (typeof a10ChartCandles !== "undefined" && Array.isArray(a10ChartCandles) && a10ChartCandles.length) {
+      lastIdx = a10ChartCandles.length - 1;
+    }
+
+    // Estado persistente (reseta quando muda o pivot/zone/horizon)
+    const key = `${pivotKindRaw}|${hz}|${zoneLo}|${zoneHi}`;
+    const R = window.__ZZ_ROUTE_STATE__ || (window.__ZZ_ROUTE_STATE__ = {});
+
+    if (R.key !== key) {
+      R.key = key;
+      R.anchor = Number.isFinite(priceNow) ? priceNow : null;
+      R.startIdx = lastIdx;
+      R.status = "ARMED";
+    }
+
+    // Helpers UI
+    const pill = document.getElementById("zz-engine-pill");
+    const setPill = (txt, cls) => {
+      if (!pill) return;
+      pill.classList.remove("loading", "armed", "confirmed", "failed");
+      pill.classList.add(cls);
+      pill.textContent = txt;
+    };
+
+    // Se não tem dados suficientes
+    if (!Number.isFinite(priceNow) || arrivePx == null || zoneLo == null || zoneHi == null) {
+      setPill("LOADING", "loading");
+      set("zz-engine-dir", side);
+      set("zz-engine-prob", fmtPct(prob));
+      set("zz-engine-mode", `${side} · ROUTE ${routeDir} → ${isLow ? "PIVOT LOW" : (isHigh ? "PIVOT HIGH" : "—")} · H≤${hz}`);
+      set("zz-engine-rule", `Steps to zone · ETA ${eta50 ?? "—"}→${eta75 ?? "—"} bars`);
+      set("zz-engine-touch", "—");
+      set("zz-engine-confirm", "—");
+      set("zz-engine-cancel", "—");
+      set("zz-engine-note", "Waiting for price + pivot zone…");
+      return;
+    }
+
+    // In-zone / reached logic
+    const inZone = (priceNow >= zoneLo && priceNow <= zoneHi);
+    const reached = (routeDir === "UP") ? (priceNow >= arrivePx) : (routeDir === "DOWN") ? (priceNow <= arrivePx) : false;
+
+    // Steps (baseado no anchor → arrivePx)
+    const A = Number.isFinite(Number(R.anchor)) ? Number(R.anchor) : priceNow;
+    const T = arrivePx;
+
+    // Se já está "do outro lado", cola steps no arrive
+    let step1 = A + (T - A) * 0.33;
+    let step2 = A + (T - A) * 0.66;
+    let step3 = T;
+
+    // Normaliza steps para não ficar invertido em casos extremos
+    if (routeDir === "UP") {
+      step1 = Math.min(step1, step2, step3);
+      step2 = Math.max(Math.min(step2, step3), step1);
+      step3 = Math.max(step1, step2, step3);
+    } else if (routeDir === "DOWN") {
+      step1 = Math.max(step1, step2, step3);
+      step2 = Math.min(Math.max(step2, step3), step1);
+      step3 = Math.min(step1, step2, step3);
+    }
+
+    // Cancel: se andar contra a rota por ~0.75 ATR (heurístico honesto)
+    const cancelLvl = (Number.isFinite(Number(atr14)) && atr14 > 0)
+      ? (routeDir === "UP" ? (A - 0.75 * atr14) : (A + 0.75 * atr14))
+      : null;
+
+    const cancelHit = (cancelLvl != null)
+      ? (routeDir === "UP" ? (priceNow <= cancelLvl) : (routeDir === "DOWN" ? (priceNow >= cancelLvl) : false))
+      : false;
+
+    // Timeout simples (se passar do ETA P75 + 1 bar e não chegou)
+    const eta75bars = Number.isFinite(Number(eta75)) ? Number(eta75) : null;
+    const barsSince = (Number.isFinite(Number(R.startIdx)) && Number.isFinite(Number(lastIdx))) ? (lastIdx - R.startIdx) : null;
+    const timeoutHit = (eta75bars != null && barsSince != null) ? (barsSince > (eta75bars + 1) && !reached && !inZone) : false;
+
+    // Decide status
+    let status = "ARMED";
+    if (cancelHit) status = "CANCELLED";
+    else if (timeoutHit) status = "TIMEOUT";
+    else if (inZone || reached) status = "ARRIVED";
+    else if (routeDir === "UP") {
+      if (priceNow >= step2) status = "STEP2";
+      else if (priceNow >= step1) status = "STEP1";
+    } else if (routeDir === "DOWN") {
+      if (priceNow <= step2) status = "STEP2";
+      else if (priceNow <= step1) status = "STEP1";
+    }
+
+    // UI header
+    set("zz-engine-dir", side);
+    set("zz-engine-prob", fmtPct(prob));
+    set("zz-engine-mode", `${side} · ROUTE ${routeDir} → ${isLow ? "PIVOT LOW" : (isHigh ? "PIVOT HIGH" : "—")} · H≤${hz}`);
+    set("zz-engine-rule", `Steps to zone · ETA ${eta50 ?? "—"}→${eta75 ?? "—"} bars`);
+
+    // Right boxes
+    set("zz-engine-touch", `${fmt2(zoneLo)} → ${fmt2(zoneHi)}`);   // Pivot Zone (Arrive)
+    set("zz-engine-confirm", fmt2(step1));                        // STEP 1
+    set("zz-engine-cancel", fmt2(step2));                         // STEP 2
+
+    // Pill style
+    if (status === "ARRIVED") setPill("ARRIVED", "confirmed");
+    else if (status === "STEP1" || status === "STEP2" || status === "ARMED") setPill(status, "armed");
+    else if (status === "CANCELLED" || status === "TIMEOUT") setPill(status, "failed");
+    else setPill("LOADING", "loading");
+
+    // Note (mostra STEP3 + cancel + barras)
+    const step3Txt = fmt2(step3);
+    const cancelTxt = (cancelLvl != null) ? fmt2(cancelLvl) : "—";
+    const barsTxt = (barsSince != null) ? `${barsSince}b` : "—";
+    const etaTxt = (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—";
+
+    set(
+      "zz-engine-note",
+      `Route: STEP1 ${fmt2(step1)} · STEP2 ${fmt2(step2)} · STEP3 ${step3Txt} → ZONE ${fmt2(zoneLo)}–${fmt2(zoneHi)} | Cancel: ${cancelTxt} | Bars: ${barsTxt} | ETA: ${etaTxt}`
+    );
+
+  } catch (e) {
+    // não deixa quebrar o painel
+  }
+}
+// ===== /ZIGZAG ROUTE ENGINE =====
 set("zz-zone", (zoneLo != null && zoneHi != null) ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)}` : "—");
       set("zz-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
       set("zz-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
