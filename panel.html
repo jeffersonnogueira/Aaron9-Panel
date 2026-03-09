@@ -10090,11 +10090,48 @@ const txt15 = rows.find(r => r.id === "ve-h15")?.txt || "—";
 const txt30 = rows.find(r => r.id === "ve-h30")?.txt || "—";
 const txt60 = rows.find(r => r.id === "ve-h60")?.txt || "—";
 
-const h1Risk   = txt1.includes("EXHAUSTION");
-const h5Sup    = isSupportive(txt5);
-const h15Sup   = isSupportive(txt15);
-const h30Sup   = isSupportive(txt30);
-const h60Sup   = isSupportive(txt60);
+const tfState = (txt) => {
+  const t = String(txt || "").toUpperCase();
+  if (!t || t === "—") return "missing";
+
+  const sameSide =
+    sideBias !== "—" && t.includes(sideBias);
+
+  const oppositeSide =
+    sideBias === "SHORT" ? t.includes("LONG") :
+    sideBias === "LONG"  ? t.includes("SHORT") :
+    false;
+
+  if (t.includes("EXHAUSTION")) {
+    return oppositeSide ? "against" : "noise";
+  }
+
+  if (sameSide && t.includes("CONTINUATION")) return "strong";
+  if (sameSide && t.includes("WEAKENING"))    return "weak";
+
+  if (oppositeSide && (
+    t.includes("CONTINUATION") ||
+    t.includes("WEAKENING") ||
+    t.includes("EXHAUSTION")
+  )) {
+    return "against";
+  }
+
+  return "neutral";
+};
+
+const s1  = tfState(txt1);
+const s5  = tfState(txt5);
+const s15 = tfState(txt15);
+const s30 = tfState(txt30);
+const s60 = tfState(txt60);
+
+const sameSideState = (s) => s === "strong" || s === "weak";
+const weakOrNoise   = (s) => s === "weak" || s === "noise";
+const neutralish    = (s) => s === "neutral" || s === "missing";
+const hostile       = (s) => s === "against";
+
+const h1Risk = s1 === "noise";
 
 const sideWord =
   sideBias === "SHORT" ? "short" :
@@ -10105,13 +10142,42 @@ let reading = "—";
 
 if (readingIn) {
   reading = readingIn;
-} else if (h1Risk && h5Sup && h15Sup && h30Sup && h60Sup) {
+} else if (
+  h1Risk &&
+  s5 === "strong" &&
+  s15 === "strong" &&
+  sameSideState(s30) &&
+  sameSideState(s60)
+) {
   reading = `Hold — 1m noise only.`;
-} else if (h1Risk && h5Sup && h15Sup && (h30Sup || h60Sup)) {
+} else if (
+  h1Risk &&
+  sameSideState(s5) &&
+  sameSideState(s15) &&
+  (sameSideState(s30) || sameSideState(s60))
+) {
   reading = `Hold with caution.`;
-} else if (h1Risk && !h5Sup && h15Sup && h30Sup && h60Sup) {
+} else if (
+  h1Risk &&
+  !hostile(s5) &&
+  !hostile(s15) &&
+  (weakOrNoise(s5) || weakOrNoise(s15)) &&
+  sameSideState(s30) &&
+  sameSideState(s60)
+) {
   reading = `Immediate motor weakening.`;
-} else if (h1Risk && !h5Sup && !h15Sup) {
+} else if (
+  h1Risk &&
+  (
+    hostile(s5) ||
+    hostile(s15) ||
+    (
+      (neutralish(s30) && neutralish(s60)) &&
+      (hostile(s5) || hostile(s15) || weakOrNoise(s5) || weakOrNoise(s15))
+    ) ||
+    (!sameSideState(s5) && !sameSideState(s15))
+  )
+) {
   reading = `Reduce / exit.`;
 } else if (holdBiasTxt !== "—") {
   reading = `${holdBiasTxt}${availableCount > 0 ? ` — ${mtfAlignTxt}` : ""}`;
