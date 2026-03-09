@@ -4690,16 +4690,16 @@
             </div>
 
             <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:12px 14px; margin-top:10px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">REGIME</div>
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">DIRECTION NOW</div>
 
               <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.20;">
                 <span id="ve-regime" style="color:#ffcc66;">—</span>
               </div>
 
                             <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CONVICTION</span> <span id="ve-conviction" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">MTF ALIGNMENT</span> <span id="ve-mtf-align" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">HOLD BIAS</span> <span id="ve-hold-bias" style="font-weight:950;">—</span></div>
+                <div><span style="opacity:.7;">DIRECTION CONFIDENCE</span> <span id="ve-conviction" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">CONTINUE WORTH IT</span> <span id="ve-mtf-align" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">EXHAUSTION RISK</span> <span id="ve-hold-bias" style="font-weight:950;">—</span></div>
               </div>
 
               <div style="margin-top:10px; font-size:12px; line-height:1.35;">
@@ -9936,6 +9936,15 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
         set("ve-reading", "—");
       };
 
+            const flow =
+        root?.volume_flow_live_v1 ||
+        ui?.volume_flow_live_v1 ||
+        digest?.volume_flow_live_v1 ||
+        panel?.volume_flow_live_v1 ||
+        root?.exec_1x1?.volume_flow_live_v1 ||
+        root?.live?.volume_flow_live_v1 ||
+        null;
+
       const vol =
         root?.volume_regime_v1 ||
         ui?.volume_regime_v1 ||
@@ -9944,7 +9953,145 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
         root?.exec_1x1?.volume_regime_v1 ||
         null;
 
-      if (!vol) {
+      if (flow && flow?.enabled !== false) {
+        const byH = flow?.by_horizon || {};
+
+        const getF = (...keys) => {
+          for (const k of keys) {
+            const v = byH?.[String(k)];
+            if (v) return v;
+          }
+          return null;
+        };
+
+        const f1  = getF("1", "1m");
+        const f5  = getF("5", "5m");
+        const f15 = getF("15", "15m");
+        const f30 = getF("30", "30m");
+        const f60 = getF("60", "60m");
+
+        const directionNowRaw = String(flow?.direction_now || "").toLowerCase();
+        const directionNow =
+          directionNowRaw === "long"  ? "LONG" :
+          directionNowRaw === "short" ? "SHORT" :
+          "NEUTRAL";
+
+        const directionConfidence = flow?.direction_confidence_pct;
+        const continueWorth = flow?.continuation_worth_it_pct ?? flow?.highlight?.continuation_worth_it_pct;
+        const exhaustionRisk = flow?.highlight?.exhaustion_score_pct ?? flow?.not_worth_it_pct;
+        const stateTxt = String(flow?.state_en || "—").toUpperCase();
+
+        const confNum = Number(directionConfidence);
+        const worthNum = Number(continueWorth);
+        const exhaustNum = Number(exhaustionRisk);
+
+        let badgeTxt = "FLOW LIVE";
+        let badgeMode = "win-wait";
+
+        if (directionNow !== "NEUTRAL" && Number.isFinite(worthNum) && worthNum >= 60 && (!Number.isFinite(exhaustNum) || exhaustNum < 45)) {
+          badgeTxt = `${directionNow} FLOW`;
+          badgeMode = "win-now";
+        } else if (directionNow === "NEUTRAL") {
+          badgeTxt = "NEUTRAL FLOW";
+          badgeMode = "win-wait";
+        } else {
+          badgeTxt = `${directionNow} FLOW`;
+          badgeMode = "win-warn";
+        }
+
+        const regimeTxt = `${directionNow} NOW`;
+
+        const fmtFlowRow = (x) => {
+          if (!x) return "—";
+          const state = String(x?.state_en || "—").toUpperCase();
+          const worth = x?.continuation_worth_it_pct;
+          if (state === "—" && !Number.isFinite(Number(worth))) return "—";
+          return `${state} | ${fmtPct(worth)}`;
+        };
+
+        const rows = [
+          { id: "ve-h1",  txt: fmtFlowRow(f1)  },
+          { id: "ve-h5",  txt: fmtFlowRow(f5)  },
+          { id: "ve-h15", txt: fmtFlowRow(f15) },
+          { id: "ve-h30", txt: fmtFlowRow(f30) },
+          { id: "ve-h60", txt: fmtFlowRow(f60) },
+        ];
+
+        let reading = "—";
+
+        if (directionNow === "NEUTRAL") {
+          reading = `Market is mixed / neutral right now.`;
+        } else if (Number.isFinite(worthNum) && worthNum >= 65 && (!Number.isFinite(exhaustNum) || exhaustNum < 40)) {
+          reading = `Market is ${directionNow} and continuation is healthy.`;
+        } else if (Number.isFinite(worthNum) && worthNum >= 55 && (!Number.isFinite(exhaustNum) || exhaustNum < 55)) {
+          reading = `Market is ${directionNow}, but continuation needs caution.`;
+        } else if (Number.isFinite(exhaustNum) && exhaustNum >= 55) {
+          reading = `${directionNow} flow is losing motor — reduce / wait.`;
+        } else if (Number.isFinite(worthNum) && worthNum < 50) {
+          reading = `${directionNow} flow is not worth chasing right now.`;
+        } else if (stateTxt !== "—") {
+          reading = stateTxt;
+        } else {
+          reading = `${directionNow} flow developing.`;
+        }
+
+        setBadge("ve-badge", badgeTxt, badgeMode);
+        set("ve-regime", regimeTxt);
+        set("ve-conviction", fmtPct(directionConfidence));
+        set("ve-mtf-align", fmtPct(continueWorth));
+        set("ve-hold-bias", fmtPct(exhaustionRisk));
+
+        rows.forEach(r => set(r.id, r.txt));
+        set("ve-reading", reading);
+
+        const regimeEl = document.getElementById("ve-regime");
+        const convEl   = document.getElementById("ve-conviction");
+        const alignEl  = document.getElementById("ve-mtf-align");
+        const holdEl   = document.getElementById("ve-hold-bias");
+
+        if (regimeEl) {
+          regimeEl.style.color =
+            directionNow === "LONG"  ? "#4ade80" :
+            directionNow === "SHORT" ? "#f87171" :
+            "#e5e7eb";
+        }
+
+        if (convEl) {
+          convEl.style.color =
+            confNum >= 70 ? "#4ade80" :
+            confNum >= 55 ? "#ffcc66" :
+            "#f87171";
+        }
+
+        if (alignEl) {
+          alignEl.style.color =
+            worthNum >= 65 ? "#4ade80" :
+            worthNum >= 55 ? "#ffcc66" :
+            "#f87171";
+        }
+
+        if (holdEl) {
+          holdEl.style.color =
+            exhaustNum <= 35 ? "#4ade80" :
+            exhaustNum <= 55 ? "#ffcc66" :
+            "#f87171";
+        }
+
+        const paintHZ = (id, txt) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const t = String(txt || "").toUpperCase();
+
+          el.style.color =
+            t.includes("EXHAUSTION") ? "#f87171" :
+            t.includes("WEAKENING")  ? "#ffcc66" :
+            t.includes("LONG")       ? "#4ade80" :
+            t.includes("SHORT")      ? "#f87171" :
+            "#e5e7eb";
+        };
+
+        rows.forEach(r => paintHZ(r.id, r.txt));
+      } else if (!vol) {
         clearVE();
       } else {
         const hi  = vol?.historical?.highlight || null;
