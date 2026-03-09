@@ -9972,74 +9972,78 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
 
         const regimeKey = String(vol?.regime || "").toLowerCase();
         const sideRaw   = String(vol?.selected_side || "—").toUpperCase();
-        const readingIn = String(vol?.advisor_en || "").trim();
-        const conviction = hi?.continuation_hit_rate_pct;
+const readingIn = "";
+const conviction = hi?.continuation_hit_rate_pct;
 
-        const sideBias =
-          (sideRaw.includes("SHORT") || sideRaw.includes("SELL")) ? "SHORT" :
-          (sideRaw.includes("LONG")  || sideRaw.includes("BUY"))  ? "LONG"  :
-          "—";
+const explicitDirOf = (x) => {
+  const raw = String(x?.label_en || x?.regime || x?.state || "")
+    .replace(/_/g, " ")
+    .trim()
+    .toUpperCase();
 
-        let badgeTxt  = "BALANCED";
-        let badgeMode = "win-wait";
+  if (raw.includes("SHORT") || raw.includes("SELL")) return "SHORT";
+  if (raw.includes("LONG")  || raw.includes("BUY"))  return "LONG";
+  return "—";
+};
 
-        if (regimeKey.includes("continuation")) {
-          badgeTxt = "CONTINUATION";
-          badgeMode = "win-now";
-        } else if (regimeKey.includes("exhaust")) {
-          badgeTxt = "EXHAUSTION RISK";
-          badgeMode = "win-warn";
-        }
+const explicitDirs = [h1, h5, h15, h30, h60]
+  .map(explicitDirOf)
+  .filter(v => v !== "—");
 
-        const regimeBase = String(vol?.label_en || vol?.regime || "—")
-          .replace(/_/g, " ")
-          .toUpperCase();
+const shortVotes = explicitDirs.filter(v => v === "SHORT").length;
+const longVotes  = explicitDirs.filter(v => v === "LONG").length;
 
-        const regimeTxt =
-          sideBias !== "—" && regimeBase !== "—" && !regimeBase.includes(sideBias)
-            ? `${sideBias} ${regimeBase}`
-            : regimeBase;
+const sideBias =
+  shortVotes > longVotes ? "SHORT" :
+  longVotes > shortVotes ? "LONG" :
+  (sideRaw.includes("SHORT") || sideRaw.includes("SELL")) ? "SHORT" :
+  (sideRaw.includes("LONG")  || sideRaw.includes("BUY"))  ? "LONG"  :
+  "—";
 
-        const classifyHZ = (x, mins) => {
-          const raw = String(x?.label_en || x?.regime || x?.state || "")
-            .replace(/_/g, " ")
-            .trim()
-            .toUpperCase();
+let badgeTxt  = "BALANCED";
+let badgeMode = "win-wait";
 
-          if (raw) {
-            if (
-              sideBias !== "—" &&
-              !raw.includes("SHORT") &&
-              !raw.includes("LONG") &&
-              !raw.includes("BUY") &&
-              !raw.includes("SELL")
-            ) {
-              return `${sideBias} ${raw}`;
-            }
-            return raw;
-          }
+if (regimeKey.includes("continuation")) {
+  badgeTxt = "CONTINUATION";
+  badgeMode = "win-now";
+} else if (regimeKey.includes("exhaust")) {
+  badgeTxt = "EXHAUSTION RISK";
+  badgeMode = "win-warn";
+}
 
-          const cont = Number(x?.continuation_hit_rate_pct);
-          const dom  = Number(x?.dominance_rate_pct);
+const regimeBase = String(vol?.label_en || vol?.regime || "—")
+  .replace(/_/g, " ")
+  .toUpperCase();
 
-          if (!Number.isFinite(cont) && !Number.isFinite(dom)) return "—";
+const regimeTxt = regimeBase;
 
-          // 1m mais sensível a perda de força
-          if (mins === 1 && Number.isFinite(cont) && cont >= 60 && Number.isFinite(dom) && dom < 50) {
-            return `${sideBias} EXHAUSTION RISK`.trim();
-          }
+const classifyHZ = (x, mins) => {
+  const raw = String(x?.label_en || x?.regime || x?.state || "")
+    .replace(/_/g, " ")
+    .trim()
+    .toUpperCase();
 
-          if (Number.isFinite(cont) && cont >= 65 && (!Number.isFinite(dom) || dom >= 48)) {
-            return `${sideBias} CONTINUATION`.trim();
-          }
+  if (raw) return raw;
 
-          if (Number.isFinite(cont) && cont >= 55) {
-            return `${sideBias} WEAKENING`.trim();
-          }
+  const cont = Number(x?.continuation_hit_rate_pct);
+  const dom  = Number(x?.dominance_rate_pct);
 
-          return `${sideBias} EXHAUSTION RISK`.trim();
-        };
+  if (!Number.isFinite(cont) && !Number.isFinite(dom)) return "—";
 
+  if (mins === 1 && Number.isFinite(cont) && cont >= 60 && Number.isFinite(dom) && dom < 50) {
+    return `EXHAUSTION RISK`;
+  }
+
+  if (Number.isFinite(cont) && cont >= 65 && (!Number.isFinite(dom) || dom >= 48)) {
+    return `CONTINUATION`;
+  }
+
+  if (Number.isFinite(cont) && cont >= 55) {
+    return `WEAKENING`;
+  }
+
+  return `EXHAUSTION RISK`;
+};
         const fmtHZ = (x, mins) => {
           const pct = x?.continuation_hit_rate_pct;
           const label = classifyHZ(x, mins);
@@ -10056,26 +10060,36 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
           { id: "ve-h60", txt: fmtHZ(h60, 60) },
         ];
 
-        const isSupportive = (txt) => {
-          const t = String(txt || "").toUpperCase();
-          if (!t || t === "—") return false;
-          if (sideBias !== "—" && !t.includes(sideBias)) return false;
-          if (t.includes("EXHAUSTION")) return false;
-          return t.includes("CONTINUATION") || t.includes("WEAKENING");
-        };
+        const txtSide = (txt) => {
+  const t = String(txt || "").toUpperCase();
+  if (t.includes("SHORT") || t.includes("SELL")) return "SHORT";
+  if (t.includes("LONG")  || t.includes("BUY"))  return "LONG";
+  return "—";
+};
 
-        const availableCount = rows.filter(r => r.txt !== "—").length;
-        const supportCount   = rows.filter(r => isSupportive(r.txt)).length;
+const isSupportive = (txt) => {
+  const t = String(txt || "").toUpperCase();
+  if (!t || t === "—") return false;
+  if (t.includes("EXHAUSTION")) return false;
 
-        const alignDir =
-          sideBias === "SHORT" ? "bearish" :
-          sideBias === "LONG"  ? "bullish" :
-          "aligned";
+  const dir = txtSide(t);
+  if (dir !== "—" && sideBias !== "—" && dir !== sideBias) return false;
 
-        const mtfAlignTxt =
-          availableCount > 0 ? `${supportCount}/${availableCount} ${alignDir}` : "—";
+  return t.includes("CONTINUATION") || t.includes("WEAKENING");
+};
 
-        let holdBiasTxt = "—";
+const availableCount = rows.filter(r => r.txt !== "—").length;
+const supportCount   = rows.filter(r => isSupportive(r.txt)).length;
+
+const alignDir =
+  sideBias === "SHORT" ? "bearish" :
+  sideBias === "LONG"  ? "bullish" :
+  "aligned";
+
+const mtfAlignTxt =
+  availableCount > 0 ? `${supportCount}/${availableCount} ${alignDir}` : "—";
+
+let holdBiasTxt = "—";
 if (availableCount > 0) {
   const ratio = supportCount / availableCount;
   holdBiasTxt =
@@ -10094,28 +10108,17 @@ const tfState = (txt) => {
   const t = String(txt || "").toUpperCase();
   if (!t || t === "—") return "missing";
 
-  const sameSide =
-    sideBias !== "—" && t.includes(sideBias);
-
-  const oppositeSide =
-    sideBias === "SHORT" ? t.includes("LONG") :
-    sideBias === "LONG"  ? t.includes("SHORT") :
-    false;
+  const dir = txtSide(t);
+  const hasExplicitSide = dir !== "—";
+  const sameSide = !hasExplicitSide || sideBias === "—" || dir === sideBias;
+  const oppositeSide = hasExplicitSide && sideBias !== "—" && dir !== sideBias;
 
   if (t.includes("EXHAUSTION")) {
     return oppositeSide ? "against" : "noise";
   }
 
-  if (sameSide && t.includes("CONTINUATION")) return "strong";
-  if (sameSide && t.includes("WEAKENING"))    return "weak";
-
-  if (oppositeSide && (
-    t.includes("CONTINUATION") ||
-    t.includes("WEAKENING") ||
-    t.includes("EXHAUSTION")
-  )) {
-    return "against";
-  }
+  if (t.includes("CONTINUATION")) return sameSide ? "strong" : "against";
+  if (t.includes("WEAKENING"))    return sameSide ? "weak"   : "against";
 
   return "neutral";
 };
