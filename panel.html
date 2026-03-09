@@ -10004,10 +10004,10 @@ let badgeTxt  = "BALANCED";
 let badgeMode = "win-wait";
 
 if (regimeKey.includes("continuation")) {
-  badgeTxt = "CONTINUATION";
+  badgeTxt = sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION";
   badgeMode = "win-now";
 } else if (regimeKey.includes("exhaust")) {
-  badgeTxt = "EXHAUSTION RISK";
+  badgeTxt = sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
   badgeMode = "win-warn";
 }
 
@@ -10015,13 +10015,30 @@ const regimeBase = String(vol?.label_en || vol?.regime || "—")
   .replace(/_/g, " ")
   .toUpperCase();
 
-const regimeTxt = regimeBase;
+const regimeTxt =
+  regimeBase.includes("EXHAUST")
+    ? (sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK")
+    : regimeBase.includes("CONTINUATION")
+      ? (sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION")
+      : regimeBase;
 
 const classifyHZ = (x, mins) => {
   const raw = String(x?.label_en || x?.regime || x?.state || "")
     .replace(/_/g, " ")
     .trim()
     .toUpperCase();
+
+  if (raw.includes("EXHAUST")) {
+    return sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
+  }
+
+  if (raw.includes("CONTINUATION")) {
+    return sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION";
+  }
+
+  if (raw.includes("WEAKENING")) {
+    return sideBias !== "—" ? `${sideBias} WEAKENING` : "WEAKENING";
+  }
 
   if (raw) return raw;
 
@@ -10031,18 +10048,18 @@ const classifyHZ = (x, mins) => {
   if (!Number.isFinite(cont) && !Number.isFinite(dom)) return "—";
 
   if (mins === 1 && Number.isFinite(cont) && cont >= 60 && Number.isFinite(dom) && dom < 50) {
-    return `EXHAUSTION RISK`;
+    return sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
   }
 
   if (Number.isFinite(cont) && cont >= 65 && (!Number.isFinite(dom) || dom >= 48)) {
-    return `CONTINUATION`;
+    return sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION";
   }
 
   if (Number.isFinite(cont) && cont >= 55) {
-    return `WEAKENING`;
+    return sideBias !== "—" ? `${sideBias} WEAKENING` : "WEAKENING";
   }
 
-  return `EXHAUSTION RISK`;
+  return sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
 };
         const fmtHZ = (x, mins) => {
           const pct = x?.continuation_hit_rate_pct;
