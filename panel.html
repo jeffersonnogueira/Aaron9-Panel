@@ -4696,18 +4696,19 @@
                 <span id="ve-regime" style="color:#ffcc66;">—</span>
               </div>
 
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">SIDE</span> <span id="ve-side" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">CONTEXT</span> <span id="ve-context" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">CONVICTION</span> <span id="ve-conviction" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">DOMINANCE</span> <span id="ve-dominance" style="font-weight:950;">—</span></div>
+                            <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CONVICTION</span> <span id="ve-conviction" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">MTF ALIGNMENT</span> <span id="ve-mtf-align" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">HOLD BIAS</span> <span id="ve-hold-bias" style="font-weight:950;">—</span></div>
               </div>
 
               <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div class="ve-mini"><span class="ve-soft">3m</span><span id="ve-h3">—</span></div>
+                <div class="ve-mini"><span class="ve-soft">1m</span><span id="ve-h1">—</span></div>
                 <div class="ve-mini"><span class="ve-soft">5m</span><span id="ve-h5">—</span></div>
                 <div class="ve-mini"><span class="ve-soft">10m</span><span id="ve-h10">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">20m</span><span id="ve-h20">—</span></div>
+                <div class="ve-mini"><span class="ve-soft">15m</span><span id="ve-h15">—</span></div>
+                <div class="ve-mini"><span class="ve-soft">30m</span><span id="ve-h30">—</span></div>
+                <div class="ve-mini"><span class="ve-soft">60m</span><span id="ve-h60">—</span></div>
               </div>
 
               <div class="ve-note" id="ve-reading" style="margin-top:10px;">—</div>
@@ -9920,17 +9921,18 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
     }
         // ===== VOLUME ENGINE (NEW BLOCK) =====
     {
-      const clearVE = () => {
+            const clearVE = () => {
         setBadge("ve-badge", "—", "win-wait");
         set("ve-regime", "—");
-        set("ve-side", "—");
-        set("ve-context", "—");
         set("ve-conviction", "—");
-        set("ve-dominance", "—");
-        set("ve-h3", "—");
+        set("ve-mtf-align", "—");
+        set("ve-hold-bias", "—");
+        set("ve-h1", "—");
         set("ve-h5", "—");
         set("ve-h10", "—");
-        set("ve-h20", "—");
+        set("ve-h15", "—");
+        set("ve-h30", "—");
+        set("ve-h60", "—");
         set("ve-reading", "—");
       };
 
@@ -9946,21 +9948,37 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
         clearVE();
       } else {
         const hi  = vol?.historical?.highlight || null;
-        const byH = vol?.historical?.by_horizon || {};
+        const byH =
+          vol?.historical?.by_horizon ||
+          vol?.mtf?.by_horizon ||
+          vol?.historical?.mtf ||
+          {};
 
-        const h3  = byH?.["3"]  || null;
-        const h5  = byH?.["5"]  || null;
-        const h10 = byH?.["10"] || null;
-        const h20 = byH?.["20"] || null;
+        const getH = (...keys) => {
+          for (const k of keys) {
+            const v = byH?.[String(k)];
+            if (v) return v;
+          }
+          return null;
+        };
+
+        // suporte novo + fallback de transição
+        const h1  = getH("1", "1m", "01", "3");     // fallback: 3 -> 1m temporário
+        const h5  = getH("5", "5m");
+        const h10 = getH("10", "10m");
+        const h15 = getH("15", "15m", "20");        // fallback: 20 -> 15m temporário
+        const h30 = getH("30", "30m");
+        const h60 = getH("60", "60m");
 
         const regimeKey = String(vol?.regime || "").toLowerCase();
         const sideRaw   = String(vol?.selected_side || "—").toUpperCase();
-        const ctxRaw    = String(vol?.context_state || "—").replace(/_/g, " ");
-        const regimeTxt = String(vol?.label_en || vol?.regime || "—").replace(/_/g, " ");
-        const reading   = String(vol?.advisor_en || "—");
-
+        const readingIn = String(vol?.advisor_en || "").trim();
         const conviction = hi?.continuation_hit_rate_pct;
-        const dominance  = hi?.dominance_rate_pct;
+
+        const sideBias =
+          (sideRaw.includes("SHORT") || sideRaw.includes("SELL")) ? "SHORT" :
+          (sideRaw.includes("LONG")  || sideRaw.includes("BUY"))  ? "LONG"  :
+          "—";
 
         let badgeTxt  = "BALANCED";
         let badgeMode = "win-wait";
@@ -9973,41 +9991,123 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
           badgeMode = "win-warn";
         }
 
-        const fmtVH = (x) => {
-          const cont = x?.continuation_hit_rate_pct;
-          const dom  = x?.dominance_rate_pct;
-          if (!Number.isFinite(Number(cont)) && !Number.isFinite(Number(dom))) return "—";
-          return `CONT ${fmtPct(cont)} · DOM ${fmtPct(dom)}`;
+        const regimeBase = String(vol?.label_en || vol?.regime || "—")
+          .replace(/_/g, " ")
+          .toUpperCase();
+
+        const regimeTxt =
+          sideBias !== "—" && regimeBase !== "—" && !regimeBase.includes(sideBias)
+            ? `${sideBias} ${regimeBase}`
+            : regimeBase;
+
+        const classifyHZ = (x, mins) => {
+          const raw = String(x?.label_en || x?.regime || x?.state || "")
+            .replace(/_/g, " ")
+            .trim()
+            .toUpperCase();
+
+          if (raw) {
+            if (
+              sideBias !== "—" &&
+              !raw.includes("SHORT") &&
+              !raw.includes("LONG") &&
+              !raw.includes("BUY") &&
+              !raw.includes("SELL")
+            ) {
+              return `${sideBias} ${raw}`;
+            }
+            return raw;
+          }
+
+          const cont = Number(x?.continuation_hit_rate_pct);
+          const dom  = Number(x?.dominance_rate_pct);
+
+          if (!Number.isFinite(cont) && !Number.isFinite(dom)) return "—";
+
+          // 1m mais sensível a perda de força
+          if (mins === 1 && Number.isFinite(cont) && cont >= 60 && Number.isFinite(dom) && dom < 50) {
+            return `${sideBias} EXHAUSTION RISK`.trim();
+          }
+
+          if (Number.isFinite(cont) && cont >= 65 && (!Number.isFinite(dom) || dom >= 48)) {
+            return `${sideBias} CONTINUATION`.trim();
+          }
+
+          if (Number.isFinite(cont) && cont >= 55) {
+            return `${sideBias} WEAKENING`.trim();
+          }
+
+          return `${sideBias} EXHAUSTION RISK`.trim();
         };
+
+        const fmtHZ = (x, mins) => {
+          const pct = x?.continuation_hit_rate_pct;
+          const label = classifyHZ(x, mins);
+          if (label === "—" && !Number.isFinite(Number(pct))) return "—";
+          return `${label} | ${fmtPct(pct)}`;
+        };
+
+        const rows = [
+          { id: "ve-h1",  txt: fmtHZ(h1, 1)  },
+          { id: "ve-h5",  txt: fmtHZ(h5, 5)  },
+          { id: "ve-h10", txt: fmtHZ(h10, 10) },
+          { id: "ve-h15", txt: fmtHZ(h15, 15) },
+          { id: "ve-h30", txt: fmtHZ(h30, 30) },
+          { id: "ve-h60", txt: fmtHZ(h60, 60) },
+        ];
+
+        const isSupportive = (txt) => {
+          const t = String(txt || "").toUpperCase();
+          if (!t || t === "—") return false;
+          if (sideBias !== "—" && !t.includes(sideBias)) return false;
+          if (t.includes("EXHAUSTION")) return false;
+          return t.includes("CONTINUATION") || t.includes("WEAKENING");
+        };
+
+        const availableCount = rows.filter(r => r.txt !== "—").length;
+        const supportCount   = rows.filter(r => isSupportive(r.txt)).length;
+
+        const alignDir =
+          sideBias === "SHORT" ? "bearish" :
+          sideBias === "LONG"  ? "bullish" :
+          "aligned";
+
+        const mtfAlignTxt =
+          availableCount > 0 ? `${supportCount}/${availableCount} ${alignDir}` : "—";
+
+        let holdBiasTxt = "—";
+        if (availableCount > 0) {
+          const ratio = supportCount / availableCount;
+          holdBiasTxt =
+            ratio >= 0.66 ? "Hold bias supported" :
+            ratio >= 0.50 ? "Hold bias mixed" :
+            "Hold bias not supported";
+        }
+
+        const reading =
+          readingIn ||
+          (holdBiasTxt !== "—"
+            ? `${holdBiasTxt}${availableCount > 0 ? ` — ${mtfAlignTxt}` : ""}`
+            : "—");
 
         setBadge("ve-badge", badgeTxt, badgeMode);
         set("ve-regime", regimeTxt);
-        set("ve-side", sideRaw);
-        set("ve-context", ctxRaw);
         set("ve-conviction", fmtPct(conviction));
-        set("ve-dominance", fmtPct(dominance));
-        set("ve-h3", fmtVH(h3));
-        set("ve-h5", fmtVH(h5));
-        set("ve-h10", fmtVH(h10));
-        set("ve-h20", fmtVH(h20));
+        set("ve-mtf-align", mtfAlignTxt);
+        set("ve-hold-bias", holdBiasTxt);
+
+        rows.forEach(r => set(r.id, r.txt));
         set("ve-reading", reading);
 
         const regimeEl = document.getElementById("ve-regime");
-        const sideEl   = document.getElementById("ve-side");
         const convEl   = document.getElementById("ve-conviction");
-        const domEl    = document.getElementById("ve-dominance");
+        const alignEl  = document.getElementById("ve-mtf-align");
+        const holdEl   = document.getElementById("ve-hold-bias");
 
         if (regimeEl) {
           regimeEl.style.color =
             badgeMode === "win-now"  ? "#4ade80" :
             badgeMode === "win-warn" ? "#ffcc66" :
-            "#e5e7eb";
-        }
-
-        if (sideEl) {
-          sideEl.style.color =
-            (sideRaw.includes("SHORT") || sideRaw.includes("SELL")) ? "#f87171" :
-            (sideRaw.includes("LONG")  || sideRaw.includes("BUY"))  ? "#4ade80" :
             "#e5e7eb";
         }
 
@@ -10019,13 +10119,34 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
             "#f87171";
         }
 
-        if (domEl) {
-          const n = Number(dominance);
-          domEl.style.color =
-            n >= 55 ? "#4ade80" :
-            n >= 45 ? "#ffcc66" :
+        const alignScore = availableCount > 0 ? (supportCount / availableCount) : 0;
+
+        if (alignEl) {
+          alignEl.style.color =
+            alignScore >= 0.66 ? "#4ade80" :
+            alignScore >= 0.50 ? "#ffcc66" :
             "#f87171";
         }
+
+        if (holdEl) {
+          holdEl.style.color =
+            alignScore >= 0.66 ? "#4ade80" :
+            alignScore >= 0.50 ? "#ffcc66" :
+            "#f87171";
+        }
+
+        const paintHZ = (id, txt) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const t = String(txt || "").toUpperCase();
+          el.style.color =
+            t.includes("CONTINUATION") ? "#4ade80" :
+            t.includes("WEAKENING")    ? "#ffcc66" :
+            t.includes("EXHAUSTION")   ? "#f87171" :
+            "#e5e7eb";
+        };
+
+        rows.forEach(r => paintHZ(r.id, r.txt));
       }
     }
     // ===== /VOLUME ENGINE =====
