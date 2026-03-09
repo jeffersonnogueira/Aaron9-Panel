@@ -3230,31 +3230,21 @@
   padding: 10px 16px !important;
 }
 
-#vol-engine-card div[style*="font-size:11px"]{ font-size: 22px !important; }
-#vol-engine-card div[style*="font-size:12px"]{ font-size: 24px !important; }
-#vol-engine-card div[style*="font-size:14px"]{ font-size: 30px !important; }
-
-#vol-engine-card .ve-note{
-  font-size: 30px !important;
-  line-height: 1.20 !important;
+#vol-engine-card .ve-plain{
+  margin-top: 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: #05070d !important;
+  color: #f8fafc !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 22px !important;
+  line-height: 1.48 !important;
   font-weight: 900 !important;
-  color: #22d3ee !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
   opacity: 1 !important;
-}
-
-#vol-engine-card .ve-mini{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  font-weight:950;
-}
-
-#vol-engine-card .ve-mini + .ve-mini{
-  margin-top:6px;
-}
-
-#vol-engine-card .ve-soft{
-  opacity:.72;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
 }
 
 @media (max-width: 1600px){
@@ -4684,35 +4674,21 @@
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
           <div class="prem-breakout-wrap" id="vol-engine-card">
-            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-              <div class="prem-breakout-title">VOLUME ENGINE</div>
-              <span id="ve-badge" class="win-badge win-wait">—</span>
-            </div>
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">VOLUME ENGINE</div>
+    <span id="ve-badge" class="win-badge win-wait">—</span>
+  </div>
 
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:12px 14px; margin-top:10px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">REGIME</div>
+  <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:12px 14px; margin-top:10px;">
+    <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">REGIME</div>
 
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.20;">
-                <span id="ve-regime" style="color:#ffcc66;">—</span>
-              </div>
+    <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.20;">
+      <span id="ve-regime" style="color:#ffcc66;">—</span>
+    </div>
 
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">SIDE</span> <span id="ve-side" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">CONTEXT</span> <span id="ve-context" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">CONVICTION</span> <span id="ve-conviction" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">DOMINANCE</span> <span id="ve-dominance" style="font-weight:950;">—</span></div>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div class="ve-mini"><span class="ve-soft">3m</span><span id="ve-h3">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">5m</span><span id="ve-h5">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">10m</span><span id="ve-h10">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">20m</span><span id="ve-h20">—</span></div>
-              </div>
-
-              <div class="ve-note" id="ve-reading" style="margin-top:10px;">—</div>
-            </div>
-          </div>
+    <pre id="ve-plain" class="ve-plain">—</pre>
+  </div>
+</div>
                 <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
@@ -9918,116 +9894,117 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
       set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
       set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
     }
-        // ===== VOLUME ENGINE (NEW BLOCK) =====
-    {
-      const clearVE = () => {
-        setBadge("ve-badge", "—", "win-wait");
-        set("ve-regime", "—");
-        set("ve-side", "—");
-        set("ve-context", "—");
-        set("ve-conviction", "—");
-        set("ve-dominance", "—");
-        set("ve-h3", "—");
-        set("ve-h5", "—");
-        set("ve-h10", "—");
-        set("ve-h20", "—");
-        set("ve-reading", "—");
-      };
+        const clearVE = () => {
+  setBadge("ve-badge", "—", "win-wait");
+  set("ve-regime", "—");
+  set("ve-plain", "—");
+};
 
-      const vol =
-        root?.volume_regime_v1 ||
-        ui?.volume_regime_v1 ||
-        digest?.volume_regime_v1 ||
-        panel?.volume_regime_v1 ||
-        root?.exec_1x1?.volume_regime_v1 ||
-        null;
+const vol =
+  root?.volume_regime_v1 ||
+  ui?.volume_regime_v1 ||
+  digest?.volume_regime_v1 ||
+  panel?.volume_regime_v1 ||
+  root?.exec_1x1?.volume_regime_v1 ||
+  null;
 
-      if (!vol) {
-        clearVE();
-      } else {
-        const hi  = vol?.historical?.highlight || null;
-        const byH = vol?.historical?.by_horizon || {};
+if (!vol) {
+  clearVE();
+} else {
+  const hi  = vol?.historical?.highlight || null;
+  const byH = vol?.historical?.by_horizon || {};
 
-        const h3  = byH?.["3"]  || null;
-        const h5  = byH?.["5"]  || null;
-        const h10 = byH?.["10"] || null;
-        const h20 = byH?.["20"] || null;
+  const h3  = byH?.["3"]  || null;
+  const h5  = byH?.["5"]  || null;
+  const h10 = byH?.["10"] || null;
+  const h20 = byH?.["20"] || null;
 
-        const regimeKey = String(vol?.regime || "").toLowerCase();
-        const sideRaw   = String(vol?.selected_side || "—").toUpperCase();
-        const ctxRaw    = String(vol?.context_state || "—").replace(/_/g, " ");
-        const regimeTxt = String(vol?.label_en || vol?.regime || "—").replace(/_/g, " ");
-        const reading   = String(vol?.advisor_en || "—");
+  const regimeKey = String(vol?.regime || "").toLowerCase();
+  const sideRaw   = String(vol?.selected_side || "—").toUpperCase();
+  const ctxRaw    = String(vol?.context_state || "—").replace(/_/g, " ");
+  const regimeTxt = String(vol?.label_en || vol?.regime || "—").replace(/_/g, " ");
+  const reading   = String(vol?.advisor_en || "—");
 
-        const conviction = hi?.continuation_hit_rate_pct;
-        const dominance  = hi?.dominance_rate_pct;
+  const conviction = hi?.continuation_hit_rate_pct;
+  const dominance  = hi?.dominance_rate_pct;
 
-        let badgeTxt  = "BALANCED";
-        let badgeMode = "win-wait";
+  let badgeTxt  = "BALANCED";
+  let badgeMode = "win-wait";
 
-        if (regimeKey.includes("continuation")) {
-          badgeTxt = "CONTINUATION";
-          badgeMode = "win-now";
-        } else if (regimeKey.includes("exhaust")) {
-          badgeTxt = "EXHAUSTION RISK";
-          badgeMode = "win-warn";
-        }
+  if (regimeKey.includes("continuation")) {
+    badgeTxt = "CONTINUATION";
+    badgeMode = "win-now";
+  } else if (regimeKey.includes("exhaust")) {
+    badgeTxt = "EXHAUSTION RISK";
+    badgeMode = "win-warn";
+  }
 
-        const fmtVH = (x) => {
-          const cont = x?.continuation_hit_rate_pct;
-          const dom  = x?.dominance_rate_pct;
-          if (!Number.isFinite(Number(cont)) && !Number.isFinite(Number(dom))) return "—";
-          return `CONT ${fmtPct(cont)} · DOM ${fmtPct(dom)}`;
-        };
+  const fmtMiniPct = (v) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? `${n.toFixed(0)}%` : "—";
+  };
 
-        setBadge("ve-badge", badgeTxt, badgeMode);
-        set("ve-regime", regimeTxt);
-        set("ve-side", sideRaw);
-        set("ve-context", ctxRaw);
-        set("ve-conviction", fmtPct(conviction));
-        set("ve-dominance", fmtPct(dominance));
-        set("ve-h3", fmtVH(h3));
-        set("ve-h5", fmtVH(h5));
-        set("ve-h10", fmtVH(h10));
-        set("ve-h20", fmtVH(h20));
-        set("ve-reading", reading);
+  const horizonCall = (x, isFront = false) => {
+    const cont = Number(x?.continuation_hit_rate_pct);
+    const dom  = Number(x?.dominance_rate_pct);
 
-        const regimeEl = document.getElementById("ve-regime");
-        const sideEl   = document.getElementById("ve-side");
-        const convEl   = document.getElementById("ve-conviction");
-        const domEl    = document.getElementById("ve-dominance");
-
-        if (regimeEl) {
-          regimeEl.style.color =
-            badgeMode === "win-now"  ? "#4ade80" :
-            badgeMode === "win-warn" ? "#ffcc66" :
-            "#e5e7eb";
-        }
-
-        if (sideEl) {
-          sideEl.style.color =
-            (sideRaw.includes("SHORT") || sideRaw.includes("SELL")) ? "#f87171" :
-            (sideRaw.includes("LONG")  || sideRaw.includes("BUY"))  ? "#4ade80" :
-            "#e5e7eb";
-        }
-
-        if (convEl) {
-          const n = Number(conviction);
-          convEl.style.color =
-            n >= 70 ? "#4ade80" :
-            n >= 55 ? "#ffcc66" :
-            "#f87171";
-        }
-
-        if (domEl) {
-          const n = Number(dominance);
-          domEl.style.color =
-            n >= 55 ? "#4ade80" :
-            n >= 45 ? "#ffcc66" :
-            "#f87171";
-        }
-      }
+    if (!Number.isFinite(cont)) {
+      return { label: "—", pct: "—", dom: "—" };
     }
+
+    let label = `${sideRaw} CONTINUATION`;
+
+    if (isFront && regimeKey.includes("exhaust")) {
+      label = `${sideRaw} EXHAUSTION RISK`;
+    } else if (cont < 60) {
+      label = `${sideRaw} WEAKENING`;
+    } else {
+      label = `${sideRaw} CONTINUATION`;
+    }
+
+    return {
+      label,
+      pct: fmtMiniPct(cont),
+      dom: fmtMiniPct(dom)
+    };
+  };
+
+  const l1  = {
+    label: `${sideRaw} ${String(regimeTxt || "—").toUpperCase()}`,
+    pct: fmtMiniPct(conviction)
+  };
+  const l3  = horizonCall(h3, true);
+  const l5  = horizonCall(h5, false);
+  const l10 = horizonCall(h10, false);
+  const l20 = horizonCall(h20, false);
+
+  const plain = [
+    "VOLUME CONVICTION MTF",
+    `${sideRaw} ${String(regimeTxt || "—").toUpperCase()}`,
+    `Conviction: ${fmtMiniPct(conviction)}`,
+    `MTF Context: ${ctxRaw}`,
+    "",
+    `1m:   ${l1.label} | ${l1.pct}`,
+    `3m:   ${l3.label} | ${l3.pct}`,
+    `5m:   ${l5.label} | ${l5.pct}`,
+    `10m:  ${l10.label} | ${l10.pct}`,
+    `20m:  ${l20.label} | ${l20.pct}`,
+    "",
+    `READING: ${reading}`
+  ].join("\n");
+
+  setBadge("ve-badge", badgeTxt, badgeMode);
+  set("ve-regime", regimeTxt);
+  set("ve-plain", plain);
+
+  const regimeEl = document.getElementById("ve-regime");
+  if (regimeEl) {
+    regimeEl.style.color =
+      badgeMode === "win-now"  ? "#4ade80" :
+      badgeMode === "win-warn" ? "#ffcc66" :
+      "#e5e7eb";
+  }
+}
     // ===== /VOLUME ENGINE =====
         // ===== ZIGZAG ROUTE ENGINE (NEW BLOCK) =====
     {
