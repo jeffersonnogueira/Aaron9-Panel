@@ -4705,7 +4705,7 @@
               <div style="margin-top:10px; font-size:12px; line-height:1.35;">
                 <div class="ve-mini"><span class="ve-soft">1m</span><span id="ve-h1">—</span></div>
                 <div class="ve-mini"><span class="ve-soft">5m</span><span id="ve-h5">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">10m</span><span id="ve-h10">—</span></div>
+                
                 <div class="ve-mini"><span class="ve-soft">15m</span><span id="ve-h15">—</span></div>
                 <div class="ve-mini"><span class="ve-soft">30m</span><span id="ve-h30">—</span></div>
                 <div class="ve-mini"><span class="ve-soft">60m</span><span id="ve-h60">—</span></div>
@@ -10050,7 +10050,7 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
         const rows = [
           { id: "ve-h1",  txt: fmtHZ(h1, 1)  },
           { id: "ve-h5",  txt: fmtHZ(h5, 5)  },
-          { id: "ve-h10", txt: fmtHZ(h10, 10) },
+          
           { id: "ve-h15", txt: fmtHZ(h15, 15) },
           { id: "ve-h30", txt: fmtHZ(h30, 30) },
           { id: "ve-h60", txt: fmtHZ(h60, 60) },
@@ -10076,19 +10076,46 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
           availableCount > 0 ? `${supportCount}/${availableCount} ${alignDir}` : "—";
 
         let holdBiasTxt = "—";
-        if (availableCount > 0) {
-          const ratio = supportCount / availableCount;
-          holdBiasTxt =
-            ratio >= 0.66 ? "Hold bias supported" :
-            ratio >= 0.50 ? "Hold bias mixed" :
-            "Hold bias not supported";
-        }
+if (availableCount > 0) {
+  const ratio = supportCount / availableCount;
+  holdBiasTxt =
+    ratio >= 0.66 ? "Hold bias supported" :
+    ratio >= 0.50 ? "Hold bias mixed" :
+    "Hold bias not supported";
+}
 
-        const reading =
-          readingIn ||
-          (holdBiasTxt !== "—"
-            ? `${holdBiasTxt}${availableCount > 0 ? ` — ${mtfAlignTxt}` : ""}`
-            : "—");
+const txt1  = rows.find(r => r.id === "ve-h1")?.txt  || "—";
+const txt5  = rows.find(r => r.id === "ve-h5")?.txt  || "—";
+const txt15 = rows.find(r => r.id === "ve-h15")?.txt || "—";
+const txt30 = rows.find(r => r.id === "ve-h30")?.txt || "—";
+const txt60 = rows.find(r => r.id === "ve-h60")?.txt || "—";
+
+const h1Risk   = txt1.includes("EXHAUSTION");
+const h5Sup    = isSupportive(txt5);
+const h15Sup   = isSupportive(txt15);
+const h30Sup   = isSupportive(txt30);
+const h60Sup   = isSupportive(txt60);
+
+const sideWord =
+  sideBias === "SHORT" ? "short" :
+  sideBias === "LONG"  ? "long"  :
+  "trend";
+
+let reading = "—";
+
+if (readingIn) {
+  reading = readingIn;
+} else if (h1Risk && h5Sup && h15Sup && h30Sup && h60Sup) {
+  reading = `Hold — 1m noise only. Higher timeframes still support the ${sideWord}.`;
+} else if (h1Risk && h5Sup && h15Sup && (h30Sup || h60Sup)) {
+  reading = `Hold with caution — 1m weak, but higher timeframes still support the ${sideWord}.`;
+} else if (h1Risk && !h5Sup && h15Sup && h30Sup && h60Sup) {
+  reading = `Caution — immediate motor weakened, but higher timeframe ${sideWord} is still alive.`;
+} else if (h1Risk && !h5Sup && !h15Sup) {
+  reading = `Reduce / exit — continuation lost immediate support.`;
+} else if (holdBiasTxt !== "—") {
+  reading = `${holdBiasTxt}${availableCount > 0 ? ` — ${mtfAlignTxt}` : ""}`;
+}
 
         setBadge("ve-badge", badgeTxt, badgeMode);
         set("ve-regime", regimeTxt);
