@@ -10106,13 +10106,13 @@ let reading = "—";
 if (readingIn) {
   reading = readingIn;
 } else if (h1Risk && h5Sup && h15Sup && h30Sup && h60Sup) {
-  reading = `Hold — 1m noise only. Higher timeframes still support the ${sideWord}.`;
+  reading = `Hold — 1m noise only.`;
 } else if (h1Risk && h5Sup && h15Sup && (h30Sup || h60Sup)) {
-  reading = `Hold with caution — 1m weak, but higher timeframes still support the ${sideWord}.`;
+  reading = `Hold with caution.`;
 } else if (h1Risk && !h5Sup && h15Sup && h30Sup && h60Sup) {
-  reading = `Caution — immediate motor weakened, but higher timeframe ${sideWord} is still alive.`;
+  reading = `Immediate motor weakening.`;
 } else if (h1Risk && !h5Sup && !h15Sup) {
-  reading = `Reduce / exit — continuation lost immediate support.`;
+  reading = `Reduce / exit.`;
 } else if (holdBiasTxt !== "—") {
   reading = `${holdBiasTxt}${availableCount > 0 ? ` — ${mtfAlignTxt}` : ""}`;
 }
