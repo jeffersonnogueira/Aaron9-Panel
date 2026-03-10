@@ -3220,7 +3220,7 @@
   min-width:0;
 }
 
-/* mesmo scaling visual do ZigZag Route Engine */
+/* título do card */
 #vol-engine-card .prem-breakout-title{
   font-size: 28px !important;
   opacity: .90 !important;
@@ -3237,7 +3237,7 @@
   border-radius: 14px !important;
 }
 
-/* headings internos */
+/* headings genéricos internos */
 #vol-engine-card div[style*="font-size:11px"]{
   font-size: 22px !important;
 }
@@ -3257,7 +3257,7 @@
   font-weight: 950 !important;
 }
 
-/* NOW + NEXT LEG (área circulada) */
+/* NOW + NEXT LEG conteúdo */
 #vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(4),
 #vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(6){
   font-size: 30px !important;
@@ -3270,7 +3270,18 @@
   margin-top: 6px !important;
 }
 
-/* WINDOW PRESSURE */
+/* NOW / NEXT LEG / WINDOW PRESSURE / TACTICAL READ headings em amarelo */
+#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(3),
+#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(5),
+#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(7),
+#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(9){
+  color:#ffcc66 !important;
+  font-size:26px !important;
+  font-weight:950 !important;
+  opacity:1 !important;
+}
+
+/* WINDOW PRESSURE linhas */
 #vol-engine-card .vp-mini{
   display:flex;
   justify-content:space-between;
@@ -3289,10 +3300,10 @@
   font-size: 24px !important;
 }
 
-/* TACTICAL READ — maior e amarelo */
+/* TACTICAL READ texto */
 #vol-engine-card .vp-reading{
   margin-top:12px;
-  font-size:26px !important;
+  font-size:32px !important;
   line-height:1.34 !important;
   font-weight:950 !important;
   color:#ffcc66 !important;
