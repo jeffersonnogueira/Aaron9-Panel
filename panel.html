@@ -3328,8 +3328,8 @@
 
 #vol-engine-card .vp-reading{
   margin-top:12px;
-  font-size:28px !important;
-  line-height:1.24 !important;
+  font-size:42px !important;
+  line-height:1.22 !important;
   font-weight:950 !important;
   color:#ffcc66 !important;
   opacity:1 !important;
@@ -10319,12 +10319,31 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
         });
 
         const readingEl = document.getElementById("vp-reading");
-        if (readingEl) {
-          readingEl.style.color =
-            String(reading).toUpperCase().includes("OVERTAKING") ? "#f87171" :
-            String(reading).toUpperCase().includes("CAUTION")    ? "#ffcc66" :
-            "#e5e7eb";
-        }
+if (readingEl) {
+  const upperRead = String(reading || "").toUpperCase();
+  const upperPrimary = String(primary || "").toUpperCase();
+
+  const isShort = upperRead.startsWith("SHORT") || upperPrimary.includes("SHORT");
+  const isLong  = upperRead.startsWith("LONG")  || upperPrimary.includes("LONG");
+  const isRisk  = upperRead.includes("OVERTAKING");
+  const isWarn  = upperRead.includes("CAUTION");
+
+  readingEl.classList.remove("pulse-sl", "pulse-micro");
+
+  if (isShort) {
+    readingEl.style.color = "#f87171";
+    readingEl.classList.add("pulse-sl");
+  } else if (isLong) {
+    readingEl.style.color = "#4ade80";
+    readingEl.classList.add("pulse-micro");
+  } else if (isRisk) {
+    readingEl.style.color = "#f87171";
+  } else if (isWarn) {
+    readingEl.style.color = "#ffcc66";
+  } else {
+    readingEl.style.color = "#e5e7eb";
+  }
+}
       }
     }
     // ===== /VOLUME PREMONITION =====
