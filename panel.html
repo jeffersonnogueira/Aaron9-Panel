@@ -3203,9 +3203,9 @@
 /* ===== VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
 #zz-volume-row{
   display:grid;
-  grid-template-columns:minmax(360px, .92fr) minmax(0, 1.68fr);
-  gap:10px;
-  align-items:stretch;
+  grid-template-columns:minmax(0, 1fr) max-content;
+  gap:14px;
+  align-items:start;
   margin-top:10px;
   grid-column:1 / -1;
 }
@@ -3218,6 +3218,8 @@
 #zz-route-card{
   margin-top:0 !important;
   min-width:0;
+  width:max-content;
+  justify-self:end;
 }
 
 /* título do card */
@@ -3331,13 +3333,18 @@
 /* responsivo */
 @media (max-width: 1600px){
   #zz-volume-row{
-    grid-template-columns:minmax(320px, .96fr) minmax(0, 1.52fr);
+    grid-template-columns:minmax(0, 1fr) max-content;
   }
 }
 
 @media (max-width: 1200px){
   #zz-volume-row{
     grid-template-columns:1fr;
+  }
+
+  #zz-route-card{
+    width:auto;
+    justify-self:stretch;
   }
 
   #vol-engine-card .vp-two-col{
