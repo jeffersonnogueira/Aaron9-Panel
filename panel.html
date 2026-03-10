@@ -3220,6 +3220,27 @@
   min-width:0;
 }
 
+/* mesmo scaling visual do ZigZag Route Engine */
+#vol-engine-card .prem-breakout-title{
+  font-size: 28px !important;
+  opacity: .90 !important;
+}
+
+#vol-engine-card .win-badge{
+  font-size: 22px !important;
+  padding: 10px 16px !important;
+}
+
+#vol-engine-card div[style*="font-size:11px"]{ font-size: 22px !important; }
+#vol-engine-card div[style*="font-size:12px"]{ font-size: 24px !important; }
+#vol-engine-card div[style*="font-size:14px"]{ font-size: 30px !important; }
+
+/* caixa interna igual ao respiro do bloco da direita */
+#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"]{
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+}
+
 #vol-engine-card .vp-mini{
   display:flex;
   justify-content:space-between;
@@ -3237,8 +3258,9 @@
 
 #vol-engine-card .vp-reading{
   margin-top:10px;
-  font-size:12px;
-  line-height:1.45;
+  font-size:18px !important;
+  line-height:1.20 !important;
+  font-weight:900 !important;
   opacity:.82;
 }
 
