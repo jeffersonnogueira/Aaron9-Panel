@@ -3164,143 +3164,46 @@
   }
 }
 /* ===== /INDICATORS TOP ROW ===== */
-/* ===== ZIGZAG ROUTE ENGINE — COMPACT + BOTTOM AREA ===== */
+/* ===== ZIGZAG ROUTE ENGINE — SAME FONT SIZE AS PREMONITION DAY ===== */
 #zz-route-card .prem-breakout-title{
   font-size: 28px !important;
   opacity: .90 !important;
 }
 
 #zz-route-card .win-badge{
-  font-size: 20px !important;
-  padding: 8px 14px !important;
+  font-size: 22px !important;
+  padding: 10px 16px !important;
 }
 
-/* topo mais apertado */
-#zz-route-card .zzr-top-grid{
-  display:grid;
-  grid-template-columns:minmax(260px, 1.24fr) minmax(150px, .50fr) minmax(150px, .50fr);
-  gap:8px;
-  margin-top:10px;
-}
+/* segue o mesmo scaling do indicator-prem-card */
+#zz-route-card div[style*="font-size:11px"]{ font-size: 22px !important; }
+#zz-route-card div[style*="font-size:12px"]{ font-size: 24px !important; }
+#zz-route-card div[style*="font-size:14px"]{ font-size: 30px !important; }
 
-#zz-route-card .zzr-top-box{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:8px 10px !important;
-  min-width:0;
-}
-
-#zz-route-card .zzr-top-box > div:first-child{
-  font-size:18px !important;
-  font-weight:950 !important;
-  letter-spacing:.14em !important;
-  text-transform:uppercase !important;
-  opacity:.75 !important;
-}
-
-#zz-route-card .zzr-top-box > div:nth-child(2){
-  margin-top:6px !important;
-  font-size:26px !important;
-  font-weight:900 !important;
-  line-height:1.15 !important;
-}
-
-#zz-route-card .zzr-top-box > div:nth-child(3){
-  margin-top:8px !important;
-  font-size:18px !important;
-  line-height:1.28 !important;
-}
-
-#zz-route-card .zzr-meta-row{
-  margin-top:8px;
-  font-size:18px !important;
-  line-height:1.35 !important;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:nowrap;
-  white-space:nowrap;
-  overflow-x:auto;
-}
-
+/* texto de rodapé / cancel */
 #zz-route-card #zzr-cancel{
-  font-size:16px !important;
-  line-height:1.15 !important;
-  opacity:.75 !important;
+  font-size: 18px !important;
+  line-height: 1.15 !important;
+  opacity: .75 !important;
 }
 
-/* área nova embaixo */
-#zz-route-card .zzr-bottom-grid{
-  margin-top:10px;
-  display:grid;
-  grid-template-columns:minmax(300px, .95fr) minmax(0, 1.25fr);
-  gap:10px;
-  align-items:start;
+/* dá o mesmo respiro visual dos cards de cima */
+#zz-route-card > div[style*="display:grid"] > div{
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
 }
 
-#zz-route-card .zzr-window-block,
-#zz-route-card .zzr-tactical-block{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:10px 12px;
-  min-width:0;
-}
-
-#zz-route-card .zzr-sec-title{
-  color:#ffcc66 !important;
-  font-size:24px !important;
-  font-weight:950 !important;
-  letter-spacing:.14em !important;
-  text-transform:uppercase !important;
-  opacity:1 !important;
-}
-
-#zz-route-card .zzr-window-list{
-  margin-top:8px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-#zz-route-card .vp-mini{
-  display:flex;
-  justify-content:space-between;
-  gap:14px;
-  font-weight:950;
-  font-size:22px !important;
-  line-height:1.24 !important;
-}
-
-#zz-route-card .vp-soft{
-  opacity:.80;
-  font-size:22px !important;
-}
-
-#zz-route-card .vp-reading{
-  margin-top:8px;
-  font-size:28px !important;
-  line-height:1.28 !important;
-  font-weight:950 !important;
-  color:#ffcc66 !important;
-  opacity:1 !important;
-}
-
+/* responsivo */
 @media (max-width: 1400px){
-  #zz-route-card .zzr-top-grid{
-    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-  }
-
-  #zz-route-card .zzr-bottom-grid{
-    grid-template-columns:1fr;
+  #zz-route-card > div[style*="display:grid"]{
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
   }
 }
 /* ===== /ZIGZAG ROUTE ENGINE ===== */
 /* ===== VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
 #zz-volume-row{
   display:grid;
-  grid-template-columns:minmax(340px, .74fr) minmax(0, 1.86fr);
+  grid-template-columns:minmax(360px, .92fr) minmax(0, 1.68fr);
   gap:10px;
   align-items:stretch;
   margin-top:10px;
@@ -4895,99 +4798,90 @@
                 </div>
               </div>
 
-                            </div>
+              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">WINDOW PRESSURE</div>
+
+              <div style="margin-top:8px; font-size:12px; line-height:1.35;">
+                <div class="vp-mini"><span class="vp-soft">1m</span><span id="vp-h1">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">5m</span><span id="vp-h5">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">15m</span><span id="vp-h15">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">30m</span><span id="vp-h30">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">60m</span><span id="vp-h60">—</span></div>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">TACTICAL READ</div>
+              <div class="vp-reading" id="vp-reading">—</div>
+            </div>
+          </div>
+                <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
+            <span id="zzr-badge" class="win-badge win-wait">—</span>
+          </div>
+
+                    <div style="display:grid; grid-template-columns:minmax(320px, 1.15fr) minmax(220px, .85fr) minmax(220px, .85fr); gap:10px; margin-top:10px;">
+            <!-- MODE / STATUS -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">MODE</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-mode" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">STATUS</span> <span id="zzr-status" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">CURRENT</span> <span id="zzr-current" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">NEXT PIVOT</span> <span id="zzr-next" style="font-weight:950; color:#ffcc66;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 1 -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 1</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step1" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step1state" style="font-weight:950;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 2</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step2" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step2state" style="font-weight:950;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 3 / ARRIVE -->
+            <div style="display:none; border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 3 / ARRIVE</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step3" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step3state" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ARRIVE ZONE</span> <span id="zzr-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
+              </div>
             </div>
           </div>
 
-          <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
-            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-              <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
-              <span id="zzr-badge" class="win-badge win-wait">—</span>
-            </div>
-
-            <div class="zzr-top-grid">
-              <!-- MODE / STATUS -->
-              <div class="zzr-top-box">
-                <div>MODE</div>
-
-                <div>
-                  <span id="zzr-mode" style="color:#ffcc66;">—</span>
-                </div>
-
-                <div>
-                  <div><span style="opacity:.7;">STATUS</span> <span id="zzr-status" style="font-weight:950;">—</span></div>
-                  <div style="margin-top:3px;"><span style="opacity:.7;">CURRENT</span> <span id="zzr-current" style="font-weight:950;">—</span></div>
-                  <div style="margin-top:3px;"><span style="opacity:.7;">NEXT PIVOT</span> <span id="zzr-next" style="font-weight:950; color:#ffcc66;">—</span></div>
-                </div>
-              </div>
-
-              <!-- STEP 1 -->
-              <div class="zzr-top-box">
-                <div>STEP 1</div>
-
-                <div>
-                  <span id="zzr-step1" style="color:#ffcc66;">—</span>
-                </div>
-
-                <div>
-                  <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step1state" style="font-weight:950;">—</span></div>
-                </div>
-              </div>
-
-              <!-- STEP 2 -->
-              <div class="zzr-top-box">
-                <div>STEP 2</div>
-
-                <div>
-                  <span id="zzr-step2" style="color:#ffcc66;">—</span>
-                </div>
-
-                <div>
-                  <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step2state" style="font-weight:950;">—</span></div>
-                </div>
-              </div>
-
-              <!-- STEP 3 / ARRIVE -->
-              <div class="zzr-top-box" style="display:none;">
-                <div>STEP 3 / ARRIVE</div>
-
-                <div>
-                  <span id="zzr-step3" style="color:#ffcc66;">—</span>
-                </div>
-
-                <div>
-                  <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step3state" style="font-weight:950;">—</span></div>
-                  <div style="margin-top:3px;"><span style="opacity:.7;">ARRIVE ZONE</span> <span id="zzr-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="zzr-meta-row">
-              <div><span style="opacity:.7;">ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">LAYER 2</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
-              <div id="zzr-cancel">—</div>
-            </div>
-
-            <div class="zzr-bottom-grid">
-              <div class="zzr-window-block">
-                <div class="zzr-sec-title">WINDOW PRESSURE</div>
-
-                <div class="zzr-window-list">
-                  <div class="vp-mini"><span class="vp-soft">1m</span><span id="vp-h1">—</span></div>
-                  <div class="vp-mini"><span class="vp-soft">5m</span><span id="vp-h5">—</span></div>
-                  <div class="vp-mini"><span class="vp-soft">15m</span><span id="vp-h15">—</span></div>
-                  <div class="vp-mini"><span class="vp-soft">30m</span><span id="vp-h30">—</span></div>
-                  <div class="vp-mini"><span class="vp-soft">60m</span><span id="vp-h60">—</span></div>
-                </div>
-              </div>
-
-              <div class="zzr-tactical-block">
-                <div class="zzr-sec-title">TACTICAL READ</div>
-                <div class="vp-reading" id="vp-reading">—</div>
-              </div>
-            </div>
-          </div>
+          <div style="margin-top:10px; font-size:12px; line-height:1.45; display:flex; align-items:center; gap:14px; flex-wrap:nowrap; white-space:nowrap; overflow-x:auto;">
+  <div><span style="opacity:.7;">ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
+  <div><span style="opacity:.7;">LAYER 2</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
+  <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
+  <div id="zzr-cancel" style="font-size:11px; opacity:.72;">—</div>
+</div>
+        </div>
         <!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
                      </div>   
         <!-- ===== /INDICATORS ===== -->
