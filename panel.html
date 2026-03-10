@@ -3200,7 +3200,7 @@
   }
 }
 /* ===== /ZIGZAG ROUTE ENGINE ===== */
-/* ===== VOLUME ENGINE + ZIGZAG ROUTE ENGINE ROW ===== */
+/* ===== VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
 #zz-volume-row{
   display:grid;
   grid-template-columns:minmax(360px, .92fr) minmax(0, 1.68fr);
@@ -3220,41 +3220,26 @@
   min-width:0;
 }
 
-#vol-engine-card .prem-breakout-title{
-  font-size: 28px !important;
-  opacity: .90 !important;
-}
-
-#vol-engine-card .win-badge{
-  font-size: 22px !important;
-  padding: 10px 16px !important;
-}
-
-#vol-engine-card div[style*="font-size:11px"]{ font-size: 22px !important; }
-#vol-engine-card div[style*="font-size:12px"]{ font-size: 24px !important; }
-#vol-engine-card div[style*="font-size:14px"]{ font-size: 30px !important; }
-
-#vol-engine-card .ve-note{
-  font-size: 30px !important;
-  line-height: 1.20 !important;
-  font-weight: 900 !important;
-  color: #22d3ee !important;
-  opacity: 1 !important;
-}
-
-#vol-engine-card .ve-mini{
+#vol-engine-card .vp-mini{
   display:flex;
   justify-content:space-between;
   gap:10px;
   font-weight:950;
 }
 
-#vol-engine-card .ve-mini + .ve-mini{
+#vol-engine-card .vp-mini + .vp-mini{
   margin-top:6px;
 }
 
-#vol-engine-card .ve-soft{
+#vol-engine-card .vp-soft{
   opacity:.72;
+}
+
+#vol-engine-card .vp-reading{
+  margin-top:10px;
+  font-size:12px;
+  line-height:1.45;
+  opacity:.82;
 }
 
 @media (max-width: 1600px){
@@ -3268,7 +3253,7 @@
     grid-template-columns:1fr;
   }
 }
-/* ===== /VOLUME ENGINE + ZIGZAG ROUTE ENGINE ROW ===== */
+/* ===== /VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
 
@@ -4683,35 +4668,50 @@
         </div>
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
-          <div class="prem-breakout-wrap" id="vol-engine-card">
-            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-              <div class="prem-breakout-title">VOLUME ENGINE</div>
-              <span id="ve-badge" class="win-badge win-wait">—</span>
+                    <div class="prem-breakout-wrap" id="vol-engine-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <div class="prem-breakout-title">VOLUME PREMONITION</div>
+              <span id="vp-badge" class="win-badge win-wait">—</span>
             </div>
 
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:12px 14px; margin-top:10px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">DIRECTION NOW</div>
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px; margin-top:10px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">PRIMARY READ</div>
 
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.20;">
-                <span id="ve-regime" style="color:#ffcc66;">—</span>
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="vp-primary" style="color:#ffcc66;">—</span>
               </div>
 
-                            <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">DIRECTION CONFIDENCE</span> <span id="ve-conviction" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">CONTINUE WORTH IT</span> <span id="ve-mtf-align" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">EXHAUSTION RISK</span> <span id="ve-hold-bias" style="font-weight:950;">—</span></div>
+              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">NOW</div>
+
+              <div style="margin-top:8px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">Continue now</span> <span id="vp-now-cont" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">Exhaust now</span> <span id="vp-now-exhaust" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">Weakening now</span> <span id="vp-now-weak" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">Direction confidence</span> <span id="vp-dir-conf" style="font-weight:950;">—</span></div>
               </div>
 
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div class="ve-mini"><span class="ve-soft">1m</span><span id="ve-h1">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">5m</span><span id="ve-h5">—</span></div>
-                
-                <div class="ve-mini"><span class="ve-soft">15m</span><span id="ve-h15">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">30m</span><span id="ve-h30">—</span></div>
-                <div class="ve-mini"><span class="ve-soft">60m</span><span id="ve-h60">—</span></div>
+              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">NEXT LEG</div>
+
+              <div style="margin-top:8px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">Continue next</span> <span id="vp-next-cont" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">Exhaust next</span> <span id="vp-next-exhaust" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">Worth it</span> <span id="vp-worth" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="vp-next-eta" style="font-weight:950;">—</span> <span style="opacity:.55;">→</span> <span style="opacity:.7;">Target</span> <span id="vp-next-target" style="font-weight:950; color:#ffcc66;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">Exhaust path</span> <span id="vp-exhaust-path" style="font-weight:950;">—</span></div>
               </div>
 
-              <div class="ve-note" id="ve-reading" style="margin-top:10px;">—</div>
+              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">WINDOW PRESSURE</div>
+
+              <div style="margin-top:8px; font-size:12px; line-height:1.35;">
+                <div class="vp-mini"><span class="vp-soft">1m</span><span id="vp-h1">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">5m</span><span id="vp-h5">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">15m</span><span id="vp-h15">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">30m</span><span id="vp-h30">—</span></div>
+                <div class="vp-mini"><span class="vp-soft">60m</span><span id="vp-h60">—</span></div>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">TACTICAL READ</div>
+              <div class="vp-reading" id="vp-reading">—</div>
             </div>
           </div>
                 <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
@@ -9919,188 +9919,44 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
       set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
       set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
     }
-        // ===== VOLUME ENGINE (NEW BLOCK) =====
+                // ===== VOLUME PREMONITION (NEW BLOCK) =====
     {
-            const clearVE = () => {
-        setBadge("ve-badge", "—", "win-wait");
-        set("ve-regime", "—");
-        set("ve-conviction", "—");
-        set("ve-mtf-align", "—");
-        set("ve-hold-bias", "—");
-        set("ve-h1", "—");
-        set("ve-h5", "—");
-        set("ve-h10", "—");
-        set("ve-h15", "—");
-        set("ve-h30", "—");
-        set("ve-h60", "—");
-        set("ve-reading", "—");
+      const clearVP = () => {
+        setBadge("vp-badge", "—", "win-wait");
+        [
+          "vp-primary",
+          "vp-now-cont",
+          "vp-now-exhaust",
+          "vp-now-weak",
+          "vp-dir-conf",
+          "vp-next-cont",
+          "vp-next-exhaust",
+          "vp-worth",
+          "vp-next-eta",
+          "vp-next-target",
+          "vp-exhaust-path",
+          "vp-h1",
+          "vp-h5",
+          "vp-h15",
+          "vp-h30",
+          "vp-h60",
+          "vp-reading"
+        ].forEach(id => set(id, "—"));
       };
 
-            const flow =
-        root?.volume_flow_live_v1 ||
-        ui?.volume_flow_live_v1 ||
-        digest?.volume_flow_live_v1 ||
-        panel?.volume_flow_live_v1 ||
-        root?.exec_1x1?.volume_flow_live_v1 ||
-        root?.live?.volume_flow_live_v1 ||
+      const vp =
+        root?.volume_premonition_v1 ||
+        ui?.volume_premonition_v1 ||
+        digest?.volume_premonition_v1 ||
+        panel?.volume_premonition_v1 ||
+        root?.exec_1x1?.volume_premonition_v1 ||
+        root?.live?.volume_premonition_v1 ||
         null;
 
-      const vol =
-        root?.volume_regime_v1 ||
-        ui?.volume_regime_v1 ||
-        digest?.volume_regime_v1 ||
-        panel?.volume_regime_v1 ||
-        root?.exec_1x1?.volume_regime_v1 ||
-        null;
-
-      if (flow && flow?.enabled !== false) {
-        const byH = flow?.by_horizon || {};
-
-        const getF = (...keys) => {
-          for (const k of keys) {
-            const v = byH?.[String(k)];
-            if (v) return v;
-          }
-          return null;
-        };
-
-        const f1  = getF("1", "1m");
-        const f5  = getF("5", "5m");
-        const f15 = getF("15", "15m");
-        const f30 = getF("30", "30m");
-        const f60 = getF("60", "60m");
-
-        const directionNowRaw = String(flow?.direction_now || "").toLowerCase();
-        const directionNow =
-          directionNowRaw === "long"  ? "LONG" :
-          directionNowRaw === "short" ? "SHORT" :
-          "NEUTRAL";
-
-        const directionConfidence = flow?.direction_confidence_pct;
-        const continueWorth = flow?.continuation_worth_it_pct ?? flow?.highlight?.continuation_worth_it_pct;
-        const exhaustionRisk = flow?.highlight?.exhaustion_score_pct ?? flow?.not_worth_it_pct;
-        const stateTxt = String(flow?.state_en || "—").toUpperCase();
-
-        const confNum = Number(directionConfidence);
-        const worthNum = Number(continueWorth);
-        const exhaustNum = Number(exhaustionRisk);
-
-        let badgeTxt = "FLOW LIVE";
-        let badgeMode = "win-wait";
-
-        if (directionNow !== "NEUTRAL" && Number.isFinite(worthNum) && worthNum >= 60 && (!Number.isFinite(exhaustNum) || exhaustNum < 45)) {
-          badgeTxt = `${directionNow} FLOW`;
-          badgeMode = "win-now";
-        } else if (directionNow === "NEUTRAL") {
-          badgeTxt = "NEUTRAL FLOW";
-          badgeMode = "win-wait";
-        } else {
-          badgeTxt = `${directionNow} FLOW`;
-          badgeMode = "win-warn";
-        }
-
-        const regimeTxt = `${directionNow} NOW`;
-
-        const fmtFlowRow = (x) => {
-          if (!x) return "—";
-          const state = String(x?.state_en || "—").toUpperCase();
-          const worth = x?.continuation_worth_it_pct;
-          if (state === "—" && !Number.isFinite(Number(worth))) return "—";
-          return `${state} | ${fmtPct(worth)}`;
-        };
-
-        const rows = [
-          { id: "ve-h1",  txt: fmtFlowRow(f1)  },
-          { id: "ve-h5",  txt: fmtFlowRow(f5)  },
-          { id: "ve-h15", txt: fmtFlowRow(f15) },
-          { id: "ve-h30", txt: fmtFlowRow(f30) },
-          { id: "ve-h60", txt: fmtFlowRow(f60) },
-        ];
-
-        let reading = "—";
-
-        if (directionNow === "NEUTRAL") {
-          reading = `Market is mixed / neutral right now.`;
-        } else if (Number.isFinite(worthNum) && worthNum >= 65 && (!Number.isFinite(exhaustNum) || exhaustNum < 40)) {
-          reading = `Market is ${directionNow} and continuation is healthy.`;
-        } else if (Number.isFinite(worthNum) && worthNum >= 55 && (!Number.isFinite(exhaustNum) || exhaustNum < 55)) {
-          reading = `Market is ${directionNow}, but continuation needs caution.`;
-        } else if (Number.isFinite(exhaustNum) && exhaustNum >= 55) {
-          reading = `${directionNow} flow is losing motor — reduce / wait.`;
-        } else if (Number.isFinite(worthNum) && worthNum < 50) {
-          reading = `${directionNow} flow is not worth chasing right now.`;
-        } else if (stateTxt !== "—") {
-          reading = stateTxt;
-        } else {
-          reading = `${directionNow} flow developing.`;
-        }
-
-        setBadge("ve-badge", badgeTxt, badgeMode);
-        set("ve-regime", regimeTxt);
-        set("ve-conviction", fmtPct(directionConfidence));
-        set("ve-mtf-align", fmtPct(continueWorth));
-        set("ve-hold-bias", fmtPct(exhaustionRisk));
-
-        rows.forEach(r => set(r.id, r.txt));
-        set("ve-reading", reading);
-
-        const regimeEl = document.getElementById("ve-regime");
-        const convEl   = document.getElementById("ve-conviction");
-        const alignEl  = document.getElementById("ve-mtf-align");
-        const holdEl   = document.getElementById("ve-hold-bias");
-
-        if (regimeEl) {
-          regimeEl.style.color =
-            directionNow === "LONG"  ? "#4ade80" :
-            directionNow === "SHORT" ? "#f87171" :
-            "#e5e7eb";
-        }
-
-        if (convEl) {
-          convEl.style.color =
-            confNum >= 70 ? "#4ade80" :
-            confNum >= 55 ? "#ffcc66" :
-            "#f87171";
-        }
-
-        if (alignEl) {
-          alignEl.style.color =
-            worthNum >= 65 ? "#4ade80" :
-            worthNum >= 55 ? "#ffcc66" :
-            "#f87171";
-        }
-
-        if (holdEl) {
-          holdEl.style.color =
-            exhaustNum <= 35 ? "#4ade80" :
-            exhaustNum <= 55 ? "#ffcc66" :
-            "#f87171";
-        }
-
-        const paintHZ = (id, txt) => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          const t = String(txt || "").toUpperCase();
-
-          el.style.color =
-            t.includes("EXHAUSTION") ? "#f87171" :
-            t.includes("WEAKENING")  ? "#ffcc66" :
-            t.includes("LONG")       ? "#4ade80" :
-            t.includes("SHORT")      ? "#f87171" :
-            "#e5e7eb";
-        };
-
-        rows.forEach(r => paintHZ(r.id, r.txt));
-      } else if (!vol) {
-        clearVE();
+      if (!vp || vp?.enabled === false) {
+        clearVP();
       } else {
-        const hi  = vol?.historical?.highlight || null;
-        const byH =
-          vol?.historical?.by_horizon ||
-          vol?.mtf?.by_horizon ||
-          vol?.historical?.mtf ||
-          {};
-
+        const byH = vp?.by_horizon || {};
         const getH = (...keys) => {
           for (const k of keys) {
             const v = byH?.[String(k)];
@@ -10109,307 +9965,236 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
           return null;
         };
 
-        // suporte novo + fallback de transição
-        const h1  = getH("1", "1m", "01", "3");     // fallback: 3 -> 1m temporário
+        const h1  = getH("1", "1m");
         const h5  = getH("5", "5m");
-        const h10 = getH("10", "10m");
-        const h15 = getH("15", "15m", "20");        // fallback: 20 -> 15m temporário
+        const h15 = getH("15", "15m");
         const h30 = getH("30", "30m");
         const h60 = getH("60", "60m");
 
-        const regimeKey = String(vol?.regime || "").toLowerCase();
-        const sideRaw   = String(vol?.selected_side || "—").toUpperCase();
-const readingIn = "";
-const conviction = hi?.continuation_hit_rate_pct;
+        const baseNow = vp?.highlight || h5 || h1 || null;
 
-const explicitDirOf = (x) => {
-  const raw = String(x?.label_en || x?.regime || x?.state || "")
-    .replace(/_/g, " ")
-    .trim()
-    .toUpperCase();
+        const sideRaw = String(vp?.direction_now || vp?.selected_side || "").toLowerCase();
+        const side =
+          (sideRaw.includes("long") || sideRaw.includes("buy"))   ? "LONG" :
+          (sideRaw.includes("short") || sideRaw.includes("sell")) ? "SHORT" :
+          "NEUTRAL";
 
-  if (raw.includes("SHORT") || raw.includes("SELL")) return "SHORT";
-  if (raw.includes("LONG")  || raw.includes("BUY"))  return "LONG";
-  return "—";
-};
+        const sideCap =
+          side === "LONG"  ? "Long"  :
+          side === "SHORT" ? "Short" :
+          "Flow";
 
-const explicitDirs = [h1, h5, h15, h30, h60]
-  .map(explicitDirOf)
-  .filter(v => v !== "—");
-
-const shortVotes = explicitDirs.filter(v => v === "SHORT").length;
-const longVotes  = explicitDirs.filter(v => v === "LONG").length;
-
-const sideBias =
-  shortVotes > longVotes ? "SHORT" :
-  longVotes > shortVotes ? "LONG" :
-  (sideRaw.includes("SHORT") || sideRaw.includes("SELL")) ? "SHORT" :
-  (sideRaw.includes("LONG")  || sideRaw.includes("BUY"))  ? "LONG"  :
-  "—";
-
-let badgeTxt  = "BALANCED";
-let badgeMode = "win-wait";
-
-if (regimeKey.includes("continuation")) {
-  badgeTxt = sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION";
-  badgeMode = "win-now";
-} else if (regimeKey.includes("exhaust")) {
-  badgeTxt = sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
-  badgeMode = "win-warn";
-}
-
-const regimeBase = String(vol?.label_en || vol?.regime || "—")
-  .replace(/_/g, " ")
-  .toUpperCase();
-
-const regimeTxt =
-  regimeBase.includes("EXHAUST")
-    ? (sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK")
-    : regimeBase.includes("CONTINUATION")
-      ? (sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION")
-      : regimeBase;
-
-const classifyHZ = (x, mins) => {
-  const raw = String(x?.label_en || x?.regime || x?.state || "")
-    .replace(/_/g, " ")
-    .trim()
-    .toUpperCase();
-
-  if (raw.includes("EXHAUST")) {
-    return sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
-  }
-
-  if (raw.includes("CONTINUATION")) {
-    return sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION";
-  }
-
-  if (raw.includes("WEAKENING")) {
-    return sideBias !== "—" ? `${sideBias} WEAKENING` : "WEAKENING";
-  }
-
-  if (raw) return raw;
-
-  const cont = Number(x?.continuation_hit_rate_pct);
-  const dom  = Number(x?.dominance_rate_pct);
-
-  if (!Number.isFinite(cont) && !Number.isFinite(dom)) return "—";
-
-  if (mins === 1 && Number.isFinite(cont) && cont >= 60 && Number.isFinite(dom) && dom < 50) {
-    return sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
-  }
-
-  if (Number.isFinite(cont) && cont >= 65 && (!Number.isFinite(dom) || dom >= 48)) {
-    return sideBias !== "—" ? `${sideBias} CONTINUATION` : "CONTINUATION";
-  }
-
-  if (Number.isFinite(cont) && cont >= 55) {
-    return sideBias !== "—" ? `${sideBias} WEAKENING` : "WEAKENING";
-  }
-
-  return sideBias !== "—" ? `${sideBias} EXHAUSTION RISK` : "EXHAUSTION RISK";
-};
-        const fmtHZ = (x, mins) => {
-          const pct = x?.continuation_hit_rate_pct;
-          const label = classifyHZ(x, mins);
-          if (label === "—" && !Number.isFinite(Number(pct))) return "—";
-          return `${label} | ${fmtPct(pct)}`;
+        const toNum = (v) => {
+          const n = Number(v);
+          return Number.isFinite(n) ? n : null;
         };
 
-        const rows = [
-          { id: "ve-h1",  txt: fmtHZ(h1, 1)  },
-          { id: "ve-h5",  txt: fmtHZ(h5, 5)  },
-          
-          { id: "ve-h15", txt: fmtHZ(h15, 15) },
-          { id: "ve-h30", txt: fmtHZ(h30, 30) },
-          { id: "ve-h60", txt: fmtHZ(h60, 60) },
+        const fmtInt = (v) => {
+          const n = toNum(v);
+          return n == null ? "—" : String(Math.round(n));
+        };
+
+        const fmtEtaMin = (v) => {
+          const n = toNum(v);
+          return n == null ? "—" : `~${Math.round(n)}m`;
+        };
+
+        const directionConf = toNum(vp?.direction_confidence_pct);
+        const contNow       = toNum(baseNow?.live_continuation_score_pct);
+        const exhaustNow    = toNum(baseNow?.live_exhaustion_score_pct);
+        const weakNow       = toNum(baseNow?.live_weakening_score_pct);
+
+        const contNext      = toNum(vp?.continuation_premonition_pct);
+        const exhaustNext   = toNum(vp?.exhaustion_premonition_pct);
+        const worthIt       = toNum(vp?.continuation_worth_it_pct);
+
+        const nextEta       = toNum(vp?.next_impulse_eta_p50_min);
+        const nextTarget    = toNum(vp?.next_impulse_target_price_p50);
+
+        const exhaustEta    = toNum(baseNow?.eta_exhaust_p50_min);
+        const exhaustTarget = toNum(baseNow?.target_exhaust_price_p50);
+
+        const classifyWindow = (x) => {
+          if (!x) return "MISSING";
+
+          const cNow  = toNum(x?.live_continuation_score_pct);
+          const eNow  = toNum(x?.live_exhaustion_score_pct);
+          const cNext = toNum(x?.continuation_premonition_pct);
+          const eNext = toNum(x?.exhaustion_premonition_pct);
+
+          if (eNext != null && cNext != null && eNext > cNext) return "EXHAUSTION RISK";
+          if ((eNext != null && eNext >= 45) || (eNow != null && eNow >= 40)) return "FATIGUE";
+          if (cNext != null && eNext != null && (cNext - eNext) >= 10 && (eNow == null || eNow < 35)) return "HEALTHY";
+          return "MIXED";
+        };
+
+        const fmtWindow = (x) => {
+          if (!x) return "—";
+
+          const status = classifyWindow(x);
+          return `NOW C${fmtInt(x?.live_continuation_score_pct)} / E${fmtInt(x?.live_exhaustion_score_pct)} / W${fmtInt(x?.live_weakening_score_pct)}   NEXT C${fmtInt(x?.continuation_premonition_pct)} / E${fmtInt(x?.exhaustion_premonition_pct)}   ${status}`;
+        };
+
+        const windows = [
+          { label: "1m",  id: "vp-h1",  obj: h1  },
+          { label: "5m",  id: "vp-h5",  obj: h5  },
+          { label: "15m", id: "vp-h15", obj: h15 },
+          { label: "30m", id: "vp-h30", obj: h30 },
+          { label: "60m", id: "vp-h60", obj: h60 }
         ];
 
-        const txtSide = (txt) => {
-  const t = String(txt || "").toUpperCase();
-  if (t.includes("SHORT") || t.includes("SELL")) return "SHORT";
-  if (t.includes("LONG")  || t.includes("BUY"))  return "LONG";
-  return "—";
-};
+        const firstFatigue = windows.find(w => {
+          if (!w.obj) return false;
+          const eNow  = toNum(w.obj?.live_exhaustion_score_pct);
+          const cNext = toNum(w.obj?.continuation_premonition_pct);
+          const eNext = toNum(w.obj?.exhaustion_premonition_pct);
+          return (eNext != null && eNext >= 45) ||
+                 (eNow != null && eNow >= 40) ||
+                 (eNext != null && cNext != null && eNext > cNext);
+        }) || null;
 
-const isSupportive = (txt) => {
-  const t = String(txt || "").toUpperCase();
-  if (!t || t === "—") return false;
-  if (t.includes("EXHAUSTION")) return false;
+        let badgeTxt = "NEUTRAL FLOW";
+        let badgeMode = "win-wait";
 
-  const dir = txtSide(t);
-  if (dir !== "—" && sideBias !== "—" && dir !== sideBias) return false;
+        if (side !== "NEUTRAL") {
+          badgeTxt = `${side} FLOW`;
 
-  return t.includes("CONTINUATION") || t.includes("WEAKENING");
-};
+          const lead = (contNext ?? -999) - (exhaustNext ?? -999);
 
-const availableCount = rows.filter(r => r.txt !== "—").length;
-const supportCount   = rows.filter(r => isSupportive(r.txt)).length;
-
-const alignDir =
-  sideBias === "SHORT" ? "bearish" :
-  sideBias === "LONG"  ? "bullish" :
-  "aligned";
-
-const mtfAlignTxt =
-  availableCount > 0 ? `${supportCount}/${availableCount} ${alignDir}` : "—";
-
-let holdBiasTxt = "—";
-if (availableCount > 0) {
-  const ratio = supportCount / availableCount;
-  holdBiasTxt =
-    ratio >= 0.66 ? "Hold bias supported" :
-    ratio >= 0.50 ? "Hold bias mixed" :
-    "Hold bias not supported";
-}
-
-const txt1  = rows.find(r => r.id === "ve-h1")?.txt  || "—";
-const txt5  = rows.find(r => r.id === "ve-h5")?.txt  || "—";
-const txt15 = rows.find(r => r.id === "ve-h15")?.txt || "—";
-const txt30 = rows.find(r => r.id === "ve-h30")?.txt || "—";
-const txt60 = rows.find(r => r.id === "ve-h60")?.txt || "—";
-
-const tfState = (txt) => {
-  const t = String(txt || "").toUpperCase();
-  if (!t || t === "—") return "missing";
-
-  const dir = txtSide(t);
-  const hasExplicitSide = dir !== "—";
-  const sameSide = !hasExplicitSide || sideBias === "—" || dir === sideBias;
-  const oppositeSide = hasExplicitSide && sideBias !== "—" && dir !== sideBias;
-
-  if (t.includes("EXHAUSTION")) {
-    return oppositeSide ? "against" : "noise";
-  }
-
-  if (t.includes("CONTINUATION")) return sameSide ? "strong" : "against";
-  if (t.includes("WEAKENING"))    return sameSide ? "weak"   : "against";
-
-  return "neutral";
-};
-
-const s1  = tfState(txt1);
-const s5  = tfState(txt5);
-const s15 = tfState(txt15);
-const s30 = tfState(txt30);
-const s60 = tfState(txt60);
-
-const sameSideState = (s) => s === "strong" || s === "weak";
-const weakOrNoise   = (s) => s === "weak" || s === "noise";
-const neutralish    = (s) => s === "neutral" || s === "missing";
-const hostile       = (s) => s === "against";
-
-const h1Risk = s1 === "noise";
-
-const sideWord =
-  sideBias === "SHORT" ? "short" :
-  sideBias === "LONG"  ? "long"  :
-  "trend";
-
-let reading = "—";
-
-if (readingIn) {
-  reading = readingIn;
-} else if (
-  h1Risk &&
-  s5 === "strong" &&
-  s15 === "strong" &&
-  sameSideState(s30) &&
-  sameSideState(s60)
-) {
-  reading = `Hold — 1m noise only.`;
-} else if (
-  h1Risk &&
-  sameSideState(s5) &&
-  sameSideState(s15) &&
-  (sameSideState(s30) || sameSideState(s60))
-) {
-  reading = `Hold with caution.`;
-} else if (
-  h1Risk &&
-  !hostile(s5) &&
-  !hostile(s15) &&
-  (weakOrNoise(s5) || weakOrNoise(s15)) &&
-  sameSideState(s30) &&
-  sameSideState(s60)
-) {
-  reading = `Immediate motor weakening.`;
-} else if (
-  h1Risk &&
-  (
-    hostile(s5) ||
-    hostile(s15) ||
-    (
-      (neutralish(s30) && neutralish(s60)) &&
-      (hostile(s5) || hostile(s15) || weakOrNoise(s5) || weakOrNoise(s15))
-    ) ||
-    (!sameSideState(s5) && !sameSideState(s15))
-  )
-) {
-  reading = `Reduce / exit.`;
-} else if (holdBiasTxt !== "—") {
-  reading = `${holdBiasTxt}${availableCount > 0 ? ` — ${mtfAlignTxt}` : ""}`;
-}
-
-        setBadge("ve-badge", badgeTxt, badgeMode);
-        set("ve-regime", regimeTxt);
-        set("ve-conviction", fmtPct(conviction));
-        set("ve-mtf-align", mtfAlignTxt);
-        set("ve-hold-bias", holdBiasTxt);
-
-        rows.forEach(r => set(r.id, r.txt));
-        set("ve-reading", reading);
-
-        const regimeEl = document.getElementById("ve-regime");
-        const convEl   = document.getElementById("ve-conviction");
-        const alignEl  = document.getElementById("ve-mtf-align");
-        const holdEl   = document.getElementById("ve-hold-bias");
-
-        if (regimeEl) {
-          regimeEl.style.color =
-            badgeMode === "win-now"  ? "#4ade80" :
-            badgeMode === "win-warn" ? "#ffcc66" :
-            "#e5e7eb";
+          if ((contNow != null && contNow >= 60) && (lead >= 10) && (worthIt == null || worthIt >= 60)) {
+            badgeMode = "win-now";
+          } else if (
+            (lead <= 0) ||
+            (exhaustNext != null && exhaustNext >= 45) ||
+            (exhaustNow != null && exhaustNow >= 40)
+          ) {
+            badgeMode = "win-warn";
+          } else {
+            badgeMode = "win-wait";
+          }
         }
 
-        if (convEl) {
-          const n = Number(conviction);
-          convEl.style.color =
-            n >= 70 ? "#4ade80" :
-            n >= 55 ? "#ffcc66" :
-            "#f87171";
+        let primary = "NEUTRAL / MIXED FLOW";
+
+        if (side !== "NEUTRAL") {
+          if ((exhaustNext != null && contNext != null && exhaustNext > contNext) || (exhaustNow != null && exhaustNow >= 55)) {
+            primary = `${side} EXHAUSTION RISK`;
+          } else if (firstFatigue && contNext != null && exhaustNext != null && contNext >= exhaustNext) {
+            primary = `${side} CONTINUATION | ${firstFatigue.label} FATIGUE BUILDING`;
+          } else if ((contNow != null && contNow >= 70) && (contNext != null && contNext >= 60)) {
+            primary = `${side} CONTINUATION IN CONTROL`;
+          } else if (contNext != null && contNext >= 55) {
+            primary = `${side} CONTINUATION ACTIVE`;
+          } else {
+            primary = `${side} FLOW DEVELOPING`;
+          }
         }
 
-        const alignScore = availableCount > 0 ? (supportCount / availableCount) : 0;
+        let reading = "Flow is mixed / neutral. No directional premonition yet.";
 
-        if (alignEl) {
-          alignEl.style.color =
-            alignScore >= 0.66 ? "#4ade80" :
-            alignScore >= 0.50 ? "#ffcc66" :
-            "#f87171";
+        if (side !== "NEUTRAL") {
+          if ((exhaustNext != null && contNext != null && exhaustNext > contNext) || (exhaustNow != null && exhaustNow >= 55)) {
+            reading = `${sideCap} flow is losing control into the next leg; exhaustion risk is overtaking continuation.`;
+          } else if (firstFatigue) {
+            reading = `${sideCap} continuation still controls the immediate flow, but ${firstFatigue.label} is the first window where exhaustion begins to build.`;
+          } else if ((contNow != null && contNow >= 60) && (contNext != null && contNext >= 60)) {
+            reading = `${sideCap} continuation still controls the immediate flow, and no major exhaustion window is building yet.`;
+          } else {
+            reading = `${sideCap} flow still has directional bias, but continuation needs caution.`;
+          }
         }
 
-        if (holdEl) {
-          holdEl.style.color =
-            alignScore >= 0.66 ? "#4ade80" :
-            alignScore >= 0.50 ? "#ffcc66" :
-            "#f87171";
-        }
+        setBadge("vp-badge", badgeTxt, badgeMode);
+        set("vp-primary", primary);
 
-        const paintHZ = (id, txt) => {
+        set("vp-now-cont", fmtPct(contNow));
+        set("vp-now-exhaust", fmtPct(exhaustNow));
+        set("vp-now-weak", fmtPct(weakNow));
+        set("vp-dir-conf", fmtPct(directionConf));
+
+        set("vp-next-cont", fmtPct(contNext));
+        set("vp-next-exhaust", fmtPct(exhaustNext));
+        set("vp-worth", fmtPct(worthIt));
+        set("vp-next-eta", fmtEtaMin(nextEta));
+        set("vp-next-target", nextTarget == null ? "—" : fmt2(nextTarget));
+        set(
+          "vp-exhaust-path",
+          exhaustTarget == null
+            ? "—"
+            : `${fmtEtaMin(exhaustEta)} → ${fmt2(exhaustTarget)}`
+        );
+
+        windows.forEach(w => set(w.id, fmtWindow(w.obj)));
+        set("vp-reading", reading);
+
+        const paintPct = (id, n, goodHigh = true) => {
           const el = document.getElementById(id);
           if (!el) return;
-          const t = String(txt || "").toUpperCase();
-          el.style.color =
-            t.includes("CONTINUATION") ? "#4ade80" :
-            t.includes("WEAKENING")    ? "#ffcc66" :
-            t.includes("EXHAUSTION")   ? "#f87171" :
-            "#e5e7eb";
+          const x = toNum(n);
+          if (x == null) {
+            el.style.color = "#e5e7eb";
+            return;
+          }
+
+          if (goodHigh) {
+            el.style.color =
+              x >= 70 ? "#4ade80" :
+              x >= 55 ? "#ffcc66" :
+              "#f87171";
+          } else {
+            el.style.color =
+              x <= 25 ? "#4ade80" :
+              x <= 40 ? "#ffcc66" :
+              "#f87171";
+          }
         };
 
-        rows.forEach(r => paintHZ(r.id, r.txt));
+        paintPct("vp-now-cont", contNow, true);
+        paintPct("vp-now-exhaust", exhaustNow, false);
+        paintPct("vp-now-weak", weakNow, false);
+        paintPct("vp-dir-conf", directionConf, true);
+        paintPct("vp-next-cont", contNext, true);
+        paintPct("vp-next-exhaust", exhaustNext, false);
+        paintPct("vp-worth", worthIt, true);
+
+        const primaryEl = document.getElementById("vp-primary");
+        if (primaryEl) {
+          const t = String(primary || "").toUpperCase();
+          primaryEl.style.color =
+            t.includes("EXHAUSTION") ? "#f87171" :
+            t.includes("FATIGUE")    ? "#ffcc66" :
+            "#ffcc66";
+        }
+
+        const exhaustPathEl = document.getElementById("vp-exhaust-path");
+        if (exhaustPathEl) {
+          exhaustPathEl.style.color =
+            exhaustNext != null && exhaustNext >= 45 ? "#f87171" :
+            exhaustNext != null && exhaustNext >= 30 ? "#ffcc66" :
+            "#e5e7eb";
+        }
+
+        windows.forEach(w => {
+          const el = document.getElementById(w.id);
+          if (!el) return;
+          const status = classifyWindow(w.obj);
+          el.style.color =
+            status === "HEALTHY"         ? "#4ade80" :
+            status === "FATIGUE"         ? "#ffcc66" :
+            status === "EXHAUSTION RISK" ? "#f87171" :
+            "#e5e7eb";
+        });
+
+        const readingEl = document.getElementById("vp-reading");
+        if (readingEl) {
+          readingEl.style.color =
+            String(reading).toUpperCase().includes("OVERTAKING") ? "#f87171" :
+            String(reading).toUpperCase().includes("CAUTION")    ? "#ffcc66" :
+            "#e5e7eb";
+        }
       }
     }
-    // ===== /VOLUME ENGINE =====
+    // ===== /VOLUME PREMONITION =====
         // ===== ZIGZAG ROUTE ENGINE (NEW BLOCK) =====
     {
       const clearZZRoute = () => {
