@@ -3257,24 +3257,42 @@
   font-weight: 950 !important;
 }
 
-/* NOW + NEXT LEG conteúdo */
+/* NOW + NEXT LEG lado a lado */
+#vol-engine-card .vp-two-col{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:28px;
+  align-items:start;
+  margin-top:10px;
+}
+
+#vol-engine-card .vp-col{
+  min-width:0;
+}
+
+#vol-engine-card .vp-sec-title{
+  color:#ffcc66 !important;
+  font-size:26px !important;
+  font-weight:950 !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase !important;
+  opacity:1 !important;
+}
+
+#vol-engine-card .vp-sec-body{
+  margin-top:8px;
+  font-size:30px !important;
+  line-height:1.38 !important;
+  font-weight:900 !important;
+}
+
+#vol-engine-card .vp-sec-body > div + div{
+  margin-top:6px !important;
+}
+
+/* WINDOW PRESSURE + TACTICAL READ headings */
 #vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(4),
 #vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(6){
-  font-size: 30px !important;
-  line-height: 1.38 !important;
-  font-weight: 900 !important;
-}
-
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(4) > div,
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(6) > div{
-  margin-top: 6px !important;
-}
-
-/* NOW / NEXT LEG / WINDOW PRESSURE / TACTICAL READ headings em amarelo */
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(3),
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(5),
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(7),
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(9){
   color:#ffcc66 !important;
   font-size:26px !important;
   font-weight:950 !important;
@@ -3287,8 +3305,8 @@
   justify-content:space-between;
   gap:14px;
   font-weight:950;
-  font-size: 24px !important;
-  line-height: 1.28 !important;
+  font-size:24px !important;
+  line-height:1.28 !important;
 }
 
 #vol-engine-card .vp-mini + .vp-mini{
@@ -3297,7 +3315,7 @@
 
 #vol-engine-card .vp-soft{
   opacity:.80;
-  font-size: 24px !important;
+  font-size:24px !important;
 }
 
 /* TACTICAL READ texto */
@@ -3320,6 +3338,11 @@
 @media (max-width: 1200px){
   #zz-volume-row{
     grid-template-columns:1fr;
+  }
+
+  #vol-engine-card .vp-two-col{
+    grid-template-columns:1fr;
+    gap:16px;
   }
 }
 /* ===== /VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
@@ -4750,23 +4773,29 @@
                 <span id="vp-primary" style="color:#ffcc66;">—</span>
               </div>
 
-              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">NOW</div>
+                            <div class="vp-two-col">
+                <div class="vp-col">
+                  <div class="vp-sec-title">NOW</div>
 
-              <div style="margin-top:8px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">Continue now</span> <span id="vp-now-cont" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">Exhaust now</span> <span id="vp-now-exhaust" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">Weakening now</span> <span id="vp-now-weak" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">Direction confidence</span> <span id="vp-dir-conf" style="font-weight:950;">—</span></div>
-              </div>
+                  <div class="vp-sec-body">
+                    <div><span style="opacity:.7;">Continue now</span> <span id="vp-now-cont" style="font-weight:950;">—</span></div>
+                    <div><span style="opacity:.7;">Exhaust now</span> <span id="vp-now-exhaust" style="font-weight:950;">—</span></div>
+                    <div><span style="opacity:.7;">Weakening now</span> <span id="vp-now-weak" style="font-weight:950;">—</span></div>
+                    <div><span style="opacity:.7;">Direction confidence</span> <span id="vp-dir-conf" style="font-weight:950;">—</span></div>
+                  </div>
+                </div>
 
-              <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">NEXT LEG</div>
+                <div class="vp-col">
+                  <div class="vp-sec-title">NEXT LEG</div>
 
-              <div style="margin-top:8px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">Continue next</span> <span id="vp-next-cont" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">Exhaust next</span> <span id="vp-next-exhaust" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">Worth it</span> <span id="vp-worth" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="vp-next-eta" style="font-weight:950;">—</span> <span style="opacity:.55;">→</span> <span style="opacity:.7;">Target</span> <span id="vp-next-target" style="font-weight:950; color:#ffcc66;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">Exhaust path</span> <span id="vp-exhaust-path" style="font-weight:950;">—</span></div>
+                  <div class="vp-sec-body">
+                    <div><span style="opacity:.7;">Continue next</span> <span id="vp-next-cont" style="font-weight:950;">—</span></div>
+                    <div><span style="opacity:.7;">Exhaust next</span> <span id="vp-next-exhaust" style="font-weight:950;">—</span></div>
+                    <div><span style="opacity:.7;">Worth it</span> <span id="vp-worth" style="font-weight:950;">—</span></div>
+                    <div><span style="opacity:.7;">ETA</span> <span id="vp-next-eta" style="font-weight:950;">—</span> <span style="opacity:.55;">→</span> <span style="opacity:.7;">Target</span> <span id="vp-next-target" style="font-weight:950; color:#ffcc66;">—</span></div>
+                    <div><span style="opacity:.7;">Exhaust path</span> <span id="vp-exhaust-path" style="font-weight:950;">—</span></div>
+                  </div>
+                </div>
               </div>
 
               <div style="margin-top:10px; font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">WINDOW PRESSURE</div>
