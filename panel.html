@@ -3375,6 +3375,181 @@
   }
 }
 /* ===== /VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
+/* ===== REPLAY MODE — BELOW ZIGZAG ROUTE ENGINE ===== */
+#zz-side-stack{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  align-self:start;
+  justify-self:end;
+  min-width:0;
+  width:max-content;
+}
+
+#replay-mode-card{
+  margin-top:0 !important;
+  min-width:0;
+  width:max-content;
+  justify-self:end;
+}
+
+#replay-mode-card .prem-breakout-title{
+  font-size:28px !important;
+  opacity:.90 !important;
+}
+
+#replay-mode-card .win-badge{
+  font-size:22px !important;
+  padding:10px 16px !important;
+}
+
+#replay-mode-card .replay-shell{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+  margin-top:10px;
+  min-width:856px;
+}
+
+#replay-mode-card .replay-topline{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:8px;
+}
+
+#replay-mode-card .replay-box,
+#replay-mode-card .replay-foot > div{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+}
+
+#replay-mode-card .replay-label{
+  font-size:22px !important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.75;
+}
+
+#replay-mode-card .replay-value{
+  margin-top:8px;
+  font-size:30px !important;
+  font-weight:900;
+  line-height:1.25;
+  color:#ffcc66;
+  white-space:nowrap;
+}
+
+#replay-mode-card .replay-current{
+  color:#e5e7eb;
+}
+
+#replay-mode-card .replay-actions{
+  display:grid;
+  grid-template-columns:repeat(6, max-content);
+  justify-content:space-between;
+  gap:8px;
+  margin-top:10px;
+}
+
+#replay-mode-card .replay-btn{
+  appearance:none;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);
+  color:#e5e7eb;
+  border-radius:14px;
+  padding:12px 14px;
+  min-height:52px;
+  font-size:20px;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:border-color .16s ease, transform .16s ease, background .16s ease, opacity .16s ease;
+}
+
+#replay-mode-card .replay-btn:hover{
+  transform:translateY(-1px);
+}
+
+#replay-mode-card .replay-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+#replay-mode-card .replay-btn-gold{
+  color:#ffcc66;
+  border-color:rgba(255,204,102,.24);
+  background:rgba(255,204,102,.08);
+}
+
+#replay-mode-card .replay-btn-green{
+  color:#4ade80;
+  border-color:rgba(74,222,128,.24);
+  background:rgba(74,222,128,.08);
+}
+
+#replay-mode-card .replay-btn-red{
+  color:#f87171;
+  border-color:rgba(248,113,113,.24);
+  background:rgba(248,113,113,.08);
+}
+
+#replay-mode-card .replay-foot{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:8px;
+  margin-top:10px;
+  font-size:24px !important;
+  line-height:1.35;
+}
+
+#replay-mode-card .replay-soft{
+  opacity:.70;
+}
+
+#replay-mode-card .replay-strong{
+  font-weight:950;
+}
+
+#replay-mode-card .replay-note{
+  margin-top:10px;
+  font-size:18px !important;
+  line-height:1.2;
+  opacity:.78;
+  white-space:normal;
+}
+
+@media (max-width: 1200px){
+  #zz-side-stack{
+    width:auto;
+    justify-self:stretch;
+  }
+
+  #replay-mode-card,
+  #zz-route-card{
+    width:auto;
+    justify-self:stretch;
+  }
+
+  #replay-mode-card .replay-shell{
+    min-width:0;
+  }
+
+  #replay-mode-card .replay-topline,
+  #replay-mode-card .replay-foot{
+    grid-template-columns:1fr;
+  }
+
+  #replay-mode-card .replay-actions{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+}
+/* ===== /REPLAY MODE ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
 
@@ -4847,7 +5022,8 @@
               </div>
             </div>
           </div>
-                <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
+                <div id="zz-side-stack">
+  <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
             <span id="zzr-badge" class="win-badge win-wait">—</span>
@@ -4916,6 +5092,50 @@
   <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
   <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
 </div>
+        </div>
+                  <div class="prem-breakout-wrap" id="replay-mode-card" style="margin-top:0; min-width:0;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+              <div class="prem-breakout-title">REPLAY MODE</div>
+              <span id="replay-badge" class="win-badge win-wait">OFF</span>
+            </div>
+
+            <div class="replay-shell">
+              <div class="replay-topline">
+                <div class="replay-box">
+                  <div class="replay-label">START</div>
+                  <div id="replay-start" class="replay-value">7:30 AM</div>
+                </div>
+
+                <div class="replay-box">
+                  <div class="replay-label">CURRENT</div>
+                  <div id="replay-current" class="replay-value replay-current">7:30 AM</div>
+                </div>
+
+                <div class="replay-box">
+                  <div class="replay-label">END</div>
+                  <div id="replay-end" class="replay-value">2:00 PM</div>
+                </div>
+              </div>
+
+              <div class="replay-actions">
+                <button id="replay-toggle" class="replay-btn replay-btn-gold" type="button">REPLAY MODE</button>
+                <button id="replay-prev" class="replay-btn" type="button">◀ PREV</button>
+                <button id="replay-next" class="replay-btn" type="button">NEXT ▶</button>
+                <button id="replay-play" class="replay-btn replay-btn-green" type="button">PLAY</button>
+                <button id="replay-pause" class="replay-btn replay-btn-red" type="button">PAUSE</button>
+                <button id="replay-reset" class="replay-btn" type="button">RESET</button>
+              </div>
+
+              <div class="replay-foot">
+                <div><span class="replay-soft">STATUS</span> <span id="replay-status" class="replay-strong">LIVE MODE</span></div>
+                <div><span class="replay-soft">WINDOW</span> <span id="replay-window" class="replay-strong">7:30 AM → 2:00 PM</span></div>
+                <div><span class="replay-soft">STEP</span> <span id="replay-step" class="replay-strong">1 MINUTE</span></div>
+              </div>
+
+              <div id="replay-note" class="replay-note">OFF — READY</div>
+            </div>
+          </div>
+
         </div>
         <!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
                      </div>   
@@ -7186,7 +7406,201 @@ window.a10LastMsgAt = 0;
 const A10_LIVE_RETRY_MIN_MS = 5000;   // 5s
 const A10_LIVE_RETRY_MAX_MS = 60000;  // 60s
 let a10LiveRetryMs = A10_LIVE_RETRY_MIN_MS;
+// ===== REPLAY MODE (UI ONLY) =====
+const REPLAY_START_MIN = (7 * 60) + 30;
+const REPLAY_END_MIN = 14 * 60;
 
+const replayState = {
+  enabled: false,
+  minute: REPLAY_START_MIN,
+  playing: false,
+  timer: null,
+  speedMs: 900,
+};
+
+function replayClampMinute(minute){
+  const n = Number(minute);
+  if (!Number.isFinite(n)) return REPLAY_START_MIN;
+  return Math.max(REPLAY_START_MIN, Math.min(REPLAY_END_MIN, Math.round(n)));
+}
+
+function replayMinuteLabel(totalMinutes){
+  const safe = replayClampMinute(totalMinutes);
+  let hours = Math.floor(safe / 60);
+  const minutes = safe % 60;
+  const suffix = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+  return `${hours}:${String(minutes).padStart(2, "0")} ${suffix}`;
+}
+
+function replayGetEls(){
+  return {
+    badge: document.getElementById("replay-badge"),
+    start: document.getElementById("replay-start"),
+    current: document.getElementById("replay-current"),
+    end: document.getElementById("replay-end"),
+    status: document.getElementById("replay-status"),
+    window: document.getElementById("replay-window"),
+    step: document.getElementById("replay-step"),
+    note: document.getElementById("replay-note"),
+    toggle: document.getElementById("replay-toggle"),
+    prev: document.getElementById("replay-prev"),
+    next: document.getElementById("replay-next"),
+    play: document.getElementById("replay-play"),
+    pause: document.getElementById("replay-pause"),
+    reset: document.getElementById("replay-reset"),
+  };
+}
+
+function replayRender(){
+  const els = replayGetEls();
+  if (!els.badge) return;
+
+  const startTxt = replayMinuteLabel(REPLAY_START_MIN);
+  const endTxt = replayMinuteLabel(REPLAY_END_MIN);
+  const currentTxt = replayMinuteLabel(replayState.minute);
+  const hasHook = typeof window.__AARON_REPLAY_HOOK__ === "function";
+
+  if (els.start) els.start.textContent = startTxt;
+  if (els.end) els.end.textContent = endTxt;
+  if (els.current) els.current.textContent = currentTxt;
+  if (els.window) els.window.textContent = `${startTxt} → ${endTxt}`;
+  if (els.step) els.step.textContent = "1 MINUTE";
+
+  els.badge.textContent = replayState.enabled ? "ON" : "OFF";
+  els.badge.className = `win-badge ${replayState.enabled ? "win-now" : "win-wait"}`;
+
+  if (els.status) {
+    els.status.textContent =
+      !replayState.enabled ? "LIVE MODE" :
+      replayState.playing ? "AUTO PLAY" :
+      "MANUAL STEP";
+  }
+
+  if (els.note) {
+    if (!replayState.enabled) {
+      els.note.textContent = "OFF — READY";
+    } else if (hasHook) {
+      els.note.textContent = `SNAPSHOT ${currentTxt} — replay hook ready`;
+    } else {
+      els.note.textContent = `UI STEP ${currentTxt} — connect n8n / Matcher hook for real historical panel`;
+    }
+  }
+
+  if (els.toggle) els.toggle.textContent = replayState.enabled ? "EXIT REPLAY" : "REPLAY MODE";
+  if (els.prev) els.prev.disabled = !replayState.enabled || replayState.playing || replayState.minute <= REPLAY_START_MIN;
+  if (els.next) els.next.disabled = !replayState.enabled || replayState.playing || replayState.minute >= REPLAY_END_MIN;
+  if (els.play) els.play.disabled = !replayState.enabled || replayState.playing || replayState.minute >= REPLAY_END_MIN;
+  if (els.pause) els.pause.disabled = !replayState.playing;
+  if (els.reset) els.reset.disabled = !replayState.enabled && replayState.minute === REPLAY_START_MIN;
+}
+
+async function replayApplyMinute(){
+  replayRender();
+
+  if (!replayState.enabled) return;
+
+  const hook = window.__AARON_REPLAY_HOOK__;
+  if (typeof hook !== "function") return;
+
+  try {
+    await hook({
+      minute: replayState.minute,
+      label: replayMinuteLabel(replayState.minute),
+      startMinute: REPLAY_START_MIN,
+      endMinute: REPLAY_END_MIN,
+    });
+  } catch (err) {
+    console.warn("Replay hook error:", err);
+  }
+}
+
+function replayPause(){
+  if (replayState.timer) clearInterval(replayState.timer);
+  replayState.timer = null;
+  replayState.playing = false;
+  replayRender();
+}
+
+function replaySetEnabled(on){
+  replayState.enabled = !!on;
+  if (!replayState.enabled) replayPause();
+  replayApplyMinute();
+}
+
+function replayStep(delta){
+  replayState.minute = replayClampMinute(replayState.minute + Number(delta || 0));
+  replayApplyMinute();
+}
+
+function replayPlay(){
+  if (!replayState.enabled) replayState.enabled = true;
+  if (replayState.playing) return;
+
+  replayState.playing = true;
+  replayRender();
+
+  replayState.timer = setInterval(async () => {
+    if (replayState.minute >= REPLAY_END_MIN) {
+      replayPause();
+      return;
+    }
+    replayState.minute = replayClampMinute(replayState.minute + 1);
+    await replayApplyMinute();
+  }, replayState.speedMs);
+}
+
+function initReplayModeUI(){
+  if (window.__AARON_REPLAY_UI_READY__) return;
+
+  const els = replayGetEls();
+  if (!els.toggle) return;
+
+  window.__AARON_REPLAY_UI_READY__ = true;
+
+  els.toggle.addEventListener("click", () => replaySetEnabled(!replayState.enabled));
+  els.prev.addEventListener("click", () => replayStep(-1));
+  els.next.addEventListener("click", () => replayStep(1));
+  els.play.addEventListener("click", replayPlay);
+  els.pause.addEventListener("click", replayPause);
+  els.reset.addEventListener("click", () => {
+    replayPause();
+    replayState.minute = REPLAY_START_MIN;
+    replayApplyMinute();
+  });
+
+  replayRender();
+}
+
+document.addEventListener("DOMContentLoaded", initReplayModeUI);
+
+window.__AARON_REPLAY__ = {
+  enable(){ replaySetEnabled(true); },
+  disable(){ replaySetEnabled(false); },
+  play(){ replayPlay(); },
+  pause(){ replayPause(); },
+  step(delta){ replayStep(delta); },
+  setMinute(minute){
+    replayPause();
+    replayState.minute = replayClampMinute(minute);
+    replayApplyMinute();
+  },
+  getState(){
+    return {
+      enabled: replayState.enabled,
+      playing: replayState.playing,
+      minute: replayState.minute,
+      label: replayMinuteLabel(replayState.minute),
+      speedMs: replayState.speedMs,
+    };
+  },
+  setHook(fn){
+    window.__AARON_REPLAY_HOOK__ = (typeof fn === "function") ? fn : null;
+    replayRender();
+  },
+};
+// ===== /REPLAY MODE =====
 
 function a10LiveSetStatus(text){
   const msg = text || "—";
