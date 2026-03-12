@@ -3232,7 +3232,121 @@
   margin-top:0 !important;
   min-width:0;
 }
+#zz-left-stack{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  min-width:0;
+  width:100%;
+  align-self:start;
+}
 
+#bw-prem-card{
+  margin-top:0 !important;
+  min-width:0;
+}
+
+#bw-prem-card .prem-breakout-title{
+  font-size:28px !important;
+  opacity:.90 !important;
+}
+
+#bw-prem-card .win-badge{
+  font-size:22px !important;
+  padding:10px 16px !important;
+}
+
+#bw-prem-card .bwp-shell{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+  margin-top:10px;
+}
+
+#bw-prem-card .bwp-primary{
+  margin-top:8px;
+  font-size:30px !important;
+  line-height:1.22 !important;
+  font-weight:950 !important;
+  color:#ffcc66;
+}
+
+#bw-prem-card .bwp-main-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.10fr) minmax(360px,.92fr);
+  gap:26px;
+  align-items:start;
+  margin-top:10px;
+}
+
+#bw-prem-card .bwp-two-col{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:28px;
+  align-items:start;
+}
+
+#bw-prem-card .bwp-col,
+#bw-prem-card .bwp-side-col{
+  min-width:0;
+}
+
+#bw-prem-card .bwp-side-col{
+  min-width:360px;
+}
+
+#bw-prem-card .bwp-sec-title{
+  color:#ffcc66 !important;
+  font-size:26px !important;
+  font-weight:950 !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase !important;
+  opacity:1 !important;
+}
+
+#bw-prem-card .bwp-sec-body{
+  margin-top:8px;
+  font-size:30px !important;
+  line-height:1.38 !important;
+  font-weight:900 !important;
+}
+
+#bw-prem-card .bwp-sec-body > div + div{
+  margin-top:6px !important;
+}
+
+#bw-prem-card .bwp-reading{
+  margin-top:8px;
+  font-size:42px !important;
+  line-height:1.22 !important;
+  font-weight:950 !important;
+  color:#ffcc66;
+  opacity:1 !important;
+}
+
+#bw-prem-card .bwp-foot{
+  margin-top:12px;
+  font-size:22px !important;
+  line-height:1.28 !important;
+  opacity:.84;
+}
+
+@media (max-width: 1200px){
+  #bw-prem-card .bwp-main-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  #bw-prem-card .bwp-two-col{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  #bw-prem-card .bwp-side-col{
+    min-width:0;
+  }
+}
 #zz-route-card{
   margin-top:0 !important;
   min-width:0;
@@ -4982,7 +5096,8 @@
         </div>
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
-                    <div class="prem-breakout-wrap" id="vol-engine-card">
+                    <div id="zz-left-stack">
+  <div class="prem-breakout-wrap" id="vol-engine-card">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
               <div class="prem-breakout-title">VOLUME PREMONITION</div>
               <span id="vp-badge" class="win-badge win-wait">—</span>
@@ -5040,6 +5155,55 @@
               </div>
             </div>
           </div>
+                    <div class="prem-breakout-wrap" id="bw-prem-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <div class="prem-breakout-title">BREAKOUT WINDOW PREMONITION</div>
+              <span id="bwp-badge" class="win-badge win-wait">—</span>
+            </div>
+
+            <div class="bwp-shell">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">PRIMARY READ</div>
+
+              <div class="bwp-primary">
+                <span id="bwp-primary">—</span>
+              </div>
+
+              <div class="bwp-main-grid">
+                <div>
+                  <div class="bwp-two-col">
+                    <div class="bwp-col">
+                      <div class="bwp-sec-title">WINDOW CLOCK</div>
+
+                      <div class="bwp-sec-body">
+                        <div><span style="opacity:.7;">Direction</span> <span id="bwp-dir" style="font-weight:950;">—</span></div>
+                        <div><span style="opacity:.7;">Window</span> <span id="bwp-window" style="font-weight:950;">—</span></div>
+                        <div><span style="opacity:.7;">Median ETA</span> <span id="bwp-median" style="font-weight:950;">—</span></div>
+                        <div><span style="opacity:.7;">Trigger</span> <span id="bwp-trigger" style="font-weight:950; color:#ffcc66;">—</span></div>
+                      </div>
+                    </div>
+
+                    <div class="bwp-col">
+                      <div class="bwp-sec-title">PROBABILITY LADDER</div>
+
+                      <div class="bwp-sec-body">
+                        <div><span style="opacity:.7;">Next 5m</span> <span id="bwp-next5" style="font-weight:950;">—</span></div>
+                        <div><span style="opacity:.7;">Until median</span> <span id="bwp-until-med" style="font-weight:950;">—</span></div>
+                        <div><span style="opacity:.7;">Until p90</span> <span id="bwp-until-p90" style="font-weight:950;">—</span></div>
+                        <div><span style="opacity:.7;">If delayed</span> <span id="bwp-delay" style="font-weight:950;">—</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bwp-side-col">
+                  <div class="bwp-sec-title">TACTICAL READ</div>
+                  <div class="bwp-reading" id="bwp-reading">—</div>
+                  <div class="bwp-foot" id="bwp-foot">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
                 <div id="zz-side-stack">
   <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
@@ -8894,7 +9058,7 @@ const extractPct = (txt) => {
 
     // breakout window card (estruturado)
         let bw = pickFirst(ui.breakout_window_card, panel.breakout_window_card, digest.breakout_window_card);
-
+    const ph = pickFirst(ui.premonition_hours, panel.premonition_hours, digest.premonition_hours);
 
             // ✅ DEMO quando não houver dados (sistema OFF / vazio)
     const A10_PREM_DEMO_WHEN_EMPTY = true;
@@ -9179,6 +9343,126 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
     const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
     const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
+        const pctTxt = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? `${Math.round(n)}%` : "—";
+    };
+
+    const pxTxt = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n.toFixed(2) : "—";
+    };
+
+    const minTxt = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? `~${Math.round(n)}m` : "—";
+    };
+
+    const timeTxt = (v) => {
+      if (v == null || v === "") return null;
+      const d = new Date(v);
+      const ms = d.getTime();
+      return Number.isFinite(ms) ? fmtMT(d) : null;
+    };
+
+    const next5Pct = pickFirst(
+      ph?.prob_until_p25_pct,
+      ph?.prob_until_now_pct,
+      bw?.prob_until_end_pct
+    );
+
+    const medianPct = pickFirst(
+      ph?.prob_until_median_pct,
+      ph?.prob_until_p50_pct,
+      bw?.prob_until_end_pct
+    );
+
+    const p90Pct = pickFirst(
+      ph?.prob_until_p90_pct,
+      ph?.prob_until_p75_pct,
+      ph?.cond_prob_median_to_p90_pct,
+      bw?.prob_until_end_pct
+    );
+
+    const lateProb = pickFirst(
+      ph?.cond_prob_median_to_p90_pct,
+      ph?.cond_prob_p25_to_p90_pct,
+      ph?.prob_between_p25_p90_pct
+    );
+
+    const bwDir = String(pickFirst(ph?.breakout_dir, bw?.dir, "—") || "—").toUpperCase();
+
+    const bwWindowTxt = (bw?.window_start_label || bw?.window_end_label)
+      ? `${bw?.window_start_label || "—"} → ${bw?.window_end_label || "—"}`
+      : "—";
+
+    const bwMedianTxt =
+      timeTxt(ph?.eta_median || ph?.eta_p50 || ph?.eta_now) ||
+      minTxt(bw?.median_minutes);
+
+    const delayFromTxt =
+      timeTxt(ph?.eta_median || ph?.eta_p25) ||
+      minTxt(ph?.p25_minutes);
+
+    const delayToTxt =
+      timeTxt(ph?.eta_p90 || ph?.eta_p75) ||
+      minTxt(ph?.p90_minutes);
+
+    const bwDelayTxt =
+      (lateProb != null && (delayFromTxt || delayToTxt))
+        ? `if not by ${delayFromTxt || "median"} → ${delayToTxt || "late window"} = ${pctTxt(lateProb)}`
+        : (bw?.miss_line || "—");
+
+    const bwPrimaryTxt =
+      (bwDir && bwDir !== "—")
+        ? `${bwDir} BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`
+        : `BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`;
+
+    const bwReadingTxt =
+      (bwDir && bwDir !== "—")
+        ? `Window still favors ${bwDir}. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`
+        : `Timed breakout edge ${pctTxt(next5Pct)} now | ${pctTxt(p90Pct)} by late window.`;
+
+    setText("bwp-primary", bwPrimaryTxt);
+    setText("bwp-dir", bwDir);
+    setText("bwp-window", bwWindowTxt);
+    setText("bwp-median", bwMedianTxt);
+    setText("bwp-trigger", pxTxt(bw?.trigger_price));
+    setText("bwp-next5", pctTxt(next5Pct));
+    setText("bwp-until-med", pctTxt(medianPct));
+    setText("bwp-until-p90", pctTxt(p90Pct));
+    setText("bwp-delay", bwDelayTxt);
+    setText("bwp-reading", bwReadingTxt);
+    setText("bwp-foot", `${nTxt} casos similares${scTxt}${confTxt}`);
+
+    try{
+      const badge = document.getElementById("bwp-badge");
+      if (badge){
+        let stateTxt = "WAIT";
+        let stateCls = "win-wait";
+
+        const elapsed = Number(ph?.setup_elapsed_minutes);
+        const p25m = Number(ph?.p25_minutes);
+        const p90m = Number(ph?.p90_minutes);
+
+        if (Number.isFinite(elapsed) && Number.isFinite(p25m) && Number.isFinite(p90m)) {
+          if (elapsed >= p25m && elapsed <= p90m) {
+            stateTxt = "LIVE";
+            stateCls = "win-now";
+          } else if (elapsed > p90m) {
+            stateTxt = "LATE";
+            stateCls = "win-warn";
+          }
+        } else if (Number.isFinite(Number(next5Pct)) && Number(next5Pct) >= 60) {
+          stateTxt = "HOT";
+          stateCls = "win-now";
+        }
+
+        badge.textContent = stateTxt;
+        badge.classList.remove("win-wait", "win-now", "win-warn");
+        badge.classList.add(stateCls);
+      }
+    }catch(_e){}
         // ===== MACRO COL (KPI + linhas) =====
 
 // (1) Prob%: SEMPRE prioriza o texto "PREMONIÇÃO MACRO..."
