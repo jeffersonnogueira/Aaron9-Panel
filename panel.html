@@ -3179,7 +3179,25 @@
 #zz-route-card div[style*="font-size:11px"]{ font-size: 22px !important; }
 #zz-route-card div[style*="font-size:12px"]{ font-size: 24px !important; }
 #zz-route-card div[style*="font-size:14px"]{ font-size: 30px !important; }
+#zz-route-card #zzr-step1,
+#zz-route-card #zzr-step2{
+  font-size: 24px !important;
+  line-height: 1.12 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}
 
+#zz-route-card #zzr-step1state,
+#zz-route-card #zzr-step2state{
+  font-size: 18px !important;
+  line-height: 1.12 !important;
+}
+
+#zz-route-card #zzr-next,
+#zz-route-card #zzr-layer2{
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}
 /* texto de rodapé / cancel */
 #zz-route-card #zzr-cancel{
   font-size: 18px !important;
@@ -5087,8 +5105,8 @@
           </div>
 
           <div style="margin-top:10px; margin-left:auto; width:max-content; font-size:10px; line-height:1.2; display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
-  <div><span style="opacity:.7;">ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
-  <div><span style="opacity:.7;">LAYER 2</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
+    <div><span style="opacity:.7;">FINAL ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
+    <div><span style="opacity:.7;">FINAL PIVOT</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
   <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
   <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
 </div>
@@ -10820,7 +10838,7 @@ if (readingEl) {
           (isLow  && zoneHi != null) ? zoneHi :
           null;
 
-        let step1 = null, step2 = null, step3 = null;
+                let step1 = null, step2 = null, step3 = null;
 
         if (current != null && targetEdge != null) {
           const routeDist = targetEdge - current;
@@ -10828,6 +10846,58 @@ if (readingEl) {
           step2 = current + (routeDist * 0.6666666667);
           step3 = targetEdge;
         }
+
+        const pivotProb = Number(hi?.prob_pivot_pct);
+        const missProb =
+          Number.isFinite(pivotProb)
+            ? Math.max(0, Math.min(100, 100 - pivotProb))
+            : null;
+
+        const stepProb = (frac) => {
+          if (!Number.isFinite(pivotProb) || !Number.isFinite(frac)) return null;
+          return Math.max(0, Math.min(100, 100 - (missProb * frac)));
+        };
+
+        const fmtBarsRange = (a, b) => {
+          const aa = Number(a);
+          const bb = Number(b);
+          if (Number.isFinite(aa) && Number.isFinite(bb)) {
+            return `${Math.max(1, Math.round(aa))}b → ${Math.max(1, Math.round(bb))}b`;
+          }
+          if (Number.isFinite(aa)) return `~${Math.max(1, Math.round(aa))}b`;
+          return "—";
+        };
+
+        const stepEtaRange = (frac50, frac75) => {
+          const a = Number(eta50);
+          const b = Number(eta75);
+          if (Number.isFinite(a) && Number.isFinite(b)) {
+            return fmtBarsRange(a * frac50, b * frac75);
+          }
+          if (Number.isFinite(a)) return `~${Math.max(1, Math.round(a * frac75))}b`;
+          return "—";
+        };
+
+        const step1Prob = stepProb(1 / 3);
+        const step2Prob = stepProb(2 / 3);
+        const finalProb = Number.isFinite(pivotProb) ? pivotProb : null;
+
+        const step1Txt =
+          (step1 != null)
+            ? `${fmt2(step1)} · ${fmtPct(step1Prob)} · ETA ${stepEtaRange(0.35, 0.50)}`
+            : "—";
+
+        const step2Txt =
+          (step2 != null)
+            ? `${fmt2(step2)} · ${fmtPct(step2Prob)} · ETA ${stepEtaRange(0.70, 0.85)}`
+            : "—";
+
+        const finalPivotTxt =
+          (zoneLo != null && zoneHi != null)
+            ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)} · ${fmtPct(finalProb)}`
+            : (Number.isFinite(finalProb) ? fmtPct(finalProb) : "—");
+
+        const finalEtaTxt = fmtBarsRange(eta50, eta75);
 
         const eps = (Number.isFinite(atr14) && atr14 > 0) ? (atr14 * 0.03) : 0.01;
 
@@ -10876,31 +10946,26 @@ if (readingEl) {
           isLow  ? "ROUTE TO PIVOT LOW"  :
           "ROUTE —";
 
-        const layer2Txt =
-          isHigh ? "After arrival: PIVOT CONFIRM DOWN" :
-          isLow  ? "After arrival: PIVOT CONFIRM UP"   :
-          "After arrival: PIVOT CONFIRM —";
-
         setBadge("zzr-badge", badgeTxt, badgeMode);
         set("zzr-mode", modeTxt);
         set("zzr-status", statusTxt);
         set("zzr-current", fmt2(current));
-        set("zzr-next", `${next} | H≤ ${hz}`);
+        set("zzr-next", Number.isFinite(finalProb) ? `${next} | H≤ ${hz} | ${fmtPct(finalProb)}` : `${next} | H≤ ${hz}`);
 
-        set("zzr-step1", fmt2(step1));
-        set("zzr-step1state", passed1 ? "PASSED ✅" : "WAIT ⏳");
+        set("zzr-step1", step1Txt);
+        set("zzr-step1state", passed1 ? "REACHED ✅" : "REACH · WAIT ⏳");
 
-        set("zzr-step2", fmt2(step2));
-        set("zzr-step2state", passed2 ? "PASSED ✅" : "WAIT ⏳");
+        set("zzr-step2", step2Txt);
+        set("zzr-step2state", passed2 ? "BROKE ✅" : (passed1 ? "BREAK · LIVE ⚡" : "AFTER S1 · WAIT ⏳"));
 
         set("zzr-step3", fmt2(step3));
         set("zzr-step3state", arrived ? "ARRIVED ✅" : (passed3 ? "PASSED ✅" : "WAIT ⏳"));
 
         set("zzr-zone", (zoneLo != null && zoneHi != null) ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)}` : "—");
-        set("zzr-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
-        set("zzr-layer2", layer2Txt);
+        set("zzr-eta", finalEtaTxt);
+        set("zzr-layer2", finalPivotTxt);
         set("zzr-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
-        set("zzr-cancel", "Cancel if pivot flips, ETA P75 expires, or route is lost by > 0.35 ATR.");
+        set("zzr-cancel", "Lose route if pivot flips, final ETA P75 expires, or route is lost by > 0.35 ATR.");
       }
     }
     // ===== /ZIGZAG ROUTE ENGINE =====
