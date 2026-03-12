@@ -9061,7 +9061,7 @@ const extractPct = (txt) => {
     const ph = pickFirst(ui.premonition_hours, panel.premonition_hours, digest.premonition_hours);
 
             // ✅ DEMO quando não houver dados (sistema OFF / vazio)
-    const A10_PREM_DEMO_WHEN_EMPTY = true;
+    const A10_PREM_DEMO_WHEN_EMPTY = false;
 
     if (A10_PREM_DEMO_WHEN_EMPTY) {
       const hasBW = bw && (
@@ -9390,7 +9390,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
       ph?.prob_between_p25_p90_pct
     );
 
-    const bwDir = String(pickFirst(ph?.breakout_dir, bw?.dir, "—") || "—").toUpperCase();
+    const bwDir = String(pickFirst(ph?.breakout_dir, bw?.dir, "NEUTRAL") || "NEUTRAL").toUpperCase();
 
     const bwWindowTxt = (bw?.window_start_label || bw?.window_end_label)
       ? `${bw?.window_start_label || "—"} → ${bw?.window_end_label || "—"}`
@@ -9414,14 +9414,14 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
         : (bw?.miss_line || "—");
 
     const bwPrimaryTxt =
-      (bwDir && bwDir !== "—")
-        ? `${bwDir} BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`
-        : `BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`;
+  (bwDir === "UP" || bwDir === "DOWN")
+    ? `${bwDir} BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`
+    : `NEUTRAL BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`;
 
     const bwReadingTxt =
-      (bwDir && bwDir !== "—")
-        ? `Window still favors ${bwDir}. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`
-        : `Timed breakout edge ${pctTxt(next5Pct)} now | ${pctTxt(p90Pct)} by late window.`;
+  (bwDir === "UP" || bwDir === "DOWN")
+    ? `Window still favors ${bwDir}. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`
+    : `No real directional edge yet. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`;
 
     setText("bwp-primary", bwPrimaryTxt);
     setText("bwp-dir", bwDir);
