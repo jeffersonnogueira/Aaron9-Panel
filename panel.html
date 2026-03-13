@@ -10953,7 +10953,7 @@ set("indip-rsi-hold-phrase",
   `HOLD ${rHoldTxt} → RSI likely stays on the current side of 50 (~5m).`
 );
     // ===== EMA =====
-    const e = ip.ema || {};
+    const e = (ip && ip.ema && typeof ip.ema === "object") ? ip.ema : {};
 
 const eFast = num(
   e.ema_fast ?? e.fast ?? e.ema20 ?? e.ema_20 ?? liveEmaFast
@@ -10968,7 +10968,11 @@ const eDiffNum = num(
 );
 
 const eState = String(
-  e.state || (Number.isFinite(eDiffNum) ? (eDiffNum >= 0 ? "above" : "below") : "")
+  e.state || (
+    Number.isFinite(eDiffNum)
+      ? (eDiffNum > 0 ? "above" : (eDiffNum < 0 ? "below" : "flat"))
+      : ""
+  )
 ).toLowerCase();
 
 setBadge(
@@ -10985,15 +10989,33 @@ set("indip-ema-slow", Number.isFinite(eSlow) ? fmt2(eSlow) : "—");
 set("indip-ema-diff", Number.isFinite(eDiffNum) ? fmt4d(eDiffNum) : "—");
 
 const eCross = (e.cross && e.cross.highlight_5min) ? e.cross.highlight_5min : null;
+const eCrossPct =
+  eCross?.prob_hit_pct_dyn ??
+  eCross?.prob_hit_pct ??
+  eCross?.prob_hit_pct_base ??
+  liveEmaCrossPct;
+
+const eCrossEta =
+  eCross?.eta_p50_min ??
+  liveEmaCrossEta;
+
 set(
   "indip-ema-cross-dir",
-  e.cross?.direction || (eState === "above" ? "UP" : (eState === "below" ? "DOWN" : "—"))
+  e.cross?.direction ||
+  (eState === "above" ? "UP" : (eState === "below" ? "DOWN" : (eState === "flat" ? "FLAT" : "—")))
 );
-set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct_dyn ?? eCross?.prob_hit_pct ?? eCross?.prob_hit_pct_base));
-set("indip-ema-cross-eta", fmtEta(eCross?.eta_p50_min));
+
+set("indip-ema-cross-pct", fmtPct(eCrossPct));
+set("indip-ema-cross-eta", fmtEta(eCrossEta));
 
 const eHold = (e.hold && e.hold.highlight_5min) ? e.hold.highlight_5min : null;
-set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct_dyn ?? eHold?.prob_hold_pct ?? eHold?.prob_hold_pct_base));
+const eHoldPct =
+  eHold?.prob_hold_pct_dyn ??
+  eHold?.prob_hold_pct ??
+  eHold?.prob_hold_pct_base ??
+  liveEmaHoldPct;
+
+set("indip-ema-hold-pct", fmtPct(eHoldPct));
 
 const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
 set("indip-ema-hold-phrase",
