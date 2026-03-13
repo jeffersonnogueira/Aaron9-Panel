@@ -5156,53 +5156,67 @@
             </div>
           </div>
                     <div class="prem-breakout-wrap" id="bw-prem-card">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-              <div class="prem-breakout-title">BREAKOUT WINDOW PREMONITION</div>
-              <span id="bwp-badge" class="win-badge win-wait">—</span>
-            </div>
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+    <div class="prem-breakout-title">STRUCTURAL PATTERN PREMONITION</div>
+    <span id="bwp-badge" class="win-badge win-wait">—</span>
+  </div>
 
-            <div class="bwp-shell">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">PRIMARY READ</div>
+  <div class="bwp-shell">
+    <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">
+      PRIMARY READ
+    </div>
 
-              <div class="bwp-primary">
-                <span id="bwp-primary">—</span>
-              </div>
+    <div class="bwp-primary">
+      <span id="bwp-primary">—</span>
+    </div>
 
-              <div class="bwp-main-grid">
-                <div>
-                  <div class="bwp-two-col">
-                    <div class="bwp-col">
-                      <div class="bwp-sec-title">WINDOW CLOCK</div>
+    <div class="bwp-main-grid">
+      <div>
+        <div class="bwp-two-col">
+          <div class="bwp-col">
+            <div class="bwp-sec-title">SETUP</div>
 
-                      <div class="bwp-sec-body">
-                        <div><span style="opacity:.7;">Direction</span> <span id="bwp-dir" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Window</span> <span id="bwp-window" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Median ETA</span> <span id="bwp-median" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Trigger</span> <span id="bwp-trigger" style="font-weight:950; color:#ffcc66;">—</span></div>
-                      </div>
-                    </div>
-
-                    <div class="bwp-col">
-                      <div class="bwp-sec-title">PROBABILITY LADDER</div>
-
-                      <div class="bwp-sec-body">
-                        <div><span style="opacity:.7;">Next 5m</span> <span id="bwp-next5" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Until median</span> <span id="bwp-until-med" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Until p90</span> <span id="bwp-until-p90" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">If delayed</span> <span id="bwp-delay" style="font-weight:950;">—</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bwp-side-col">
-                  <div class="bwp-sec-title">TACTICAL READ</div>
-                  <div class="bwp-reading" id="bwp-reading">—</div>
-                  <div class="bwp-foot" id="bwp-foot">—</div>
-                </div>
-              </div>
+            <div class="bwp-sec-body">
+              <div><span style="opacity:.7;">Pattern</span> <span id="bwp-setup" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Bias</span> <span id="bwp-bias" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Confidence</span> <span id="bwp-conf" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Price now</span> <span id="bwp-price-now" style="font-weight:950; color:#ffcc66;">—</span></div>
             </div>
           </div>
+
+          <div class="bwp-col">
+            <div class="bwp-sec-title">PIVOT / TRIGGERS</div>
+
+            <div class="bwp-sec-body">
+              <div><span style="opacity:.7;">Pivot price</span> <span id="bwp-pivot" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Trigger up</span> <span id="bwp-trigger-up" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Trigger down</span> <span id="bwp-trigger-down" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Respiro before break</span> <span id="bwp-breath" style="font-weight:950; color:#ffcc66;">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bwp-side-col">
+        <div class="bwp-sec-title">BREAK / ETA / RISK</div>
+
+        <div class="bwp-sec-body">
+          <div><span style="opacity:.7;">Break up</span> <span id="bwp-break-up" style="font-weight:950;">—</span></div>
+          <div><span style="opacity:.7;">Break down</span> <span id="bwp-break-down" style="font-weight:950;">—</span></div>
+          <div><span style="opacity:.7;">ETA p25</span> <span id="bwp-eta-p25" style="font-weight:950;">—</span></div>
+          <div><span style="opacity:.7;">ETA p50</span> <span id="bwp-eta-p50" style="font-weight:950;">—</span></div>
+          <div><span style="opacity:.7;">ETA p75</span> <span id="bwp-eta-p75" style="font-weight:950;">—</span></div>
+          <div><span style="opacity:.7;">Target 1</span> <span id="bwp-target1" style="font-weight:950;">—</span></div>
+          <div><span style="opacity:.7;">Invalidation</span> <span id="bwp-invalidation" style="font-weight:950;">—</span></div>
+        </div>
+
+        <div class="bwp-sec-title" style="margin-top:14px;">TACTICAL READ</div>
+        <div class="bwp-reading" id="bwp-reading">—</div>
+        <div class="bwp-foot" id="bwp-foot">—</div>
+      </div>
+    </div>
+  </div>
+</div>
         </div>
                 <div id="zz-side-stack">
   <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
@@ -9340,129 +9354,290 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     try{ a10UpdateExecGateMicroSizing(payload, { microTake: kpiPriceNum, etaMin }); }catch(_e){}
 
     const score = (payload?.digest?.shape_focus?.score ?? bw?.score);
-    const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
-    const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
-    const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
-        const pctTxt = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? `${Math.round(n)}%` : "—";
-    };
+const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
+const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
+const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
 
-    const pxTxt = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n.toFixed(2) : "—";
-    };
+const pctTxt = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? `${Math.round(n)}%` : "—";
+};
 
-    const minTxt = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? `~${Math.round(n)}m` : "—";
-    };
+const pxTxt = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n.toFixed(2) : "—";
+};
 
-    const timeTxt = (v) => {
-      if (v == null || v === "") return null;
-      const d = new Date(v);
-      const ms = d.getTime();
-      return Number.isFinite(ms) ? fmtMT(d) : null;
-    };
+const minTxt = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? `~${Math.round(n)}m` : "—";
+};
 
-    const next5Pct = pickFirst(
-      ph?.prob_until_p25_pct,
-      ph?.prob_until_now_pct,
-      bw?.prob_until_end_pct
-    );
+const timeTxt = (v) => {
+  if (v == null || v === "") return null;
+  const d = new Date(v);
+  const ms = d.getTime();
+  return Number.isFinite(ms) ? fmtMT(d) : null;
+};
 
-    const medianPct = pickFirst(
-      ph?.prob_until_median_pct,
-      ph?.prob_until_p50_pct,
-      bw?.prob_until_end_pct
-    );
+const etaTxt = (barsVal, minsVal, timeVal) => {
+  const b = Number(barsVal);
+  if (Number.isFinite(b)) return `${Math.round(b)} bars`;
 
-    const p90Pct = pickFirst(
-      ph?.prob_until_p90_pct,
-      ph?.prob_until_p75_pct,
-      ph?.cond_prob_median_to_p90_pct,
-      bw?.prob_until_end_pct
-    );
+  const m = Number(minsVal);
+  if (Number.isFinite(m)) return `~${Math.round(m)}m`;
 
-    const lateProb = pickFirst(
-      ph?.cond_prob_median_to_p90_pct,
-      ph?.cond_prob_p25_to_p90_pct,
-      ph?.prob_between_p25_p90_pct
-    );
+  const t = timeTxt(timeVal);
+  return t || "—";
+};
 
-    const bwDir = String(pickFirst(ph?.breakout_dir, bw?.dir, "NEUTRAL") || "NEUTRAL").toUpperCase();
+const normDir = (v) => {
+  const s = String(v || "").toLowerCase();
+  if (s.includes("up") || s.includes("bull") || s.includes("buy") || s.includes("long")) return "UP";
+  if (s.includes("down") || s.includes("bear") || s.includes("sell") || s.includes("short")) return "DOWN";
+  return "NEUTRAL";
+};
 
-    const bwWindowTxt = (bw?.window_start_label || bw?.window_end_label)
-      ? `${bw?.window_start_label || "—"} → ${bw?.window_end_label || "—"}`
-      : "—";
+const sf = digest?.shape_focus || deepFind(digest, "shape_focus") || deepFind(root, "shape_focus") || {};
+const sr = digest?.sr_proxy || deepFind(digest, "sr_proxy") || deepFind(root, "sr_proxy") || {};
 
-    const bwMedianTxt =
-      timeTxt(ph?.eta_median || ph?.eta_p50 || ph?.eta_now) ||
-      minTxt(bw?.median_minutes);
+const pp =
+  deepFind(root, "pattern_premonition_v1") ||
+  deepFind(root, "shape_trigger_premonition_v1") ||
+  deepFind(root, "structural_pattern_premonition_v1") ||
+  deepFind(digest, "pattern_premonition_v1") ||
+  deepFind(digest, "shape_trigger_premonition_v1") ||
+  deepFind(ui, "pattern_premonition_v1") ||
+  deepFind(panel, "pattern_premonition_v1") ||
+  null;
 
-    const delayFromTxt =
-      timeTxt(ph?.eta_median || ph?.eta_p25) ||
-      minTxt(ph?.p25_minutes);
+const priceNow = pickFirst(
+  panel?.price_now,
+  ui?.price_now,
+  digest?.price_now,
+  root?.price_now,
+  payload?.price_now
+);
 
-    const delayToTxt =
-      timeTxt(ph?.eta_p90 || ph?.eta_p75) ||
-      minTxt(ph?.p90_minutes);
+const setupLabelRaw = pickFirst(
+  pp?.setup_label,
+  pp?.pattern_label,
+  pp?.pattern_name,
+  pp?.structure_name,
+  sf?.label,
+  sf?.name_en,
+  sf?.name_pt,
+  sf?.family_en,
+  sf?.family,
+  "—"
+);
 
-    const bwDelayTxt =
-      (lateProb != null && (delayFromTxt || delayToTxt))
-        ? `if not by ${delayFromTxt || "median"} → ${delayToTxt || "late window"} = ${pctTxt(lateProb)}`
-        : (bw?.miss_line || "—");
+const setupLabel = String(setupLabelRaw || "—").toUpperCase();
 
-    const bwPrimaryTxt =
-  (bwDir === "UP" || bwDir === "DOWN")
-    ? `${bwDir} BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`
-    : `NEUTRAL BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`;
+const dirNorm = normDir(
+  pickFirst(
+    pp?.direction,
+    pp?.bias,
+    sf?.direction,
+    sf?.bias,
+    bw?.dir,
+    ph?.breakout_dir,
+    "neutral"
+  )
+);
 
-    const bwReadingTxt =
-  (bwDir === "UP" || bwDir === "DOWN")
-    ? `Window still favors ${bwDir}. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`
-    : `No real directional edge yet. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`;
+const confPct = pickFirst(
+  pp?.confidence_pct,
+  sf?.confidence_pct,
+  Number.isFinite(Number(sf?.score)) ? Number(sf.score) * 100 : null
+);
 
-    setText("bwp-primary", bwPrimaryTxt);
-    setText("bwp-dir", bwDir);
-    setText("bwp-window", bwWindowTxt);
-    setText("bwp-median", bwMedianTxt);
-    setText("bwp-trigger", pxTxt(bw?.trigger_price));
-    setText("bwp-next5", pctTxt(next5Pct));
-    setText("bwp-until-med", pctTxt(medianPct));
-    setText("bwp-until-p90", pctTxt(p90Pct));
-    setText("bwp-delay", bwDelayTxt);
-    setText("bwp-reading", bwReadingTxt);
-    setText("bwp-foot", `${nTxt} casos similares${scTxt}${confTxt}`);
+const pivotPrice = pickFirst(
+  pp?.pivot_price,
+  pp?.pivot,
+  sr?.breakout_level,
+  dirNorm === "UP" ? sr?.recent_high : null,
+  dirNorm === "DOWN" ? sr?.recent_low : null,
+  sr?.recent_high,
+  sr?.recent_low
+);
 
-    try{
-      const badge = document.getElementById("bwp-badge");
-      if (badge){
-        let stateTxt = "WAIT";
-        let stateCls = "win-wait";
+const triggerUp = pickFirst(
+  pp?.trigger_up,
+  pp?.trigger_up_price,
+  pp?.breakout_up_trigger,
+  sr?.recent_high
+);
 
-        const elapsed = Number(ph?.setup_elapsed_minutes);
-        const p25m = Number(ph?.p25_minutes);
-        const p90m = Number(ph?.p90_minutes);
+const triggerDown = pickFirst(
+  pp?.trigger_down,
+  pp?.trigger_down_price,
+  pp?.breakout_down_trigger,
+  sr?.recent_low
+);
 
-        if (Number.isFinite(elapsed) && Number.isFinite(p25m) && Number.isFinite(p90m)) {
-          if (elapsed >= p25m && elapsed <= p90m) {
-            stateTxt = "LIVE";
-            stateCls = "win-now";
-          } else if (elapsed > p90m) {
-            stateTxt = "LATE";
-            stateCls = "win-warn";
-          }
-        } else if (Number.isFinite(Number(next5Pct)) && Number(next5Pct) >= 60) {
-          stateTxt = "HOT";
-          stateCls = "win-now";
-        }
+let breakUpPct = pickFirst(
+  pp?.break_up_pct,
+  pp?.prob_break_up_pct,
+  pp?.up_break_pct,
+  dirNorm === "UP" ? ph?.prob_until_p25_pct : null
+);
 
-        badge.textContent = stateTxt;
-        badge.classList.remove("win-wait", "win-now", "win-warn");
-        badge.classList.add(stateCls);
+let breakDownPct = pickFirst(
+  pp?.break_down_pct,
+  pp?.prob_break_down_pct,
+  pp?.down_break_pct,
+  dirNorm === "DOWN" ? ph?.prob_until_p25_pct : null
+);
+
+if (!Number.isFinite(Number(breakUpPct)) && Number.isFinite(Number(breakDownPct))) {
+  breakUpPct = 100 - Number(breakDownPct);
+}
+if (!Number.isFinite(Number(breakDownPct)) && Number.isFinite(Number(breakUpPct))) {
+  breakDownPct = 100 - Number(breakUpPct);
+}
+
+const etaP25Txt = etaTxt(
+  pickFirst(pp?.eta_p25_bars, pp?.p25_bars),
+  ph?.p25_minutes,
+  pickFirst(ph?.eta_p25, ph?.eta_now)
+);
+
+const etaP50Txt = etaTxt(
+  pickFirst(pp?.eta_p50_bars, pp?.p50_bars),
+  bw?.median_minutes,
+  pickFirst(ph?.eta_median, ph?.eta_p50, ph?.eta_now)
+);
+
+const etaP75Txt = etaTxt(
+  pickFirst(pp?.eta_p75_bars, pp?.eta_p90_bars, pp?.p75_bars),
+  ph?.p90_minutes,
+  pickFirst(ph?.eta_p90, ph?.eta_p75)
+);
+
+const target1 = pickFirst(
+  pp?.target_1,
+  pp?.target1,
+  pp?.target_price_p50,
+  pp?.target_price
+);
+
+const invalidation = pickFirst(
+  pp?.invalidation,
+  pp?.invalidation_price,
+  pp?.fail_price,
+  pp?.cancel_price
+);
+
+const breath = pickFirst(
+  pp?.respiro_before_break,
+  pp?.breath_before_break,
+  pp?.allow_pullback_price,
+  pp?.breath_price
+);
+
+const biasTxt =
+  dirNorm === "UP" ? "UP BIAS" :
+  dirNorm === "DOWN" ? "DOWN BIAS" :
+  "NEUTRAL";
+
+const vwapState = document.getElementById("indip-vwap-state")?.textContent?.trim();
+const emaState  = document.getElementById("indip-ema-state")?.textContent?.trim();
+const rsiVal    = document.getElementById("indip-rsi-val")?.textContent?.trim();
+const vpPrim    = document.getElementById("vp-primary")?.textContent?.trim();
+const zzNextDom = document.getElementById("zz-next")?.textContent?.trim();
+
+const ctxParts = [];
+if (vwapState && vwapState !== "—") ctxParts.push(`VWAP ${vwapState}`);
+if (emaState && emaState !== "—") ctxParts.push(`EMA ${emaState}`);
+if (rsiVal && rsiVal !== "—") ctxParts.push(`RSI ${rsiVal}`);
+if (vpPrim && vpPrim !== "—") ctxParts.push(vpPrim);
+if (zzNextDom && zzNextDom !== "—") ctxParts.push(`Zigzag ${zzNextDom}`);
+
+const contextTxt = ctxParts.length
+  ? ctxParts.join(" | ")
+  : `${nTxt} casos similares${scTxt}${confTxt}`;
+
+const bwPrimaryTxt =
+  `${setupLabel} | ${biasTxt} | ${pctTxt(confPct)}`;
+
+const setupHuman = String(setupLabelRaw || "Setup").replace(/\s+/g, " ").trim();
+
+let bwReadingTxt = `${setupHuman}. Ainda não há edge direcional claro.`;
+
+if (dirNorm === "UP") {
+  bwReadingTxt =
+    `${setupHuman} armado. Probabilidade maior de rompimento para cima.` +
+    `${Number.isFinite(Number(breath)) ? ` Pode respirar até ${pxTxt(breath)} antes do break.` : ""}` +
+    `${Number.isFinite(Number(triggerUp)) ? ` Acima de ${pxTxt(triggerUp)} ativa o gatilho.` : ""}`;
+} else if (dirNorm === "DOWN") {
+  bwReadingTxt =
+    `${setupHuman} ativo. Probabilidade maior de rompimento para baixo.` +
+    `${Number.isFinite(Number(breath)) ? ` Pode respirar até ${pxTxt(breath)} antes do break.` : ""}` +
+    `${Number.isFinite(Number(triggerDown)) ? ` Abaixo de ${pxTxt(triggerDown)} ativa o gatilho.` : ""}`;
+}
+
+setText("bwp-primary", bwPrimaryTxt);
+
+setText("bwp-setup", setupLabel);
+setText("bwp-bias", biasTxt);
+setText("bwp-conf", pctTxt(confPct));
+setText("bwp-price-now", pxTxt(priceNow));
+
+setText("bwp-pivot", pxTxt(pivotPrice));
+setText("bwp-trigger-up", pxTxt(triggerUp));
+setText("bwp-trigger-down", pxTxt(triggerDown));
+setText("bwp-breath", pxTxt(breath));
+
+setText("bwp-break-up", pctTxt(breakUpPct));
+setText("bwp-break-down", pctTxt(breakDownPct));
+setText("bwp-eta-p25", etaP25Txt);
+setText("bwp-eta-p50", etaP50Txt);
+setText("bwp-eta-p75", etaP75Txt);
+setText("bwp-target1", pxTxt(target1));
+setText("bwp-invalidation", pxTxt(invalidation));
+
+setText("bwp-reading", bwReadingTxt);
+setText("bwp-foot", `CONTEXT · ${contextTxt} · ${nTxt}${scTxt}${confTxt}`);
+
+try {
+  const badge = document.getElementById("bwp-badge");
+  if (badge) {
+    let stateTxt = String(
+      pickFirst(pp?.status, pp?.state, pp?.badge, "")
+    ).toUpperCase();
+
+    let stateCls = "win-wait";
+
+    const nowNum = Number(priceNow);
+    const upNum = Number(triggerUp);
+    const downNum = Number(triggerDown);
+
+    if (!stateTxt || stateTxt === "—") {
+      if (dirNorm === "UP" && Number.isFinite(nowNum) && Number.isFinite(upNum) && nowNum >= upNum) {
+        stateTxt = "TRIGGERED";
+      } else if (dirNorm === "DOWN" && Number.isFinite(nowNum) && Number.isFinite(downNum) && nowNum <= downNum) {
+        stateTxt = "TRIGGERED";
+      } else if (dirNorm === "UP" || dirNorm === "DOWN") {
+        stateTxt = "ARMED";
+      } else {
+        stateTxt = "LIVE";
       }
-    }catch(_e){}
+    }
+
+    if (stateTxt === "TRIGGERED" || stateTxt === "LIVE" || stateTxt === "HOT") {
+      stateCls = "win-now";
+    } else if (stateTxt === "LATE" || stateTxt === "FAILED") {
+      stateCls = "win-warn";
+    } else {
+      stateCls = "win-wait";
+    }
+
+    badge.textContent = stateTxt;
+    badge.classList.remove("win-wait", "win-now", "win-warn");
+    badge.classList.add(stateCls);
+  }
+} catch(_e) {}
         // ===== MACRO COL (KPI + linhas) =====
 
 // (1) Prob%: SEMPRE prioriza o texto "PREMONIÇÃO MACRO..."
