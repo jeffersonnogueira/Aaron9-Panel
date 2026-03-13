@@ -5189,8 +5189,8 @@
 
             <div class="bwp-sec-body">
               <div><span style="opacity:.7;">Pivot price</span> <span id="bwp-pivot" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">Trigger up</span> <span id="bwp-trigger-up" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">Trigger down</span> <span id="bwp-trigger-down" style="font-weight:950;">—</span></div>
+              <div><span id="bwp-trigger-up-label" style="opacity:.7;">Trigger up</span> <span id="bwp-trigger-up" style="font-weight:950;">—</span></div>
+              <div><span id="bwp-trigger-down-label" style="opacity:.7;">Trigger down</span> <span id="bwp-trigger-down" style="font-weight:950;">—</span></div>
               <div><span style="opacity:.7;">Respiro before break</span> <span id="bwp-breath" style="font-weight:950; color:#ffcc66;">—</span></div>
             </div>
           </div>
@@ -9623,6 +9623,15 @@ const rawInvalidation = pickFirst(
   pp?.cancel_price
 );
 
+const rawBreath = pickFirst(
+  geom?.respiro_before_break,
+  pp?.runtime_respiro_before_break,
+  pp?.respiro_before_break,
+  pp?.breath_before_break,
+  pp?.allow_pullback_price,
+  pp?.breath_price
+);
+
 const targetMoveP50 = pickFirst(
   pp?.first_target_move_usd?.p50,
   pp?.first_target_move_usd_p50,
@@ -9634,6 +9643,14 @@ const invalidationMoveP50 = pickFirst(
   pp?.invalidation_move_usd?.p50,
   pp?.invalidation_move_usd_p50,
   pp?.fail_move_usd?.p50
+);
+
+const breathMoveP50 = pickFirst(
+  pp?.respiro_before_break_usd?.p50,
+  pp?.respiro_before_break_usd_p50,
+  pp?.shape_trigger_respiro_before_break_usd_p50,
+  pp?.breath_before_break_usd?.p50,
+  pp?.breath_move_usd?.p50
 );
 
 const upRefNum = Number(pickFirst(triggerUp, pivotPrice, priceNow));
@@ -9677,14 +9694,24 @@ const invalidation = (() => {
   return Number.isFinite(raw) ? raw : null;
 })();
 
-const breath = pickFirst(
-  geom?.respiro_before_break,
-  pp?.runtime_respiro_before_break,
-  pp?.respiro_before_break,
-  pp?.breath_before_break,
-  pp?.allow_pullback_price,
-  pp?.breath_price
-);
+const breath = (() => {
+  const raw = Number(rawBreath);
+  const move = Number(breathMoveP50);
+
+  if (dirNorm === "UP") {
+    if (Number.isFinite(raw) && (!Number.isFinite(upRefNum) || raw < upRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(upRefNum)) return upRefNum - move;
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  if (dirNorm === "DOWN") {
+    if (Number.isFinite(raw) && (!Number.isFinite(downRefNum) || raw > downRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(downRefNum)) return downRefNum + move;
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  return Number.isFinite(raw) ? raw : null;
+})();
 
 const vwapState = pickFirst(
   pp?.vwap_side,
@@ -9730,85 +9757,65 @@ const nowNum = Number(priceNow);
 const upNum = Number(triggerUp);
 const downNum = Number(triggerDown);
 
-let prevClosedNum = NaN;
-let liveRefNum = Number.isFinite(nowNum) ? nowNum : NaN;
-
-try {
-  if (Array.isArray(a10ChartCandles) && a10ChartCandles.length >= 2) {
-    const prevClosedBar = a10ChartCandles[a10ChartCandles.length - 2];
-    const liveBar = a10ChartCandles[a10ChartCandles.length - 1];
-
-    prevClosedNum = Number(prevClosedBar?.close);
-
-    if (!Number.isFinite(liveRefNum)) {
-      liveRefNum = Number(liveBar?.close);
-    }
-  }
-} catch (_e) {}
-
-const hasFreshUpTrigger =
+const isTriggeredUp =
   dirNorm === "UP" &&
-  Number.isFinite(prevClosedNum) &&
-  Number.isFinite(liveRefNum) &&
+  Number.isFinite(nowNum) &&
   Number.isFinite(upNum) &&
-  prevClosedNum < upNum &&
-  liveRefNum >= upNum;
+  nowNum >= upNum;
 
-const hasFreshDownTrigger =
+const isTriggeredDown =
   dirNorm === "DOWN" &&
-  Number.isFinite(prevClosedNum) &&
-  Number.isFinite(liveRefNum) &&
+  Number.isFinite(nowNum) &&
   Number.isFinite(downNum) &&
-  prevClosedNum > downNum &&
-  liveRefNum <= downNum;
+  nowNum <= downNum;
 
-const isStaleUpBreak =
+const isCancelledUp =
   dirNorm === "UP" &&
-  Number.isFinite(liveRefNum) &&
-  Number.isFinite(upNum) &&
-  liveRefNum >= upNum &&
-  !hasFreshUpTrigger;
-
-const isStaleDownBreak =
-  dirNorm === "DOWN" &&
-  Number.isFinite(liveRefNum) &&
+  Number.isFinite(nowNum) &&
   Number.isFinite(downNum) &&
-  liveRefNum <= downNum &&
-  !hasFreshDownTrigger;
+  nowNum <= downNum;
+
+const isCancelledDown =
+  dirNorm === "DOWN" &&
+  Number.isFinite(nowNum) &&
+  Number.isFinite(upNum) &&
+  nowNum >= upNum;
 
 if (dirNorm === "UP") {
-  if (hasFreshUpTrigger) {
+  if (isTriggeredUp) {
     bwReadingTxt =
-      `${setupHuman} triggerado neste candle. Rompimento fresco para cima.` +
+      `${setupHuman} triggerado para cima.` +
       `${Number.isFinite(Number(target1)) ? ` Alvo inicial ${pxTxt(target1)}.` : ""}` +
       `${Number.isFinite(Number(invalidation)) ? ` Invalidação ${pxTxt(invalidation)}.` : ""}`;
-  } else if (isStaleUpBreak) {
+  } else if (isCancelledUp) {
     bwReadingTxt =
-      `${setupHuman} já passou do gatilho de alta.` +
-      `${Number.isFinite(upNum) ? ` O trigger ${pxTxt(triggerUp)} ficou para trás.` : ""}` +
-      `${Number.isFinite(Number(breath)) ? ` Respiro estimado ${pxTxt(breath)}.` : ""}`;
+      `${setupHuman} cancelado.` +
+      `${Number.isFinite(Number(triggerDown)) ? ` Perdeu ${pxTxt(triggerDown)} para baixo.` : ""}` +
+      `${Number.isFinite(Number(invalidation)) ? ` Invalidação ${pxTxt(invalidation)}.` : ""}`;
   } else {
     bwReadingTxt =
       `${setupHuman} armado. Probabilidade maior de rompimento para cima.` +
       `${Number.isFinite(Number(breath)) ? ` Pode respirar até ${pxTxt(breath)} antes do break.` : ""}` +
-      `${Number.isFinite(upNum) ? ` Acima de ${pxTxt(triggerUp)} ativa o gatilho.` : ""}`;
+      `${Number.isFinite(Number(triggerUp)) ? ` Acima de ${pxTxt(triggerUp)} ativa o gatilho.` : ""}` +
+      `${Number.isFinite(Number(triggerDown)) ? ` Abaixo de ${pxTxt(triggerDown)} cancela o setup.` : ""}`;
   }
 } else if (dirNorm === "DOWN") {
-  if (hasFreshDownTrigger) {
+  if (isTriggeredDown) {
     bwReadingTxt =
-      `${setupHuman} triggerado neste candle. Rompimento fresco para baixo.` +
+      `${setupHuman} triggerado para baixo.` +
       `${Number.isFinite(Number(target1)) ? ` Alvo inicial ${pxTxt(target1)}.` : ""}` +
       `${Number.isFinite(Number(invalidation)) ? ` Invalidação ${pxTxt(invalidation)}.` : ""}`;
-  } else if (isStaleDownBreak) {
+  } else if (isCancelledDown) {
     bwReadingTxt =
-      `${setupHuman} já passou do gatilho de baixa.` +
-      `${Number.isFinite(downNum) ? ` O trigger ${pxTxt(triggerDown)} ficou para trás.` : ""}` +
-      `${Number.isFinite(Number(breath)) ? ` Respiro estimado ${pxTxt(breath)}.` : ""}`;
+      `${setupHuman} cancelado.` +
+      `${Number.isFinite(Number(triggerUp)) ? ` Rompeu acima de ${pxTxt(triggerUp)}.` : ""}` +
+      `${Number.isFinite(Number(invalidation)) ? ` Invalidação ${pxTxt(invalidation)}.` : ""}`;
   } else {
     bwReadingTxt =
       `${setupHuman} ativo. Probabilidade maior de rompimento para baixo.` +
       `${Number.isFinite(Number(breath)) ? ` Pode respirar até ${pxTxt(breath)} antes do break.` : ""}` +
-      `${Number.isFinite(downNum) ? ` Abaixo de ${pxTxt(triggerDown)} ativa o gatilho.` : ""}`;
+      `${Number.isFinite(Number(triggerDown)) ? ` Abaixo de ${pxTxt(triggerDown)} ativa o gatilho.` : ""}` +
+      `${Number.isFinite(Number(triggerUp)) ? ` Acima de ${pxTxt(triggerUp)} cancela o setup.` : ""}`;
   }
 }
 
@@ -9823,6 +9830,16 @@ setText("bwp-pivot", pxTxt(pivotPrice));
 setText("bwp-trigger-up", pxTxt(triggerUp));
 setText("bwp-trigger-down", pxTxt(triggerDown));
 setText("bwp-breath", pxTxt(breath));
+
+setText(
+  "bwp-trigger-up-label",
+  dirNorm === "DOWN" ? "Cancel if above" : "Trigger up"
+);
+
+setText(
+  "bwp-trigger-down-label",
+  dirNorm === "UP" ? "Cancel if below" : "Trigger down"
+);
 
 setText("bwp-break-up", pctTxt(breakUpPct));
 setText("bwp-break-down", pctTxt(breakDownPct));
@@ -9841,11 +9858,11 @@ try {
     let stateTxt = "LIVE";
     let stateCls = "win-wait";
 
-    if (hasFreshUpTrigger || hasFreshDownTrigger) {
-      stateTxt = "TRIGGERED NOW";
+    if (isTriggeredUp || isTriggeredDown) {
+      stateTxt = "TRIGGERED";
       stateCls = "win-now";
-    } else if (isStaleUpBreak || isStaleDownBreak) {
-      stateTxt = "PASSED";
+    } else if (isCancelledUp || isCancelledDown) {
+      stateTxt = "CANCELLED";
       stateCls = "win-warn";
     } else if (dirNorm === "UP" || dirNorm === "DOWN") {
       stateTxt = "ARMED";
@@ -9856,7 +9873,7 @@ try {
     badge.classList.remove("win-wait", "win-now", "win-warn");
     badge.classList.add(stateCls);
   }
-} catch (_e) {}
+} catch(_e) {}
         // ===== MACRO COL (KPI + linhas) =====
 
 // (1) Prob%: SEMPRE prioriza o texto "PREMONIÇÃO MACRO..."
