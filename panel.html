@@ -10886,86 +10886,27 @@ set("indip-rsi-hold-phrase",
   (rState === "below") ? `HOLD ${rHoldTxt} → RSI likely stays BELOW 50 (~5m).` :
   `HOLD ${rHoldTxt} → RSI likely stays on the current side of 50 (~5m).`
 );
-        // ===== EMA =====
-    const e = (ip && ip.ema) ? ip.ema : {};
-
-    const emaFastVal = pickFirst(
-      e?.ema_fast,
-      e?.fast,
-      ui?.live_ema_fast,
-      panel?.live_ema_fast,
-      digest?.live_ema_fast,
-      root?.live_ema_fast
-    );
-
-    const emaSlowVal = pickFirst(
-      e?.ema_slow,
-      e?.slow,
-      ui?.live_ema_slow,
-      panel?.live_ema_slow,
-      digest?.live_ema_slow,
-      root?.live_ema_slow
-    );
-
-    const emaDiffVal = pickFirst(
-      e?.diff,
-      (Number.isFinite(Number(emaFastVal)) && Number.isFinite(Number(emaSlowVal)))
-        ? (Number(emaFastVal) - Number(emaSlowVal))
-        : null
-    );
-
-    const rawEState = pickFirst(
-      e?.state,
-      ip?.ema_state,
-      ui?.shape_trigger_ema_state,
-      digest?.shape_trigger_ema_state,
-      root?.shape_trigger_ema_state,
-      deepFind(root, "shape_trigger_ema_state"),
-      deepFind(root, "ema_state")
-    );
-
-    let eState = String(rawEState || "").toLowerCase();
-
-    if (!eState && Number.isFinite(Number(emaFastVal)) && Number.isFinite(Number(emaSlowVal))) {
-      eState = Number(emaFastVal) >= Number(emaSlowVal) ? "above" : "below";
-    }
-
-    const eBadgeText =
-      eState === "above" ? "ABOVE" :
-      eState === "below" ? "BELOW" :
-      eState === "ema_misaligned" ? "MISALIGNED" :
-      eState === "unknown" ? "UNKNOWN" :
-      "—";
-
-    const eBadgeMode =
-      eState === "above" ? "win-now" :
-      eState === "below" ? "win-warn" :
-      "win-wait";
-
-    setBadge("indip-ema-state", eBadgeText, eBadgeMode);
-
-    set("indip-ema-fast-span", "20");
-    set("indip-ema-slow-span", "50");
-    set("indip-ema-fast", fmt2(emaFastVal));
-    set("indip-ema-slow", fmt2(emaSlowVal));
-    set("indip-ema-diff", fmt4(emaDiffVal));
+    // ===== EMA =====
+    const e = ip.ema || {};
+    const eState = String(e.state || "").toLowerCase();
+    setBadge("indip-ema-state", (eState ? eState.toUpperCase() : "—"), eState === "above" ? "win-now" : (eState === "below" ? "win-warn" : "win-wait"));
+    set("indip-ema-fast", fmt2(e.ema_fast));
+    set("indip-ema-slow", fmt2(e.ema_slow));
+    set("indip-ema-diff", fmt4(e.diff));
 
     const eCross = (e.cross && e.cross.highlight_5min) ? e.cross.highlight_5min : null;
-    set("indip-ema-cross-dir", e.cross?.direction || (eState === "above" ? "UP" : (eState === "below" ? "DOWN" : "—")));
+    set("indip-ema-cross-dir", e.cross?.direction || "—");
     set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct_dyn ?? eCross?.prob_hit_pct ?? eCross?.prob_hit_pct_base));
     set("indip-ema-cross-eta", fmtEta(eCross?.eta_p50_min));
 
     const eHold = (e.hold && e.hold.highlight_5min) ? e.hold.highlight_5min : null;
     set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct_dyn ?? eHold?.prob_hold_pct ?? eHold?.prob_hold_pct_base));
-
-    const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
-    set("indip-ema-hold-phrase",
-      (eState === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
-      (eState === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
-      (eState === "ema_misaligned") ? `EMA MISALIGNED → Fast/Slow EMA not aligned right now.` :
-      (eState === "unknown") ? `EMA UNKNOWN → Payload did not send a usable EMA structure.` :
-      `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
-    );
+const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
+set("indip-ema-hold-phrase",
+  (eState === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
+  (eState === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
+  `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
+);
     // ===== PREMONITION DAY (NEW CARD) =====
     const sfDay = digest?.shape_focus || deepFind(digest,"shape_focus") || deepFind(root,"shape_focus") || {};
     const pday = deepFind(root, "premonition_day") || deepFind(root,"premonition_day_v1") || digest?.premonition_day || ui?.premonition_day || null;
