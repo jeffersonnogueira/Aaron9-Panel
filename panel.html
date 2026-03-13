@@ -9605,7 +9605,7 @@ const etaP75Txt = etaPatternTxt(
   )
 );
 
-const target1 = pickFirst(
+const rawTarget1 = pickFirst(
   geom?.target_1,
   pp?.runtime_target_1,
   pp?.target_1,
@@ -9614,7 +9614,7 @@ const target1 = pickFirst(
   pp?.target_price
 );
 
-const invalidation = pickFirst(
+const rawInvalidation = pickFirst(
   geom?.invalidation,
   pp?.runtime_invalidation,
   pp?.invalidation,
@@ -9622,6 +9622,60 @@ const invalidation = pickFirst(
   pp?.fail_price,
   pp?.cancel_price
 );
+
+const targetMoveP50 = pickFirst(
+  pp?.first_target_move_usd?.p50,
+  pp?.first_target_move_usd_p50,
+  pp?.first_target_move?.p50,
+  pp?.target_move_usd?.p50
+);
+
+const invalidationMoveP50 = pickFirst(
+  pp?.invalidation_move_usd?.p50,
+  pp?.invalidation_move_usd_p50,
+  pp?.fail_move_usd?.p50
+);
+
+const upRefNum = Number(pickFirst(triggerUp, pivotPrice, priceNow));
+const downRefNum = Number(pickFirst(triggerDown, pivotPrice, priceNow));
+
+const target1 = (() => {
+  const raw = Number(rawTarget1);
+  const move = Number(targetMoveP50);
+
+  if (dirNorm === "UP") {
+    if (Number.isFinite(raw) && (!Number.isFinite(upRefNum) || raw > upRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(upRefNum)) return upRefNum + move;
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  if (dirNorm === "DOWN") {
+    if (Number.isFinite(raw) && (!Number.isFinite(downRefNum) || raw < downRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(downRefNum)) return downRefNum - move;
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  return Number.isFinite(raw) ? raw : null;
+})();
+
+const invalidation = (() => {
+  const raw = Number(rawInvalidation);
+  const move = Number(invalidationMoveP50);
+
+  if (dirNorm === "UP") {
+    if (Number.isFinite(raw) && (!Number.isFinite(upRefNum) || raw < upRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(upRefNum)) return upRefNum - move;
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  if (dirNorm === "DOWN") {
+    if (Number.isFinite(raw) && (!Number.isFinite(downRefNum) || raw > downRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(downRefNum)) return downRefNum + move;
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  return Number.isFinite(raw) ? raw : null;
+})();
 
 const breath = pickFirst(
   geom?.respiro_before_break,
