@@ -8997,7 +8997,32 @@ function updatePremonitionPanel(payload){
     const panel  = payload?.panel  || payload || {};
     const ui     = payload?.ui     || {};
     const digest = payload?.digest || {};
+    const root = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
 
+    const deepFind = (obj, key, maxDepth = 6) => {
+      try{
+        const seen = new Set();
+        const q = [{ v: obj, d: 0 }];
+
+        while (q.length){
+          const { v, d } = q.shift();
+          if (!v || typeof v !== "object") continue;
+          if (seen.has(v)) continue;
+          seen.add(v);
+
+          if (Object.prototype.hasOwnProperty.call(v, key)) return v[key];
+          if (d >= maxDepth) continue;
+
+          for (const k of Object.keys(v)){
+            const child = v[k];
+            if (child && typeof child === "object") {
+              q.push({ v: child, d: d + 1 });
+            }
+          }
+        }
+      }catch(_e){}
+      return null;
+    };
     const lang = (typeof currentLang !== "undefined" && currentLang === "en") ? "en" : "pt";
 
     const pickFirst = (...vals) => {
