@@ -10728,9 +10728,11 @@ function updateIndicatorPremonitionPanel(payload){
     // ===== FALLBACK LIVE (quando indicator_premonition vem disabled/null) =====
         // ===== FALLBACK LIVE (quando indicator_premonition vem disabled/null) =====
     const num = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : null;
-    };
+  if (v == null) return null;
+  if (typeof v === "string" && v.trim() === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+};
 
     const fmt4d = (n) => (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(4);
 
@@ -10773,6 +10775,23 @@ const liveEmaSlow = num(
   ui?.indicators?.ema_50 ?? panel?.indicators?.ema_50 ?? digest?.indicators?.ema_50 ?? root?.indicators?.ema_50 ??
   panel?.market_state?.indicators?.ema50 ?? root?.market_state?.indicators?.ema50 ??
   panel?.market_state?.indicators?.ema_50 ?? root?.market_state?.indicators?.ema_50
+);
+const liveEmaCrossPct = num(
+  ui?.live_ema_cross_pct ?? panel?.live_ema_cross_pct ?? digest?.live_ema_cross_pct ?? root?.live_ema_cross_pct ??
+  ui?.live_ema_cross_prob_pct ?? panel?.live_ema_cross_prob_pct ?? digest?.live_ema_cross_prob_pct ?? root?.live_ema_cross_prob_pct ??
+  ui?.ema_cross_prob_pct ?? panel?.ema_cross_prob_pct ?? digest?.ema_cross_prob_pct ?? root?.ema_cross_prob_pct
+);
+
+const liveEmaCrossEta = num(
+  ui?.live_ema_cross_eta_min ?? panel?.live_ema_cross_eta_min ?? digest?.live_ema_cross_eta_min ?? root?.live_ema_cross_eta_min ??
+  ui?.live_ema_eta_p50_min ?? panel?.live_ema_eta_p50_min ?? digest?.live_ema_eta_p50_min ?? root?.live_ema_eta_p50_min ??
+  ui?.ema_cross_eta_p50_min ?? panel?.ema_cross_eta_p50_min ?? digest?.ema_cross_eta_p50_min ?? root?.ema_cross_eta_p50_min
+);
+
+const liveEmaHoldPct = num(
+  ui?.live_ema_hold_pct ?? panel?.live_ema_hold_pct ?? digest?.live_ema_hold_pct ?? root?.live_ema_hold_pct ??
+  ui?.live_ema_hold_prob_pct ?? panel?.live_ema_hold_prob_pct ?? digest?.live_ema_hold_prob_pct ?? root?.live_ema_hold_prob_pct ??
+  ui?.ema_hold_prob_pct ?? panel?.ema_hold_prob_pct ?? digest?.ema_hold_prob_pct ?? root?.ema_hold_prob_pct
 );
 set("indip-vwap-hold-phrase","—");
 set("indip-rsi-hold-phrase","—");
@@ -10832,35 +10851,46 @@ set("indip-rsi-hold-phrase",
       set("indip-rsi-cross-eta","—");
       set("indip-rsi-hold-pct","—");
 
-      // EMA
       if (Number.isFinite(liveEmaFast) && Number.isFinite(liveEmaSlow)) {
-        const diff = liveEmaFast - liveEmaSlow;
-        const state = diff >= 0 ? "above" : "below";
-        setBadge("indip-ema-state", state.toUpperCase(), state === "above" ? "win-now" : "win-warn");
-        const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
-set("indip-ema-hold-phrase",
-  (state === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
-(state === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
-  `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
-);
+  const diff = liveEmaFast - liveEmaSlow;
+  const state = diff > 0 ? "above" : (diff < 0 ? "below" : "flat");
 
-        // labels (assumindo FAST=20 / SLOW=50)
-        set("indip-ema-fast-span", "20");
-        set("indip-ema-slow-span", "50");
+  setBadge(
+    "indip-ema-state",
+    state === "flat" ? "FLAT" : state.toUpperCase(),
+    state === "above" ? "win-now" : (state === "below" ? "win-warn" : "win-wait")
+  );
 
-        set("indip-ema-fast", fmt2(liveEmaFast));
-        set("indip-ema-slow", fmt2(liveEmaSlow));
-        set("indip-ema-diff", fmt4d(diff));
-        set("indip-ema-cross-dir", diff >= 0 ? "UP" : "DOWN");
-      } else {
-        setBadge("indip-ema-state","—","win-wait");
-        set("indip-ema-fast-span","—"); set("indip-ema-slow-span","—");
-        set("indip-ema-fast","—"); set("indip-ema-slow","—"); set("indip-ema-diff","—");
-        set("indip-ema-cross-dir","—");
-      }
-      set("indip-ema-cross-pct","—");
-      set("indip-ema-cross-eta","—");
-      set("indip-ema-hold-pct","—");
+  // labels (assumindo FAST=20 / SLOW=50)
+  set("indip-ema-fast-span", "20");
+  set("indip-ema-slow-span", "50");
+
+  set("indip-ema-fast", fmt2(liveEmaFast));
+  set("indip-ema-slow", fmt2(liveEmaSlow));
+  set("indip-ema-diff", fmt4d(diff));
+
+  set("indip-ema-cross-dir", state === "above" ? "UP" : (state === "below" ? "DOWN" : "FLAT"));
+  set("indip-ema-cross-pct", fmtPct(liveEmaCrossPct));
+  set("indip-ema-cross-eta", fmtEta(liveEmaCrossEta));
+
+  const eHoldTxt = fmtPct(liveEmaHoldPct);
+  set("indip-ema-hold-pct", eHoldTxt);
+
+  set("indip-ema-hold-phrase",
+    (state === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
+    (state === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
+    `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
+  );
+} else {
+  setBadge("indip-ema-state","—","win-wait");
+  set("indip-ema-fast-span","—"); set("indip-ema-slow-span","—");
+  set("indip-ema-fast","—"); set("indip-ema-slow","—"); set("indip-ema-diff","—");
+  set("indip-ema-cross-dir","—");
+  set("indip-ema-cross-pct","—");
+  set("indip-ema-cross-eta","—");
+  set("indip-ema-hold-pct","—");
+  set("indip-ema-hold-phrase","—");
+}
 
       return; // ✅ já preencheu via live_* (não deixa cair no "zera e sai")
     }
