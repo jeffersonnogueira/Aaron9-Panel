@@ -9512,7 +9512,9 @@ const triggerUp = pickFirst(
   pp?.trigger_up,
   pp?.trigger_up_price,
   pp?.breakout_up_trigger,
-  pp?.runtime_invalidation,
+  geom?.pivot_zone_high,
+  pp?.pivot_zone_high,
+  pp?.pivot_high,
   sr?.recent_high
 );
 
@@ -9521,6 +9523,9 @@ const triggerDown = pickFirst(
   pp?.trigger_down,
   pp?.trigger_down_price,
   pp?.breakout_down_trigger,
+  geom?.pivot_zone_low,
+  pp?.pivot_zone_low,
+  pp?.pivot_low,
   sr?.recent_low
 );
 
