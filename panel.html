@@ -3179,25 +3179,7 @@
 #zz-route-card div[style*="font-size:11px"]{ font-size: 22px !important; }
 #zz-route-card div[style*="font-size:12px"]{ font-size: 24px !important; }
 #zz-route-card div[style*="font-size:14px"]{ font-size: 30px !important; }
-#zz-route-card #zzr-step1,
-#zz-route-card #zzr-step2{
-  font-size: 24px !important;
-  line-height: 1.12 !important;
-  white-space: normal !important;
-  overflow-wrap: anywhere;
-}
 
-#zz-route-card #zzr-step1state,
-#zz-route-card #zzr-step2state{
-  font-size: 18px !important;
-  line-height: 1.12 !important;
-}
-
-#zz-route-card #zzr-next,
-#zz-route-card #zzr-layer2{
-  white-space: normal !important;
-  overflow-wrap: anywhere;
-}
 /* texto de rodapé / cancel */
 #zz-route-card #zzr-cancel{
   font-size: 18px !important;
@@ -3232,126 +3214,12 @@
   margin-top:0 !important;
   min-width:0;
 }
-#zz-left-stack{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:14px;
-  min-width:0;
-  width:100%;
-  align-self:start;
-}
 
-#bw-prem-card{
-  margin-top:0 !important;
-  min-width:0;
-}
-
-#bw-prem-card .prem-breakout-title{
-  font-size:28px !important;
-  opacity:.90 !important;
-}
-
-#bw-prem-card .win-badge{
-  font-size:22px !important;
-  padding:10px 16px !important;
-}
-
-#bw-prem-card .bwp-shell{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  margin-top:10px;
-}
-
-#bw-prem-card .bwp-primary{
-  margin-top:8px;
-  font-size:30px !important;
-  line-height:1.22 !important;
-  font-weight:950 !important;
-  color:#ffcc66;
-}
-
-#bw-prem-card .bwp-main-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.10fr) minmax(360px,.92fr);
-  gap:26px;
-  align-items:start;
-  margin-top:10px;
-}
-
-#bw-prem-card .bwp-two-col{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:28px;
-  align-items:start;
-}
-
-#bw-prem-card .bwp-col,
-#bw-prem-card .bwp-side-col{
-  min-width:0;
-}
-
-#bw-prem-card .bwp-side-col{
-  min-width:360px;
-}
-
-#bw-prem-card .bwp-sec-title{
-  color:#ffcc66 !important;
-  font-size:26px !important;
-  font-weight:950 !important;
-  letter-spacing:.14em !important;
-  text-transform:uppercase !important;
-  opacity:1 !important;
-}
-
-#bw-prem-card .bwp-sec-body{
-  margin-top:8px;
-  font-size:30px !important;
-  line-height:1.38 !important;
-  font-weight:900 !important;
-}
-
-#bw-prem-card .bwp-sec-body > div + div{
-  margin-top:6px !important;
-}
-
-#bw-prem-card .bwp-reading{
-  margin-top:8px;
-  font-size:42px !important;
-  line-height:1.22 !important;
-  font-weight:950 !important;
-  color:#ffcc66;
-  opacity:1 !important;
-}
-
-#bw-prem-card .bwp-foot{
-  margin-top:12px;
-  font-size:22px !important;
-  line-height:1.28 !important;
-  opacity:.84;
-}
-
-@media (max-width: 1200px){
-  #bw-prem-card .bwp-main-grid{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  #bw-prem-card .bwp-two-col{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  #bw-prem-card .bwp-side-col{
-    min-width:0;
-  }
-}
 #zz-route-card{
   margin-top:0 !important;
   min-width:0;
-  width:100%;
-  justify-self:stretch;
+  width:max-content;
+  justify-self:end;
 }
 
 /* título do card */
@@ -3507,181 +3375,6 @@
   }
 }
 /* ===== /VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
-/* ===== REPLAY MODE — BELOW ZIGZAG ROUTE ENGINE ===== */
-#zz-side-stack{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:14px;
-  align-self:start;
-  justify-self:end;
-  min-width:0;
-  width:max-content;
-}
-
-#replay-mode-card{
-  margin-top:0 !important;
-  min-width:0;
-  width:max-content;
-  justify-self:end;
-}
-
-#replay-mode-card .prem-breakout-title{
-  font-size:28px !important;
-  opacity:.90 !important;
-}
-
-#replay-mode-card .win-badge{
-  font-size:22px !important;
-  padding:10px 16px !important;
-}
-
-#replay-mode-card .replay-shell{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:16px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  margin-top:10px;
-  min-width:856px;
-}
-
-#replay-mode-card .replay-topline{
-  display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
-  gap:8px;
-}
-
-#replay-mode-card .replay-box,
-#replay-mode-card .replay-foot > div{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-}
-
-#replay-mode-card .replay-label{
-  font-size:22px !important;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.75;
-}
-
-#replay-mode-card .replay-value{
-  margin-top:8px;
-  font-size:30px !important;
-  font-weight:900;
-  line-height:1.25;
-  color:#ffcc66;
-  white-space:nowrap;
-}
-
-#replay-mode-card .replay-current{
-  color:#e5e7eb;
-}
-
-#replay-mode-card .replay-actions{
-  display:grid;
-  grid-template-columns:repeat(6, max-content);
-  justify-content:space-between;
-  gap:8px;
-  margin-top:10px;
-}
-
-#replay-mode-card .replay-btn{
-  appearance:none;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.04);
-  color:#e5e7eb;
-  border-radius:14px;
-  padding:12px 14px;
-  min-height:52px;
-  font-size:20px;
-  font-weight:950;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:border-color .16s ease, transform .16s ease, background .16s ease, opacity .16s ease;
-}
-
-#replay-mode-card .replay-btn:hover{
-  transform:translateY(-1px);
-}
-
-#replay-mode-card .replay-btn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
-}
-
-#replay-mode-card .replay-btn-gold{
-  color:#ffcc66;
-  border-color:rgba(255,204,102,.24);
-  background:rgba(255,204,102,.08);
-}
-
-#replay-mode-card .replay-btn-green{
-  color:#4ade80;
-  border-color:rgba(74,222,128,.24);
-  background:rgba(74,222,128,.08);
-}
-
-#replay-mode-card .replay-btn-red{
-  color:#f87171;
-  border-color:rgba(248,113,113,.24);
-  background:rgba(248,113,113,.08);
-}
-
-#replay-mode-card .replay-foot{
-  display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
-  gap:8px;
-  margin-top:10px;
-  font-size:24px !important;
-  line-height:1.35;
-}
-
-#replay-mode-card .replay-soft{
-  opacity:.70;
-}
-
-#replay-mode-card .replay-strong{
-  font-weight:950;
-}
-
-#replay-mode-card .replay-note{
-  margin-top:10px;
-  font-size:18px !important;
-  line-height:1.2;
-  opacity:.78;
-  white-space:normal;
-}
-
-@media (max-width: 1200px){
-  #zz-side-stack{
-    width:auto;
-    justify-self:stretch;
-  }
-
-  #replay-mode-card,
-  #zz-route-card{
-    width:auto;
-    justify-self:stretch;
-  }
-
-  #replay-mode-card .replay-shell{
-    min-width:0;
-  }
-
-  #replay-mode-card .replay-topline,
-  #replay-mode-card .replay-foot{
-    grid-template-columns:1fr;
-  }
-
-  #replay-mode-card .replay-actions{
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-  }
-}
-/* ===== /REPLAY MODE ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
 
@@ -4800,7 +4493,7 @@
         </div>
 
 
-    <div class="status-dot-live" data-i18n="top.live_feed" style="display:none;">
+    <div class="status-dot-live" data-i18n="top.live_feed">
       LIVE FEED
     </div>
 
@@ -4822,7 +4515,7 @@
   <button class="tf-btn" type="button" data-tf="1d">1D</button>
 </div>
 
-    <div class="pill-small" style="display:none;">
+    <div class="pill-small">
       <span data-i18n="top.session">Sessão</span>
       <strong id="session-label">—</strong>
     </div>
@@ -4862,7 +4555,7 @@
 </header>
 
     <!-- ================== GARIMPO DE HOJE / BEST STOCK TO TRADE ================== -->
-<section id="garimpo-today" class="garimpo-banner" style="display:none;">
+<section id="garimpo-today" class="garimpo-banner">
   <div class="garimpo-container">
     <div class="garimpo-badge" data-i18n="garimpo_badge">
       Garimpo de Hoje
@@ -4933,7 +4626,7 @@
 </section>
 <!-- ================== FIM GARIMPO DE HOJE ================== -->
  <!-- ================== COMENTÁRIO DO AARON (DIREÇÃO + PADRÃO) ================== -->
-<section id="aaron-commentary-section" class="premonition-banner" style="display:none;">
+<section id="aaron-commentary-section" class="premonition-banner">
   <div class="premonition-container aaron-commentary-container">
     <div class="premonition-head">
       <div>
@@ -4957,7 +4650,7 @@
 
 <section id="premonition-section" class="premonition-banner">
   <div class="premonition-container">
-   <div class="premonition-head" style="display:none;">
+    <div class="premonition-head">
       <div>
         <div class="premonition-title" id="prem-title">PREMONIÇÃO</div>
         <div class="premonition-sub" id="prem-sub">Breakout Window (heurístico)</div>
@@ -5096,8 +4789,7 @@
         </div>
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
-                    <div id="zz-left-stack">
-  <div class="prem-breakout-wrap" id="vol-engine-card">
+                    <div class="prem-breakout-wrap" id="vol-engine-card">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
               <div class="prem-breakout-title">VOLUME PREMONITION</div>
               <span id="vp-badge" class="win-badge win-wait">—</span>
@@ -5155,63 +4847,13 @@
               </div>
             </div>
           </div>
-                    <div class="prem-breakout-wrap" id="bw-prem-card">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-              <div class="prem-breakout-title">BREAKOUT WINDOW PREMONITION</div>
-              <span id="bwp-badge" class="win-badge win-wait">—</span>
-            </div>
-
-            <div class="bwp-shell">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">PRIMARY READ</div>
-
-              <div class="bwp-primary">
-                <span id="bwp-primary">—</span>
-              </div>
-
-              <div class="bwp-main-grid">
-                <div>
-                  <div class="bwp-two-col">
-                    <div class="bwp-col">
-                      <div class="bwp-sec-title">WINDOW CLOCK</div>
-
-                      <div class="bwp-sec-body">
-                        <div><span style="opacity:.7;">Direction</span> <span id="bwp-dir" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Window</span> <span id="bwp-window" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Median ETA</span> <span id="bwp-median" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Trigger</span> <span id="bwp-trigger" style="font-weight:950; color:#ffcc66;">—</span></div>
-                      </div>
-                    </div>
-
-                    <div class="bwp-col">
-                      <div class="bwp-sec-title">PROBABILITY LADDER</div>
-
-                      <div class="bwp-sec-body">
-                        <div><span style="opacity:.7;">Next 5m</span> <span id="bwp-next5" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Until median</span> <span id="bwp-until-med" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Until p90</span> <span id="bwp-until-p90" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">If delayed</span> <span id="bwp-delay" style="font-weight:950;">—</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bwp-side-col">
-                  <div class="bwp-sec-title">TACTICAL READ</div>
-                  <div class="bwp-reading" id="bwp-reading">—</div>
-                  <div class="bwp-foot" id="bwp-foot">—</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-                <div id="zz-side-stack">
-  <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
+                <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
             <span id="zzr-badge" class="win-badge win-wait">—</span>
           </div>
 
-                    <div style="display:grid; width:100%; grid-template-columns:minmax(360px, 1fr) minmax(215px, 245px) minmax(215px, 245px); justify-content:stretch; margin-left:0; gap:8px; margin-top:10px;">
+                    <div style="display:grid; grid-template-columns:minmax(250px, 280px) minmax(120px, 140px) minmax(120px, 140px); justify-content:end; margin-left:auto; gap:8px; margin-top:10px;">
             <!-- MODE / STATUS -->
             <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
               <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">MODE</div>
@@ -5269,55 +4911,11 @@
           </div>
 
           <div style="margin-top:10px; margin-left:auto; width:max-content; font-size:10px; line-height:1.2; display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
-    <div><span style="opacity:.7;">FINAL ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
-    <div><span style="opacity:.7;">FINAL PIVOT</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
+  <div><span style="opacity:.7;">ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
+  <div><span style="opacity:.7;">LAYER 2</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
   <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
   <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
 </div>
-        </div>
-                  <div class="prem-breakout-wrap" id="replay-mode-card" style="margin-top:0; min-width:0;">
-            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-              <div class="prem-breakout-title">REPLAY MODE</div>
-              <span id="replay-badge" class="win-badge win-wait">OFF</span>
-            </div>
-
-            <div class="replay-shell">
-              <div class="replay-topline">
-                <div class="replay-box">
-                  <div class="replay-label">START</div>
-                  <div id="replay-start" class="replay-value">7:30 AM</div>
-                </div>
-
-                <div class="replay-box">
-                  <div class="replay-label">CURRENT</div>
-                  <div id="replay-current" class="replay-value replay-current">7:30 AM</div>
-                </div>
-
-                <div class="replay-box">
-                  <div class="replay-label">END</div>
-                  <div id="replay-end" class="replay-value">2:00 PM</div>
-                </div>
-              </div>
-
-              <div class="replay-actions">
-                <button id="replay-toggle" class="replay-btn replay-btn-gold" type="button">REPLAY MODE</button>
-                <button id="replay-prev" class="replay-btn" type="button">◀ PREV</button>
-                <button id="replay-next" class="replay-btn" type="button">NEXT ▶</button>
-                <button id="replay-play" class="replay-btn replay-btn-green" type="button">PLAY</button>
-                <button id="replay-pause" class="replay-btn replay-btn-red" type="button">PAUSE</button>
-                <button id="replay-reset" class="replay-btn" type="button">RESET</button>
-              </div>
-
-              <div class="replay-foot">
-                <div><span class="replay-soft">STATUS</span> <span id="replay-status" class="replay-strong">LIVE MODE</span></div>
-                <div><span class="replay-soft">WINDOW</span> <span id="replay-window" class="replay-strong">7:30 AM → 2:00 PM</span></div>
-                <div><span class="replay-soft">STEP</span> <span id="replay-step" class="replay-strong">1 MINUTE</span></div>
-              </div>
-
-              <div id="replay-note" class="replay-note">OFF — READY</div>
-            </div>
-          </div>
-
         </div>
         <!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
                      </div>   
@@ -7588,201 +7186,7 @@ window.a10LastMsgAt = 0;
 const A10_LIVE_RETRY_MIN_MS = 5000;   // 5s
 const A10_LIVE_RETRY_MAX_MS = 60000;  // 60s
 let a10LiveRetryMs = A10_LIVE_RETRY_MIN_MS;
-// ===== REPLAY MODE (UI ONLY) =====
-const REPLAY_START_MIN = (7 * 60) + 30;
-const REPLAY_END_MIN = 14 * 60;
 
-const replayState = {
-  enabled: false,
-  minute: REPLAY_START_MIN,
-  playing: false,
-  timer: null,
-  speedMs: 900,
-};
-
-function replayClampMinute(minute){
-  const n = Number(minute);
-  if (!Number.isFinite(n)) return REPLAY_START_MIN;
-  return Math.max(REPLAY_START_MIN, Math.min(REPLAY_END_MIN, Math.round(n)));
-}
-
-function replayMinuteLabel(totalMinutes){
-  const safe = replayClampMinute(totalMinutes);
-  let hours = Math.floor(safe / 60);
-  const minutes = safe % 60;
-  const suffix = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  if (hours === 0) hours = 12;
-  return `${hours}:${String(minutes).padStart(2, "0")} ${suffix}`;
-}
-
-function replayGetEls(){
-  return {
-    badge: document.getElementById("replay-badge"),
-    start: document.getElementById("replay-start"),
-    current: document.getElementById("replay-current"),
-    end: document.getElementById("replay-end"),
-    status: document.getElementById("replay-status"),
-    window: document.getElementById("replay-window"),
-    step: document.getElementById("replay-step"),
-    note: document.getElementById("replay-note"),
-    toggle: document.getElementById("replay-toggle"),
-    prev: document.getElementById("replay-prev"),
-    next: document.getElementById("replay-next"),
-    play: document.getElementById("replay-play"),
-    pause: document.getElementById("replay-pause"),
-    reset: document.getElementById("replay-reset"),
-  };
-}
-
-function replayRender(){
-  const els = replayGetEls();
-  if (!els.badge) return;
-
-  const startTxt = replayMinuteLabel(REPLAY_START_MIN);
-  const endTxt = replayMinuteLabel(REPLAY_END_MIN);
-  const currentTxt = replayMinuteLabel(replayState.minute);
-  const hasHook = typeof window.__AARON_REPLAY_HOOK__ === "function";
-
-  if (els.start) els.start.textContent = startTxt;
-  if (els.end) els.end.textContent = endTxt;
-  if (els.current) els.current.textContent = currentTxt;
-  if (els.window) els.window.textContent = `${startTxt} → ${endTxt}`;
-  if (els.step) els.step.textContent = "1 MINUTE";
-
-  els.badge.textContent = replayState.enabled ? "ON" : "OFF";
-  els.badge.className = `win-badge ${replayState.enabled ? "win-now" : "win-wait"}`;
-
-  if (els.status) {
-    els.status.textContent =
-      !replayState.enabled ? "LIVE MODE" :
-      replayState.playing ? "AUTO PLAY" :
-      "MANUAL STEP";
-  }
-
-  if (els.note) {
-    if (!replayState.enabled) {
-      els.note.textContent = "OFF — READY";
-    } else if (hasHook) {
-      els.note.textContent = `SNAPSHOT ${currentTxt} — replay hook ready`;
-    } else {
-      els.note.textContent = `UI STEP ${currentTxt} — connect n8n / Matcher hook for real historical panel`;
-    }
-  }
-
-  if (els.toggle) els.toggle.textContent = replayState.enabled ? "EXIT REPLAY" : "REPLAY MODE";
-  if (els.prev) els.prev.disabled = !replayState.enabled || replayState.playing || replayState.minute <= REPLAY_START_MIN;
-  if (els.next) els.next.disabled = !replayState.enabled || replayState.playing || replayState.minute >= REPLAY_END_MIN;
-  if (els.play) els.play.disabled = !replayState.enabled || replayState.playing || replayState.minute >= REPLAY_END_MIN;
-  if (els.pause) els.pause.disabled = !replayState.playing;
-  if (els.reset) els.reset.disabled = !replayState.enabled && replayState.minute === REPLAY_START_MIN;
-}
-
-async function replayApplyMinute(){
-  replayRender();
-
-  if (!replayState.enabled) return;
-
-  const hook = window.__AARON_REPLAY_HOOK__;
-  if (typeof hook !== "function") return;
-
-  try {
-    await hook({
-      minute: replayState.minute,
-      label: replayMinuteLabel(replayState.minute),
-      startMinute: REPLAY_START_MIN,
-      endMinute: REPLAY_END_MIN,
-    });
-  } catch (err) {
-    console.warn("Replay hook error:", err);
-  }
-}
-
-function replayPause(){
-  if (replayState.timer) clearInterval(replayState.timer);
-  replayState.timer = null;
-  replayState.playing = false;
-  replayRender();
-}
-
-function replaySetEnabled(on){
-  replayState.enabled = !!on;
-  if (!replayState.enabled) replayPause();
-  replayApplyMinute();
-}
-
-function replayStep(delta){
-  replayState.minute = replayClampMinute(replayState.minute + Number(delta || 0));
-  replayApplyMinute();
-}
-
-function replayPlay(){
-  if (!replayState.enabled) replayState.enabled = true;
-  if (replayState.playing) return;
-
-  replayState.playing = true;
-  replayRender();
-
-  replayState.timer = setInterval(async () => {
-    if (replayState.minute >= REPLAY_END_MIN) {
-      replayPause();
-      return;
-    }
-    replayState.minute = replayClampMinute(replayState.minute + 1);
-    await replayApplyMinute();
-  }, replayState.speedMs);
-}
-
-function initReplayModeUI(){
-  if (window.__AARON_REPLAY_UI_READY__) return;
-
-  const els = replayGetEls();
-  if (!els.toggle) return;
-
-  window.__AARON_REPLAY_UI_READY__ = true;
-
-  els.toggle.addEventListener("click", () => replaySetEnabled(!replayState.enabled));
-  els.prev.addEventListener("click", () => replayStep(-1));
-  els.next.addEventListener("click", () => replayStep(1));
-  els.play.addEventListener("click", replayPlay);
-  els.pause.addEventListener("click", replayPause);
-  els.reset.addEventListener("click", () => {
-    replayPause();
-    replayState.minute = REPLAY_START_MIN;
-    replayApplyMinute();
-  });
-
-  replayRender();
-}
-
-document.addEventListener("DOMContentLoaded", initReplayModeUI);
-
-window.__AARON_REPLAY__ = {
-  enable(){ replaySetEnabled(true); },
-  disable(){ replaySetEnabled(false); },
-  play(){ replayPlay(); },
-  pause(){ replayPause(); },
-  step(delta){ replayStep(delta); },
-  setMinute(minute){
-    replayPause();
-    replayState.minute = replayClampMinute(minute);
-    replayApplyMinute();
-  },
-  getState(){
-    return {
-      enabled: replayState.enabled,
-      playing: replayState.playing,
-      minute: replayState.minute,
-      label: replayMinuteLabel(replayState.minute),
-      speedMs: replayState.speedMs,
-    };
-  },
-  setHook(fn){
-    window.__AARON_REPLAY_HOOK__ = (typeof fn === "function") ? fn : null;
-    replayRender();
-  },
-};
-// ===== /REPLAY MODE =====
 
 function a10LiveSetStatus(text){
   const msg = text || "—";
@@ -9058,10 +8462,10 @@ const extractPct = (txt) => {
 
     // breakout window card (estruturado)
         let bw = pickFirst(ui.breakout_window_card, panel.breakout_window_card, digest.breakout_window_card);
-    const ph = pickFirst(ui.premonition_hours, panel.premonition_hours, digest.premonition_hours);
+
 
             // ✅ DEMO quando não houver dados (sistema OFF / vazio)
-    const A10_PREM_DEMO_WHEN_EMPTY = false;
+    const A10_PREM_DEMO_WHEN_EMPTY = true;
 
     if (A10_PREM_DEMO_WHEN_EMPTY) {
       const hasBW = bw && (
@@ -9343,126 +8747,6 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     const nTxt = (bw?.n_total != null) ? `N=${bw.n_total}` : "N=—";
     const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(score).toFixed(2)})` : "";
     const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
-        const pctTxt = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? `${Math.round(n)}%` : "—";
-    };
-
-    const pxTxt = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n.toFixed(2) : "—";
-    };
-
-    const minTxt = (v) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? `~${Math.round(n)}m` : "—";
-    };
-
-    const timeTxt = (v) => {
-      if (v == null || v === "") return null;
-      const d = new Date(v);
-      const ms = d.getTime();
-      return Number.isFinite(ms) ? fmtMT(d) : null;
-    };
-
-    const next5Pct = pickFirst(
-      ph?.prob_until_p25_pct,
-      ph?.prob_until_now_pct,
-      bw?.prob_until_end_pct
-    );
-
-    const medianPct = pickFirst(
-      ph?.prob_until_median_pct,
-      ph?.prob_until_p50_pct,
-      bw?.prob_until_end_pct
-    );
-
-    const p90Pct = pickFirst(
-      ph?.prob_until_p90_pct,
-      ph?.prob_until_p75_pct,
-      ph?.cond_prob_median_to_p90_pct,
-      bw?.prob_until_end_pct
-    );
-
-    const lateProb = pickFirst(
-      ph?.cond_prob_median_to_p90_pct,
-      ph?.cond_prob_p25_to_p90_pct,
-      ph?.prob_between_p25_p90_pct
-    );
-
-    const bwDir = String(pickFirst(ph?.breakout_dir, bw?.dir, "NEUTRAL") || "NEUTRAL").toUpperCase();
-
-    const bwWindowTxt = (bw?.window_start_label || bw?.window_end_label)
-      ? `${bw?.window_start_label || "—"} → ${bw?.window_end_label || "—"}`
-      : "—";
-
-    const bwMedianTxt =
-      timeTxt(ph?.eta_median || ph?.eta_p50 || ph?.eta_now) ||
-      minTxt(bw?.median_minutes);
-
-    const delayFromTxt =
-      timeTxt(ph?.eta_median || ph?.eta_p25) ||
-      minTxt(ph?.p25_minutes);
-
-    const delayToTxt =
-      timeTxt(ph?.eta_p90 || ph?.eta_p75) ||
-      minTxt(ph?.p90_minutes);
-
-    const bwDelayTxt =
-      (lateProb != null && (delayFromTxt || delayToTxt))
-        ? `if not by ${delayFromTxt || "median"} → ${delayToTxt || "late window"} = ${pctTxt(lateProb)}`
-        : (bw?.miss_line || "—");
-
-    const bwPrimaryTxt =
-  (bwDir === "UP" || bwDir === "DOWN")
-    ? `${bwDir} BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`
-    : `NEUTRAL BREAKOUT WINDOW | NEXT 5M ${pctTxt(next5Pct)}`;
-
-    const bwReadingTxt =
-  (bwDir === "UP" || bwDir === "DOWN")
-    ? `Window still favors ${bwDir}. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`
-    : `No real directional edge yet. Median ${pctTxt(medianPct)} | P90 ${pctTxt(p90Pct)}.`;
-
-    setText("bwp-primary", bwPrimaryTxt);
-    setText("bwp-dir", bwDir);
-    setText("bwp-window", bwWindowTxt);
-    setText("bwp-median", bwMedianTxt);
-    setText("bwp-trigger", pxTxt(bw?.trigger_price));
-    setText("bwp-next5", pctTxt(next5Pct));
-    setText("bwp-until-med", pctTxt(medianPct));
-    setText("bwp-until-p90", pctTxt(p90Pct));
-    setText("bwp-delay", bwDelayTxt);
-    setText("bwp-reading", bwReadingTxt);
-    setText("bwp-foot", `${nTxt} casos similares${scTxt}${confTxt}`);
-
-    try{
-      const badge = document.getElementById("bwp-badge");
-      if (badge){
-        let stateTxt = "WAIT";
-        let stateCls = "win-wait";
-
-        const elapsed = Number(ph?.setup_elapsed_minutes);
-        const p25m = Number(ph?.p25_minutes);
-        const p90m = Number(ph?.p90_minutes);
-
-        if (Number.isFinite(elapsed) && Number.isFinite(p25m) && Number.isFinite(p90m)) {
-          if (elapsed >= p25m && elapsed <= p90m) {
-            stateTxt = "LIVE";
-            stateCls = "win-now";
-          } else if (elapsed > p90m) {
-            stateTxt = "LATE";
-            stateCls = "win-warn";
-          }
-        } else if (Number.isFinite(Number(next5Pct)) && Number(next5Pct) >= 60) {
-          stateTxt = "HOT";
-          stateCls = "win-now";
-        }
-
-        badge.textContent = stateTxt;
-        badge.classList.remove("win-wait", "win-now", "win-warn");
-        badge.classList.add(stateCls);
-      }
-    }catch(_e){}
         // ===== MACRO COL (KPI + linhas) =====
 
 // (1) Prob%: SEMPRE prioriza o texto "PREMONIÇÃO MACRO..."
@@ -11122,7 +10406,7 @@ if (readingEl) {
           (isLow  && zoneHi != null) ? zoneHi :
           null;
 
-                let step1 = null, step2 = null, step3 = null;
+        let step1 = null, step2 = null, step3 = null;
 
         if (current != null && targetEdge != null) {
           const routeDist = targetEdge - current;
@@ -11130,58 +10414,6 @@ if (readingEl) {
           step2 = current + (routeDist * 0.6666666667);
           step3 = targetEdge;
         }
-
-        const pivotProb = Number(hi?.prob_pivot_pct);
-        const missProb =
-          Number.isFinite(pivotProb)
-            ? Math.max(0, Math.min(100, 100 - pivotProb))
-            : null;
-
-        const stepProb = (frac) => {
-          if (!Number.isFinite(pivotProb) || !Number.isFinite(frac)) return null;
-          return Math.max(0, Math.min(100, 100 - (missProb * frac)));
-        };
-
-        const fmtBarsRange = (a, b) => {
-          const aa = Number(a);
-          const bb = Number(b);
-          if (Number.isFinite(aa) && Number.isFinite(bb)) {
-            return `${Math.max(1, Math.round(aa))}b → ${Math.max(1, Math.round(bb))}b`;
-          }
-          if (Number.isFinite(aa)) return `~${Math.max(1, Math.round(aa))}b`;
-          return "—";
-        };
-
-        const stepEtaRange = (frac50, frac75) => {
-          const a = Number(eta50);
-          const b = Number(eta75);
-          if (Number.isFinite(a) && Number.isFinite(b)) {
-            return fmtBarsRange(a * frac50, b * frac75);
-          }
-          if (Number.isFinite(a)) return `~${Math.max(1, Math.round(a * frac75))}b`;
-          return "—";
-        };
-
-        const step1Prob = stepProb(1 / 3);
-        const step2Prob = stepProb(2 / 3);
-        const finalProb = Number.isFinite(pivotProb) ? pivotProb : null;
-
-        const step1Txt =
-          (step1 != null)
-            ? `${fmt2(step1)} · ${fmtPct(step1Prob)} · ETA ${stepEtaRange(0.35, 0.50)}`
-            : "—";
-
-        const step2Txt =
-          (step2 != null)
-            ? `${fmt2(step2)} · ${fmtPct(step2Prob)} · ETA ${stepEtaRange(0.70, 0.85)}`
-            : "—";
-
-        const finalPivotTxt =
-          (zoneLo != null && zoneHi != null)
-            ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)} · ${fmtPct(finalProb)}`
-            : (Number.isFinite(finalProb) ? fmtPct(finalProb) : "—");
-
-        const finalEtaTxt = fmtBarsRange(eta50, eta75);
 
         const eps = (Number.isFinite(atr14) && atr14 > 0) ? (atr14 * 0.03) : 0.01;
 
@@ -11230,26 +10462,31 @@ if (readingEl) {
           isLow  ? "ROUTE TO PIVOT LOW"  :
           "ROUTE —";
 
+        const layer2Txt =
+          isHigh ? "After arrival: PIVOT CONFIRM DOWN" :
+          isLow  ? "After arrival: PIVOT CONFIRM UP"   :
+          "After arrival: PIVOT CONFIRM —";
+
         setBadge("zzr-badge", badgeTxt, badgeMode);
         set("zzr-mode", modeTxt);
         set("zzr-status", statusTxt);
         set("zzr-current", fmt2(current));
-        set("zzr-next", Number.isFinite(finalProb) ? `${next} | H≤ ${hz} | ${fmtPct(finalProb)}` : `${next} | H≤ ${hz}`);
+        set("zzr-next", `${next} | H≤ ${hz}`);
 
-        set("zzr-step1", step1Txt);
-        set("zzr-step1state", passed1 ? "REACHED ✅" : "REACH · WAIT ⏳");
+        set("zzr-step1", fmt2(step1));
+        set("zzr-step1state", passed1 ? "PASSED ✅" : "WAIT ⏳");
 
-        set("zzr-step2", step2Txt);
-        set("zzr-step2state", passed2 ? "BROKE ✅" : (passed1 ? "BREAK · LIVE ⚡" : "AFTER S1 · WAIT ⏳"));
+        set("zzr-step2", fmt2(step2));
+        set("zzr-step2state", passed2 ? "PASSED ✅" : "WAIT ⏳");
 
         set("zzr-step3", fmt2(step3));
         set("zzr-step3state", arrived ? "ARRIVED ✅" : (passed3 ? "PASSED ✅" : "WAIT ⏳"));
 
         set("zzr-zone", (zoneLo != null && zoneHi != null) ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)}` : "—");
-        set("zzr-eta", finalEtaTxt);
-        set("zzr-layer2", finalPivotTxt);
+        set("zzr-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
+        set("zzr-layer2", layer2Txt);
         set("zzr-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
-        set("zzr-cancel", "Lose route if pivot flips, final ETA P75 expires, or route is lost by > 0.35 ATR.");
+        set("zzr-cancel", "Cancel if pivot flips, ETA P75 expires, or route is lost by > 0.35 ATR.");
       }
     }
     // ===== /ZIGZAG ROUTE ENGINE =====
