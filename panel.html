@@ -10735,10 +10735,45 @@ function updateIndicatorPremonitionPanel(payload){
     const fmt4d = (n) => (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(4);
 
     // ⚠️ live_* está vindo em panel (no seu Test result), não em ui
-    const liveVwap    = num(ui?.live_vwap    ?? panel?.live_vwap    ?? digest?.live_vwap    ?? root?.live_vwap);
-    const liveRsi14   = num(ui?.live_rsi14   ?? panel?.live_rsi14   ?? digest?.live_rsi14   ?? root?.live_rsi14);
-    const liveEmaFast = num(ui?.live_ema_fast?? panel?.live_ema_fast?? digest?.live_ema_fast?? root?.live_ema_fast);
-    const liveEmaSlow = num(ui?.live_ema_slow?? panel?.live_ema_slow?? digest?.live_ema_slow?? root?.live_ema_slow);
+    const liveVwap = num(
+  ui?.live_vwap ?? panel?.live_vwap ?? digest?.live_vwap ?? root?.live_vwap ??
+  ui?.vwap ?? panel?.vwap ?? digest?.vwap ?? root?.vwap ??
+  ui?.indicators?.vwap ?? panel?.indicators?.vwap ?? digest?.indicators?.vwap ?? root?.indicators?.vwap ??
+  panel?.market_state?.indicators?.vwap ?? root?.market_state?.indicators?.vwap
+);
+
+const liveRsi14 = num(
+  ui?.live_rsi14 ?? panel?.live_rsi14 ?? digest?.live_rsi14 ?? root?.live_rsi14 ??
+  ui?.rsi14 ?? panel?.rsi14 ?? digest?.rsi14 ?? root?.rsi14 ??
+  ui?.rsi_14 ?? panel?.rsi_14 ?? digest?.rsi_14 ?? root?.rsi_14 ??
+  ui?.rsi ?? panel?.rsi ?? digest?.rsi ?? root?.rsi ??
+  ui?.indicators?.rsi14 ?? panel?.indicators?.rsi14 ?? digest?.indicators?.rsi14 ?? root?.indicators?.rsi14 ??
+  ui?.indicators?.rsi_14 ?? panel?.indicators?.rsi_14 ?? digest?.indicators?.rsi_14 ?? root?.indicators?.rsi_14 ??
+  ui?.indicators?.rsi ?? panel?.indicators?.rsi ?? digest?.indicators?.rsi ?? root?.indicators?.rsi ??
+  panel?.market_state?.indicators?.rsi14 ?? root?.market_state?.indicators?.rsi14 ??
+  panel?.market_state?.indicators?.rsi_14 ?? root?.market_state?.indicators?.rsi_14 ??
+  panel?.market_state?.indicators?.rsi ?? root?.market_state?.indicators?.rsi
+);
+
+const liveEmaFast = num(
+  ui?.live_ema_fast ?? panel?.live_ema_fast ?? digest?.live_ema_fast ?? root?.live_ema_fast ??
+  ui?.ema20 ?? panel?.ema20 ?? digest?.ema20 ?? root?.ema20 ??
+  ui?.ema_20 ?? panel?.ema_20 ?? digest?.ema_20 ?? root?.ema_20 ??
+  ui?.indicators?.ema20 ?? panel?.indicators?.ema20 ?? digest?.indicators?.ema20 ?? root?.indicators?.ema20 ??
+  ui?.indicators?.ema_20 ?? panel?.indicators?.ema_20 ?? digest?.indicators?.ema_20 ?? root?.indicators?.ema_20 ??
+  panel?.market_state?.indicators?.ema20 ?? root?.market_state?.indicators?.ema20 ??
+  panel?.market_state?.indicators?.ema_20 ?? root?.market_state?.indicators?.ema_20
+);
+
+const liveEmaSlow = num(
+  ui?.live_ema_slow ?? panel?.live_ema_slow ?? digest?.live_ema_slow ?? root?.live_ema_slow ??
+  ui?.ema50 ?? panel?.ema50 ?? digest?.ema50 ?? root?.ema50 ??
+  ui?.ema_50 ?? panel?.ema_50 ?? digest?.ema_50 ?? root?.ema_50 ??
+  ui?.indicators?.ema50 ?? panel?.indicators?.ema50 ?? digest?.indicators?.ema50 ?? root?.indicators?.ema50 ??
+  ui?.indicators?.ema_50 ?? panel?.indicators?.ema_50 ?? digest?.indicators?.ema_50 ?? root?.indicators?.ema_50 ??
+  panel?.market_state?.indicators?.ema50 ?? root?.market_state?.indicators?.ema50 ??
+  panel?.market_state?.indicators?.ema_50 ?? root?.market_state?.indicators?.ema_50
+);
 set("indip-vwap-hold-phrase","—");
 set("indip-rsi-hold-phrase","—");
 set("indip-ema-hold-phrase","—");
@@ -10761,8 +10796,8 @@ set("indip-ema-hold-phrase","—");
         set("indip-vwap-diff",  fmt4d(diff));
         const vHoldTxt = document.getElementById("indip-vwap-hold-pct")?.textContent || "—";
 set("indip-vwap-hold-phrase",
-  (vState === "above") ? `HOLD ${vHoldTxt} → Price likely stays ABOVE VWAP (~5m).` :
-  (vState === "below") ? `HOLD ${vHoldTxt} → Price likely stays BELOW VWAP (~5m).` :
+  (state === "above") ? `HOLD ${vHoldTxt} → Price likely stays ABOVE VWAP (~5m).` :
+(state === "below") ? `HOLD ${vHoldTxt} → Price likely stays BELOW VWAP (~5m).` :
   `HOLD ${vHoldTxt} → Price likely stays in the current VWAP state (~5m).`
 );
         set("indip-vwap-cross-dir", state.toUpperCase());
@@ -10782,8 +10817,8 @@ set("indip-vwap-hold-phrase",
         set("indip-rsi-val", fmt2(liveRsi14));
         const rHoldTxt = document.getElementById("indip-rsi-hold-pct")?.textContent || "—";
 set("indip-rsi-hold-phrase",
-  (rState === "above") ? `HOLD ${rHoldTxt} → RSI likely stays ABOVE 50 (~5m).` :
-  (rState === "below") ? `HOLD ${rHoldTxt} → RSI likely stays BELOW 50 (~5m).` :
+  (state50 === "above") ? `HOLD ${rHoldTxt} → RSI likely stays ABOVE 50 (~5m).` :
+(state50 === "below") ? `HOLD ${rHoldTxt} → RSI likely stays BELOW 50 (~5m).` :
   `HOLD ${rHoldTxt} → RSI likely stays on the current side of 50 (~5m).`
 );
         set("indip-rsi-50", "50");
@@ -10804,8 +10839,8 @@ set("indip-rsi-hold-phrase",
         setBadge("indip-ema-state", state.toUpperCase(), state === "above" ? "win-now" : "win-warn");
         const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
 set("indip-ema-hold-phrase",
-  (eState === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
-  (eState === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
+  (state === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
+(state === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
   `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
 );
 
