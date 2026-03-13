@@ -10875,8 +10875,9 @@ set("indip-ema-hold-phrase",
       set("indip-rsi-cross-dir","—"); set("indip-rsi-cross-pct","—"); set("indip-rsi-cross-eta","—"); set("indip-rsi-hold-pct","—");
 
       setBadge("indip-ema-state","—","win-wait");
-      set("indip-ema-fast","—"); set("indip-ema-slow","—"); set("indip-ema-diff","—");
-      set("indip-ema-cross-dir","—"); set("indip-ema-cross-pct","—"); set("indip-ema-cross-eta","—"); set("indip-ema-hold-pct","—");
+set("indip-ema-fast-span","—"); set("indip-ema-slow-span","—");
+set("indip-ema-fast","—"); set("indip-ema-slow","—"); set("indip-ema-diff","—");
+set("indip-ema-cross-dir","—"); set("indip-ema-cross-pct","—"); set("indip-ema-cross-eta","—"); set("indip-ema-hold-pct","—");
       return;
     }
 
@@ -10923,19 +10924,47 @@ set("indip-rsi-hold-phrase",
 );
     // ===== EMA =====
     const e = ip.ema || {};
-    const eState = String(e.state || "").toLowerCase();
-    setBadge("indip-ema-state", (eState ? eState.toUpperCase() : "—"), eState === "above" ? "win-now" : (eState === "below" ? "win-warn" : "win-wait"));
-    set("indip-ema-fast", fmt2(e.ema_fast));
-    set("indip-ema-slow", fmt2(e.ema_slow));
-    set("indip-ema-diff", fmt4(e.diff));
 
-    const eCross = (e.cross && e.cross.highlight_5min) ? e.cross.highlight_5min : null;
-    set("indip-ema-cross-dir", e.cross?.direction || "—");
-    set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct_dyn ?? eCross?.prob_hit_pct ?? eCross?.prob_hit_pct_base));
-    set("indip-ema-cross-eta", fmtEta(eCross?.eta_p50_min));
+const eFast = num(
+  e.ema_fast ?? e.fast ?? e.ema20 ?? e.ema_20 ?? liveEmaFast
+);
 
-    const eHold = (e.hold && e.hold.highlight_5min) ? e.hold.highlight_5min : null;
-    set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct_dyn ?? eHold?.prob_hold_pct ?? eHold?.prob_hold_pct_base));
+const eSlow = num(
+  e.ema_slow ?? e.slow ?? e.ema50 ?? e.ema_50 ?? liveEmaSlow
+);
+
+const eDiffNum = num(
+  e.diff ?? (Number.isFinite(eFast) && Number.isFinite(eSlow) ? (eFast - eSlow) : null)
+);
+
+const eState = String(
+  e.state || (Number.isFinite(eDiffNum) ? (eDiffNum >= 0 ? "above" : "below") : "")
+).toLowerCase();
+
+setBadge(
+  "indip-ema-state",
+  (eState ? eState.toUpperCase() : "—"),
+  eState === "above" ? "win-now" : (eState === "below" ? "win-warn" : "win-wait")
+);
+
+set("indip-ema-fast-span", Number.isFinite(eFast) ? "20" : "—");
+set("indip-ema-slow-span", Number.isFinite(eSlow) ? "50" : "—");
+
+set("indip-ema-fast", Number.isFinite(eFast) ? fmt2(eFast) : "—");
+set("indip-ema-slow", Number.isFinite(eSlow) ? fmt2(eSlow) : "—");
+set("indip-ema-diff", Number.isFinite(eDiffNum) ? fmt4d(eDiffNum) : "—");
+
+const eCross = (e.cross && e.cross.highlight_5min) ? e.cross.highlight_5min : null;
+set(
+  "indip-ema-cross-dir",
+  e.cross?.direction || (eState === "above" ? "UP" : (eState === "below" ? "DOWN" : "—"))
+);
+set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct_dyn ?? eCross?.prob_hit_pct ?? eCross?.prob_hit_pct_base));
+set("indip-ema-cross-eta", fmtEta(eCross?.eta_p50_min));
+
+const eHold = (e.hold && e.hold.highlight_5min) ? e.hold.highlight_5min : null;
+set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct_dyn ?? eHold?.prob_hold_pct ?? eHold?.prob_hold_pct_base));
+
 const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
 set("indip-ema-hold-phrase",
   (eState === "above") ? `HOLD ${eHoldTxt} → Fast EMA likely stays ABOVE Slow EMA (~5m).` :
