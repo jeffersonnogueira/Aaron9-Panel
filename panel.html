@@ -9380,14 +9380,14 @@ const timeTxt = (v) => {
   return Number.isFinite(ms) ? fmtMT(d) : null;
 };
 
-const etaTxt = (barsVal, minsVal, timeVal) => {
+const etaPatternTxt = (barsVal, minsVal, isoVal) => {
   const b = Number(barsVal);
   if (Number.isFinite(b)) return `${Math.round(b)} bars`;
 
   const m = Number(minsVal);
   if (Number.isFinite(m)) return `~${Math.round(m)}m`;
 
-  const t = timeTxt(timeVal);
+  const t = timeTxt(isoVal);
   return t || "—";
 };
 
@@ -9398,25 +9398,37 @@ const normDir = (v) => {
   return "NEUTRAL";
 };
 
-const sf = digest?.shape_focus || deepFind(digest, "shape_focus") || deepFind(root, "shape_focus") || {};
-const sr = digest?.sr_proxy || deepFind(digest, "sr_proxy") || deepFind(root, "sr_proxy") || {};
+const sf =
+  digest?.shape_focus ||
+  deepFind(root, "shape_focus") ||
+  {};
+
+const sr =
+  digest?.sr_proxy ||
+  deepFind(root, "sr_proxy") ||
+  {};
+
+const geom =
+  digest?.shape_runtime_geometry_v1 ||
+  deepFind(root, "shape_runtime_geometry_v1") ||
+  {};
 
 const pp =
-  deepFind(root, "pattern_premonition_v1") ||
+  digest?.shape_trigger_premonition_v1 ||
   deepFind(root, "shape_trigger_premonition_v1") ||
+  digest?.pattern_premonition_v1 ||
+  deepFind(root, "pattern_premonition_v1") ||
   deepFind(root, "structural_pattern_premonition_v1") ||
-  deepFind(digest, "pattern_premonition_v1") ||
-  deepFind(digest, "shape_trigger_premonition_v1") ||
-  deepFind(ui, "pattern_premonition_v1") ||
-  deepFind(panel, "pattern_premonition_v1") ||
-  null;
+  {};
 
 const priceNow = pickFirst(
   panel?.price_now,
   ui?.price_now,
   digest?.price_now,
   root?.price_now,
-  payload?.price_now
+  payload?.price_now,
+  digest?.indicator_premonition?.vwap?.price,
+  root?.indicator_premonition?.vwap?.price
 );
 
 const setupLabelRaw = pickFirst(
@@ -9424,15 +9436,15 @@ const setupLabelRaw = pickFirst(
   pp?.pattern_label,
   pp?.pattern_name,
   pp?.structure_name,
+  sf?.name_pt,
   sf?.label,
   sf?.name_en,
-  sf?.name_pt,
-  sf?.family_en,
-  sf?.family,
+  sf?.detector_key,
   "—"
 );
 
 const setupLabel = String(setupLabelRaw || "—").toUpperCase();
+const setupHuman = String(setupLabelRaw || "Setup").replace(/\s+/g, " ").trim();
 
 const dirNorm = normDir(
   pickFirst(
@@ -9440,11 +9452,17 @@ const dirNorm = normDir(
     pp?.bias,
     sf?.direction,
     sf?.bias,
-    bw?.dir,
+    ph?.breakout_dir_consensus,
     ph?.breakout_dir,
+    bw?.dir,
     "neutral"
   )
 );
+
+const biasTxt =
+  dirNorm === "UP" ? "UP BIAS" :
+  dirNorm === "DOWN" ? "DOWN BIAS" :
+  "NEUTRAL";
 
 const confPct = pickFirst(
   pp?.confidence_pct,
@@ -9453,23 +9471,28 @@ const confPct = pickFirst(
 );
 
 const pivotPrice = pickFirst(
+  geom?.pivot_price,
+  geom?.neckline,
   pp?.pivot_price,
-  pp?.pivot,
+  pp?.neckline,
   sr?.breakout_level,
-  dirNorm === "UP" ? sr?.recent_high : null,
   dirNorm === "DOWN" ? sr?.recent_low : null,
+  dirNorm === "UP" ? sr?.recent_high : null,
   sr?.recent_high,
   sr?.recent_low
 );
 
 const triggerUp = pickFirst(
+  geom?.trigger_up,
   pp?.trigger_up,
   pp?.trigger_up_price,
   pp?.breakout_up_trigger,
+  pp?.runtime_invalidation,
   sr?.recent_high
 );
 
 const triggerDown = pickFirst(
+  geom?.trigger_down,
   pp?.trigger_down,
   pp?.trigger_down_price,
   pp?.breakout_down_trigger,
@@ -9477,17 +9500,15 @@ const triggerDown = pickFirst(
 );
 
 let breakUpPct = pickFirst(
-  pp?.break_up_pct,
   pp?.prob_break_up_pct,
-  pp?.up_break_pct,
-  dirNorm === "UP" ? ph?.prob_until_p25_pct : null
+  pp?.break_up_pct,
+  pp?.up_break_pct
 );
 
 let breakDownPct = pickFirst(
-  pp?.break_down_pct,
   pp?.prob_break_down_pct,
-  pp?.down_break_pct,
-  dirNorm === "DOWN" ? ph?.prob_until_p25_pct : null
+  pp?.break_down_pct,
+  pp?.down_break_pct
 );
 
 if (!Number.isFinite(Number(breakUpPct)) && Number.isFinite(Number(breakDownPct))) {
@@ -9497,25 +9518,66 @@ if (!Number.isFinite(Number(breakDownPct)) && Number.isFinite(Number(breakUpPct)
   breakDownPct = 100 - Number(breakUpPct);
 }
 
-const etaP25Txt = etaTxt(
-  pickFirst(pp?.eta_p25_bars, pp?.p25_bars),
-  ph?.p25_minutes,
-  pickFirst(ph?.eta_p25, ph?.eta_now)
+const etaKey =
+  dirNorm === "UP" ? "up" :
+  dirNorm === "DOWN" ? "down" :
+  "intended";
+
+const etaP25Txt = etaPatternTxt(
+  pickFirst(
+    pp?.eta_p25_bars,
+    pp?.eta_break_bars?.[etaKey]?.p25,
+    pp?.eta_break_bars?.intended?.p25,
+    ph?.breakout_window_consensus_eta_bars?.p25
+  ),
+  pickFirst(
+    ph?.p25_minutes,
+    ph?.breakout_window_consensus_eta_minutes?.p25
+  ),
+  pickFirst(
+    ph?.eta_p25,
+    bw?.eta_p25
+  )
 );
 
-const etaP50Txt = etaTxt(
-  pickFirst(pp?.eta_p50_bars, pp?.p50_bars),
-  bw?.median_minutes,
-  pickFirst(ph?.eta_median, ph?.eta_p50, ph?.eta_now)
+const etaP50Txt = etaPatternTxt(
+  pickFirst(
+    pp?.eta_p50_bars,
+    pp?.eta_break_bars?.[etaKey]?.p50,
+    pp?.eta_break_bars?.intended?.p50,
+    ph?.breakout_window_consensus_eta_bars?.p50
+  ),
+  pickFirst(
+    ph?.median_minutes,
+    ph?.p50_minutes,
+    ph?.breakout_window_consensus_eta_minutes?.p50
+  ),
+  pickFirst(
+    ph?.eta_median,
+    ph?.eta_p50
+  )
 );
 
-const etaP75Txt = etaTxt(
-  pickFirst(pp?.eta_p75_bars, pp?.eta_p90_bars, pp?.p75_bars),
-  ph?.p90_minutes,
-  pickFirst(ph?.eta_p90, ph?.eta_p75)
+const etaP75Txt = etaPatternTxt(
+  pickFirst(
+    pp?.eta_p75_bars,
+    pp?.eta_break_bars?.[etaKey]?.p75,
+    pp?.eta_break_bars?.intended?.p75,
+    ph?.breakout_window_consensus_eta_bars?.p75
+  ),
+  pickFirst(
+    ph?.p75_minutes,
+    ph?.breakout_window_consensus_eta_minutes?.p75
+  ),
+  pickFirst(
+    ph?.eta_p75,
+    ph?.eta_p90
+  )
 );
 
 const target1 = pickFirst(
+  geom?.target_1,
+  pp?.runtime_target_1,
   pp?.target_1,
   pp?.target1,
   pp?.target_price_p50,
@@ -9523,6 +9585,8 @@ const target1 = pickFirst(
 );
 
 const invalidation = pickFirst(
+  geom?.invalidation,
+  pp?.runtime_invalidation,
   pp?.invalidation,
   pp?.invalidation_price,
   pp?.fail_price,
@@ -9530,40 +9594,53 @@ const invalidation = pickFirst(
 );
 
 const breath = pickFirst(
+  geom?.respiro_before_break,
+  pp?.runtime_respiro_before_break,
   pp?.respiro_before_break,
   pp?.breath_before_break,
   pp?.allow_pullback_price,
   pp?.breath_price
 );
 
-const biasTxt =
-  dirNorm === "UP" ? "UP BIAS" :
-  dirNorm === "DOWN" ? "DOWN BIAS" :
-  "NEUTRAL";
+const vwapState = pickFirst(
+  pp?.vwap_side,
+  document.getElementById("indip-vwap-state")?.textContent?.trim()
+);
 
-const vwapState = document.getElementById("indip-vwap-state")?.textContent?.trim();
-const emaState  = document.getElementById("indip-ema-state")?.textContent?.trim();
-const rsiVal    = document.getElementById("indip-rsi-val")?.textContent?.trim();
-const vpPrim    = document.getElementById("vp-primary")?.textContent?.trim();
-const zzNextDom = document.getElementById("zz-next")?.textContent?.trim();
+const emaState = pickFirst(
+  pp?.ema_state,
+  document.getElementById("indip-ema-state")?.textContent?.trim()
+);
+
+const rsiVal = pickFirst(
+  pp?.rsi_bucket,
+  document.getElementById("indip-rsi-val")?.textContent?.trim()
+);
+
+const vpPrim = pickFirst(
+  pp?.volume_regime,
+  document.getElementById("vp-primary")?.textContent?.trim()
+);
+
+const zzNextDom = pickFirst(
+  pp?.zigzag_state,
+  document.getElementById("zz-next")?.textContent?.trim()
+);
 
 const ctxParts = [];
-if (vwapState && vwapState !== "—") ctxParts.push(`VWAP ${vwapState}`);
-if (emaState && emaState !== "—") ctxParts.push(`EMA ${emaState}`);
-if (rsiVal && rsiVal !== "—") ctxParts.push(`RSI ${rsiVal}`);
-if (vpPrim && vpPrim !== "—") ctxParts.push(vpPrim);
-if (zzNextDom && zzNextDom !== "—") ctxParts.push(`Zigzag ${zzNextDom}`);
+if (vwapState && vwapState !== "—" && String(vwapState).toLowerCase() !== "unknown") ctxParts.push(`VWAP ${String(vwapState).toUpperCase()}`);
+if (emaState && emaState !== "—" && String(emaState).toLowerCase() !== "unknown") ctxParts.push(`EMA ${String(emaState).toUpperCase()}`);
+if (rsiVal && rsiVal !== "—" && String(rsiVal).toLowerCase() !== "unknown") ctxParts.push(`RSI ${String(rsiVal).toUpperCase()}`);
+if (vpPrim && vpPrim !== "—" && String(vpPrim).toLowerCase() !== "unknown") ctxParts.push(`VOLUME ${String(vpPrim).toUpperCase()}`);
+if (zzNextDom && zzNextDom !== "—" && String(zzNextDom).toLowerCase() !== "unknown") ctxParts.push(`ZIGZAG ${String(zzNextDom).toUpperCase()}`);
 
 const contextTxt = ctxParts.length
   ? ctxParts.join(" | ")
   : `${nTxt} casos similares${scTxt}${confTxt}`;
 
-const bwPrimaryTxt =
-  `${setupLabel} | ${biasTxt} | ${pctTxt(confPct)}`;
+const bwPrimaryTxt = `${setupLabel} | ${biasTxt} | ${pctTxt(confPct)}`;
 
-const setupHuman = String(setupLabelRaw || "Setup").replace(/\s+/g, " ").trim();
-
-let bwReadingTxt = `${setupHuman}. Ainda não há edge direcional claro.`;
+let bwReadingTxt = `${setupHuman}. Ainda sem edge estrutural claro.`;
 
 if (dirNorm === "UP") {
   bwReadingTxt =
@@ -9598,38 +9675,26 @@ setText("bwp-target1", pxTxt(target1));
 setText("bwp-invalidation", pxTxt(invalidation));
 
 setText("bwp-reading", bwReadingTxt);
-setText("bwp-foot", `CONTEXT · ${contextTxt} · ${nTxt}${scTxt}${confTxt}`);
+setText("bwp-foot", `CONTEXT · ${contextTxt} · ${nTxt}${scTxt}`);
 
 try {
   const badge = document.getElementById("bwp-badge");
   if (badge) {
-    let stateTxt = String(
-      pickFirst(pp?.status, pp?.state, pp?.badge, "")
-    ).toUpperCase();
-
+    let stateTxt = "LIVE";
     let stateCls = "win-wait";
 
     const nowNum = Number(priceNow);
     const upNum = Number(triggerUp);
     const downNum = Number(triggerDown);
 
-    if (!stateTxt || stateTxt === "—") {
-      if (dirNorm === "UP" && Number.isFinite(nowNum) && Number.isFinite(upNum) && nowNum >= upNum) {
-        stateTxt = "TRIGGERED";
-      } else if (dirNorm === "DOWN" && Number.isFinite(nowNum) && Number.isFinite(downNum) && nowNum <= downNum) {
-        stateTxt = "TRIGGERED";
-      } else if (dirNorm === "UP" || dirNorm === "DOWN") {
-        stateTxt = "ARMED";
-      } else {
-        stateTxt = "LIVE";
-      }
-    }
-
-    if (stateTxt === "TRIGGERED" || stateTxt === "LIVE" || stateTxt === "HOT") {
+    if (dirNorm === "UP" && Number.isFinite(nowNum) && Number.isFinite(upNum) && nowNum >= upNum) {
+      stateTxt = "TRIGGERED";
       stateCls = "win-now";
-    } else if (stateTxt === "LATE" || stateTxt === "FAILED") {
-      stateCls = "win-warn";
-    } else {
+    } else if (dirNorm === "DOWN" && Number.isFinite(nowNum) && Number.isFinite(downNum) && nowNum <= downNum) {
+      stateTxt = "TRIGGERED";
+      stateCls = "win-now";
+    } else if (dirNorm === "UP" || dirNorm === "DOWN") {
+      stateTxt = "ARMED";
       stateCls = "win-wait";
     }
 
