@@ -2611,7 +2611,7 @@
 /* ===== MICRO vs MACRO (DUAL COLUMN) ===== */
 .mm-dual-grid{
   display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
   gap: 14px;
   width: 100%;
 }
@@ -2960,24 +2960,23 @@
   align-items:flex-start;
   justify-content:flex-start;
   gap: 14px;
-  flex-wrap: nowrap; /* <-- era wrap; isso colocava os números embaixo */
+  flex-wrap: wrap;
 }
 
 .ee-engine-left{
   display:flex;
   flex-direction:column;
   gap: 8px;
-  min-width: 0;     /* <-- novo */
-  flex: 1 1 auto;   /* <-- novo */
+  min-width: 180px;
 }
 
 .ee-engine-pill{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding: 6px 12px;   /* <-- era 8px 14px */
+  padding: 8px 14px;
   border-radius: 999px;
-  font-size: 26px;     /* <-- era 36px */
+  font-size: 36px;
   font-weight: 950;
   letter-spacing: .16em;
   text-transform: uppercase;
@@ -3030,15 +3029,14 @@
 
 /* layout (como no mockup) */
 .ee-engine-right{
-  flex: 0 1 560px;                 /* <-- permite encolher */
+  flex: 0 0 auto;                 /* não estica */
   margin-left: auto;
-  width: 560px;                    /* base */
-  max-width: 100%;                 /* nunca estoura o card */
+  width: fit-content;             /* encaixa no conteúdo */
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* <-- era max-content */
-  gap: 10px;
+  grid-template-columns: max-content max-content; /* colunas “justas” */
+  gap: 10px;                      /* um pouco mais compacto */
   align-items: stretch;
-  min-width: 0;
+  min-width: 0;                   /* remove a trava dos 520px */
 }
 
 .ee-engine-stack{
@@ -3052,42 +3050,38 @@
   border-radius: 16px;
   background: rgba(255,255,255,.02);
   padding: 12px 14px;
-  min-width: 0;
 }
 
 .ee-engine-box .k{
-  font-size: 18px;          /* era 24 */
+  font-size: 24px;
   letter-spacing: .16em;
   text-transform: uppercase;
   opacity: .70;
-  margin-bottom: 5px;       /* era 6 */
+  margin-bottom: 6px;
   font-weight: 900;
 }
 
 .ee-engine-box .v{
-  font-size: 36px;          /* era 46 */
+  font-size: 46px;
   font-weight: 950;
   line-height: 1.05;
-  border-radius: 14px;      /* era 16 */
-  padding: 5px 10px;        /* era 6px 12px */
+  border-radius: 16px;
+  padding: 6px 12px;
   display:inline-block;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.10);
   box-shadow: 0 0 18px rgba(0,0,0,.35);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.ee-engine-box.big{ padding: 12px 12px; border-radius: 18px; }  /* era 16px 16px */
-.ee-engine-box.big .v{ font-size: 64px; padding: 8px 12px; }    /* era 84px + 10px 14px */
-.ee-engine-box.stack .v{ font-size: 32px; }                     /* era 46px */
+.ee-engine-box.big{ padding: 16px 16px; border-radius: 18px; }
+.ee-engine-box.big .v{ font-size: 84px; padding: 10px 14px; }
+.ee-engine-box.stack .v{ font-size: 46px; }
 
 @media (max-width: 980px){
   .ee-engine-right{
   flex: 1 1 100%;
   width: 100%;
-    .ee-engine-box.big .v{ font-size: 52px; }
+  grid-template-columns: 1fr;
   min-width: 0;
 }
   .ee-engine-stack{ flex-direction: row; }
@@ -3101,9 +3095,6 @@
 #ee-macro-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
 #ee-macro-engine-touch{ color: #60a5fa; border-color: rgba(96,165,250,.28); background: rgba(96,165,250,.08); }
 #ee-macro-engine-cancel{ color: #fb7185; border-color: rgba(251,113,133,.28); background: rgba(251,113,133,.08); }
-#ee-macro-min-engine-confirm{ color: #34d399; border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.08); }
-#ee-macro-min-engine-touch{ color: #60a5fa; border-color: rgba(96,165,250,.28); background: rgba(96,165,250,.08); }
-#ee-macro-min-engine-cancel{ color: #fb7185; border-color: rgba(251,113,133,.28); background: rgba(251,113,133,.08); }
 .ee-engine-note{
   margin-top: 6px;
   font-size: 14px;
@@ -3111,270 +3102,16 @@
   letter-spacing: .02em;
 }
 /* ===== /ENTRY ENGINE ===== */
-/* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
+/* ===== INDICATORS (EMA / VWAP / RSI) — BIG FONTS (match Entry Engine) ===== */
 #indicator-prem-card .prem-breakout-title{
-  font-size: 28px !important;   /* era 15 */
-  opacity: .90 !important;
-}
-
-#indicator-prem-card .win-badge{
-  font-size: 22px !important;   /* era 12 */
-  padding: 10px 16px !important; /* era 6px 10px */
-}
-
-/* DOBRA legibilidade geral (os inline styles do HTML) */
-#indicator-prem-card div[style*="font-size:11px"]{ font-size: 22px !important; } /* era 12 */
-#indicator-prem-card div[style*="font-size:12px"]{ font-size: 24px !important; } /* era 13 */
-#indicator-prem-card div[style*="font-size:14px"]{ font-size: 30px !important; } /* era 16 */
-
-/* frase longa: aumenta mas não explode layout */
-#indicator-prem-card #indip-vwap-hold-phrase,
-#indicator-prem-card #indip-rsi-hold-phrase,
-#indicator-prem-card #indip-ema-hold-phrase{
-  font-size: 18px !important;
-  opacity: .75 !important;
-  line-height: 1.15 !important;
-}
-
-/* 5 cards em 1 linha: DAY + ZIGZAG maiores, VWAP/RSI/EMA squished */
-#indicator-prem-card > div[style*="display:grid"]{
-  grid-template-columns: 1.25fr 1.25fr 0.85fr 0.85fr 0.85fr !important;
-  gap: 6px !important;
-  margin-top: 8px !important;
-}
-
-/* padding padrão dos cards */
-#indicator-prem-card > div[style*="display:grid"] > div{
-  padding: 12px 14px !important;     /* era 9px 11px */
-  border-radius: 14px !important;
-}
-
-/* squish extra só nos 3 últimos (VWAP/RSI/EMA) */
-#indicator-prem-card > div[style*="display:grid"] > div:nth-child(n+3){
-  padding: 10px 12px !important;     /* era 7px 9px */
-}
-
-/* em tela menor, volta pro auto-fit (responsivo) */
-@media (max-width: 1400px){
-  #indicator-prem-card > div[style*="display:grid"]{
-    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)) !important;
-  }
-  #indicator-prem-card > div[style*="display:grid"] > div:nth-child(n+3){
-    padding: 12px 14px !important;
-  }
-}
-/* ===== /INDICATORS TOP ROW ===== */
-/* ===== ZIGZAG ROUTE ENGINE — SAME FONT SIZE AS PREMONITION DAY ===== */
-#zz-route-card .prem-breakout-title{
-  font-size: 28px !important;
-  opacity: .90 !important;
-}
-
-#zz-route-card .win-badge{
-  font-size: 22px !important;
-  padding: 10px 16px !important;
-}
-
-/* segue o mesmo scaling do indicator-prem-card */
-#zz-route-card div[style*="font-size:11px"]{ font-size: 22px !important; }
-#zz-route-card div[style*="font-size:12px"]{ font-size: 24px !important; }
-#zz-route-card div[style*="font-size:14px"]{ font-size: 30px !important; }
-
-/* texto de rodapé / cancel */
-#zz-route-card #zzr-cancel{
-  font-size: 18px !important;
-  line-height: 1.15 !important;
-  opacity: .75 !important;
-}
-
-/* dá o mesmo respiro visual dos cards de cima */
-#zz-route-card > div[style*="display:grid"] > div{
-  padding: 12px 14px !important;
-  border-radius: 14px !important;
-}
-
-/* responsivo */
-@media (max-width: 1400px){
-  #zz-route-card > div[style*="display:grid"]{
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-  }
-}
-/* ===== /ZIGZAG ROUTE ENGINE ===== */
-/* ===== VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
-#zz-volume-row{
-  display:grid;
-  grid-template-columns:minmax(0, 1fr) max-content;
-  gap:14px;
-  align-items:start;
-  margin-top:10px;
-  grid-column:1 / -1;
-}
-
-#vol-engine-card{
-  margin-top:0 !important;
-  min-width:0;
-}
-
-#zz-route-card{
-  margin-top:0 !important;
-  min-width:0;
-  width:max-content;
-  justify-self:end;
-}
-
-/* título do card */
-#vol-engine-card .prem-breakout-title{
-  font-size: 28px !important;
-  opacity: .90 !important;
-}
-
-#vol-engine-card .win-badge{
-  font-size: 22px !important;
-  padding: 10px 16px !important;
-}
-
-/* caixa interna */
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"]{
-  padding: 12px 14px !important;
-  border-radius: 14px !important;
-}
-
-/* headings genéricos internos */
-#vol-engine-card div[style*="font-size:11px"]{
-  font-size: 22px !important;
-}
-
-#vol-engine-card div[style*="font-size:12px"]{
   font-size: 24px !important;
+  opacity: .75;
 }
-
-#vol-engine-card div[style*="font-size:14px"]{
-  font-size: 30px !important;
-}
-
-/* PRIMARY READ */
-#vol-engine-card > div[style*="border:1px solid rgba(255,255,255,.10)"] > div:nth-of-type(2){
-  font-size: 30px !important;
-  line-height: 1.22 !important;
-  font-weight: 950 !important;
-}
-
-/* layout: esquerda = NOW + NEXT LEG | direita = WINDOW PRESSURE + TACTICAL READ */
-#vol-engine-card .vp-main-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.12fr) minmax(420px,.98fr);
-  gap:26px;
-  align-items:start;
-  margin-top:10px;
-}
-
-#vol-engine-card .vp-two-col{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:28px;
-  align-items:start;
-  margin-top:0;
-}
-
-#vol-engine-card .vp-col,
-#vol-engine-card .vp-side-col{
-  min-width:0;
-}
-
-#vol-engine-card .vp-side-col{
-  min-width:420px;
-}
-
-#vol-engine-card .vp-sec-title{
-  color:#ffcc66 !important;
-  font-size:26px !important;
-  font-weight:950 !important;
-  letter-spacing:.14em !important;
-  text-transform:uppercase !important;
-  opacity:1 !important;
-}
-
-#vol-engine-card .vp-sec-body{
-  margin-top:8px;
-  font-size:30px !important;
-  line-height:1.38 !important;
-  font-weight:900 !important;
-}
-
-#vol-engine-card .vp-sec-body > div + div{
-  margin-top:6px !important;
-}
-
-#vol-engine-card .vp-mini{
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  gap:18px;
-  font-weight:950;
-  font-size:24px !important;
-  line-height:1.28 !important;
-  white-space:nowrap;
-}
-
-#vol-engine-card .vp-mini + .vp-mini{
-  margin-top:10px;
-}
-
-#vol-engine-card .vp-soft{
-  opacity:.80;
-  font-size:24px !important;
-  white-space:nowrap;
-}
-
-#vol-engine-card .vp-reading{
-  margin-top:12px;
-  font-size:42px !important;
-  line-height:1.22 !important;
-  font-weight:950 !important;
-  color:#ffcc66;
-  opacity:1 !important;
-}
-
-/* responsivo */
-@media (max-width: 1200px){
-  #vol-engine-card .vp-main-grid{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  #vol-engine-card .vp-two-col{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  #vol-engine-card .vp-side-col{
-    min-width:0;
-  }
-}
-
-/* responsivo */
-@media (max-width: 1600px){
-  #zz-volume-row{
-    grid-template-columns:minmax(0, 1fr) max-content;
-  }
-}
-
-@media (max-width: 1200px){
-  #zz-volume-row{
-    grid-template-columns:1fr;
-  }
-
-  #zz-route-card{
-    width:auto;
-    justify-self:stretch;
-  }
-
-  #vol-engine-card .vp-two-col{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-}
-/* ===== /VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
+#indicator-prem-card div[style*="font-size:11px"]{ font-size: 20px !important; }
+#indicator-prem-card div[style*="font-size:12px"]{ font-size: 20px !important; }
+#indicator-prem-card div[style*="font-size:14px"]{ font-size: 24px !important; }
+#indicator-prem-card .win-badge{ font-size: 18px !important; }
+/* ===== /INDICATORS BIG FONTS ===== */
 /* ===== EE BRAIN — BIG FONTS (igual Quick P&L / Most Optimal Entry) ===== */
 #ee-brain-card{ padding: 12px 14px; }
 
@@ -3897,7 +3634,7 @@
 }
 
 .prem-pnlcalc .pnl-v{
-  font-size: 28px;  /* era 44px */
+  font-size: 44px; /* igual ao Most optimal entry */
   line-height: 1.05;
   font-weight: 950;
   text-align: right;
@@ -3907,7 +3644,7 @@
 .prem-pnlcalc .pnl-loss{ color: #fb7185; }
 
 .prem-pnlcalc .pnl-muted{
-  font-size: 14px;  /* era 22px */
+  font-size: 22px;
   opacity: .65;
   font-weight: 850;
   margin-left: 6px;
@@ -3916,99 +3653,7 @@
   margin-top: 10px;
   font-size: 11px;
 }
-/* ===== BREATH PREMONITION + RETRACE PLAN (Micro) — ABOVE QUICK P&L ===== */
-.breath-grid{
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-@media (max-width: 980px){
-  .breath-grid{ grid-template-columns: 1fr; }
-}
 
-.breath-card{
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 12px;
-  background: rgba(0,0,0,.22);
-  padding: 10px 10px 12px;
-}
-
-.breath-h{
-  font-size: 11px;
-  font-weight: 950;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: .80;
-  margin-bottom: 8px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 10px;
-}
-
-.breath-tag{
-  font-size: 12px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  padding: 4px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.04);
-  opacity: .92;
-  white-space: nowrap;
-}
-.breath-tag.buy{ color: #bbf7d0; border-color: rgba(74,222,128,.32); background: rgba(74,222,128,.10); }
-.breath-tag.sell{ color: #fecaca; border-color: rgba(248,113,113,.32); background: rgba(248,113,113,.10); }
-.breath-tag.neutral{ color: rgba(226,232,240,.90); border-color: rgba(148,163,184,.28); background: rgba(148,163,184,.08); }
-
-.breath-main{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap: 10px;
-}
-
-.breath-price{
-  font-size: 44px;
-  line-height: 1.05;
-  font-weight: 950;
-  letter-spacing: .02em;
-  color: #ffcc66;
-  text-shadow: 0 10px 30px rgba(0,0,0,.55);
-}
-.breath-price.buy{ color: rgba(74,222,128,.95); }
-.breath-price.sell{ color: rgba(248,113,113,.95); }
-
-.breath-meta{
-  text-align:right;
-  font-size: 16px;
-  opacity: .85;
-}
-.breath-meta b{ color:#ffcc66; font-weight: 950; font-size: 18px; }
-
-.breath-kv{
-  margin-top: 10px;
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 10px;
-  font-size: 14px;
-}
-.breath-kv .k{
-  font-size: 13px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: .65;
-}
-.breath-kv .v{
-  font-size: 18px;
-  font-weight: 900;
-  text-align:right;
-}
-
-.breath-muted{ opacity: .65; }
-.breath-warn{ color: #facc15; font-weight: 950; }
-/* ===== /BREATH PREMONITION ===== */
 /* PREMONIÇÃO: readout (REGIME/REVERSÃO/CONSOLIDAÇÃO/...) com hierarquia visual */
 .prem-kpi-right #prem-readout{
   margin: 10px 0 12px;
@@ -4679,45 +4324,7 @@
           </div>
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; margin-top:10px;">
-            <!-- PREMONITION DAY (NEW) -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">PREMONITION DAY</div>
-                <span id="pday-badge" class="win-badge win-wait">—</span>
-              </div>
 
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span style="opacity:.70;">STRUCTURE</span>
-                <span id="pday-structure" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">DAY WINDOW</span> <span id="pday-window" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="pday-eta" style="font-weight:950; color:#ffcc66;">—</span></div>
-              </div>
-            </div>
-
-            <!-- ZIGZAG PREMONITION (NEW) -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">ZIGZAG PREMONITION</div>
-                <span id="zz-badge" class="win-badge win-wait">—</span>
-              </div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span style="opacity:.70;">NEXT PIVOT</span>
-                <span id="zz-next" style="color:#ffcc66;">—</span>
-                <span style="opacity:.55;">|</span>
-                <span style="opacity:.70;">H ≤</span> <span id="zz-hz" style="font-weight:950;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CONF</span> <span id="zz-conf" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">PIVOT ZONE</span> <span id="zz-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ETA</span> <span id="zz-eta" style="font-weight:950;">—</span></div>
-                <div style="margin-top:6px; font-size:11px; opacity:.72;" id="zz-context">—</div>
-              </div>
-            </div>
             <!-- VWAP -->
             <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
               <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
@@ -4787,138 +4394,6 @@
 
           </div>
         </div>
-                <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
-                         <div id="zz-volume-row">
-                    <div class="prem-breakout-wrap" id="vol-engine-card">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-              <div class="prem-breakout-title">VOLUME PREMONITION</div>
-              <span id="vp-badge" class="win-badge win-wait">—</span>
-            </div>
-
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px; margin-top:10px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">PRIMARY READ</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="vp-primary" style="color:#ffcc66;">—</span>
-              </div>
-
-                                          <div class="vp-main-grid">
-                                <div>
-                  <div class="vp-two-col">
-                    <div class="vp-col">
-                      <div class="vp-sec-title">NOW</div>
-
-                      <div class="vp-sec-body">
-                        <div><span style="opacity:.7;">Continue now</span> <span id="vp-now-cont" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Exhaust now</span> <span id="vp-now-exhaust" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Weakening now</span> <span id="vp-now-weak" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Direction confidence</span> <span id="vp-dir-conf" style="font-weight:950;">—</span></div>
-                      </div>
-                    </div>
-
-                    <div class="vp-col">
-                      <div class="vp-sec-title">NEXT LEG</div>
-
-                      <div class="vp-sec-body">
-                        <div><span style="opacity:.7;">Continue next</span> <span id="vp-next-cont" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Exhaust next</span> <span id="vp-next-exhaust" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">Worth it</span> <span id="vp-worth" style="font-weight:950;">—</span></div>
-                        <div><span style="opacity:.7;">ETA</span> <span id="vp-next-eta" style="font-weight:950;">—</span> <span style="opacity:.55;">→</span> <span style="opacity:.7;">Target</span> <span id="vp-next-target" style="font-weight:950; color:#ffcc66;">—</span></div>
-                        <div><span style="opacity:.7;">Exhaust path</span> <span id="vp-exhaust-path" style="font-weight:950;">—</span></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="vp-sec-title" style="margin-top:14px;">TACTICAL READ</div>
-                  <div class="vp-reading" id="vp-reading">—</div>
-                </div>
-
-                <div class="vp-side-col">
-                  <div class="vp-sec-title">WINDOW PRESSURE</div>
-
-                  <div style="margin-top:8px; font-size:12px; line-height:1.35;">
-                    <div class="vp-mini"><span class="vp-soft">1m</span><span id="vp-h1">—</span></div>
-                    <div class="vp-mini"><span class="vp-soft">5m</span><span id="vp-h5">—</span></div>
-                    <div class="vp-mini"><span class="vp-soft">15m</span><span id="vp-h15">—</span></div>
-                    <div class="vp-mini"><span class="vp-soft">30m</span><span id="vp-h30">—</span></div>
-                    <div class="vp-mini"><span class="vp-soft">60m</span><span id="vp-h60">—</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-                <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
-          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-            <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
-            <span id="zzr-badge" class="win-badge win-wait">—</span>
-          </div>
-
-                    <div style="display:grid; grid-template-columns:minmax(250px, 280px) minmax(120px, 140px) minmax(120px, 140px); justify-content:end; margin-left:auto; gap:8px; margin-top:10px;">
-            <!-- MODE / STATUS -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">MODE</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-mode" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">STATUS</span> <span id="zzr-status" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">CURRENT</span> <span id="zzr-current" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">NEXT PIVOT</span> <span id="zzr-next" style="font-weight:950; color:#ffcc66;">—</span></div>
-              </div>
-            </div>
-
-            <!-- STEP 1 -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 1</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-step1" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step1state" style="font-weight:950;">—</span></div>
-              </div>
-            </div>
-
-            <!-- STEP 2 -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 2</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-step2" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step2state" style="font-weight:950;">—</span></div>
-              </div>
-            </div>
-
-            <!-- STEP 3 / ARRIVE -->
-            <div style="display:none; border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 3 / ARRIVE</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-step3" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step3state" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ARRIVE ZONE</span> <span id="zzr-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top:10px; margin-left:auto; width:max-content; font-size:10px; line-height:1.2; display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
-  <div><span style="opacity:.7;">ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
-  <div><span style="opacity:.7;">LAYER 2</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
-  <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
-  <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
-</div>
-        </div>
-        <!-- ===== /ZIGZAG ROUTE ENGINE ===== -->
-                     </div>   
         <!-- ===== /INDICATORS ===== -->
       <div class="premonition-chart">
        
@@ -5004,7 +4479,7 @@
 
     <!-- ===== MACRO MAP (NOW) ===== -->
     <div class="micro-map-card" id="macro-map-card" style="margin-top:10px;">
-      <div class="micro-map-title">MACRO MAX (NOW)</div>
+      <div class="micro-map-title">MACRO MAP (NOW)</div>
       <div class="micro-map-line" id="mmac-macro-line">MACRO LIVE — NOW: —</div>
       <div class="micro-map-line" id="mmac-cont-line">CONTINUAÇÃO (A2): —</div>
       <div class="micro-map-line" id="mmac-respiro-line">RANGE / FAIL (B): —</div>
@@ -5029,63 +4504,7 @@
 
         <div class="prem-kpi-right-sub" id="prem-macro-eta">—</div>
       </div>
-      <!-- ===== BREATH (RESPIRO) — Premonition + Retrace Plan (MACRO MAX) ===== -->
-      <div class="breath-grid" id="breath-grid-macro" style="display:none;">
 
-        <!-- Breath Premonition -->
-        <div class="breath-card" id="breath-prem-card-macro">
-          <div class="breath-h">
-            <span>BREATH PREMONITION · MACRO MAX</span>
-            <span class="breath-tag neutral" id="breath-side-tag-macro">—</span>
-          </div>
-
-          <div class="breath-main">
-            <div>
-              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTRY ZONE (P50)</div>
-              <div class="breath-price" id="breath-p50-price-macro">—</div>
-            </div>
-            <div class="breath-meta">
-              <div>Prob <b id="breath-p50-prob-macro">—</b></div>
-              <div>ETA <b id="breath-p50-eta-macro">—</b></div>
-            </div>
-          </div>
-
-          <div class="breath-kv">
-            <div class="k">Deep (P75)</div><div class="v" id="breath-p75-price-macro">—</div>
-            <div class="k">Rev Trigger</div><div class="v breath-warn" id="breath-rev-macro">—</div>
-            <div class="k">Break Risk</div><div class="v" id="breath-break-macro">—</div>
-            <div class="k">Invalidate</div><div class="v" id="breath-inv-macro">—</div>
-          </div>
-        </div>
-
-        <!-- Retrace Breath Plan -->
-        <div class="breath-card" id="breath-plan-card-macro">
-          <div class="breath-h">
-            <span>RETRACE BREATH PLAN</span>
-            <span class="breath-tag neutral" id="breath-gate-tag-macro">GATE —</span>
-          </div>
-
-          <div class="breath-main">
-            <div>
-              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTER ON BREATH (P50)</div>
-              <div class="breath-price" id="be-entry-macro">—</div>
-            </div>
-            <div class="breath-meta">
-              <div>Window <b id="be-window-macro">—</b></div>
-              <div>RR <b id="be-rr-macro">—</b></div>
-            </div>
-          </div>
-
-          <div class="breath-kv">
-            <div class="k">Stop (guard)</div><div class="v breath-warn" id="be-stop-macro">—</div>
-            <div class="k">Take Profit (Macro)</div><div class="v" id="be-tp-macro">—</div>
-          </div>
-
-          <div class="breath-gate" id="be-gate-line-macro">Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y</div>
-        </div>
-
-      </div>
-      <!-- ===== /BREATH (RESPIRO) — MACRO MAX ===== -->
       <div class="prem-pnlcalc" id="macro-pnlcalc">
         <div class="pnl-h">QUICK P&L (simulação)</div>
 
@@ -5123,35 +4542,35 @@
           <div class="pnl-v pnl-loss" id="mpnl-loss">—</div>
         </div>
 
-        <div class="pnl-foot pnl-muted" id="mpnl-foot" style="display:none;">—</div>
+        <div class="pnl-foot pnl-muted" id="mpnl-foot">—</div>
       </div>
 
-      <div class="row" style="display:none;">
+      <div class="row">
         <div class="label">Janela estimada</div>
         <div class="value" id="macro-prem-window">—</div>
       </div>
 
-      <div class="row" style="display:none;">
+      <div class="row">
         <div class="label">Tempo típico</div>
         <div class="value" id="macro-prem-median">—</div>
       </div>
 
-      <div class="row" style="display:none;">
+      <div class="row">
         <div class="label">Se não romper.</div>
         <div class="value muted" id="macro-prem-miss">—</div>
       </div>
 
-      <div class="row" style="display:none;">
+      <div class="row">
         <div class="label">Premonição Macro</div>
         <div class="value" id="macro-prem-macro">—</div>
       </div>
 
-      <div class="row" style="display:none;">
+      <div class="row">
         <div class="label">Premonição Micro</div>
         <div class="value" id="macro-prem-micro">—</div>
       </div>
 
-      <div class="row" style="display:none;">
+      <div class="row">
         <div class="label">Base</div>
         <div class="value muted" id="macro-prem-base">—</div>
       </div>
@@ -5224,237 +4643,6 @@
       </div>
 
       <div class="ee-engine-note" id="ee-macro-engine-note">—</div>
-    </div>
-
-  </div>
-    <!-- Coluna MACRO MIN (novo) -->
-  <div class="mm-col" id="mm-col-macro-min">
-
-    <!-- ===== MACRO MIN MAP (NOW) ===== -->
-    <div class="micro-map-card" id="macro-min-map-card" style="margin-top:10px;">
-      <div class="micro-map-title">MACRO MIN MAP (NOW)</div>
-      <div class="micro-map-line" id="mmn-macro-line">MACRO MIN — NOW: —</div>
-      <div class="micro-map-line" id="mmn-cont-line">CONTINUAÇÃO (A2): —</div>
-      <div class="micro-map-line" id="mmn-respiro-line">RANGE / FAIL (B): —</div>
-      <div class="micro-map-line" id="mmn-reversao-line">INVALIDAÇÃO (SL 1x1): —</div>
-      <div class="micro-map-foot">Base: Macro Extremes (MIN) + Engine (SL 1x1)</div>
-    </div>
-
-    <!-- ===== MACRO MIN KPI + QUICK P&L + linhas ===== -->
-    <div class="premonition-panel" id="macro-min-premonition-panel">
-
-      <div class="prem-kpi-right" id="prem-macro-min-kpi-right">
-        <div class="prem-kpi-right-main">
-          <div class="prem-kpi-right-current">
-            <span class="prem-kpi-right-time prem-kpi-right-current-label">Current Price:</span>
-            <span class="prem-kpi-right-time prem-kpi-right-current-price" id="prem-macro-min-current-price">—</span>
-          </div>
-
-          <span class="prem-kpi-right-time" id="prem-macro-min-time">--:--</span>
-          <span class="prem-kpi-right-ampm" id="prem-macro-min-ampm"></span>
-          <span class="prem-kpi-right-prob" id="prem-macro-min-prob">--%</span>
-          <span class="prem-kpi-right-prob" id="prem-macro-min-target-inline" style="color:#34d399;">—</span>
-        </div>
-
-        <div class="prem-kpi-right-sub" id="prem-macro-min-eta">—</div>
-      </div>
-      <!-- ===== BREATH (RESPIRO) — Premonition + Retrace Plan (MACRO MIN) ===== -->
-      <div class="breath-grid" id="breath-grid-min" style="display:none;">
-
-        <!-- Breath Premonition -->
-        <div class="breath-card" id="breath-prem-card-min">
-          <div class="breath-h">
-            <span>BREATH PREMONITION · MACRO MIN</span>
-            <span class="breath-tag neutral" id="breath-side-tag-min">—</span>
-          </div>
-
-          <div class="breath-main">
-            <div>
-              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTRY ZONE (P50)</div>
-              <div class="breath-price" id="breath-p50-price-min">—</div>
-            </div>
-            <div class="breath-meta">
-              <div>Prob <b id="breath-p50-prob-min">—</b></div>
-              <div>ETA <b id="breath-p50-eta-min">—</b></div>
-            </div>
-          </div>
-
-          <div class="breath-kv">
-            <div class="k">Deep (P75)</div><div class="v" id="breath-p75-price-min">—</div>
-            <div class="k">Rev Trigger</div><div class="v breath-warn" id="breath-rev-min">—</div>
-            <div class="k">Break Risk</div><div class="v" id="breath-break-min">—</div>
-            <div class="k">Invalidate</div><div class="v" id="breath-inv-min">—</div>
-          </div>
-        </div>
-
-        <!-- Retrace Breath Plan -->
-        <div class="breath-card" id="breath-plan-card-min">
-          <div class="breath-h">
-            <span>RETRACE BREATH PLAN</span>
-            <span class="breath-tag neutral" id="breath-gate-tag-min">GATE —</span>
-          </div>
-
-          <div class="breath-main">
-            <div>
-              <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTER ON BREATH (P50)</div>
-              <div class="breath-price" id="be-entry-min">—</div>
-            </div>
-            <div class="breath-meta">
-              <div>Window <b id="be-window-min">—</b></div>
-              <div>RR <b id="be-rr-min">—</b></div>
-            </div>
-          </div>
-
-          <div class="breath-kv">
-            <div class="k">Stop (guard)</div><div class="v breath-warn" id="be-stop-min">—</div>
-            <div class="k">Take Profit (Macro)</div><div class="v" id="be-tp-min">—</div>
-          </div>
-
-          <div class="breath-gate" id="be-gate-line-min">Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y</div>
-        </div>
-
-      </div>
-      <!-- ===== /BREATH (RESPIRO) — MACRO MIN ===== -->
-      <div class="prem-pnlcalc" id="macro-min-pnlcalc">
-        <div class="pnl-h">QUICK P&L (simulação)</div>
-
-        <div class="pnl-controls">
-          <div class="pnl-field">
-            <span class="pnl-l">Montante</span>
-            <input id="mpnlmin-capital" class="pnl-in" type="number" inputmode="decimal" step="1000" value="100000" />
-          </div>
-
-          <div class="pnl-field">
-            <span class="pnl-l">Entrada</span>
-            <select id="mpnlmin-entrymode" class="pnl-sel">
-              <option value="now">NOW (Current)</option>
-              <option value="opt">Most optimal entry</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="pnl-grid">
-          <div class="pnl-k">ΔTP/share</div>
-          <div class="pnl-v">
-            <span id="mpnlmin-delta">—</span>
-            <span class="pnl-muted" id="mpnlmin-delta-cents"></span>
-          </div>
-
-          <div class="pnl-k">Qtd</div>
-          <div class="pnl-v">
-            <span id="mpnlmin-shares">—</span> <span class="pnl-muted">shares</span>
-          </div>
-
-          <div class="pnl-k">P/L no TP</div>
-          <div class="pnl-v" id="mpnlmin-profit">—</div>
-
-          <div class="pnl-k">P/L no SL</div>
-          <div class="pnl-v pnl-loss" id="mpnlmin-loss">—</div>
-        </div>
-
-        <div class="pnl-foot pnl-muted" id="mpnlmin-foot" style="display:none;">—</div>
-      </div>
-
-      <div class="row" style="display:none;">
-        <div class="label">Janela estimada</div>
-        <div class="value" id="macro-min-prem-window">—</div>
-      </div>
-
-     <div class="row" style="display:none;">
-        <div class="label">Tempo típico</div>
-        <div class="value" id="macro-min-prem-median">—</div>
-      </div>
-
-      <div class="row" style="display:none;">
-        <div class="label">Se não romper.</div>
-        <div class="value muted" id="macro-min-prem-miss">—</div>
-      </div>
-
-      <div class="row" style="display:none;">
-        <div class="label">Premonição Macro</div>
-        <div class="value" id="macro-min-prem-macro">—</div>
-      </div>
-
-      <div class="row" style="display:none;">
-        <div class="label">Premonição Micro</div>
-        <div class="value" id="macro-min-prem-micro">—</div>
-      </div>
-
-      <div class="row" style="display:none;">
-        <div class="label">Base</div>
-        <div class="value muted" id="macro-min-prem-base">—</div>
-      </div>
-
-      <!-- ===== MACRO MIN · MOST OPTIMAL ENTRY (1x1) ===== -->
-      <div id="prem-exec-macro-min" style="padding-top:12px; margin-top:12px; border-top:1px solid rgba(255,255,255,.06);">
-        <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.80; margin-bottom:10px;">
-          MACRO MIN PLAN · MOST OPTIMAL ENTRY (1x1)
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:10px; font-size:34px; line-height:1.25;">
-          <div>
-            <span style="font-weight:950;">Most optimal entry:</span>
-            <span id="mslrmin-optentry" style="color:#60a5fa; font-weight:900;">—</span>
-
-            <span style="opacity:.65; font-size:18px; margin-left:10px;">
-              @ <span id="mslrmin-entrytime" style="color:#facc15; font-weight:900;">—</span>
-              <span style="opacity:.55;">(MT)</span>
-            </span>
-          </div>
-
-          <div>
-            <span style="font-weight:950;">SL 1x1:</span>
-            <span id="mslrmin-sl" class="pulse-sl" style="color:var(--danger); font-weight:900;">—</span>
-            <span style="opacity:.55;"> | </span>
-            <span style="font-weight:950;">Status:</span>
-            <span id="mslrmin-status" style="font-weight:950;">—</span>
-          </div>
-
-          <div id="mslrmin-rule" style="font-size:16px; line-height:1.45; opacity:.78;">—</div>
-        </div>
-      </div>
-      <!-- ===== /MACRO MIN PLAN ===== -->
-
-      <!-- ===== ENTRY ENGINE (MACRO MIN) ===== -->
-      <div class="prem-breakout-wrap" id="ee-macro-min-engine-card" style="margin-top:10px;">
-        <div class="prem-breakout-title">ENTRY ENGINE · (Touch → Confirm → Cancel)</div>
-
-        <div class="ee-engine-top">
-          <div class="ee-engine-left">
-            <div class="ee-engine-pill loading" id="ee-macro-min-engine-pill">LOADING</div>
-
-            <div class="ee-engine-meta">
-              <span class="ee-engine-dir" id="ee-macro-min-engine-dir">—</span>
-              <span class="ee-engine-prob" id="ee-macro-min-engine-prob">—</span>
-            </div>
-
-            <div class="ee-engine-mode" id="ee-macro-min-engine-mode">—</div>
-            <div class="ee-engine-rule" id="ee-macro-min-engine-rule">—</div>
-          </div>
-
-          <div class="ee-engine-right">
-            <div class="ee-engine-box big">
-              <div class="k">TOUCH (Most Optimal Entry)</div>
-              <div class="v" id="ee-macro-min-engine-touch">—</div>
-            </div>
-
-            <div class="ee-engine-stack">
-              <div class="ee-engine-box stack">
-                <div class="k">CONFIRM CLOSE</div>
-                <div class="v" id="ee-macro-min-engine-confirm">—</div>
-              </div>
-
-              <div class="ee-engine-box stack">
-                <div class="k">CANCEL CLOSE</div>
-                <div class="v" id="ee-macro-min-engine-cancel">—</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ee-engine-note" id="ee-macro-min-engine-note">—</div>
-      </div>
-
     </div>
 
   </div>
@@ -5544,65 +4732,6 @@
 
   <div class="prem-kpi-right-sub" id="prem-right-eta">—</div>
 </div>
-  <!-- ===== BREATH (RESPIRO) — Premonition + Retrace Plan (Micro) ===== -->
-  <div class="breath-grid" id="breath-grid">
-
-    <!-- Breath Premonition -->
-    <div class="breath-card" id="breath-prem-card">
-      <div class="breath-h">
-        <span>BREATH PREMONITION · MICRO</span>
-        <span class="breath-tag neutral" id="breath-side-tag">—</span>
-      </div>
-
-      <div class="breath-main">
-        <div>
-          <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTRY ZONE (P50)</div>
-          <div class="breath-price" id="breath-p50-price">—</div>
-        </div>
-        <div class="breath-meta">
-          <div>Prob <b id="breath-p50-prob">—</b></div>
-          <div>ETA <b id="breath-p50-eta">—</b></div>
-        </div>
-      </div>
-
-      <div class="breath-kv">
-        <div class="k">Deep (P75)</div><div class="v" id="breath-p75-price">—</div>
-        <div class="k">Rev Trigger</div><div class="v breath-warn" id="breath-rev">—</div>
-        <div class="k">Break Risk</div><div class="v" id="breath-break">—</div>
-        <div class="k">Invalidate</div><div class="v" id="breath-inv">—</div>
-      </div>
-    </div>
-
-    <!-- Retrace Breath Plan -->
-    <div class="breath-card" id="breath-plan-card">
-      <div class="breath-h">
-        <span>RETRACE BREATH PLAN</span>
-        <span class="breath-tag neutral" id="breath-gate-tag">GATE —</span>
-      </div>
-
-      <div class="breath-main">
-        <div>
-          <div class="breath-muted" style="font-size:10px; letter-spacing:.14em; text-transform:uppercase;">ENTER ON BREATH (P50)</div>
-          <div class="breath-price" id="be-entry">—</div>
-        </div>
-        <div class="breath-meta">
-          <div>Window <b id="be-window">—</b></div>
-          <div>RR <b id="be-rr">—</b></div>
-        </div>
-      </div>
-
-      <div class="breath-kv">
-        <div class="k">Stop (guard)</div><div class="v breath-warn" id="be-stop">—</div>
-        <div class="k">Take Profit (Micro)</div><div class="v" id="be-tp">—</div>
-        <div class="k">Rule</div>
-        <div class="v breath-muted" style="grid-column:1 / -1; text-align:left;" id="be-gate-line">
-          Only if micro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y
-        </div>
-      </div>
-    </div>
-
-  </div>
-  <!-- ===== /BREATH (RESPIRO) ===== -->
   <!-- ===== QUICK P&L (simulação) — NÃO mexe no Premonition Micro Live ===== -->
   <div class="prem-pnlcalc" id="prem-pnlcalc">
     <div class="pnl-h">QUICK P&L (simulação)</div>
@@ -5641,36 +4770,36 @@
       <div class="pnl-v pnl-loss" id="pnl-loss">—</div>
     </div>
 
-    <div class="pnl-foot pnl-muted" id="pnl-foot" style="display:none;">—</div>
+    <div class="pnl-foot pnl-muted" id="pnl-foot">—</div>
   </div>
   <!-- ===== /QUICK P&L ===== -->
 
-        <div class="row" style="display:none;">
+        <div class="row">
           <div class="label">Janela estimada</div>
           <div class="value" id="prem-window">—</div>
         </div>
 
-        <div class="row" style="display:none;">
+        <div class="row">
           <div class="label">Tempo típico</div>
           <div class="value" id="prem-median">—</div>
         </div>
 
-        <div class="row" style="display:none;">
+        <div class="row">
           <div class="label">Se não romper...</div>
           <div class="value muted" id="prem-miss">—</div>
         </div>
 
-        <div class="row" style="display:none;">
+        <div class="row">
           <div class="label">Premonição Macro</div>
           <div class="value" id="prem-macro">—</div>
         </div>
 
-        <div class="row" style="display:none;">
+        <div class="row">
           <div class="label">Premonição Micro</div>
           <div class="value" id="prem-micro">—</div>
         </div>
 
-        <div class="row" style="display:none;">
+        <div class="row">
           <div class="label">Base</div>
           <div class="value muted" id="prem-base">—</div>
         </div>
@@ -5681,12 +4810,12 @@
             PLANO “SE BATER STOP” (REENTRADA)
           </div>
 
-                    <div style="display:flex; flex-direction:column; gap:10px; font-size:34px; line-height:1.25;">
+                    <div style="display:flex; flex-direction:column; gap:10px; font-size:44px; line-height:1.25;">
             <div>
   <span style="font-weight:950;">Most optimal entry:</span>
   <span id="slr-optentry" style="color:#60a5fa; font-weight:900;">—</span>
 
-  <span style="opacity:.65; font-size:18px; margin-left:10px;">
+  <span style="opacity:.65; font-size:22px; margin-left:10px;">
     @ <span id="slr-entrytime" style="color:#facc15; font-weight:900;">—</span>
     <span style="opacity:.55;">(MT)</span>
   </span>
@@ -5702,15 +4831,15 @@
             </div>
 
 
-            <div id="slr-rule" style="display:none; font-size:16px; line-height:1.45; opacity:.78;">—</div>
+            <div id="slr-rule" style="font-size:20px; line-height:1.45; opacity:.78;">—</div>
 
             <div style="font-size:24px; line-height:1.5;">
-              <div style="display:none;"><span style="font-weight:950;">Quando SL atingir:</span></div>
+              <div><span style="font-weight:950;">Quando SL atingir:</span></div>
 
               <div>
-                <span style="display:none; font-weight:950;">Esperar:</span>
-                <span id="slr-wait" style="display:none; color:#facc15; font-weight:900;">—</span>
-                <span style="display:none; opacity:.55;"> (t_stop_to_reentry_med)</span>
+                <span style="font-weight:950;">Esperar:</span>
+                <span id="slr-wait" style="color:#facc15; font-weight:900;">—</span>
+                <span style="opacity:.55;"> (t_stop_to_reentry_med)</span>
                       <!-- ===== SL FLEX (Respiro Profundo) — bloco do retângulo amarelo inferior ===== -->
       <div class="prem-breakout-wrap" id="slflex-card" style="margin-top:12px; grid-column: 1 / -1;">
         <div class="prem-breakout-title">SL FLEX · Respiro Profundo (ATR)</div>
@@ -5771,23 +4900,23 @@
 
               </div>
 
-              <div style="display:none;">
+              <div>
                 <span style="font-weight:950;">Reentrada:</span>
                 <span id="slr-reentry" style="color:#facc15; font-weight:900;">—</span>
                 <span id="slr-reentry-note" style="opacity:.55;"></span>
               </div>
 
-              <div style="display:none;">
+              <div>
                 <span style="font-weight:950;">TP travado:</span>
                 <span id="slr-tp" style="color:#facc15; font-weight:900;">—</span>
               </div>
 
-              <div style="display:none;">
+              <div>
                 <span style="font-weight:950;">SL 1x1 reentrada:</span>
                 <span id="slr-resl" style="color:#facc15; font-weight:900;">—</span>
               </div>
 
-              <div style="display:none;">
+              <div>
                 <span style="font-weight:950;">Chance stop→target:</span>
                 <span id="slr-chance" style="color:#facc15; font-weight:900;">—</span>
               </div>
@@ -8556,37 +7685,18 @@ const t = splitTimeLabel(tLab);
 
 // ✅ KPI: depois da % mostrar preço + minutos (mesma linha)
 const kpiPriceNum = (() => {
-
-  // 1) PRIORIDADE: número estruturado do JSON (premonition.micro_target_price)
-  const premObj =
-    payload?.premonition ||
-    panel?.premonition ||
-    digest?.premonition ||
-    ui?.premonition ||
-    payload?.panel?.premonition ||
-    payload?.digest?.premonition ||
-    payload?.ui?.premonition ||
-    null;
-
-  const fromJson = (
-    premObj && (premObj.micro_target_price ?? premObj.micro_take ?? premObj.micro_target)
-  );
-
-  if (fromJson != null && isFinite(Number(fromJson))) {
-    return Number(fromJson);
-  }
-
-  // 2) ÚLTIMO recurso: parse do texto (evita capturar "88%")
   const s = String(microTxt || "");
 
+  // pega depois de tocar/touch/target/alvo/High/Low
   let m = s.match(/(?:tocar|touch|target|alvo|High|Low)\s*\$?\s*(\d{1,6}(?:[.,]\d{1,6})?)/i);
+
+  // fallback: pega o 1º decimal (evita capturar "88%")
   if (!m) m = s.match(/(\d{1,6}[.,]\d{1,6})/);
 
   if (!m) return null;
 
   const n = Number(String(m[1]).replace(",", "."));
   return Number.isFinite(n) ? n : null;
-
 })() ?? ((bw?.trigger_price != null && isFinite(Number(bw.trigger_price))) ? Number(bw.trigger_price) : null);
 
 
@@ -8622,111 +7732,7 @@ const probLine = `${prob}${kpiPriceTxt ? ` ${kpiPriceTxt}` : ""}${kpiMinTxt ? ` 
     setText("prem-right-ampm", t.ampm || "");
     (document.getElementById("prem-right-prob") || {}).innerHTML = prob + (kpiPriceTxt ? ' <span class="pulse-micro" style="color:var(--success)">' + kpiPriceTxt + '</span>' : '') + (kpiMinTxt ? ' ' + kpiMinTxt : '');
     setText("prem-right-eta", (etaMin != null) ? ((lang==="en") ? `In ~${Math.round(etaMin)} min` : `Em ~${Math.round(etaMin)} min`) : "—");
-    // ===== BREATH (RESPIRO) UI — above QUICK P&L =====
-    try{
-      const breath = pickFirst(
-        payload?.panel?.respiro_premonition_v1,
-        payload?.ui?.respiro_premonition_v1,
-        payload?.digest?.respiro_premonition_v1,
-        payload?.respiro_premonition_v1
-      ) || {};
 
-      const plan = pickFirst(
-        payload?.panel?.breath_entry_plan_v1,
-        payload?.ui?.breath_entry_plan_v1,
-        payload?.digest?.breath_entry_plan_v1,
-        payload?.breath_entry_plan_v1
-      ) || {};
-
-      const hasBreath = (breath && (breath?.levels?.p50?.price != null || breath?.levels?.p75?.price != null || breath?.reversal_trigger?.trigger_price != null || breath.breath_p50_price != null || breath.p50_price != null));
-      const hasPlan   = (plan && (plan.entry_zone_p50 != null || plan.entry_price != null));
-
-      const grid = document.getElementById("breath-grid");
-      if (grid) grid.style.display = (hasBreath || hasPlan) ? "" : "none";
-
-            // Regra: usa SOMENTE current vs micro target (kpiPriceNum)
-      const curPx = (currentPxRaw != null && isFinite(Number(currentPxRaw))) ? Number(currentPxRaw) : null;
-      const tgtPx = (kpiPriceNum   != null && isFinite(Number(kpiPriceNum)))   ? Number(kpiPriceNum)   : null;
-
-      let side = "—";
-      if (curPx != null && tgtPx != null){
-        side = (tgtPx > curPx) ? "BUY" : (tgtPx < curPx) ? "SELL" : "—";
-      } else {
-        const sideRaw = String(breath.side ?? plan.side ?? "").toUpperCase();
-        side = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : "—";
-      }
-
-      const fmt2local = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : Number(n).toFixed(2);
-      const fmtPctLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `${Math.round(Number(n))}%`;
-      const fmtMinLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `~${Math.round(Number(n))}m`;
-
-      // tags
-      const sideTag = document.getElementById("breath-side-tag");
-      if (sideTag){
-        sideTag.textContent = side;
-        sideTag.classList.remove("buy","sell","neutral");
-        sideTag.classList.add(side === "BUY" ? "buy" : side === "SELL" ? "sell" : "neutral");
-      }
-
-      const gateTag = document.getElementById("breath-gate-tag");
-      if (gateTag){
-        const ok = plan.gate_ok;
-        gateTag.textContent = (ok === true) ? "GATE PASS" : (ok === false) ? "GATE BLOCK" : "GATE —";
-        gateTag.classList.remove("buy","sell","neutral");
-        gateTag.classList.add(ok === true ? "buy" : ok === false ? "sell" : "neutral");
-      }
-
-            // Breath Premonition values
-      let p50 = pickFirst(breath?.levels?.p50?.price, breath.breath_p50_price, breath.p50_price);
-      const p50Prob = pickFirst(breath?.levels?.p50?.prob_touch_pct, breath.breath_p50_prob_pct, breath.p50_prob_pct, plan.prob_breath_pct);
-      const p50Eta  = pickFirst(breath?.levels?.p50?.eta_min, breath.breath_p50_eta_min, breath.p50_eta_min, plan.entry_window_min);
-
-      // FORÇA: se target vai subir => respiro tem que estar ABAIXO do current
-      //        se target vai cair  => respiro tem que estar ACIMA do current
-      if (curPx != null && tgtPx != null && p50 != null && Number.isFinite(Number(p50))){
-        const p50n = Number(p50);
-        if (tgtPx > curPx && p50n >= curPx) p50 = (curPx - Math.abs(p50n - curPx));
-        if (tgtPx < curPx && p50n <= curPx) p50 = (curPx + Math.abs(p50n - curPx));
-      }
-
-      setText("breath-p50-price", fmt2local(p50));
-      setText("breath-p50-prob", fmtPctLocal(p50Prob));
-      setText("breath-p50-eta", fmtMinLocal(p50Eta));
-
-      setText("breath-p75-price", fmt2local(pickFirst(breath?.levels?.p75?.price, breath.breath_p75_price, breath.p75_price)));
-      setText("breath-rev", fmt2local(pickFirst(breath?.reversal_trigger?.trigger_price, breath.reversal_trigger_price, breath.rev_trigger_price, plan.stop_guard, plan.stop_price)));
-      setText("breath-break", fmtPctLocal(pickFirst(breath.break_risk_pct, breath.break_risk, breath?.reversal_trigger?.prob_stop_before_target_pct)));
-
-      const inv = pickFirst(breath.invalidation_price, breath.invalidate_price);
-      setText("breath-inv", (inv != null && Number.isFinite(Number(inv))) ? `> ${Number(inv).toFixed(2)}` : "—");
-
-      // Retrace Breath Plan values
-      setText("be-entry", fmt2local(pickFirst(plan.entry_zone_p50, plan.entry_price, p50)));
-      setText("be-window", fmtMinLocal(pickFirst(plan.entry_window_min, p50Eta)));
-      setText("be-stop", fmt2local(pickFirst(plan.stop_guard, plan.stop_price, breath?.reversal_trigger?.trigger_price, breath.reversal_trigger_price)));
-      setText("be-tp", fmt2local(pickFirst(plan.take_profit_micro, plan.tp_micro_price, plan.tp_micro, kpiPriceNum)));
-
-      const rr = pickFirst(plan.rr_est, plan.rr);
-      setText("be-rr", (rr==null || !Number.isFinite(Number(rr))) ? "—" : Number(rr).toFixed(2));
-
-      setText("be-gate-line", plan.gate_line || "Only if micro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y");
-
-      // color big prices by side
-      const p50El = document.getElementById("breath-p50-price");
-      if (p50El){
-        p50El.classList.remove("buy","sell");
-        if (side === "BUY") p50El.classList.add("buy");
-        if (side === "SELL") p50El.classList.add("sell");
-      }
-      const beEntryEl = document.getElementById("be-entry");
-      if (beEntryEl){
-        beEntryEl.classList.remove("buy","sell");
-        if (side === "BUY") beEntryEl.classList.add("buy");
-        if (side === "SELL") beEntryEl.classList.add("sell");
-      }
-
-    }catch(_e){}
-    // ===== /BREATH (RESPIRO) UI =====
 
     const wLine = (bw?.window_start_label || bw?.window_end_label)
       ? `${bw.window_start_label || "—"} – ${bw.window_end_label || "—"} (MT)`
@@ -8818,136 +7824,6 @@ const macroTakeNum = pickFirst(
     setText("macro-prem-macro", macroTxt || "—");
     setText("macro-prem-micro", microTxt || "—");
     setText("macro-prem-base", `${nTxt} casos similares${scTxt}${confTxt}`);
-        // ===== BREATH (RESPIRO) UI — MACRO MAX (above QUICK P&L) =====
-    try{
-      const mAll = pickFirst(
-        payload?.panel?.macro_respiro_premonition_v1,
-        payload?.ui?.macro_respiro_premonition_v1,
-        payload?.digest?.macro_respiro_premonition_v1,
-        payload?.macro_respiro_premonition_v1
-      ) || {};
-
-      const breath = (mAll && typeof mAll === "object") ? (mAll.max || mAll.macro_max || mAll.macroMax || {}) : {};
-
-      // Target do MACRO MAX (prioriza o alvo do próprio respiro macro)
-      const tpMacro = pickFirst(
-        breath?.macro?.target_price,
-        breath?.macro?.target,
-        macroTakeNum,
-        digest.macro_take,
-        digest.macro_entry_engine?.target_price
-      );
-
-      // (Opcional) se algum dia existir um plan macro vindo do Digest, usa; senão calcula aqui (determinístico)
-      const planIn = pickFirst(
-        payload?.panel?.macro_breath_entry_plan_v1?.max,
-        payload?.digest?.macro_breath_entry_plan_v1?.max,
-        payload?.panel?.breath_entry_plan_macro_max_v1,
-        payload?.digest?.breath_entry_plan_macro_max_v1
-      ) || null;
-
-      const p50 = pickFirst(breath?.levels?.p50?.price, breath?.breath_p50_price, breath?.p50_price);
-      const p50Prob = pickFirst(breath?.levels?.p50?.prob_touch_pct, breath?.breath_p50_prob_pct, breath?.p50_prob_pct);
-      const p50Eta  = pickFirst(breath?.levels?.p50?.eta_min, breath?.breath_p50_eta_min, breath?.p50_eta_min);
-      const p75     = pickFirst(breath?.levels?.p75?.price, breath?.breath_p75_price, breath?.p75_price);
-      const rev     = pickFirst(breath?.reversal_trigger?.trigger_price, breath?.reversal_trigger_price, breath?.rev_trigger_price);
-      const brkPct  = pickFirst(breath?.break_risk_pct, breath?.break_risk, breath?.reversal_trigger?.prob_stop_before_target_pct);
-
-      const cur = (currentPxRaw != null && isFinite(Number(currentPxRaw))) ? Number(currentPxRaw) : null;
-      const atr = pickFirst(breath?.atr14, digest?.atr14, payload?.digest?.atr14);
-
-      // Side
-      const sideRaw = String(breath?.side ?? planIn?.side ?? "").toUpperCase();
-      let side = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : "—";
-      if (side === "—" && tpMacro != null && cur != null && isFinite(Number(tpMacro))){
-        side = (Number(tpMacro) > cur) ? "BUY" : (Number(tpMacro) < cur) ? "SELL" : "—";
-      }
-
-      // Plan (fallback) — determinístico
-      let entry = (p50 != null && isFinite(Number(p50))) ? Number(p50) : null;
-      let tp = (tpMacro != null && isFinite(Number(tpMacro))) ? Number(tpMacro) : null;
-      const buf = (atr != null && isFinite(Number(atr)) && Number(atr) > 0) ? (Number(atr) * 0.10) : (cur != null ? (cur * 0.001) : 0);
-
-      let stop = (planIn?.stop_guard != null && isFinite(Number(planIn.stop_guard))) ? Number(planIn.stop_guard)
-              : (planIn?.stop_price != null && isFinite(Number(planIn.stop_price))) ? Number(planIn.stop_price)
-              : (rev != null && isFinite(Number(rev))) ? Number(rev)
-              : null;
-
-      if (stop == null && p75 != null && isFinite(Number(p75)) && (side === "BUY" || side === "SELL")){
-        stop = (side === "SELL") ? (Number(p75) + buf) : (Number(p75) - buf);
-      }
-      if (stop == null && entry != null && (side === "BUY" || side === "SELL")){
-        stop = (side === "SELL") ? (entry + buf) : (entry - buf);
-      }
-
-      let rr = null;
-      if (entry != null && tp != null && stop != null && (side === "BUY" || side === "SELL")){
-        const reward = (side === "SELL") ? (entry - tp) : (tp - entry);
-        const risk   = (side === "SELL") ? (stop - entry) : (entry - stop);
-        rr = (isFinite(reward) && isFinite(risk) && risk > 0) ? (reward / risk) : null;
-      }
-      const gateOk = (planIn && typeof planIn.gate_ok === "boolean") ? planIn.gate_ok : (rr == null ? null : (rr >= 0.90));
-
-      const hasBreath = (p50 != null || p75 != null || rev != null);
-      const hasPlan   = (entry != null && tp != null);
-
-      const grid = document.getElementById("breath-grid-macro");
-      if (grid) grid.style.display = (hasBreath || hasPlan) ? "" : "none";
-
-      const fmt2local = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : Number(n).toFixed(2);
-      const fmtPctLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `${Math.round(Number(n))}%`;
-      const fmtMinLocal = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `~${Math.round(Number(n))}m`;
-
-      // tags
-      const sideTag = document.getElementById("breath-side-tag-macro");
-      if (sideTag){
-        sideTag.textContent = side;
-        sideTag.classList.remove("buy","sell","neutral");
-        sideTag.classList.add(side === "BUY" ? "buy" : side === "SELL" ? "sell" : "neutral");
-      }
-      const gateTag = document.getElementById("breath-gate-tag-macro");
-      if (gateTag){
-        gateTag.textContent = (gateOk === true) ? "GATE PASS" : (gateOk === false) ? "GATE BLOCK" : "GATE —";
-        gateTag.classList.remove("buy","sell","neutral");
-        gateTag.classList.add(gateOk === true ? "buy" : gateOk === false ? "sell" : "neutral");
-      }
-
-      // Breath Premonition values
-      setText("breath-p50-price-macro", fmt2local(p50));
-      setText("breath-p50-prob-macro", fmtPctLocal(p50Prob));
-      setText("breath-p50-eta-macro", fmtMinLocal(p50Eta));
-      setText("breath-p75-price-macro", fmt2local(p75));
-      setText("breath-rev-macro", fmt2local(rev));
-      setText("breath-break-macro", fmtPctLocal(brkPct));
-
-      // Invalidate: tenta usar pivot como referência (se existir)
-      const inv = pickFirst(breath?.invalidation_price, breath?.invalidate_price, (side === "SELL" ? breath?.sr?.pivot_res : (side === "BUY" ? breath?.sr?.pivot_sup : null)));
-      setText("breath-inv-macro", (inv != null && Number.isFinite(Number(inv))) ? `${Number(inv).toFixed(2)}` : "—");
-
-      // Retrace Breath Plan values
-      setText("be-entry-macro", fmt2local(pickFirst(planIn?.entry_zone_p50, planIn?.entry_price, entry)));
-      setText("be-window-macro", fmtMinLocal(pickFirst(planIn?.entry_window_min, planIn?.eta_entry_min, p50Eta)));
-      setText("be-stop-macro", fmt2local(pickFirst(planIn?.stop_guard, planIn?.stop_price, stop)));
-      setText("be-tp-macro", fmt2local(pickFirst(planIn?.take_profit_macro, planIn?.tp_macro_price, tp)));
-      setText("be-rr-macro", (rr==null || !Number.isFinite(Number(rr))) ? "—" : Number(rr).toFixed(2));
-      setText("be-gate-line-macro", planIn?.gate_line || "Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y");
-
-      // color big prices by side
-      const p50El = document.getElementById("breath-p50-price-macro");
-      if (p50El){
-        p50El.classList.remove("buy","sell");
-        if (side === "BUY") p50El.classList.add("buy");
-        if (side === "SELL") p50El.classList.add("sell");
-      }
-      const beEntryEl = document.getElementById("be-entry-macro");
-      if (beEntryEl){
-        beEntryEl.classList.remove("buy","sell");
-        if (side === "BUY") beEntryEl.classList.add("buy");
-        if (side === "SELL") beEntryEl.classList.add("sell");
-      }
-
-    }catch(_e){}
-    // ===== /BREATH (RESPIRO) UI — MACRO MAX =====
     // ===== MACRO PLAN (Most Optimal Entry + SL 1x1 + Status) =====
 try{
   const me = digest.macro_entry_engine || {};
@@ -9926,570 +8802,6 @@ set("indip-ema-hold-phrase",
   (eState === "below") ? `HOLD ${eHoldTxt} → Fast EMA likely stays BELOW Slow EMA (~5m).` :
   `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
 );
-    // ===== PREMONITION DAY (NEW CARD) =====
-    const sfDay = digest?.shape_focus || deepFind(digest,"shape_focus") || deepFind(root,"shape_focus") || {};
-    const pday = deepFind(root, "premonition_day") || deepFind(root,"premonition_day_v1") || digest?.premonition_day || ui?.premonition_day || null;
-
-    const dayName =
-      (pday?.structure_name || pday?.structure || pday?.label ||
-       sfDay?.name_en || sfDay?.name_pt || sfDay?.family_en || sfDay?.family || "—");
-
-    const dayBiasRaw = (pday?.bias || sfDay?.bias || sfDay?.trend_bias || "neutral");
-    const dayBias = String(dayBiasRaw).toUpperCase();
-    const dayConf = (pday?.confidence_pct ?? sfDay?.confidence_pct ?? (Number.isFinite(sfDay?.score) ? (sfDay.score * 100) : null));
-
-    const dayStructTxt = (dayConf != null && isFinite(dayConf))
-      ? `${dayName} · ${String(dayBiasRaw)} · ${Math.round(dayConf)}%`
-      : `${dayName} · ${String(dayBiasRaw)}`;
-
-    set("pday-structure", dayStructTxt);
-// (FIX) Day window/ETA: fallback para premonition_hours / premonition_eod (payload real)
-const dayWin =
-  pday?.day_window || pday?.breakout_window || pday?.window ||
-  deepFind(root, "premonition_hours") ||
-  deepFind(root, "premonition_eod") ||
-  deepFind(digest, "premonition_hours") ||
-  deepFind(digest, "premonition_eod") ||
-  null;
-
-const dayDir = dayWin?.breakout_dir || dayWin?.dir || pday?.breakout_dir || "—";
-const dayEtaMedRaw = dayWin?.eta_median || dayWin?.eta_med || dayWin?.eta?.median || pday?.eta_median || "—";
-const dayEtaP75Raw = dayWin?.eta_p75 || dayWin?.eta?.p75 || pday?.eta_p75 || "—";
-
-const _clock = (v)=> (typeof fmtClock === "function" ? fmtClock(v) : String(v ?? "—"));
-
-set("pday-window", (dayDir && dayDir !== "—") ? String(dayDir).toUpperCase() : "—");
-set("pday-eta", `${_clock(dayEtaMedRaw)} → ${_clock(dayEtaP75Raw)}`);
-    
-
-    const biasLow = String(dayBiasRaw).toLowerCase();
-    const dayMode =
-      (biasLow.includes("up") || biasLow.includes("bull")) ? "win-now" :
-      (biasLow.includes("down") || biasLow.includes("bear")) ? "win-warn" :
-      "win-wait";
-
-    const dayBadgeTxt = (dayConf != null && isFinite(dayConf))
-      ? `DAY: ${dayBias} · ${Math.round(dayConf)}%`
-      : `DAY: ${dayBias}`;
-
-    setBadge("pday-badge", dayBadgeTxt, dayMode);
-
-    // ===== ZIGZAG PREMONITION (NEW CARD) =====
-    const zz =
-      root?.zigzag_premonition_v1 ||
-      ui?.zigzag_premonition_v1 ||
-      digest?.zigzag_premonition_v1 ||
-      panel?.zigzag_premonition_v1 ||
-      root?.exec_1x1?.zigzag_premonition_v1 ||
-      null;
-
-    if (zz){
-      const next = String(zz?.state?.next_pivot_kind || zz?.state?.next_pivot || "—").toUpperCase();
-      const hz = zz?.chosen?.highlight_horizon_bars ?? zz?.chosen?.horizon_bars ?? "—";
-      const hi = zz?.chosen?.highlight || zz?.chosen?.best || zz?.chosen || null;
-
-      const prob = hi?.prob_pivot_pct;
-      const eta50 = hi?.eta_p50_bars;
-      const eta75 = hi?.eta_p75_bars;
-      const p50 = hi?.target_price_p50;
-      const p75 = hi?.target_price_p75;
-// [ADD] (after line 9652)
-const atr14 = Number(zz?.atr14);
-const zoneLo = (p50 != null && p75 != null) ? Math.min(p50, p75) : null;
-const zoneHi = (p50 != null && p75 != null) ? Math.max(p50, p75) : null;
-const zoneW  = (zoneLo != null && zoneHi != null) ? (zoneHi - zoneLo) : null;
-const zoneW_ATR = (Number.isFinite(zoneW) && Number.isFinite(atr14) && atr14 > 0) ? (zoneW / atr14) : null;
-      const legNow = String(zz?.state?.current_leg || "—").toUpperCase();
-      const dist = zz?.state?.dist_from_pivot_atr;
-
-      set("zz-next", next);
-      set("zz-hz", hz);
-      set("zz-conf", fmtPct(prob));
-      // [REPLACE] line 9660
-set("zz-zone", (zoneLo != null && zoneHi != null) ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)}` : "—");
-      set("zz-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
-      set("zz-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
-
-      // [REPLACE] lines 9664–9674
-const pnum = Number(prob);
-
-// thresholds (ajuste se quiser)
-const STRONG_MIN   = 80;
-const NOISE_MAX    = 65;
-const ZONE_ATR_MAX = 1.50;  // zona “larga” acima disso vira NOISE
-
-const isWide = (zoneW_ATR != null && zoneW_ATR > ZONE_ATR_MAX);
-
-let mode = "win-wait";
-let badgeTxt = "NOISE ZONE";
-
-if (Number.isFinite(pnum)){
-  if (pnum >= STRONG_MIN && !isWide){
-    mode = "win-now";
-    badgeTxt = "STRONG PIVOT";
-  } else if (pnum < NOISE_MAX || isWide){
-    mode = "win-wait";
-    badgeTxt = "NOISE ZONE";
-  } else {
-    mode = "win-warn";
-    badgeTxt = "CAUTION";
-  }
-}
-
-setBadge("zz-badge", badgeTxt, mode);
-
-      setBadge("zz-badge", badgeTxt, mode);
-
-      const zzb = document.getElementById("zz-badge");
-      if (zzb){
-        // [REPLACE] line 9678
-if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("pulse-micro");
-        else zzb.classList.remove("pulse-micro");
-      }
-
-    } else {
-      setBadge("zz-badge", "—", "win-wait");
-      set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
-      set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
-    }
-                // ===== VOLUME PREMONITION (NEW BLOCK) =====
-    {
-      const clearVP = () => {
-        setBadge("vp-badge", "—", "win-wait");
-        [
-          "vp-primary",
-          "vp-now-cont",
-          "vp-now-exhaust",
-          "vp-now-weak",
-          "vp-dir-conf",
-          "vp-next-cont",
-          "vp-next-exhaust",
-          "vp-worth",
-          "vp-next-eta",
-          "vp-next-target",
-          "vp-exhaust-path",
-          "vp-h1",
-          "vp-h5",
-          "vp-h15",
-          "vp-h30",
-          "vp-h60",
-          "vp-reading"
-        ].forEach(id => set(id, "—"));
-      };
-
-      const vp =
-        root?.volume_premonition_v1 ||
-        ui?.volume_premonition_v1 ||
-        digest?.volume_premonition_v1 ||
-        panel?.volume_premonition_v1 ||
-        root?.exec_1x1?.volume_premonition_v1 ||
-        root?.live?.volume_premonition_v1 ||
-        null;
-
-      if (!vp || vp?.enabled === false) {
-        clearVP();
-      } else {
-        const byH = vp?.by_horizon || {};
-        const getH = (...keys) => {
-          for (const k of keys) {
-            const v = byH?.[String(k)];
-            if (v) return v;
-          }
-          return null;
-        };
-
-        const h1  = getH("1", "1m");
-        const h5  = getH("5", "5m");
-        const h15 = getH("15", "15m");
-        const h30 = getH("30", "30m");
-        const h60 = getH("60", "60m");
-
-        const baseNow = vp?.highlight || h5 || h1 || null;
-
-        const sideRaw = String(vp?.direction_now || vp?.selected_side || "").toLowerCase();
-        const side =
-          (sideRaw.includes("long") || sideRaw.includes("buy"))   ? "LONG" :
-          (sideRaw.includes("short") || sideRaw.includes("sell")) ? "SHORT" :
-          "NEUTRAL";
-
-        const sideCap =
-          side === "LONG"  ? "Long"  :
-          side === "SHORT" ? "Short" :
-          "Flow";
-
-        const toNum = (v) => {
-          const n = Number(v);
-          return Number.isFinite(n) ? n : null;
-        };
-
-        const fmtInt = (v) => {
-          const n = toNum(v);
-          return n == null ? "—" : String(Math.round(n));
-        };
-
-        const fmtEtaMin = (v) => {
-          const n = toNum(v);
-          return n == null ? "—" : `~${Math.round(n)}m`;
-        };
-
-        const directionConf = toNum(vp?.direction_confidence_pct);
-        const contNow       = toNum(baseNow?.live_continuation_score_pct);
-        const exhaustNow    = toNum(baseNow?.live_exhaustion_score_pct);
-        const weakNow       = toNum(baseNow?.live_weakening_score_pct);
-
-        const contNext      = toNum(vp?.continuation_premonition_pct);
-        const exhaustNext   = toNum(vp?.exhaustion_premonition_pct);
-        const worthIt       = toNum(vp?.continuation_worth_it_pct);
-
-        const nextEta       = toNum(vp?.next_impulse_eta_p50_min);
-        const nextTarget    = toNum(vp?.next_impulse_target_price_p50);
-
-        const exhaustEta    = toNum(baseNow?.eta_exhaust_p50_min);
-        const exhaustTarget = toNum(baseNow?.target_exhaust_price_p50);
-
-        const classifyWindow = (x) => {
-          if (!x) return "MISSING";
-
-          const cNow  = toNum(x?.live_continuation_score_pct);
-          const eNow  = toNum(x?.live_exhaustion_score_pct);
-          const cNext = toNum(x?.continuation_premonition_pct);
-          const eNext = toNum(x?.exhaustion_premonition_pct);
-
-          if (eNext != null && cNext != null && eNext > cNext) return "EXHAUSTION RISK";
-          if ((eNext != null && eNext >= 45) || (eNow != null && eNow >= 40)) return "FATIGUE";
-          if (cNext != null && eNext != null && (cNext - eNext) >= 10 && (eNow == null || eNow < 35)) return "HEALTHY";
-          return "MIXED";
-        };
-
-        const fmtWindow = (x) => {
-          if (!x) return "—";
-
-          const status = classifyWindow(x);
-          return `NOW C${fmtInt(x?.live_continuation_score_pct)} / E${fmtInt(x?.live_exhaustion_score_pct)} / W${fmtInt(x?.live_weakening_score_pct)}   NEXT C${fmtInt(x?.continuation_premonition_pct)} / E${fmtInt(x?.exhaustion_premonition_pct)}   ${status}`;
-        };
-
-        const windows = [
-          { label: "1m",  id: "vp-h1",  obj: h1  },
-          { label: "5m",  id: "vp-h5",  obj: h5  },
-          { label: "15m", id: "vp-h15", obj: h15 },
-          { label: "30m", id: "vp-h30", obj: h30 },
-          { label: "60m", id: "vp-h60", obj: h60 }
-        ];
-
-        const firstFatigue = windows.find(w => {
-          if (!w.obj) return false;
-          const eNow  = toNum(w.obj?.live_exhaustion_score_pct);
-          const cNext = toNum(w.obj?.continuation_premonition_pct);
-          const eNext = toNum(w.obj?.exhaustion_premonition_pct);
-          return (eNext != null && eNext >= 45) ||
-                 (eNow != null && eNow >= 40) ||
-                 (eNext != null && cNext != null && eNext > cNext);
-        }) || null;
-
-        let badgeTxt = "NEUTRAL FLOW";
-        let badgeMode = "win-wait";
-
-        if (side !== "NEUTRAL") {
-          badgeTxt = `${side} FLOW`;
-
-          const lead = (contNext ?? -999) - (exhaustNext ?? -999);
-
-          if ((contNow != null && contNow >= 60) && (lead >= 10) && (worthIt == null || worthIt >= 60)) {
-            badgeMode = "win-now";
-          } else if (
-            (lead <= 0) ||
-            (exhaustNext != null && exhaustNext >= 45) ||
-            (exhaustNow != null && exhaustNow >= 40)
-          ) {
-            badgeMode = "win-warn";
-          } else {
-            badgeMode = "win-wait";
-          }
-        }
-
-        let primary = "NEUTRAL / MIXED FLOW";
-
-        if (side !== "NEUTRAL") {
-          if ((exhaustNext != null && contNext != null && exhaustNext > contNext) || (exhaustNow != null && exhaustNow >= 55)) {
-            primary = `${side} EXHAUSTION RISK`;
-          } else if (firstFatigue && contNext != null && exhaustNext != null && contNext >= exhaustNext) {
-            primary = `${side} CONTINUATION | ${firstFatigue.label} FATIGUE BUILDING`;
-          } else if ((contNow != null && contNow >= 70) && (contNext != null && contNext >= 60)) {
-            primary = `${side} CONTINUATION IN CONTROL`;
-          } else if (contNext != null && contNext >= 55) {
-            primary = `${side} CONTINUATION ACTIVE`;
-          } else {
-            primary = `${side} FLOW DEVELOPING`;
-          }
-        }
-
-        let reading = "Flow is mixed / neutral. No directional premonition yet.";
-
-        if (side !== "NEUTRAL") {
-          if ((exhaustNext != null && contNext != null && exhaustNext > contNext) || (exhaustNow != null && exhaustNow >= 55)) {
-            reading = `${sideCap} flow is losing control into the next leg; exhaustion risk is overtaking continuation.`;
-          } else if (firstFatigue) {
-            reading = `${sideCap} continuation still controls the immediate flow, but ${firstFatigue.label} is the first window where exhaustion begins to build.`;
-          } else if ((contNow != null && contNow >= 60) && (contNext != null && contNext >= 60)) {
-            reading = `${sideCap} continuation still controls the immediate flow, and no major exhaustion window is building yet.`;
-          } else {
-            reading = `${sideCap} flow still has directional bias, but continuation needs caution.`;
-          }
-        }
-
-        setBadge("vp-badge", badgeTxt, badgeMode);
-        set("vp-primary", primary);
-
-        set("vp-now-cont", fmtPct(contNow));
-        set("vp-now-exhaust", fmtPct(exhaustNow));
-        set("vp-now-weak", fmtPct(weakNow));
-        set("vp-dir-conf", fmtPct(directionConf));
-
-        set("vp-next-cont", fmtPct(contNext));
-        set("vp-next-exhaust", fmtPct(exhaustNext));
-        set("vp-worth", fmtPct(worthIt));
-        set("vp-next-eta", fmtEtaMin(nextEta));
-        set("vp-next-target", nextTarget == null ? "—" : fmt2(nextTarget));
-        set(
-          "vp-exhaust-path",
-          exhaustTarget == null
-            ? "—"
-            : `${fmtEtaMin(exhaustEta)} → ${fmt2(exhaustTarget)}`
-        );
-
-        windows.forEach(w => set(w.id, fmtWindow(w.obj)));
-        set("vp-reading", reading);
-
-        const paintPct = (id, n, goodHigh = true) => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          const x = toNum(n);
-          if (x == null) {
-            el.style.color = "#e5e7eb";
-            return;
-          }
-
-          if (goodHigh) {
-            el.style.color =
-              x >= 70 ? "#4ade80" :
-              x >= 55 ? "#ffcc66" :
-              "#f87171";
-          } else {
-            el.style.color =
-              x <= 25 ? "#4ade80" :
-              x <= 40 ? "#ffcc66" :
-              "#f87171";
-          }
-        };
-
-        paintPct("vp-now-cont", contNow, true);
-        paintPct("vp-now-exhaust", exhaustNow, false);
-        paintPct("vp-now-weak", weakNow, false);
-        paintPct("vp-dir-conf", directionConf, true);
-        paintPct("vp-next-cont", contNext, true);
-        paintPct("vp-next-exhaust", exhaustNext, false);
-        paintPct("vp-worth", worthIt, true);
-
-        const primaryEl = document.getElementById("vp-primary");
-        if (primaryEl) {
-          const t = String(primary || "").toUpperCase();
-          primaryEl.style.color =
-            t.includes("EXHAUSTION") ? "#f87171" :
-            t.includes("FATIGUE")    ? "#ffcc66" :
-            "#ffcc66";
-        }
-
-        const exhaustPathEl = document.getElementById("vp-exhaust-path");
-        if (exhaustPathEl) {
-          exhaustPathEl.style.color =
-            exhaustNext != null && exhaustNext >= 45 ? "#f87171" :
-            exhaustNext != null && exhaustNext >= 30 ? "#ffcc66" :
-            "#e5e7eb";
-        }
-
-        windows.forEach(w => {
-          const el = document.getElementById(w.id);
-          if (!el) return;
-          const status = classifyWindow(w.obj);
-          el.style.color =
-            status === "HEALTHY"         ? "#4ade80" :
-            status === "FATIGUE"         ? "#ffcc66" :
-            status === "EXHAUSTION RISK" ? "#f87171" :
-            "#e5e7eb";
-        });
-
-        const readingEl = document.getElementById("vp-reading");
-if (readingEl) {
-  const upperRead = String(reading || "").toUpperCase();
-  const upperPrimary = String(primary || "").toUpperCase();
-
-  const isShort = upperRead.startsWith("SHORT") || upperPrimary.includes("SHORT");
-  const isLong  = upperRead.startsWith("LONG")  || upperPrimary.includes("LONG");
-  const isRisk  = upperRead.includes("OVERTAKING");
-  const isWarn  = upperRead.includes("CAUTION");
-
-  readingEl.classList.remove("pulse-sl", "pulse-micro");
-
-  if (isShort) {
-    readingEl.style.color = "#f87171";
-    readingEl.classList.add("pulse-sl");
-  } else if (isLong) {
-    readingEl.style.color = "#4ade80";
-    readingEl.classList.add("pulse-micro");
-  } else if (isRisk) {
-    readingEl.style.color = "#f87171";
-  } else if (isWarn) {
-    readingEl.style.color = "#ffcc66";
-  } else {
-    readingEl.style.color = "#e5e7eb";
-  }
-}
-      }
-    }
-    // ===== /VOLUME PREMONITION =====
-        // ===== ZIGZAG ROUTE ENGINE (NEW BLOCK) =====
-    {
-      const clearZZRoute = () => {
-        setBadge("zzr-badge", "—", "win-wait");
-        set("zzr-mode", "—");
-        set("zzr-status", "—");
-        set("zzr-current", "—");
-        set("zzr-next", "—");
-        set("zzr-step1", "—");
-        set("zzr-step1state", "—");
-        set("zzr-step2", "—");
-        set("zzr-step2state", "—");
-        set("zzr-step3", "—");
-        set("zzr-step3state", "—");
-        set("zzr-zone", "—");
-        set("zzr-eta", "—");
-        set("zzr-layer2", "—");
-        set("zzr-context", "—");
-        set("zzr-cancel", "—");
-      };
-
-      if (!zz) {
-        clearZZRoute();
-      } else {
-        const next = String(zz?.state?.next_pivot_kind || zz?.state?.next_pivot || "—").toUpperCase();
-        const hz = zz?.chosen?.highlight_horizon_bars ?? zz?.chosen?.horizon_bars ?? "—";
-        const hi = zz?.chosen?.highlight || zz?.chosen?.best || zz?.chosen || null;
-
-        const eta50 = hi?.eta_p50_bars;
-        const eta75 = hi?.eta_p75_bars;
-        const p50 = hi?.target_price_p50;
-        const p75 = hi?.target_price_p75;
-        const dist = zz?.state?.dist_from_pivot_atr;
-        const legNow = String(zz?.state?.current_leg || "—").toUpperCase();
-        const atr14 = Number(zz?.atr14);
-
-        const zoneLo = (p50 != null && p75 != null) ? Math.min(Number(p50), Number(p75)) : null;
-        const zoneHi = (p50 != null && p75 != null) ? Math.max(Number(p50), Number(p75)) : null;
-
-        const currentCandidates = [
-          panel?.price_now, panel?.last_price,
-          ui?.price_now, ui?.last_price,
-          digest?.price_now, digest?.last_price, digest?.price,
-          document.getElementById("prem-right-current-price")?.textContent,
-          document.getElementById("prem-head-current-price")?.textContent
-        ]
-          .map(v => Number(v))
-          .filter(v => Number.isFinite(v));
-
-        const current = currentCandidates.length ? currentCandidates[0] : null;
-
-        const isHigh = next.includes("HIGH");
-        const isLow  = next.includes("LOW");
-
-        const targetEdge =
-          (isHigh && zoneLo != null) ? zoneLo :
-          (isLow  && zoneHi != null) ? zoneHi :
-          null;
-
-        let step1 = null, step2 = null, step3 = null;
-
-        if (current != null && targetEdge != null) {
-          const routeDist = targetEdge - current;
-          step1 = current + (routeDist * 0.3333333333);
-          step2 = current + (routeDist * 0.6666666667);
-          step3 = targetEdge;
-        }
-
-        const eps = (Number.isFinite(atr14) && atr14 > 0) ? (atr14 * 0.03) : 0.01;
-
-        const arrived =
-          (current != null && zoneLo != null && zoneHi != null)
-            ? (current >= (zoneLo - eps) && current <= (zoneHi + eps))
-            : false;
-
-        const passed1 =
-          (current != null && step1 != null)
-            ? (isHigh ? current >= (step1 - eps) : isLow ? current <= (step1 + eps) : false)
-            : false;
-
-        const passed2 =
-          (current != null && step2 != null)
-            ? (isHigh ? current >= (step2 - eps) : isLow ? current <= (step2 + eps) : false)
-            : false;
-
-        const passed3 =
-          (current != null && step3 != null)
-            ? (isHigh ? current >= (step3 - eps) : isLow ? current <= (step3 + eps) : false)
-            : false;
-
-        let statusTxt = "ARMED";
-        if (arrived) statusTxt = "ARRIVED";
-        else if (passed3) statusTxt = "STEP 3 PASSED";
-        else if (passed2) statusTxt = "STEP 2 PASSED";
-        else if (passed1) statusTxt = "STEP 1 PASSED";
-
-        let badgeTxt = "ARMED";
-        let badgeMode = "win-wait";
-
-        if (arrived) {
-          badgeTxt = "ARRIVED";
-          badgeMode = "win-now";
-        } else if (passed2 || passed3) {
-          badgeTxt = "ROUTE LIVE";
-          badgeMode = "win-now";
-        } else if (passed1) {
-          badgeTxt = "ROUTE LIVE";
-          badgeMode = "win-warn";
-        }
-
-        const modeTxt =
-          isHigh ? "ROUTE TO PIVOT HIGH" :
-          isLow  ? "ROUTE TO PIVOT LOW"  :
-          "ROUTE —";
-
-        const layer2Txt =
-          isHigh ? "After arrival: PIVOT CONFIRM DOWN" :
-          isLow  ? "After arrival: PIVOT CONFIRM UP"   :
-          "After arrival: PIVOT CONFIRM —";
-
-        setBadge("zzr-badge", badgeTxt, badgeMode);
-        set("zzr-mode", modeTxt);
-        set("zzr-status", statusTxt);
-        set("zzr-current", fmt2(current));
-        set("zzr-next", `${next} | H≤ ${hz}`);
-
-        set("zzr-step1", fmt2(step1));
-        set("zzr-step1state", passed1 ? "PASSED ✅" : "WAIT ⏳");
-
-        set("zzr-step2", fmt2(step2));
-        set("zzr-step2state", passed2 ? "PASSED ✅" : "WAIT ⏳");
-
-        set("zzr-step3", fmt2(step3));
-        set("zzr-step3state", arrived ? "ARRIVED ✅" : (passed3 ? "PASSED ✅" : "WAIT ⏳"));
-
-        set("zzr-zone", (zoneLo != null && zoneHi != null) ? `${fmt2(zoneLo)} → ${fmt2(zoneHi)}` : "—");
-        set("zzr-eta", (eta50 != null && eta75 != null) ? `${eta50}b → ${eta75}b` : "—");
-        set("zzr-layer2", layer2Txt);
-        set("zzr-context", `LEG: ${legNow} · DIST: ${Number.isFinite(Number(dist)) ? Number(dist).toFixed(2) : "—"} ATR`);
-        set("zzr-cancel", "Cancel if pivot flips, ETA P75 expires, or route is lost by > 0.35 ATR.");
-      }
-    }
-    // ===== /ZIGZAG ROUTE ENGINE =====
   }catch(e){
     // não quebra o painel
   }
@@ -15767,7 +14079,7 @@ renderOptions("");
     if (!microCol) return;
 
     const microMap = document.getElementById("micro-map-card");
-    const premPanel = document.querySelector('.premonition-panel:not(#macro-premonition-panel):not(#macro-min-premonition-panel)');
+    const premPanel = document.querySelector('.premonition-panel:not(#macro-premonition-panel)');
     const entryEngine = document.getElementById("ee-engine-card");
 
     // ordem final (igual seu mockup): Micro Map -> Prem Panel -> Entry Engine
@@ -17092,556 +15404,6 @@ const tpTxt = (() => {
   setInterval(updateMPnL, 750);
 })();
 // ===== /QUICK P&L (MACRO) =====
-// ===== MACRO MIN (NOW) — MAP + KPI + PLAN + ENGINE + QUICK P&L =====
-(function(){
-  const $ = (id) => document.getElementById(id);
-
-  const num = (v) => {
-    if (v == null) return null;
-    if (typeof v === "number") return Number.isFinite(v) ? v : null;
-    const s = String(v).trim();
-    if (!s || s === "—") return null;
-    const cleaned = s.replace(/[^\d.,-]/g, "").replace(",", ".");
-    const n = Number(cleaned);
-    return Number.isFinite(n) ? n : null;
-  };
-
-  const fmt2 = (n) => (n == null || !Number.isFinite(n)) ? "—" : Number(n).toFixed(2);
-  const fmtPct = (n) => (n == null || !Number.isFinite(n)) ? "—" : `${Math.round(Number(n))}%`;
-  const fmtEta = (n) => (n == null || !Number.isFinite(n)) ? "—" : `~${Math.round(Number(n))}m`;
-
-  function fmtTimeMTParts(ms){
-    try{
-      const s = new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Denver",
-        hour: "numeric",
-        minute: "2-digit"
-      }).format(new Date(ms));
-      const m = String(s).match(/^(\d{1,2}:\d{2})\s*(AM|PM)?$/i);
-      return { time: m ? m[1] : s, ampm: m ? (m[2] || "") : "" };
-    }catch(_e){
-      const d = new Date(ms);
-      let hh = d.getHours();
-      const mm = String(d.getMinutes()).padStart(2,"0");
-      const ampm = (hh >= 12) ? "PM" : "AM";
-      hh = hh % 12; if (hh === 0) hh = 12;
-      return { time: `${hh}:${mm}`, ampm };
-    }
-  }
-
-  function pickATR(payload, digest){
-  const panel = payload?.panel || payload || {};
-  const raw   = payload?.raw || payload?.raw_eye || payload?.eye || {};
-  const ind   = raw?.indicators || panel?.indicators || {};
-  const atrBlock = panel?.atr || panel?.atr_info || panel?.atrInfo || {};
-
-  return (
-    num(digest?.macro_pack?.atr14) ??
-
-    // panel direto
-    num(panel?.atr14) ?? num(panel?.atr_14) ??
-    num(panel?.metrics?.atr14) ??
-    num(panel?.indicators?.atr14) ?? num(panel?.indicators?.atr_14) ?? num(panel?.indicators?.atr) ??
-
-    // panel.atr.value (muito comum no teu payload)
-    num(atrBlock?.value) ?? num(atrBlock?.atr14) ??
-
-    // digest / raw
-    num(digest?.atr14) ?? num(digest?.atr_14) ??
-    num(digest?.indicators?.atr14) ?? num(digest?.indicators?.atr) ??
-    num(ind?.atr14) ?? num(ind?.atr_14) ?? num(ind?.atr) ??
-
-    // inputs do Risk Manager (fallback)
-    num(document.getElementById("sb-atr-value")?.value) ??
-    num(document.getElementById("atr-value-input")?.value) ??
-
-    null
-  );
-}
-
-  function updateMacroMinAll(){
-    const payload = window.__AARON_LAST_PAYLOAD__ || {};
-    const digest  = payload.digest || {};
-
-    const current =
-      num($("prem-right-current-price")?.textContent) ??
-      num($("prem-head-current-price")?.textContent) ??
-      num(payload?.panel?.price_now ?? payload?.panel?.last_price) ??
-      null;
-
-    const target = num(digest.macro_extremes_min_target);
-    const prob   = num(digest.macro_extremes_min_prob_pct);
-    const eta    = num(digest.macro_extremes_min_eta_p50_min);
-    const atr    = pickATR(payload, digest);
-
-    // side pelo preço
-    let side = null;
-    if (current != null && target != null){
-      if (target > current) side = "BUY";
-      else if (target < current) side = "SELL";
-    }
-    const arrow = (side === "BUY") ? "↑" : (side === "SELL") ? "↓" : "↕";
-
-    // ===== MAP (4 linhas)
-    const line1 = (target != null)
-      ? `MACRO MIN — NOW: ${fmtEta(eta)} • ${fmtPct(prob)} • Target ${fmt2(target)} ${arrow}`
-      : `MACRO MIN — NOW: —`;
-
-    // continuação simples: target ± 0.125 ATR
-    let contPrice = null;
-    if (target != null && atr != null && side){
-      contPrice = target + (side === "BUY" ? 1 : -1) * atr * 0.125;
-    }
-    const contProb = (prob != null) ? Math.round(prob * 0.65) : null;
-    const contEta  = (eta  != null) ? Math.round(eta) + 2 : null;
-
-    const line2 = (contPrice != null)
-      ? `CONTINUAÇÃO (A2): ${fmtEta(contEta)} • ${fmtPct(contProb)} • Depois do target pode estender até ${fmt2(contPrice)} ${arrow}`
-      : `CONTINUAÇÃO (A2): —`;
-
-    // RANGE/FAIL (B): fallback por ATR (igual filosofia do Macro Map)
-let failBefore = null;
-if (target != null && atr != null && side){
-  // "falhar antes" = voltar em direção ao current antes de tocar o target
-  failBefore = target + (side === "BUY" ? -1 : +1) * atr * 0.20;
-}
-
-const failProb = (prob != null) ? Math.max(0, Math.min(100, 100 - prob)) : null;
-const failEta  = (eta  != null) ? Math.max(0, Math.round(Number(eta) * 0.70)) : null;
-
-const line3 = (failBefore != null)
-  ? `RANGE / FAIL (B): ${fmtEta(failEta)} • ${fmtPct(failProb)} • Pode falhar antes → ${fmt2(failBefore)}`
-  : `RANGE / FAIL (B): —`;
-
-    // ===== PLAN (entry + SL 1x1)
-    // entry “esperável”: para SELL, puxa um pouco acima (bounce); para BUY, um pouco abaixo.
-    const entry =
-      (current != null && atr != null && side)
-        ? current + (side === "SELL" ? +atr * 0.20 : -atr * 0.20)
-        : current;
-
-    const sl1x1 = (entry != null && target != null) ? (2 * entry - target) : null;
-
-    const line4 = (sl1x1 != null && side)
-      ? `INVALIDAÇÃO (SL 1x1): se tocar ${fmt2(sl1x1)} → invalida o macro ${side}`
-      : `INVALIDAÇÃO (SL 1x1): —`;
-
-    const m1 = $("mmn-macro-line");
-    const m2 = $("mmn-cont-line");
-    const m3 = $("mmn-respiro-line");
-    const m4 = $("mmn-reversao-line");
-
-    if (m1){
-      m1.textContent = line1;
-      m1.style.color = (side === "BUY") ? "var(--success)" : (side === "SELL") ? "#fb7185" : "";
-    }
-    if (m2){ m2.textContent = line2; m2.style.color = "#60a5fa"; }
-    if (m3){ m3.textContent = line3; m3.style.color = "#facc15"; }
-    if (m4){ m4.textContent = line4; m4.style.color = "var(--danger)"; }
-
-    // ===== KPI
-    if ($("prem-macro-min-current-price")) $("prem-macro-min-current-price").textContent = (current != null) ? fmt2(current) : "—";
-    if ($("prem-macro-min-prob")) $("prem-macro-min-prob").textContent = (prob != null) ? `${Math.round(prob)}%` : "--%";
-if ($("prem-macro-min-target-inline")){
-  const txt = (target != null)
-    ? `${fmt2(target)}${(eta != null ? ` (${fmtEta(eta)})` : "")}`
-    : "—";
-  $("prem-macro-min-target-inline").textContent = txt;
-}
-    const nowMs = Date.now();
-    const tMs = (eta != null) ? (nowMs + Math.max(0, eta) * 60000) : nowMs;
-    const tp = fmtTimeMTParts(tMs);
-
-    if ($("prem-macro-min-time")) $("prem-macro-min-time").textContent = tp.time || "--:--";
-    if ($("prem-macro-min-ampm")) $("prem-macro-min-ampm").textContent = tp.ampm || "";
-
-    if ($("prem-macro-min-eta")){
-  const txt = (target != null)
-    ? `Target ${fmt2(target)} • ETA ${fmtEta(eta)}`
-    : "Target — • ETA —";
-  $("prem-macro-min-eta").textContent = txt;
-
-  // cor por side (opcional, mas ajuda muito visualmente)
-  $("prem-macro-min-eta").style.color =
-    (side === "BUY") ? "var(--success)" : (side === "SELL") ? "#fb7185" : "";
-}
-
-    // ===== Linhas do painel
-    if ($("macro-min-prem-window")) $("macro-min-prem-window").textContent = (eta != null) ? `~${Math.round(eta)}m (p50)` : "—";
-    if ($("macro-min-prem-median")) $("macro-min-prem-median").textContent = (eta != null) ? `~${Math.round(eta)} min` : "—";
-    if ($("macro-min-prem-miss")) $("macro-min-prem-miss").textContent = "—";
-
-    // Premonição Macro = linha pronta do Digest V23
-    const macroLine =
-  digest.macro_extremes_min_line ||
-  (target != null ? `PREMONITION MACRO MIN: ${fmtPct(prob)} chance de tocar ${fmt2(target)} em ${fmtEta(eta)}` : "—");
-    if ($("macro-min-prem-macro")) $("macro-min-prem-macro").textContent = macroLine;
-
-    // Premonição Micro: espelha do macro atual (não inventa nada)
-    const microMirror = $("macro-prem-micro")?.textContent || "—";
-    if ($("macro-min-prem-micro")) $("macro-min-prem-micro").textContent = microMirror;
-
-    if ($("macro-min-prem-base")) $("macro-min-prem-base").textContent = "macro_extremes_v1 (intraday 1m)";
-    // ===== BREATH (RESPIRO) UI — MACRO MIN (above QUICK P&L) =====
-    try{
-      const all = (payload?.panel?.macro_respiro_premonition_v1 ?? payload?.digest?.macro_respiro_premonition_v1 ?? payload?.macro_respiro_premonition_v1 ?? {});
-      const breath = (all && typeof all === "object") ? (all.min || all.macro_min || all.macroMin || {}) : {};
-
-      const grid = $("breath-grid-min");
-
-      const p50 = (breath?.levels?.p50?.price ?? breath?.breath_p50_price ?? breath?.p50_price ?? null);
-      const p50Prob = (breath?.levels?.p50?.prob_touch_pct ?? breath?.breath_p50_prob_pct ?? breath?.p50_prob_pct ?? null);
-      const p50Eta  = (breath?.levels?.p50?.eta_min ?? breath?.breath_p50_eta_min ?? breath?.p50_eta_min ?? null);
-      const p75     = (breath?.levels?.p75?.price ?? breath?.breath_p75_price ?? breath?.p75_price ?? null);
-      const rev     = (breath?.reversal_trigger?.trigger_price ?? breath?.reversal_trigger_price ?? breath?.rev_trigger_price ?? null);
-      const brkPct  = (breath?.break_risk_pct ?? breath?.break_risk ?? breath?.reversal_trigger?.prob_stop_before_target_pct ?? null);
-
-      // Target do macro min = o próprio target do Macro MIN
-      const tpMacro = (target != null) ? target : (breath?.macro?.target_price ?? breath?.macro?.target ?? null);
-
-      // side
-      const sideRaw = String(breath?.side || "").toUpperCase();
-      let sideLocal = (sideRaw === "BUY" || sideRaw === "SELL") ? sideRaw : (tpMacro != null && current != null ? ((tpMacro > current) ? "BUY" : (tpMacro < current) ? "SELL" : "—") : "—");
-
-      // plan determinístico
-      const cur = (current != null && Number.isFinite(Number(current))) ? Number(current) : null;
-      const entry = (p50 != null && Number.isFinite(Number(p50))) ? Number(p50) : null;
-      const tp = (tpMacro != null && Number.isFinite(Number(tpMacro))) ? Number(tpMacro) : null;
-      const buf = (atr != null && Number.isFinite(Number(atr)) && Number(atr) > 0) ? (Number(atr) * 0.10) : (cur != null ? (cur * 0.001) : 0);
-
-      let stop = (rev != null && Number.isFinite(Number(rev))) ? Number(rev) : null;
-      if (stop == null && p75 != null && Number.isFinite(Number(p75)) && (sideLocal === "BUY" || sideLocal === "SELL")){
-        stop = (sideLocal === "SELL") ? (Number(p75) + buf) : (Number(p75) - buf);
-      }
-      if (stop == null && entry != null && (sideLocal === "BUY" || sideLocal === "SELL")){
-        stop = (sideLocal === "SELL") ? (entry + buf) : (entry - buf);
-      }
-
-      let rr = null;
-      if (entry != null && tp != null && stop != null && (sideLocal === "BUY" || sideLocal === "SELL")){
-        const reward = (sideLocal === "SELL") ? (entry - tp) : (tp - entry);
-        const risk   = (sideLocal === "SELL") ? (stop - entry) : (entry - stop);
-        rr = (Number.isFinite(reward) && Number.isFinite(risk) && risk > 0) ? (reward / risk) : null;
-      }
-      const gateOk = (rr == null) ? null : (rr >= 0.90);
-
-      const hasBreath = (p50 != null || p75 != null || rev != null);
-      const hasPlan   = (entry != null && tp != null);
-      if (grid) grid.style.display = (hasBreath || hasPlan) ? "" : "none";
-
-      const set = (id, v) => { const el = $(id); if (el) el.textContent = v; };
-      const fmt2l = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : Number(n).toFixed(2);
-      const fmtPctL = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `${Math.round(Number(n))}%`;
-      const fmtMinL = (n)=> (n==null || !Number.isFinite(Number(n))) ? "—" : `~${Math.round(Number(n))}m`;
-
-      // tags
-      const sideTag = $("breath-side-tag-min");
-      if (sideTag){
-        sideTag.textContent = sideLocal;
-        sideTag.classList.remove("buy","sell","neutral");
-        sideTag.classList.add(sideLocal === "BUY" ? "buy" : sideLocal === "SELL" ? "sell" : "neutral");
-      }
-      const gateTag = $("breath-gate-tag-min");
-      if (gateTag){
-        gateTag.textContent = (gateOk === true) ? "GATE PASS" : (gateOk === false) ? "GATE BLOCK" : "GATE —";
-        gateTag.classList.remove("buy","sell","neutral");
-        gateTag.classList.add(gateOk === true ? "buy" : gateOk === false ? "sell" : "neutral");
-      }
-
-      // Breath values
-      set("breath-p50-price-min", fmt2l(p50));
-      set("breath-p50-prob-min", fmtPctL(p50Prob));
-      set("breath-p50-eta-min", fmtMinL(p50Eta));
-      set("breath-p75-price-min", fmt2l(p75));
-      set("breath-rev-min", fmt2l(rev));
-      set("breath-break-min", fmtPctL(brkPct));
-
-      const inv = (breath?.invalidation_price ?? breath?.invalidate_price ?? (sideLocal === "SELL" ? breath?.sr?.pivot_res : (sideLocal === "BUY" ? breath?.sr?.pivot_sup : null)));
-      set("breath-inv-min", (inv != null && Number.isFinite(Number(inv))) ? `${Number(inv).toFixed(2)}` : "—");
-
-      // Plan values
-      set("be-entry-min", fmt2l(entry));
-      set("be-window-min", fmtMinL(p50Eta));
-      set("be-stop-min", fmt2l(stop));
-      set("be-tp-min", fmt2l(tp));
-      set("be-rr-min", (rr==null || !Number.isFinite(Number(rr))) ? "—" : Number(rr).toFixed(2));
-      set("be-gate-line-min", "Only if macro_mode=CONTINUE AND prob_breath>=X AND break_risk<=Y");
-
-      // color big prices by side
-      const p50El = $("breath-p50-price-min");
-      if (p50El){
-        p50El.classList.remove("buy","sell");
-        if (sideLocal === "BUY") p50El.classList.add("buy");
-        if (sideLocal === "SELL") p50El.classList.add("sell");
-      }
-      const beEntryEl = $("be-entry-min");
-      if (beEntryEl){
-        beEntryEl.classList.remove("buy","sell");
-        if (sideLocal === "BUY") beEntryEl.classList.add("buy");
-        if (sideLocal === "SELL") beEntryEl.classList.add("sell");
-      }
-
-    }catch(_e){}
-    // ===== /BREATH (RESPIRO) UI — MACRO MIN =====
-    // ===== MACRO MIN PLAN (Most optimal entry / SL / status)
-    if ($("mslrmin-optentry")) $("mslrmin-optentry").textContent = (entry != null) ? fmt2(entry) : "—";
-    if ($("mslrmin-sl")) $("mslrmin-sl").textContent = (sl1x1 != null) ? fmt2(sl1x1) : "—";
-
-    // usa o mesmo horário do KPI (estimativa do alvo) pra manter o padrão do macro max
-    if ($("mslrmin-entrytime")) $("mslrmin-entrytime").textContent = tp.time || "—";
-
-    let touchHit = null;
-    if (current != null && entry != null && side){
-      touchHit = (side === "BUY") ? (current >= entry) : (current <= entry);
-    }
-
-    let slHit = null;
-    if (touchHit === true && current != null && sl1x1 != null && side){
-      slHit = (side === "SELL") ? (current >= sl1x1) : (current <= sl1x1);
-    }
-
-    const statusTxt =
-      (!side || entry == null || sl1x1 == null)
-        ? "—"
-        : (touchHit !== true)
-            ? "⏳ WAIT — aguarde TOUCH"
-            : (slHit ? "⚠️ SL atingido — executar reentrada" : "✅ SL não atingido — continuar");
-
-    if ($("mslrmin-status")){
-      $("mslrmin-status").textContent = statusTxt;
-      $("mslrmin-status").style.color =
-        (touchHit !== true) ? "#facc15" :
-        (slHit === true) ? "#fb7185" :
-        (slHit === false) ? "#34d399" : "";
-    }
-
-    const ruleTxt =
-      (entry != null && sl1x1 != null && side)
-        ? (side === "BUY"
-            ? `Aguardar TOUCH: current ≥ ${fmt2(entry)}. Depois: se current > ${fmt2(sl1x1)} → ✅ SL não atingido · se current ≤ ${fmt2(sl1x1)} → ⚠️ SL atingido`
-            : `Aguardar TOUCH: current ≤ ${fmt2(entry)}. Depois: se current < ${fmt2(sl1x1)} → ✅ SL não atingido · se current ≥ ${fmt2(sl1x1)} → ⚠️ SL atingido`)
-        : "—";
-    if ($("mslrmin-rule")) $("mslrmin-rule").textContent = ruleTxt;
-
-    // ===== ENTRY ENGINE (MACRO MIN) — touch/confirm/cancel por ATR
-    const step = (atr != null && Number.isFinite(atr)) ? Math.max(0.05, atr * 0.10) : 0.10;
-    const touch = entry;
-    const confirm = (touch != null && side)
-      ? (side === "BUY" ? (touch + step) : (touch - step))
-      : null;
-    const cancel  = (touch != null && side)
-      ? (side === "BUY" ? (touch - step) : (touch + step))
-      : null;
-
-    if ($("ee-macro-min-engine-touch")) $("ee-macro-min-engine-touch").textContent = (touch != null) ? fmt2(touch) : "—";
-    if ($("ee-macro-min-engine-confirm")) $("ee-macro-min-engine-confirm").textContent = (confirm != null) ? fmt2(confirm) : "—";
-    if ($("ee-macro-min-engine-cancel")) $("ee-macro-min-engine-cancel").textContent = (cancel != null) ? fmt2(cancel) : "—";
-
-    if ($("ee-macro-min-engine-dir")) $("ee-macro-min-engine-dir").textContent = side || "—";
-    if ($("ee-macro-min-engine-prob")) $("ee-macro-min-engine-prob").textContent = (prob != null) ? `${Math.round(prob)}%` : "—";
-
-    // ===== Engine stage (WAIT → ARMED → CONFIRMED → FAILED) baseado em preço
-const pProb = (prob != null) ? Number(prob) : null;
-const modeKind = (pProb == null) ? null : (pProb >= 70) ? "strong" : (pProb >= 50) ? "noise" : "notrade";
-
-const touched = (current != null && touch != null && side)
-  ? (side === "BUY" ? (current >= touch) : (current <= touch))
-  : false;
-
-const confirmedHit = (touched && current != null && confirm != null && side)
-  ? (side === "BUY" ? (current >= confirm) : (current <= confirm))
-  : false;
-
-const canceledHit = (touched && current != null && cancel != null && side)
-  ? (side === "BUY" ? (current <= cancel) : (current >= cancel))
-  : false;
-
-// pill = estágio mecânico
-let pill = "LOADING";
-if (!side || touch == null) pill = "LOADING";
-else if (canceledHit) pill = "FAILED";
-else if (confirmedHit) pill = "CONFIRMED";
-else if (touched) pill = "ARMED";
-else pill = "WAIT";
-
-// texto do modo = permissão (prob)
-let modeTxt = "—";
-let note = "—";
-if (modeKind === "strong"){
-  modeTxt = "MODE: (PROB ≥ 70%) AARON STRONG ✅";
-  note = "High confidence (macro min) — gerado por macro_extremes_v1.";
-} else if (modeKind === "noise"){
-  modeTxt = "MODE: (PROB 50–69%) NOISE ZONE";
-  note = "Zona instável — aguarde confirmação do micro/fluxo.";
-} else if (modeKind === "notrade"){
-  modeTxt = "MODE: (PROB ≤ 49%) NO TRADE ⛔";
-  note = "Prob baixa para tocar a mínima — evite forçar trade.";
-}
-
-// rule line = estágio (não prob)
-let ruleLine = "Rule line: WAIT";
-if (pill === "WAIT") ruleLine = "Rule line: WAIT for TOUCH";
-else if (pill === "ARMED") ruleLine = "Rule line: TOUCH ok · wait CONFIRM close";
-else if (pill === "CONFIRMED") ruleLine = "Rule line: CONFIRMED · execute";
-else if (pill === "FAILED") ruleLine = "Rule line: CANCELLED · no trade";
-
-    const pillEl = $("ee-macro-min-engine-pill");
-if (pillEl){
-  pillEl.classList.remove("loading","armed","confirmed","failed");
-
-  if (pill === "ARMED") pillEl.classList.add("armed");
-  else if (pill === "CONFIRMED") pillEl.classList.add("confirmed");
-  else if (pill === "FAILED") pillEl.classList.add("failed");
-  else pillEl.classList.add("loading");
-
-  pillEl.textContent = pill;
-}
-
-const modeEl = $("ee-macro-min-engine-mode");
-if (modeEl){
-  modeEl.classList.remove("strong","noise","notrade");
-  if (modeKind === "strong") modeEl.classList.add("strong");
-  else if (modeKind === "noise") modeEl.classList.add("noise");
-  else if (modeKind === "notrade") modeEl.classList.add("notrade");
-  modeEl.textContent = modeTxt;
-}
-
-if ($("ee-macro-min-engine-rule")) $("ee-macro-min-engine-rule").textContent = ruleLine;
-if ($("ee-macro-min-engine-note")) $("ee-macro-min-engine-note").textContent = note;
-  }
-
-  // ===== QUICK P&L (MACRO MIN)
-  function updateMPnLMin(){
-    const box = $("macro-min-pnlcalc");
-    if (!box) return;
-
-    const payload = window.__AARON_LAST_PAYLOAD__ || {};
-    const digest  = payload.digest || {};
-
-    const capEl  = $("mpnlmin-capital");
-    const modeEl = $("mpnlmin-entrymode");
-
-    const cap  = num(capEl?.value);
-    const mode = modeEl?.value || "now";
-
-    const current =
-      num($("prem-right-current-price")?.textContent) ??
-      num($("prem-head-current-price")?.textContent) ??
-      num(payload?.panel?.price_now ?? payload?.panel?.last_price) ??
-      null;
-
-    const tp = num(digest.macro_extremes_min_target);
-    const opt = num($("mslrmin-optentry")?.textContent);
-    const entry = (mode === "opt") ? opt : current;
-
-    let dir = null;
-    if (entry != null && tp != null){
-      if (tp > entry) dir = "BUY";
-      else if (tp < entry) dir = "SELL";
-    }
-
-    let delta = null;
-    if (entry != null && tp != null && dir){
-      delta = (dir === "BUY") ? (tp - entry) : (entry - tp);
-    }
-
-    const sl = (entry != null && tp != null) ? (2 * entry - tp) : null;
-
-    let lossPer = null;
-    if (entry != null && sl != null && dir){
-      lossPer = (dir === "BUY") ? (entry - sl) : (sl - entry);
-      if (lossPer != null) lossPer = Math.abs(lossPer);
-    }
-
-    const shares = (cap != null && entry != null && cap > 0 && entry > 0)
-      ? Math.floor(cap / entry)
-      : null;
-
-    const profit = (shares != null && delta != null)   ? (shares * delta)   : null;
-    const loss   = (shares != null && lossPer != null) ? (shares * lossPer) : null;
-
-    const fmtMoney = (n) => {
-      if (n == null || !Number.isFinite(n)) return "—";
-      const abs = Math.abs(n);
-      const txt = abs.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      return (n < 0 ? "-$" : "$") + txt;
-    };
-    const fmtInt = (n) => (n == null || !Number.isFinite(n)) ? "—" : Math.round(n).toLocaleString("en-US");
-
-    if ($("mpnlmin-delta")) $("mpnlmin-delta").textContent = (delta != null) ? fmt2(delta) : "—";
-    if ($("mpnlmin-delta-cents")) $("mpnlmin-delta-cents").textContent = (delta != null) ? `(${Math.round(delta * 100)}¢)` : "";
-
-    if ($("mpnlmin-shares")) $("mpnlmin-shares").textContent = (shares != null) ? fmtInt(shares) : "—";
-
-    const pEl = $("mpnlmin-profit");
-    if (pEl){
-      pEl.textContent = (profit != null) ? fmtMoney(profit) : "—";
-      pEl.style.color = (profit != null) ? "#34d399" : "";
-    }
-
-    const lEl = $("mpnlmin-loss");
-    if (lEl){
-      lEl.textContent = (loss != null) ? fmtMoney(-Math.abs(loss)) : "—";
-    }
-
-    const foot = $("mpnlmin-foot");
-    if (foot){
-      const bits = [];
-      if (dir) bits.push(`Dir: ${dir}`);
-      if (entry != null) bits.push(`Entrada: ${fmt2(entry)}`);
-      if (tp != null) bits.push(`TP: ${fmt2(tp)}`);
-      if (sl != null) bits.push(`SL: ${fmt2(sl)}`);
-      foot.textContent = bits.length ? bits.join(" · ") : "—";
-    }
-  }
-
-  function loadMPnLMin(){
-    try{
-      const capSaved  = localStorage.getItem("a10_mpnlmin_capital");
-      const modeSaved = localStorage.getItem("a10_mpnlmin_entrymode");
-      if ($("mpnlmin-capital") && capSaved) $("mpnlmin-capital").value = capSaved;
-      if ($("mpnlmin-entrymode") && modeSaved) $("mpnlmin-entrymode").value = modeSaved;
-    }catch(_e){}
-  }
-
-  function bindMPnLMin(){
-    const capEl  = $("mpnlmin-capital");
-    const modeEl = $("mpnlmin-entrymode");
-
-    if (capEl){
-      capEl.addEventListener("input", () => {
-        try{ localStorage.setItem("a10_mpnlmin_capital", capEl.value); }catch(_e){}
-        updateMPnLMin();
-      });
-    }
-
-    if (modeEl){
-      modeEl.addEventListener("change", () => {
-        try{ localStorage.setItem("a10_mpnlmin_entrymode", modeEl.value); }catch(_e){}
-        updateMPnLMin();
-      });
-    }
-  }
-
-  function tick(){
-    updateMacroMinAll();
-    updateMPnLMin();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      loadMPnLMin();
-      bindMPnLMin();
-      tick();
-    });
-  } else {
-    loadMPnLMin();
-    bindMPnLMin();
-    tick();
-  }
-
-  setInterval(tick, 750);
-})();
 /* ===== EE BRAIN (Entry Brain) — onde/quando entrar (Target = Micro Live) ===== */
 (function(){
   const $ = (id) => document.getElementById(id);
@@ -18099,61 +15861,6 @@ const tpTxt = (() => {
   setInterval(updateEEBrain, 750);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", updateEEBrain);
   else updateEEBrain();
-})();
-(function(){
-  function placeEntryEnginesInOwnColumns(){
-    // ===== MICRO =====
-    const microCol   = document.getElementById("mm-col-micro");
-    const microEE    = document.getElementById("ee-engine-card");
-    const microMap   = document.getElementById("micro-map-card");
-    const microPanel = microMap ? microMap.nextElementSibling : null;
-
-    if (microCol && microEE && microMap && microPanel) {
-      // força tirar da posição antiga
-      microCol.appendChild(microEE);
-      microCol.appendChild(microMap);
-      microCol.appendChild(microPanel);
-    }
-
-    // ===== MACRO MAX =====
-    const macroCol   = document.getElementById("mm-col-macro");
-    const macroEE    = document.getElementById("ee-macro-engine-card");
-    const macroMap   = document.getElementById("macro-map-card");
-    const macroPanel = macroMap ? macroMap.nextElementSibling : null;
-
-    if (macroCol && macroEE && macroMap && macroPanel) {
-      macroCol.appendChild(macroEE);
-      macroCol.appendChild(macroMap);
-      macroCol.appendChild(macroPanel);
-    }
-
-    // ===== MACRO MIN =====
-    const macroMinCol   = document.getElementById("mm-col-macro-min");
-    const macroMinEE    = document.getElementById("ee-macro-min-engine-card");
-    const macroMinMap   = document.getElementById("macro-min-map-card");
-    const macroMinPanel = macroMinMap ? macroMinMap.nextElementSibling : null;
-
-    if (macroMinCol && macroMinEE && macroMinMap && macroMinPanel) {
-      macroMinCol.appendChild(macroMinEE);
-      macroMinCol.appendChild(macroMinMap);
-      macroMinCol.appendChild(macroMinPanel);
-    }
-  }
-
-  function placeEntryEnginesSafely(){
-    placeEntryEnginesInOwnColumns();
-    setTimeout(placeEntryEnginesInOwnColumns, 50);
-    setTimeout(placeEntryEnginesInOwnColumns, 200);
-    setTimeout(placeEntryEnginesInOwnColumns, 600);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", placeEntryEnginesSafely);
-  } else {
-    placeEntryEnginesSafely();
-  }
-
-  window.addEventListener("load", placeEntryEnginesSafely);
 })();
 </script>
 
