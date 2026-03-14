@@ -3552,12 +3552,13 @@
 
 #replay-mode-card .replay-datebar{
   display:grid;
-  grid-template-columns:minmax(220px, .9fr) minmax(0, 1.1fr);
+  grid-template-columns:minmax(220px, .85fr) minmax(180px, .72fr) minmax(0, 1.15fr);
   gap:8px;
   margin-top:10px;
 }
 
-#replay-mode-card .replay-date-input{
+#replay-mode-card .replay-date-input,
+#replay-mode-card .replay-time-input{
   width:100%;
   min-height:52px;
   appearance:none;
@@ -3573,7 +3574,8 @@
   color-scheme: dark;
 }
 
-#replay-mode-card .replay-date-input:focus{
+#replay-mode-card .replay-date-input:focus,
+#replay-mode-card .replay-time-input:focus{
   border-color:rgba(255,204,102,.32);
   box-shadow:0 0 0 3px rgba(255,204,102,.10);
 }
@@ -5347,16 +5349,30 @@
                 </div>
               </div>
 
-              <div class="replay-datebar">
+                            <div class="replay-datebar">
                 <div class="replay-box">
                   <div class="replay-label">DATE PICKER</div>
                   <input id="replay-date-input" class="replay-date-input" type="date" />
                 </div>
 
                 <div class="replay-box">
+                  <div class="replay-label">HOUR PICKER</div>
+                  <input
+                    id="replay-time-input"
+                    class="replay-time-input"
+                    type="time"
+                    min="07:30"
+                    max="14:00"
+                    step="60"
+                    value="07:30"
+                  />
+                </div>
+
+                <div class="replay-box">
                   <div class="replay-label">SNAPSHOT</div>
                   <div id="replay-datetime" class="replay-value replay-current">—</div>
                 </div>
+              </div>
               </div>
 
               <div class="replay-actions">
@@ -7669,6 +7685,7 @@ const replayState = {
   enabled: false,
   tradeDate: replayTodayIso(),
   minute: REPLAY_START_MIN,
+  anchorMinute: REPLAY_START_MIN,
   playing: false,
   timer: null,
   speedMs: 900,
@@ -7697,6 +7714,24 @@ function replayMinuteHhmm(totalMinutes){
   return `${hh}:${mm}`;
 }
 
+function replayHhmmToMinute(hhmm){
+  const raw = String(hhmm || "").trim();
+  const m = raw.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return REPLAY_START_MIN;
+
+  const hh = Number(m[1]);
+  const mm = Number(m[2]);
+  return replayClampMinute((hh * 60) + mm);
+}
+
+function replayNormalizeTimeValue(value){
+  const raw = String(value || "").trim();
+  if (!/^\d{1,2}:\d{2}$/.test(raw)) {
+    return replayMinuteHhmm(replayState.minute);
+  }
+  return replayMinuteHhmm(replayHhmmToMinute(raw));
+}
+
 function replayDateLabel(iso){
   const safe = replayNormalizeTradeDate(iso);
   const [y, m, d] = safe.split("-");
@@ -7715,6 +7750,7 @@ function replayGetEls(){
     current: document.getElementById("replay-current"),
     end: document.getElementById("replay-end"),
     dateInput: document.getElementById("replay-date-input"),
+    timeInput: document.getElementById("replay-time-input"),
     dateTime: document.getElementById("replay-datetime"),
     status: document.getElementById("replay-status"),
     window: document.getElementById("replay-window"),
@@ -7741,14 +7777,23 @@ function replayRender(){
   const snapshotTxt = replayDateTimeLabel(tradeDate, replayState.minute);
   const hasHook = typeof window.__AARON_REPLAY_HOOK__ === "function";
 
-  if (els.day) els.day.textContent = dateTxt;
+    if (els.day) els.day.textContent = dateTxt;
   if (els.start) els.start.textContent = startTxt;
   if (els.end) els.end.textContent = endTxt;
   if (els.current) els.current.textContent = currentTxt;
   if (els.dateTime) els.dateTime.textContent = snapshotTxt;
+
   if (els.dateInput && els.dateInput.value !== tradeDate) {
     els.dateInput.value = tradeDate;
   }
+
+  if (els.timeInput) {
+    const hhmm = replayMinuteHhmm(replayState.minute);
+    if (els.timeInput.value !== hhmm) {
+      els.timeInput.value = hhmm;
+    }
+  }
+
   if (els.window) els.window.textContent = `${startTxt} → ${endTxt}`;
   if (els.step) els.step.textContent = "1 MINUTE";
 
@@ -7782,6 +7827,15 @@ function replayRender(){
 
 async function replayApplyMinute(){
   replayRender();
+
+  if (typeof loadPanel === "function") {
+    try {
+      await loadPanel(false);
+      return;
+    } catch (err) {
+      console.warn("Replay loadPanel error:", err);
+    }
+  }
 
   if (!replayState.enabled) return;
 
@@ -7853,18 +7907,31 @@ function initReplayModeUI(){
   els.play.addEventListener("click", replayPlay);
   els.pause.addEventListener("click", replayPause);
 
-  if (els.dateInput) {
-    els.dateInput.addEventListener("change", (ev) => {
+    if (els.dateInput) {
+    els.dateInput.addEventListener("change", async (ev) => {
       replayPause();
       replayState.tradeDate = replayNormalizeTradeDate(ev.target.value);
-      replayApplyMinute();
+      replayState.enabled = true;
+      await replayApplyMinute();
     });
   }
 
-  els.reset.addEventListener("click", () => {
+  if (els.timeInput) {
+    els.timeInput.addEventListener("change", async (ev) => {
+      replayPause();
+      const safeHhmm = replayNormalizeTimeValue(ev.target.value);
+      replayState.minute = replayHhmmToMinute(safeHhmm);
+      replayState.anchorMinute = replayState.minute;
+      replayState.enabled = true;
+      await replayApplyMinute();
+    });
+  }
+
+  els.reset.addEventListener("click", async () => {
     replayPause();
-    replayState.minute = REPLAY_START_MIN;
-    replayApplyMinute();
+    replayState.minute = replayClampMinute(replayState.anchorMinute);
+    replayState.enabled = true;
+    await replayApplyMinute();
   });
 
   replayRender();
@@ -7877,15 +7944,25 @@ window.__AARON_REPLAY__ = {
   disable(){ replaySetEnabled(false); },
   play(){ replayPlay(); },
   pause(){ replayPause(); },
-  step(delta){ replayStep(delta); },
+    step(delta){ replayStep(delta); },
   setMinute(minute){
     replayPause();
     replayState.minute = replayClampMinute(minute);
+    replayState.anchorMinute = replayState.minute;
+    replayState.enabled = true;
+    replayApplyMinute();
+  },
+  setTime(hhmm){
+    replayPause();
+    replayState.minute = replayHhmmToMinute(replayNormalizeTimeValue(hhmm));
+    replayState.anchorMinute = replayState.minute;
+    replayState.enabled = true;
     replayApplyMinute();
   },
   setDate(tradeDate){
     replayPause();
     replayState.tradeDate = replayNormalizeTradeDate(tradeDate);
+    replayState.enabled = true;
     replayApplyMinute();
   },
   getState(){
@@ -14738,9 +14815,28 @@ async function loadPanel(showSpinner) {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
 
-        const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
+            const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
     const tf  = (typeof getSelectedTimeframe === "function") ? getSelectedTimeframe() : "1m";
-    const url = `${PANEL_URL}${PANEL_URL.includes('?') ? '&' : '?'}symbol=${encodeURIComponent(sym)}&timeframe=${encodeURIComponent(tf)}&t=${Date.now()}`;
+
+    const replayApi =
+      (window.__AARON_REPLAY__ && typeof window.__AARON_REPLAY__.getState === 'function')
+        ? window.__AARON_REPLAY__.getState()
+        : null;
+
+    const qs = new URLSearchParams({
+      symbol: sym,
+      timeframe: tf,
+      t: String(Date.now()),
+    });
+
+    if (replayApi && replayApi.enabled) {
+      qs.set('replay', '1');
+      qs.set('tradeDate', replayApi.tradeDate || '');
+      qs.set('replay_minute', replayApi.replay_minute || '07:30');
+      qs.set('replay_idx', String(Math.max(0, Number(replayApi.replay_idx || 0))));
+    }
+
+    const url = `${PANEL_URL}?${qs.toString()}`;
     const res = await fetch(url, { cache: 'no-store' });
 
 
