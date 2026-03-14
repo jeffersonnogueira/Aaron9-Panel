@@ -3546,8 +3546,36 @@
 
 #replay-mode-card .replay-topline{
   display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
+  grid-template-columns:repeat(4, minmax(0, 1fr));
   gap:8px;
+}
+
+#replay-mode-card .replay-datebar{
+  display:grid;
+  grid-template-columns:minmax(220px, .9fr) minmax(0, 1.1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+#replay-mode-card .replay-date-input{
+  width:100%;
+  min-height:52px;
+  appearance:none;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);
+  color:#e5e7eb;
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:20px;
+  font-weight:950;
+  letter-spacing:.03em;
+  outline:none;
+  color-scheme: dark;
+}
+
+#replay-mode-card .replay-date-input:focus{
+  border-color:rgba(255,204,102,.32);
+  box-shadow:0 0 0 3px rgba(255,204,102,.10);
 }
 
 #replay-mode-card .replay-box,
@@ -3672,7 +3700,8 @@
     min-width:0;
   }
 
-  #replay-mode-card .replay-topline,
+    #replay-mode-card .replay-topline,
+  #replay-mode-card .replay-datebar,
   #replay-mode-card .replay-foot{
     grid-template-columns:1fr;
   }
@@ -5295,8 +5324,13 @@
               <span id="replay-badge" class="win-badge win-wait">OFF</span>
             </div>
 
-            <div class="replay-shell">
+                        <div class="replay-shell">
               <div class="replay-topline">
+                <div class="replay-box">
+                  <div class="replay-label">DAY</div>
+                  <div id="replay-day" class="replay-value replay-current">—</div>
+                </div>
+
                 <div class="replay-box">
                   <div class="replay-label">START</div>
                   <div id="replay-start" class="replay-value">7:30 AM</div>
@@ -5310,6 +5344,18 @@
                 <div class="replay-box">
                   <div class="replay-label">END</div>
                   <div id="replay-end" class="replay-value">2:00 PM</div>
+                </div>
+              </div>
+
+              <div class="replay-datebar">
+                <div class="replay-box">
+                  <div class="replay-label">DATE PICKER</div>
+                  <input id="replay-date-input" class="replay-date-input" type="date" />
+                </div>
+
+                <div class="replay-box">
+                  <div class="replay-label">SNAPSHOT</div>
+                  <div id="replay-datetime" class="replay-value replay-current">—</div>
                 </div>
               </div>
 
@@ -7606,8 +7652,22 @@ let a10LiveRetryMs = A10_LIVE_RETRY_MIN_MS;
 const REPLAY_START_MIN = (7 * 60) + 30;
 const REPLAY_END_MIN = 14 * 60;
 
+function replayTodayIso(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function replayNormalizeTradeDate(value){
+  const raw = String(value || "").trim();
+  return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : replayTodayIso();
+}
+
 const replayState = {
   enabled: false,
+  tradeDate: replayTodayIso(),
   minute: REPLAY_START_MIN,
   playing: false,
   timer: null,
@@ -7630,12 +7690,32 @@ function replayMinuteLabel(totalMinutes){
   return `${hours}:${String(minutes).padStart(2, "0")} ${suffix}`;
 }
 
+function replayMinuteHhmm(totalMinutes){
+  const safe = replayClampMinute(totalMinutes);
+  const hh = String(Math.floor(safe / 60)).padStart(2, "0");
+  const mm = String(safe % 60).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+function replayDateLabel(iso){
+  const safe = replayNormalizeTradeDate(iso);
+  const [y, m, d] = safe.split("-");
+  return `${m}/${d}/${y}`;
+}
+
+function replayDateTimeLabel(tradeDate, totalMinutes){
+  return `${replayDateLabel(tradeDate)} · ${replayMinuteLabel(totalMinutes)}`;
+}
+
 function replayGetEls(){
   return {
     badge: document.getElementById("replay-badge"),
+    day: document.getElementById("replay-day"),
     start: document.getElementById("replay-start"),
     current: document.getElementById("replay-current"),
     end: document.getElementById("replay-end"),
+    dateInput: document.getElementById("replay-date-input"),
+    dateTime: document.getElementById("replay-datetime"),
     status: document.getElementById("replay-status"),
     window: document.getElementById("replay-window"),
     step: document.getElementById("replay-step"),
@@ -7653,14 +7733,22 @@ function replayRender(){
   const els = replayGetEls();
   if (!els.badge) return;
 
+  const tradeDate = replayNormalizeTradeDate(replayState.tradeDate);
+  const dateTxt = replayDateLabel(tradeDate);
   const startTxt = replayMinuteLabel(REPLAY_START_MIN);
   const endTxt = replayMinuteLabel(REPLAY_END_MIN);
   const currentTxt = replayMinuteLabel(replayState.minute);
+  const snapshotTxt = replayDateTimeLabel(tradeDate, replayState.minute);
   const hasHook = typeof window.__AARON_REPLAY_HOOK__ === "function";
 
+  if (els.day) els.day.textContent = dateTxt;
   if (els.start) els.start.textContent = startTxt;
   if (els.end) els.end.textContent = endTxt;
   if (els.current) els.current.textContent = currentTxt;
+  if (els.dateTime) els.dateTime.textContent = snapshotTxt;
+  if (els.dateInput && els.dateInput.value !== tradeDate) {
+    els.dateInput.value = tradeDate;
+  }
   if (els.window) els.window.textContent = `${startTxt} → ${endTxt}`;
   if (els.step) els.step.textContent = "1 MINUTE";
 
@@ -7676,11 +7764,11 @@ function replayRender(){
 
   if (els.note) {
     if (!replayState.enabled) {
-      els.note.textContent = "OFF — READY";
+      els.note.textContent = `OFF — READY (${snapshotTxt})`;
     } else if (hasHook) {
-      els.note.textContent = `SNAPSHOT ${currentTxt} — replay hook ready`;
+      els.note.textContent = `SNAPSHOT ${snapshotTxt} — replay hook ready`;
     } else {
-      els.note.textContent = `UI STEP ${currentTxt} — connect n8n / Matcher hook for real historical panel`;
+      els.note.textContent = `UI STEP ${snapshotTxt} — connect n8n / Matcher hook for real historical panel`;
     }
   }
 
@@ -7702,8 +7790,12 @@ async function replayApplyMinute(){
 
   try {
     await hook({
+      tradeDate: replayNormalizeTradeDate(replayState.tradeDate),
+      replay_minute: replayMinuteHhmm(replayState.minute),
+      replay_idx: replayState.minute - REPLAY_START_MIN,
       minute: replayState.minute,
       label: replayMinuteLabel(replayState.minute),
+      snapshotLabel: replayDateTimeLabel(replayState.tradeDate, replayState.minute),
       startMinute: REPLAY_START_MIN,
       endMinute: REPLAY_END_MIN,
     });
@@ -7760,6 +7852,15 @@ function initReplayModeUI(){
   els.next.addEventListener("click", () => replayStep(1));
   els.play.addEventListener("click", replayPlay);
   els.pause.addEventListener("click", replayPause);
+
+  if (els.dateInput) {
+    els.dateInput.addEventListener("change", (ev) => {
+      replayPause();
+      replayState.tradeDate = replayNormalizeTradeDate(ev.target.value);
+      replayApplyMinute();
+    });
+  }
+
   els.reset.addEventListener("click", () => {
     replayPause();
     replayState.minute = REPLAY_START_MIN;
@@ -7782,12 +7883,21 @@ window.__AARON_REPLAY__ = {
     replayState.minute = replayClampMinute(minute);
     replayApplyMinute();
   },
+  setDate(tradeDate){
+    replayPause();
+    replayState.tradeDate = replayNormalizeTradeDate(tradeDate);
+    replayApplyMinute();
+  },
   getState(){
     return {
       enabled: replayState.enabled,
       playing: replayState.playing,
+      tradeDate: replayNormalizeTradeDate(replayState.tradeDate),
       minute: replayState.minute,
+      replay_minute: replayMinuteHhmm(replayState.minute),
+      replay_idx: replayState.minute - REPLAY_START_MIN,
       label: replayMinuteLabel(replayState.minute),
+      snapshotLabel: replayDateTimeLabel(replayState.tradeDate, replayState.minute),
       speedMs: replayState.speedMs,
     };
   },
