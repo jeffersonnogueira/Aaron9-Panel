@@ -5364,7 +5364,7 @@
                     min="07:30"
                     max="14:00"
                     step="60"
-                    value="07:30"
+                    value="07:31"
                   />
                 </div>
 
@@ -7700,8 +7700,8 @@ function replayNormalizeTradeDate(value){
 const replayState = {
   enabled: false,
   tradeDate: replayTodayIso(),
-  minute: REPLAY_START_MIN,
-  anchorMinute: REPLAY_START_MIN,
+  minute: REPLAY_START_MIN + 1,
+  anchorMinute: REPLAY_START_MIN + 1,
   playing: false,
   timer: null,
   speedMs: 900,
