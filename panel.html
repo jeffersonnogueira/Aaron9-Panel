@@ -7619,6 +7619,21 @@
   <script>
 // ======= CONFIG PAINEL (JSON) =======
 const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json';
+const PANEL_URL_REPLAY = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json_bridge';
+
+function getPanelUrl() {
+  try {
+    const replayApi =
+      (window.__AARON_REPLAY__ && typeof window.__AARON_REPLAY__.getState === 'function')
+        ? window.__AARON_REPLAY__.getState()
+        : null;
+
+    return (replayApi && replayApi.enabled) ? PANEL_URL_REPLAY : PANEL_URL;
+  } catch (_) {
+    return PANEL_URL;
+  }
+}
+
 const REFRESH_MS = 60000; // 1 minuto
 
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
@@ -14810,7 +14825,8 @@ function adaptPanelToTradeCard(panel, raw, fallbackSymbol){
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
 async function loadPanel(showSpinner) {
-  if (!PANEL_URL) return;
+  const panelUrlBase = getPanelUrl();
+if (!panelUrlBase) return;
   try {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
@@ -14836,7 +14852,7 @@ async function loadPanel(showSpinner) {
       qs.set('replay_idx', String(Math.max(0, Number(replayApi.replay_idx || 0))));
     }
 
-    const url = `${PANEL_URL}?${qs.toString()}`;
+    const url = `${panelUrlBase}?${qs.toString()}`;
     const res = await fetch(url, { cache: 'no-store' });
 
 
