@@ -7779,7 +7779,19 @@ function replayGetEls(){
     reset: document.getElementById("replay-reset"),
   };
 }
+function replaySyncInputsToState(){
+  const els = replayGetEls();
 
+  if (els.dateInput && els.dateInput.value) {
+    replayState.tradeDate = replayNormalizeTradeDate(els.dateInput.value);
+  }
+
+  if (els.timeInput && els.timeInput.value) {
+    const safeHhmm = replayNormalizeTimeValue(els.timeInput.value);
+    replayState.minute = replayHhmmToMinute(safeHhmm);
+    replayState.anchorMinute = replayState.minute;
+  }
+}
 function replayRender(){
   const els = replayGetEls();
   if (!els.badge) return;
@@ -7841,6 +7853,7 @@ function replayRender(){
 }
 
 async function replayApplyMinute(){
+  replaySyncInputsToState();
   replayRender();
 
   if (typeof loadPanel === "function") {
@@ -7941,24 +7954,30 @@ function initReplayModeUI(){
   els.play.addEventListener("click", replayPlay);
   els.pause.addEventListener("click", replayPause);
 
-    if (els.dateInput) {
-    els.dateInput.addEventListener("change", async (ev) => {
+      if (els.dateInput) {
+    const onReplayDatePick = async (ev) => {
       replayPause();
       replayState.tradeDate = replayNormalizeTradeDate(ev.target.value);
       replayState.enabled = true;
       await replayApplyMinute();
-    });
+    };
+
+    els.dateInput.addEventListener("input", onReplayDatePick);
+    els.dateInput.addEventListener("change", onReplayDatePick);
   }
 
   if (els.timeInput) {
-    els.timeInput.addEventListener("change", async (ev) => {
+    const onReplayTimePick = async (ev) => {
       replayPause();
       const safeHhmm = replayNormalizeTimeValue(ev.target.value);
       replayState.minute = replayHhmmToMinute(safeHhmm);
       replayState.anchorMinute = replayState.minute;
       replayState.enabled = true;
       await replayApplyMinute();
-    });
+    };
+
+    els.timeInput.addEventListener("input", onReplayTimePick);
+    els.timeInput.addEventListener("change", onReplayTimePick);
   }
 
   els.reset.addEventListener("click", async () => {
@@ -14865,9 +14884,24 @@ if (!panelUrlBase) return;
     });
 
     if (replayApi && replayApi.enabled) {
-  const replayTradeDate = replayApi.tradeDate || '';
-  const replayMinute = replayApi.replay_minute || '07:30';
-  const replayIdx = String(Math.max(0, Number(replayApi.replay_idx || 0)));
+  const replayDateInputEl = document.getElementById('replay-date-input');
+const replayTimeInputEl = document.getElementById('replay-time-input');
+
+const replayTradeDate =
+  (replayDateInputEl && replayDateInputEl.value)
+    ? replayNormalizeTradeDate(replayDateInputEl.value)
+    : (replayApi.tradeDate || '');
+
+const replayMinute =
+  (replayTimeInputEl && replayTimeInputEl.value)
+    ? replayNormalizeTimeValue(replayTimeInputEl.value)
+    : (replayApi.replay_minute || '07:30');
+
+const replayIdx =
+  String(Math.max(
+    0,
+    replayHhmmToMinute(replayMinute) - REPLAY_START_MIN
+  ));
 
   qs.set('replay', '1');
 
