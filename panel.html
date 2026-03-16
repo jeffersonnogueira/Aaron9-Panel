@@ -3611,7 +3611,7 @@
 
 #replay-mode-card .replay-actions{
   display:grid;
-  grid-template-columns:repeat(6, max-content);
+  grid-template-columns:repeat(7, max-content);
   justify-content:space-between;
   gap:8px;
   margin-top:10px;
@@ -5376,6 +5376,7 @@
               </div>
 
               <div class="replay-actions">
+                <button id="replay-apply" class="replay-btn replay-btn-gold" type="button">APPLY</button>
                 <button id="replay-toggle" class="replay-btn replay-btn-gold" type="button">REPLAY MODE</button>
                 <button id="replay-prev" class="replay-btn" type="button">◀ PREV</button>
                 <button id="replay-next" class="replay-btn" type="button">NEXT ▶</button>
@@ -7776,6 +7777,7 @@ function replayGetEls(){
     next: document.getElementById("replay-next"),
     play: document.getElementById("replay-play"),
     pause: document.getElementById("replay-pause"),
+    apply: document.getElementById("replay-apply"),
     reset: document.getElementById("replay-reset"),
   };
 }
@@ -7791,6 +7793,12 @@ function replaySyncInputsToState(){
     replayState.minute = replayHhmmToMinute(safeHhmm);
     replayState.anchorMinute = replayState.minute;
   }
+}
+async function replayCommitPicker(){
+  replayPause();
+  replaySyncInputsToState();
+  replayState.enabled = true;
+  await replayApplyMinute();
 }
 function replayRender(){
   const els = replayGetEls();
@@ -7810,16 +7818,19 @@ function replayRender(){
   if (els.current) els.current.textContent = currentTxt;
   if (els.dateTime) els.dateTime.textContent = snapshotTxt;
 
-  if (els.dateInput && els.dateInput.value !== tradeDate) {
-    els.dateInput.value = tradeDate;
-  }
+  const isEditingDate = !!(els.dateInput && document.activeElement === els.dateInput);
+const isEditingTime = !!(els.timeInput && document.activeElement === els.timeInput);
 
-  if (els.timeInput) {
-    const hhmm = replayMinuteHhmm(replayState.minute);
-    if (els.timeInput.value !== hhmm) {
-      els.timeInput.value = hhmm;
-    }
+if (els.dateInput && !isEditingDate && els.dateInput.value !== tradeDate) {
+  els.dateInput.value = tradeDate;
+}
+
+if (els.timeInput && !isEditingTime) {
+  const hhmm = replayMinuteHhmm(replayState.minute);
+  if (els.timeInput.value !== hhmm) {
+    els.timeInput.value = hhmm;
   }
+}
 
   if (els.window) els.window.textContent = `${startTxt} → ${endTxt}`;
   if (els.step) els.step.textContent = "1 MINUTE";
@@ -7953,32 +7964,29 @@ function initReplayModeUI(){
   els.next.addEventListener("click", () => replayStep(1));
   els.play.addEventListener("click", replayPlay);
   els.pause.addEventListener("click", replayPause);
+  if (els.apply) els.apply.addEventListener("click", replayCommitPicker);
 
       if (els.dateInput) {
-    const onReplayDatePick = async (ev) => {
-      replayPause();
-      replayState.tradeDate = replayNormalizeTradeDate(ev.target.value);
-      replayState.enabled = true;
-      await replayApplyMinute();
-    };
+  const onReplayDatePick = (ev) => {
+    replayState.tradeDate = replayNormalizeTradeDate(ev.target.value);
+    replayRender();
+  };
 
-    els.dateInput.addEventListener("input", onReplayDatePick);
-    els.dateInput.addEventListener("change", onReplayDatePick);
-  }
+  els.dateInput.addEventListener("input", onReplayDatePick);
+  els.dateInput.addEventListener("change", onReplayDatePick);
+}
 
-  if (els.timeInput) {
-    const onReplayTimePick = async (ev) => {
-      replayPause();
-      const safeHhmm = replayNormalizeTimeValue(ev.target.value);
-      replayState.minute = replayHhmmToMinute(safeHhmm);
-      replayState.anchorMinute = replayState.minute;
-      replayState.enabled = true;
-      await replayApplyMinute();
-    };
+if (els.timeInput) {
+  const onReplayTimePick = (ev) => {
+    const safeHhmm = replayNormalizeTimeValue(ev.target.value);
+    replayState.minute = replayHhmmToMinute(safeHhmm);
+    replayState.anchorMinute = replayState.minute;
+    replayRender();
+  };
 
-    els.timeInput.addEventListener("input", onReplayTimePick);
-    els.timeInput.addEventListener("change", onReplayTimePick);
-  }
+  els.timeInput.addEventListener("input", onReplayTimePick);
+  els.timeInput.addEventListener("change", onReplayTimePick);
+}
 
   els.reset.addEventListener("click", async () => {
     replayPause();
