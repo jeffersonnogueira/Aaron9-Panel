@@ -7780,6 +7780,18 @@ function replayGetEls(){
     apply: document.getElementById("replay-apply"),
     reset: document.getElementById("replay-reset"),
   };
+  function replaySyncInputsToState(){
+  const els = replayGetEls();
+
+  if (els.dateInput) {
+    replayState.tradeDate = replayNormalizeTradeDate(els.dateInput.value);
+  }
+
+  if (els.timeInput) {
+    const safeHhmm = replayNormalizeTimeValue(els.timeInput.value);
+    replayState.minute = replayHhmmToMinute(safeHhmm);
+  }
+}
 }
 function replaySyncInputsToState(){
   const els = replayGetEls();
