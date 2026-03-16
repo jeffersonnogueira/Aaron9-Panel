@@ -7916,7 +7916,26 @@ function initReplayModeUI(){
 
   window.__AARON_REPLAY_UI_READY__ = true;
 
-  els.toggle.addEventListener("click", () => replaySetEnabled(!replayState.enabled));
+  els.toggle.addEventListener("click", async () => {
+  const nextEnabled = !replayState.enabled;
+
+  replayPause();
+
+  if (nextEnabled) {
+    if (els.dateInput && els.dateInput.value) {
+      replayState.tradeDate = replayNormalizeTradeDate(els.dateInput.value);
+    }
+
+    if (els.timeInput && els.timeInput.value) {
+      const safeHhmm = replayNormalizeTimeValue(els.timeInput.value);
+      replayState.minute = replayHhmmToMinute(safeHhmm);
+      replayState.anchorMinute = replayState.minute;
+    }
+  }
+
+  replayState.enabled = nextEnabled;
+  await replayApplyMinute();
+});
   els.prev.addEventListener("click", () => replayStep(-1));
   els.next.addEventListener("click", () => replayStep(1));
   els.play.addEventListener("click", replayPlay);
@@ -14846,11 +14865,29 @@ if (!panelUrlBase) return;
     });
 
     if (replayApi && replayApi.enabled) {
-      qs.set('replay', '1');
-      qs.set('tradeDate', replayApi.tradeDate || '');
-      qs.set('replay_minute', replayApi.replay_minute || '07:30');
-      qs.set('replay_idx', String(Math.max(0, Number(replayApi.replay_idx || 0))));
-    }
+  const replayTradeDate = replayApi.tradeDate || '';
+  const replayMinute = replayApi.replay_minute || '07:30';
+  const replayIdx = String(Math.max(0, Number(replayApi.replay_idx || 0)));
+
+  qs.set('replay', '1');
+
+  // DATA
+  qs.set('tradeDate', replayTradeDate);
+  qs.set('date', replayTradeDate);
+  qs.set('day', replayTradeDate);
+  qs.set('replay_date', replayTradeDate);
+  qs.set('snapshot_date', replayTradeDate);
+
+  // HORA
+  qs.set('replay_minute', replayMinute);
+  qs.set('minute', replayMinute);
+  qs.set('time', replayMinute);
+
+  // ÍNDICE / SNAPSHOT
+  qs.set('replay_idx', replayIdx);
+  qs.set('snapshot', `${replayTradeDate} ${replayMinute}`);
+  qs.set('snapshotLabel', `${replayTradeDate} ${replayMinute}`);
+}
 
     const url = `${panelUrlBase}?${qs.toString()}`;
     const res = await fetch(url, { cache: 'no-store' });
