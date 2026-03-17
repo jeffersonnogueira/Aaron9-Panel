@@ -14228,6 +14228,7 @@ function a10UpdateEntryPremLive(bar) {
   const readEl    = document.getElementById('ep-read');
   const zoneEl    = document.getElementById('ep-zone');
   const touchEl   = document.getElementById('ep-touch');
+  const chaseEl   = document.getElementById('ep-chase');
   const confirmEl = document.getElementById('ep-confirm');
   const cancelEl  = document.getElementById('ep-cancel');
 
@@ -14239,10 +14240,12 @@ function a10UpdateEntryPremLive(bar) {
 
   const zone    = a10ParsePriceRange(zoneEl?.textContent || '');
   const touchR  = a10ParsePriceRange(touchEl?.textContent || '');
+  const chaseR  = a10ParsePriceRange(chaseEl?.textContent || '');
   const confR   = a10ParsePriceRange(confirmEl?.textContent || '');
   const cancR   = a10ParsePriceRange(cancelEl?.textContent || '');
 
   const touchPx   = touchR ? touchR.lo : null;
+  const chasePx   = chaseR ? chaseR.lo : null;
   const confirmPx = confR ? confR.lo : null;
   const cancelPx  = cancR ? cancR.lo : null;
 
@@ -14254,15 +14257,89 @@ function a10UpdateEntryPremLive(bar) {
     ? (livePx >= zoneLo && livePx <= zoneHi)
     : false;
 
+  const zoneWidth =
+    (zoneLo != null && zoneHi != null)
+      ? Math.max(0.03, Math.abs(zoneHi - zoneLo))
+      : 0.08;
+
   const nearZone = (zoneMid != null)
-    ? (Math.abs(livePx - zoneMid) <= Math.max(0.03, Math.abs((zoneHi ?? zoneMid) - (zoneLo ?? zoneMid)), 0.08))
+    ? (Math.abs(livePx - zoneMid) <= Math.max(zoneWidth, 0.08))
     : false;
+
+  // ===== memória live do setup atual =====
+  const fp = [
+    modeTxt,
+    zoneLo, zoneHi,
+    touchPx, chasePx,
+    confirmPx, cancelPx
+  ].join('|');
+
+  const st = (window.__A10_EP_LIVE_STATE__ ||= {});
+
+  if (st.fp !== fp) {
+    st.fp = fp;
+    st.touched = false;
+    st.missed = false;
+  }
+
+  // registrou toque real na zona
+  if (inZone) {
+    st.touched = true;
+  } else if (touchPx != null) {
+    if (isSell && livePx <= touchPx) st.touched = true;
+    if (isBuy  && livePx >= touchPx) st.touched = true;
+  }
+
+  const missBuffer = Math.max(zoneWidth, 0.08);
+  const flipBuffer = Math.max(zoneWidth * 2, 0.16);
+
+  // ===== lógica "não bateu e foi embora" =====
+  if (!st.touched) {
+    if (isSell) {
+      const missRef = chasePx ?? zoneHi ?? touchPx ?? confirmPx;
+      if (missRef != null && livePx > (missRef + missBuffer)) {
+        st.missed = true;
+      }
+    }
+
+    if (isBuy) {
+      const missRef = chasePx ?? zoneLo ?? touchPx ?? confirmPx;
+      if (missRef != null && livePx < (missRef - missBuffer)) {
+        st.missed = true;
+      }
+    }
+  }
 
   let badgeText = 'WAIT';
   let badgeMode = 'win-wait';
   let liveRead  = `LIVE ${livePx.toFixed(2)} · WAIT`;
 
-  if (isBuy) {
+  // ===== se perdeu a entrada, não continua fingindo que ela está viva =====
+  if (st.missed) {
+    if (isSell) {
+      const flipRef = zoneHi ?? chasePx ?? touchPx ?? confirmPx;
+      if (flipRef != null && livePx > (flipRef + flipBuffer)) {
+        badgeText = 'FLIP UP';
+        badgeMode = 'win-now';
+        liveRead  = `LIVE ${livePx.toFixed(2)} · MISSED SHORT / FLOW UP`;
+      } else {
+        badgeText = 'MISSED';
+        badgeMode = 'win-wait';
+        liveRead  = `LIVE ${livePx.toFixed(2)} · SHORT LEFT BEHIND`;
+      }
+    } else if (isBuy) {
+      const flipRef = zoneLo ?? chasePx ?? touchPx ?? confirmPx;
+      if (flipRef != null && livePx < (flipRef - flipBuffer)) {
+        badgeText = 'FLIP DOWN';
+        badgeMode = 'win-now';
+        liveRead  = `LIVE ${livePx.toFixed(2)} · MISSED LONG / FLOW DOWN`;
+      } else {
+        badgeText = 'MISSED';
+        badgeMode = 'win-wait';
+        liveRead  = `LIVE ${livePx.toFixed(2)} · LONG LEFT BEHIND`;
+      }
+    }
+  } else if (isBuy) {
     if (cancelPx != null && livePx <= cancelPx) {
       badgeText = 'NO TRADE';
       badgeMode = 'win-wait';
@@ -14280,9 +14357,7 @@ function a10UpdateEntryPremLive(bar) {
       badgeMode = 'win-wait';
       liveRead  = `LIVE ${livePx.toFixed(2)} · APPROACHING ZONE`;
     }
-  }
-
-  if (isSell) {
+  } else if (isSell) {
     if (cancelPx != null && livePx >= cancelPx) {
       badgeText = 'NO TRADE';
       badgeMode = 'win-wait';
