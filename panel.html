@@ -3685,7 +3685,125 @@
   opacity:.78;
   white-space:normal;
 }
+/* ===== ENTRY PREMONITION — BELOW ZIGZAG ROUTE ENGINE ===== */
+#entry-prem-card{
+  margin-top:0 !important;
+  min-width:0;
+  width:max-content;
+  justify-self:end;
+}
 
+#entry-prem-card .prem-breakout-title{
+  font-size:28px !important;
+  opacity:.90 !important;
+}
+
+#entry-prem-card .win-badge{
+  font-size:22px !important;
+  padding:10px 16px !important;
+}
+
+#entry-prem-card .entryprem-shell{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+  margin-top:10px;
+  min-width:856px;
+}
+
+#entry-prem-card .entryprem-top{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+#entry-prem-card .entryprem-mode{
+  font-size:30px !important;
+  font-weight:950;
+  line-height:1.2;
+  color:#ffcc66;
+}
+
+#entry-prem-card .entryprem-sub{
+  font-size:22px !important;
+  line-height:1.25;
+  opacity:.88;
+}
+
+#entry-prem-card .entryprem-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+
+#entry-prem-card .entryprem-box{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+}
+
+#entry-prem-card .entryprem-k{
+  font-size:22px !important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+  margin-bottom:6px;
+}
+
+#entry-prem-card .entryprem-v{
+  font-size:24px !important;
+  line-height:1.35;
+  font-weight:900;
+}
+
+#entry-prem-card .entryprem-v strong{
+  color:#ffcc66;
+}
+
+#entry-prem-card .entryprem-read{
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+}
+
+#entry-prem-card .entryprem-read-title{
+  font-size:22px !important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+  margin-bottom:6px;
+}
+
+#entry-prem-card .entryprem-read-body{
+  font-size:30px !important;
+  line-height:1.22;
+  font-weight:950;
+  color:#ffcc66;
+}
+
+@media (max-width: 1200px){
+  #entry-prem-card{
+    width:auto;
+    justify-self:stretch;
+  }
+
+  #entry-prem-card .entryprem-shell{
+    min-width:0;
+  }
+
+  #entry-prem-card .entryprem-grid{
+    grid-template-columns:1fr;
+  }
+}
 @media (max-width: 1200px){
   #zz-side-stack{
     width:auto;
@@ -5320,6 +5438,65 @@
   <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
 </div>
         </div>
+        <div class="prem-breakout-wrap" id="entry-prem-card" style="margin-top:0; min-width:0;">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">ENTRY PREMONITION</div>
+    <span id="ep-badge" class="win-badge win-wait">WAIT</span>
+  </div>
+
+  <div class="entryprem-shell">
+    <div class="entryprem-top">
+      <div class="entryprem-mode" id="ep-mode">—</div>
+      <div class="entryprem-sub">
+        Style <strong id="ep-style">—</strong>
+        <span style="opacity:.55;">|</span>
+        Exec <strong id="ep-exec">—</strong>
+      </div>
+    </div>
+
+    <div class="entryprem-grid">
+      <div class="entryprem-box">
+        <div class="entryprem-k">WINDOW</div>
+        <div class="entryprem-v">
+          Zone <strong id="ep-zone">—</strong><br>
+          Ideal touch <strong id="ep-touch">—</strong><br>
+          Max chase <strong id="ep-chase">—</strong><br>
+          Valid bars <strong id="ep-valid">—</strong>
+        </div>
+      </div>
+
+      <div class="entryprem-box">
+        <div class="entryprem-k">QUALITY / RISK</div>
+        <div class="entryprem-v">
+          Quality <strong id="ep-quality">—</strong><br>
+          Noise <strong id="ep-noise">—</strong><br>
+          Touch→Confirm <strong id="ep-t2c">—</strong><br>
+          False break <strong id="ep-fbr">—</strong>
+        </div>
+      </div>
+
+      <div class="entryprem-box">
+        <div class="entryprem-k">CONFIRM / CANCEL</div>
+        <div class="entryprem-v">
+          Confirm close <strong id="ep-confirm">—</strong><br>
+          Cancel close <strong id="ep-cancel">—</strong><br>
+          Cancel before confirm <strong id="ep-cbc">—</strong><br>
+          No-trade <strong id="ep-notrade">—</strong>
+        </div>
+      </div>
+
+      <div class="entryprem-box">
+        <div class="entryprem-k">PATH AFTER ENTRY</div>
+        <div class="entryprem-v" id="ep-path">—</div>
+      </div>
+    </div>
+
+    <div class="entryprem-read">
+      <div class="entryprem-read-title">TACTICAL READ</div>
+      <div class="entryprem-read-body" id="ep-read">—</div>
+    </div>
+  </div>
+</div>
                   <div class="prem-breakout-wrap" id="replay-mode-card" style="margin-top:0; min-width:0;">
             <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
               <div class="prem-breakout-title">REPLAY MODE</div>
@@ -12018,6 +12195,110 @@ if (readingEl) {
       }
     }
     // ===== /ZIGZAG ROUTE ENGINE =====
+        // ===== ENTRY PREMONITION =====
+    {
+      const clearEntryPrem = () => {
+        setBadge("ep-badge", "WAIT", "win-wait");
+        set("ep-mode", "—");
+        set("ep-style", "—");
+        set("ep-exec", "—");
+        set("ep-zone", "—");
+        set("ep-touch", "—");
+        set("ep-chase", "—");
+        set("ep-valid", "—");
+        set("ep-quality", "—");
+        set("ep-noise", "—");
+        set("ep-t2c", "—");
+        set("ep-fbr", "—");
+        set("ep-confirm", "—");
+        set("ep-cancel", "—");
+        set("ep-cbc", "—");
+        set("ep-notrade", "—");
+        set("ep-path", "—");
+        set("ep-read", "—");
+      };
+
+      const fmtPctSafe = (v) => {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return "—";
+        return `${n.toFixed(2).replace(/\.00$/, "")}%`;
+      };
+
+      const ep =
+        panel?.entry_premition_v1 || panel?.entry_premonition_v1 ||
+        ui?.entry_premition_v1 || ui?.entry_premonition_v1 ||
+        digest?.entry_premition_v1 || digest?.entry_premonition_v1 ||
+        data?.entry_premition_v1 || data?.entry_premonition_v1 ||
+        null;
+
+      if (!ep) {
+        clearEntryPrem();
+      } else {
+        const summary = ep?.summary || {};
+        const windowX = ep?.window || {};
+        const odds = ep?.odds || {};
+        const path = ep?.path_after_entry || {};
+
+        const badgeRaw = String(
+          ep?.status ||
+          summary?.badge ||
+          ep?.labels?.badge ||
+          "WAIT"
+        ).toUpperCase();
+
+        let badgeMode = "win-wait";
+        if (badgeRaw.includes("HOT")) badgeMode = "win-now";
+        else if (badgeRaw.includes("ARMED")) badgeMode = "win-warn";
+        else if (badgeRaw.includes("NO TRADE")) badgeMode = "win-wait";
+
+        const modeTxt =
+          ep?.entry_mode ||
+          summary?.entry_mode ||
+          ep?.official_label ||
+          summary?.official_label ||
+          "—";
+
+        const styleTxt =
+          ep?.best_entry_style ||
+          summary?.best_entry_style ||
+          ep?.labels?.best_entry_style ||
+          "—";
+
+        const zoneTxt =
+          (windowX?.entry_zone_low != null || windowX?.entry_zone_high != null)
+            ? `${fmt2(windowX?.entry_zone_low)} → ${fmt2(windowX?.entry_zone_high)}`
+            : "—";
+
+        const pathTxt =
+          `MAE p50 ${fmt2(path?.mae_usd?.p50)} | p75 ${fmt2(path?.mae_usd?.p75)} · ` +
+          `MFE p50 ${fmt2(path?.mfe_usd?.p50)} | p75 ${fmt2(path?.mfe_usd?.p75)}`;
+
+        const readTxt =
+          ep?.tactical_read_pt ||
+          ep?.tactical_read_en ||
+          "—";
+
+        setBadge("ep-badge", badgeRaw, badgeMode);
+        set("ep-mode", modeTxt);
+        set("ep-style", styleTxt);
+        set("ep-exec", fmtPctSafe(ep?.execution_confidence_pct));
+        set("ep-zone", zoneTxt);
+        set("ep-touch", fmt2(windowX?.ideal_touch));
+        set("ep-chase", fmt2(windowX?.max_chase));
+        set("ep-valid", summary?.window_valid_bars ?? ep?.window_valid_bars ?? "—");
+        set("ep-quality", fmtPctSafe(ep?.entry_quality_pct ?? summary?.entry_quality_pct));
+        set("ep-noise", fmtPctSafe(ep?.noise_penalty_pct ?? summary?.noise_penalty_pct));
+        set("ep-t2c", fmtPctSafe(odds?.touch_to_confirm_pct));
+        set("ep-fbr", fmtPctSafe(odds?.false_break_risk_pct));
+        set("ep-confirm", fmt2(windowX?.confirm_close));
+        set("ep-cancel", fmt2(windowX?.cancel_close));
+        set("ep-cbc", fmtPctSafe(odds?.cancel_before_confirm_pct));
+        set("ep-notrade", fmtPctSafe(odds?.no_trade_pct));
+        set("ep-path", pathTxt);
+        set("ep-read", readTxt);
+      }
+    }
+    // ===== /ENTRY PREMONITION =====
   }catch(e){
     // não quebra o painel
   }
