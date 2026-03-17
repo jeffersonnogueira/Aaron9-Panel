@@ -8456,6 +8456,11 @@ function a10LiveHandleMessage(payloadOrEvent) {
     } catch (e) {
       console.warn('[A10] live reflex do Trade Card falhou:', e);
     }
+        try {
+      a10UpdateEntryPremLive(bar);
+    } catch (e) {
+      console.warn('[A10] live do Entry Prem falhou:', e);
+    }
   }
 
 
@@ -15632,6 +15637,7 @@ try {
 try {
   if (window.__A10_LIVE_LAST_45__) {
     a10UpdateTradeCardLiveReflex(window.__A10_LIVE_LAST_45__);
+        a10UpdateEntryPremLive(window.__A10_LIVE_LAST_45__);
   }
 } catch (e) {}
 
