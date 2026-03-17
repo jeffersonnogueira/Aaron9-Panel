@@ -14209,7 +14209,105 @@ function a10UpdateTradeCardLiveReflex(bar) {
     }
   }
 }
+function a10UpdateEntryPremLive(bar) {
+  const livePx =
+    a10LiveNum(bar?.c) ??
+    a10LiveNum(bar?.close) ??
+    a10LiveNum(bar?.price) ??
+    a10LiveNum(bar?.p);
 
+  if (livePx == null) return;
+
+  const modeEl    = document.getElementById('ep-mode');
+  const badgeEl   = document.getElementById('ep-badge');
+  const readEl    = document.getElementById('ep-read');
+  const zoneEl    = document.getElementById('ep-zone');
+  const touchEl   = document.getElementById('ep-touch');
+  const confirmEl = document.getElementById('ep-confirm');
+  const cancelEl  = document.getElementById('ep-cancel');
+
+  const modeTxt = String(modeEl?.textContent || '').toLowerCase();
+  const isBuy  = /buy|compra|long/.test(modeTxt);
+  const isSell = /sell|venda|short/.test(modeTxt);
+
+  if (!isBuy && !isSell) return;
+
+  const zone    = a10ParsePriceRange(zoneEl?.textContent || '');
+  const touchR  = a10ParsePriceRange(touchEl?.textContent || '');
+  const confR   = a10ParsePriceRange(confirmEl?.textContent || '');
+  const cancR   = a10ParsePriceRange(cancelEl?.textContent || '');
+
+  const touchPx   = touchR ? touchR.lo : null;
+  const confirmPx = confR ? confR.lo : null;
+  const cancelPx  = cancR ? cancR.lo : null;
+
+  const zoneLo  = zone ? zone.lo : touchPx;
+  const zoneHi  = zone ? zone.hi : touchPx;
+  const zoneMid = (zoneLo != null && zoneHi != null) ? ((zoneLo + zoneHi) / 2) : null;
+
+  const inZone = (zoneLo != null && zoneHi != null)
+    ? (livePx >= zoneLo && livePx <= zoneHi)
+    : false;
+
+  const nearZone = (zoneMid != null)
+    ? (Math.abs(livePx - zoneMid) <= Math.max(0.03, Math.abs((zoneHi ?? zoneMid) - (zoneLo ?? zoneMid)), 0.08))
+    : false;
+
+  let badgeText = 'WAIT';
+  let badgeMode = 'win-wait';
+  let liveRead  = `LIVE ${livePx.toFixed(2)} · WAIT`;
+
+  if (isBuy) {
+    if (cancelPx != null && livePx <= cancelPx) {
+      badgeText = 'NO TRADE';
+      badgeMode = 'win-wait';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · CANCEL HIT`;
+    } else if (confirmPx != null && livePx >= confirmPx) {
+      badgeText = 'HOT';
+      badgeMode = 'win-now';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · CONFIRM HIT`;
+    } else if ((touchPx != null && livePx >= touchPx) || inZone) {
+      badgeText = 'ARMED';
+      badgeMode = 'win-warn';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · TOUCH / ZONE HIT`;
+    } else if (nearZone) {
+      badgeText = 'WAIT';
+      badgeMode = 'win-wait';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · APPROACHING ZONE`;
+    }
+  }
+
+  if (isSell) {
+    if (cancelPx != null && livePx >= cancelPx) {
+      badgeText = 'NO TRADE';
+      badgeMode = 'win-wait';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · CANCEL HIT`;
+    } else if (confirmPx != null && livePx <= confirmPx) {
+      badgeText = 'HOT';
+      badgeMode = 'win-now';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · CONFIRM HIT`;
+    } else if ((touchPx != null && livePx <= touchPx) || inZone) {
+      badgeText = 'ARMED';
+      badgeMode = 'win-warn';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · TOUCH / ZONE HIT`;
+    } else if (nearZone) {
+      badgeText = 'WAIT';
+      badgeMode = 'win-wait';
+      liveRead  = `LIVE ${livePx.toFixed(2)} · APPROACHING ZONE`;
+    }
+  }
+
+  if (typeof setBadge === 'function') {
+    setBadge('ep-badge', badgeText, badgeMode);
+  } else if (badgeEl) {
+    badgeEl.textContent = badgeText;
+    badgeEl.className = `win-badge ${badgeMode}`;
+  }
+
+  if (readEl) {
+    readEl.textContent = liveRead;
+  }
+}
 function applyHeroDecision(executionPlan, riskLevel, finalSummary) {
   const lang = (typeof currentLang !== 'undefined' ? currentLang : 'pt');
 
