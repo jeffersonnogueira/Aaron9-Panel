@@ -7479,7 +7479,15 @@
           <strong data-i18n="trade_card.entry_label">Entrada:</strong>
           <span id="trade-entry">492.80 – 493.10</span>
         </div>
+        <div class="trade-line">
+          <strong>Live Price:</strong>
+          <span id="trade-live-price">—</span>
+        </div>
 
+        <div class="trade-line">
+          <strong>Live Reflex:</strong>
+          <span id="trade-live-reflex">—</span>
+        </div>
         <div class="trade-line">
           <strong data-i18n="trade_card.stop_label">Stop:</strong>
           <span id="trade-stop">494.20</span>
@@ -8429,7 +8437,7 @@ function a10LiveHandleMessage(payloadOrEvent) {
     return { t: bucketTime, o, h, l, c, v };
   }
 
-      function pushAggBar(bar){
+            function pushAggBar(bar){
     if (!bar) return;
 
     window.__A10_LIVE_HAS_BARS__ = true;
@@ -8442,6 +8450,12 @@ function a10LiveHandleMessage(payloadOrEvent) {
       timeframe: tfWanted,
       __live: true
     });
+
+    try {
+      a10UpdateTradeCardLiveReflex(bar);
+    } catch (e) {
+      console.warn('[A10] live reflex do Trade Card falhou:', e);
+    }
   }
 
 
@@ -14051,7 +14065,150 @@ setFormattedComment(els.tradeComment, parsed.comment || commentText);
     badge.textContent = text;
   }
 }
+function a10ParsePriceRange(text) {
+  const nums = String(text || '')
+    .replace(/,/g, '.')
+    .match(/\d+(?:\.\d+)?/g);
 
+  if (!nums || !nums.length) return null;
+
+  const vals = nums.map(Number).filter(Number.isFinite);
+  if (!vals.length) return null;
+
+  if (vals.length === 1) {
+    return { lo: vals[0], hi: vals[0] };
+  }
+
+  return {
+    lo: Math.min(vals[0], vals[1]),
+    hi: Math.max(vals[0], vals[1]),
+  };
+}
+
+function a10LiveNum(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function a10UpdateTradeCardLiveReflex(bar) {
+  if (!els.tradeCard) return;
+
+  const livePx =
+    a10LiveNum(bar?.c) ??
+    a10LiveNum(bar?.close) ??
+    a10LiveNum(bar?.price) ??
+    a10LiveNum(bar?.p);
+
+  if (livePx == null) return;
+
+  const liveEl = document.getElementById('trade-live-price');
+  const reflexEl = document.getElementById('trade-live-reflex');
+
+  if (liveEl) liveEl.textContent = livePx.toFixed(2);
+
+  const ap = (typeof apLoad === 'function') ? apLoad() : null;
+  const inPosition = !!(ap && ap.enabled && ap.active);
+
+  const entryRange = a10ParsePriceRange(els.tradeEntry?.textContent || '');
+  const stopRange  = a10ParsePriceRange(els.tradeStop?.textContent || '');
+  const tp1Range   = a10ParsePriceRange(els.tradeTP1?.textContent || '');
+  const dirTxt = String(els.tradeDirection?.textContent || '').toLowerCase();
+
+  const isBuy  = /buy|compra|comprar|long/.test(dirTxt);
+  const isSell = /sell|venda|vender|short/.test(dirTxt);
+
+  if (!entryRange || (!isBuy && !isSell)) {
+    if (reflexEl) reflexEl.textContent = '—';
+    return;
+  }
+
+  const stopPx = stopRange ? stopRange.lo : null;
+  const tpPx   = tp1Range ? tp1Range.lo : null;
+
+  const zoneLo  = entryRange.lo;
+  const zoneHi  = entryRange.hi;
+  const zoneMid = (zoneLo + zoneHi) / 2;
+
+  const zoneHit = livePx >= zoneLo && livePx <= zoneHi;
+
+  const fallbackBuffer =
+    Math.max(
+      0.03,
+      Math.abs(zoneHi - zoneLo),
+      stopPx != null ? Math.abs(stopPx - zoneMid) * 0.20 : 0.08
+    );
+
+  const nearZone = !zoneHit && Math.abs(livePx - zoneMid) <= fallbackBuffer;
+
+  let reflex = 'ESPERAR';
+  let cardClass = 'status-wait';
+  let badgeText = 'WAIT';
+
+  if (isBuy) {
+    if (stopPx != null && livePx <= stopPx) {
+      reflex = 'INVALIDADO';
+      cardClass = 'status-no-trade';
+      badgeText = 'INVALID';
+    } else if (tpPx != null && livePx >= tpPx) {
+      reflex = 'ALVO PEGANDO';
+      cardClass = 'status-buy';
+      badgeText = 'RUNNING';
+    } else if (zoneHit) {
+      reflex = 'EXECUTAR AGORA';
+      cardClass = 'status-buy';
+      badgeText = 'BUY NOW';
+    } else if (nearZone) {
+      reflex = 'PREPARAR';
+      cardClass = 'status-wait';
+      badgeText = 'PREPARE';
+    }
+  }
+
+  if (isSell) {
+    if (stopPx != null && livePx >= stopPx) {
+      reflex = 'INVALIDADO';
+      cardClass = 'status-no-trade';
+      badgeText = 'INVALID';
+    } else if (tpPx != null && livePx <= tpPx) {
+      reflex = 'ALVO PEGANDO';
+      cardClass = 'status-sell';
+      badgeText = 'RUNNING';
+    } else if (zoneHit) {
+      reflex = 'EXECUTAR AGORA';
+      cardClass = 'status-sell';
+      badgeText = 'SELL NOW';
+    } else if (nearZone) {
+      reflex = 'PREPARAR';
+      cardClass = 'status-wait';
+      badgeText = 'PREPARE';
+    }
+  }
+
+  if (reflexEl) {
+    reflexEl.textContent = `${reflex} • zone ${zoneLo.toFixed(2)} – ${zoneHi.toFixed(2)}`;
+  }
+
+  if (!inPosition) {
+    els.tradeCard.classList.remove('status-buy', 'status-sell', 'status-wait', 'status-no-trade');
+    els.tradeCard.classList.add(cardClass);
+
+    if (els.tradeBadge) {
+      els.tradeBadge.classList.remove('buy', 'sell', 'wait', 'no-trade');
+
+      if (badgeText === 'BUY NOW') {
+        els.tradeBadge.classList.add('buy');
+      } else if (badgeText === 'SELL NOW') {
+        els.tradeBadge.classList.add('sell');
+      } else if (badgeText === 'INVALID') {
+        els.tradeBadge.classList.add('no-trade');
+      } else {
+        els.tradeBadge.classList.add('wait');
+      }
+
+      els.tradeBadge.textContent = badgeText;
+    }
+  }
+}
 
 function applyHeroDecision(executionPlan, riskLevel, finalSummary) {
   const lang = (typeof currentLang !== 'undefined' ? currentLang : 'pt');
@@ -15374,7 +15531,11 @@ try {
   }
 } catch (e) {}
 
-
+try {
+  if (window.__A10_LIVE_LAST_45__) {
+    a10UpdateTradeCardLiveReflex(window.__A10_LIVE_LAST_45__);
+  }
+} catch (e) {}
 
     // Cabeçalho
     safeText(els.symbol, panel.symbol || raw.symbol || '—');
