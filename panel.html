@@ -8457,10 +8457,11 @@ function a10LiveHandleMessage(payloadOrEvent) {
       console.warn('[A10] live reflex do Trade Card falhou:', e);
     }
         try {
-      a10UpdateEntryPremLive(bar);
-    } catch (e) {
-      console.warn('[A10] live do Entry Prem falhou:', e);
-    }
+  a10UpdateEntryPremLive(bar);
+  a10ScheduleEntryPremLiveRefresh();
+} catch (e) {
+  console.warn('[A10] live do Entry Prem falhou:', e);
+}
   }
 
 
@@ -14387,6 +14388,43 @@ function a10UpdateEntryPremLive(bar) {
   if (readEl) {
     readEl.textContent = liveRead;
   }
+}
+async function a10RefreshEntryPremLiveFromBackend() {
+  try {
+    const replayApi =
+      (window.__AARON_REPLAY__ && typeof window.__AARON_REPLAY__.getState === 'function')
+        ? window.__AARON_REPLAY__.getState()
+        : null;
+
+    // nunca força refresh live enquanto replay estiver ligado
+    if (replayApi && replayApi.enabled) return;
+
+    const now = Date.now();
+    if ((now - a10EntryPremLastRefreshAt) < ENTRY_PREM_LIVE_REFRESH_MS) return;
+
+    a10EntryPremLastRefreshAt = now;
+
+    if (typeof loadPanel === 'function') {
+      await loadPanel(false);
+    }
+  } catch (e) {
+    console.warn('[A10] refresh live do Entry Prem falhou:', e);
+  }
+}
+
+function a10ScheduleEntryPremLiveRefresh() {
+  const replayApi =
+    (window.__AARON_REPLAY__ && typeof window.__AARON_REPLAY__.getState === 'function')
+      ? window.__AARON_REPLAY__.getState()
+      : null;
+
+  if (replayApi && replayApi.enabled) return;
+  if (a10EntryPremRefreshTimer) return;
+
+  a10EntryPremRefreshTimer = setTimeout(async () => {
+    a10EntryPremRefreshTimer = null;
+    await a10RefreshEntryPremLiveFromBackend();
+  }, ENTRY_PREM_LIVE_REFRESH_MS);
 }
 function applyHeroDecision(executionPlan, riskLevel, finalSummary) {
   const lang = (typeof currentLang !== 'undefined' ? currentLang : 'pt');
