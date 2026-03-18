@@ -5253,6 +5253,68 @@
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
                     <div id="zz-left-stack">
+                        <div class="prem-breakout-wrap" id="pivot-prem-card">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+      <div class="prem-breakout-title">PIVOT PREMONITION</div>
+      <span id="pp-badge" class="win-badge win-wait">—</span>
+    </div>
+
+    <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:12px 14px; margin-top:10px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <div id="pp-seq" style="font-size:30px; font-weight:950; line-height:1.2; color:#ffcc66;">—</div>
+        <div style="font-size:22px; line-height:1.25; opacity:.88;">
+          Conf <strong id="pp-conf">—</strong>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px; margin-top:12px;">
+        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
+          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">PIVOT 1</div>
+          <div style="font-size:24px; line-height:1.35; font-weight:900;">
+            Kind <strong id="pp-p1-kind">—</strong><br>
+            Zone <strong id="pp-p1-zone">—</strong><br>
+            ETA <strong id="pp-p1-eta">—</strong><br>
+            Prob <strong id="pp-p1-prob">—</strong>
+          </div>
+        </div>
+
+        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
+          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">PIVOT 2</div>
+          <div style="font-size:24px; line-height:1.35; font-weight:900;">
+            Kind <strong id="pp-p2-kind">—</strong><br>
+            Zone <strong id="pp-p2-zone">—</strong><br>
+            ETA <strong id="pp-p2-eta">—</strong><br>
+            Prob <strong id="pp-p2-prob">—</strong>
+          </div>
+        </div>
+
+        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
+          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">CONTEXT</div>
+          <div style="font-size:24px; line-height:1.35; font-weight:900;">
+            Trend <strong id="pp-trend">—</strong><br>
+            Location <strong id="pp-loc">—</strong><br>
+            Key <strong id="pp-key">—</strong><br>
+            Source <strong id="pp-source">—</strong>
+          </div>
+        </div>
+
+        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
+          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">LIVE CONTEXT</div>
+          <div style="font-size:24px; line-height:1.35; font-weight:900;">
+            Next pivot <strong id="pp-next">—</strong><br>
+            Range pos <strong id="pp-rangepos">—</strong><br>
+            Current <strong id="pp-current">—</strong><br>
+            ATR14 <strong id="pp-atr">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px; border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
+        <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">TACTICAL READ</div>
+        <div id="pp-read" style="font-size:30px; line-height:1.22; font-weight:950; color:#ffcc66;">—</div>
+      </div>
+    </div>
+  </div>                                  
   <div class="prem-breakout-wrap" id="vol-engine-card">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
               <div class="prem-breakout-title">VOLUME PREMONITION</div>
@@ -11742,6 +11804,146 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
       setBadge("zz-badge", "—", "win-wait");
       set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
       set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
+    }
+        // ===== PIVOT PREMONITION (NEW BLOCK) =====
+    {
+      const clearPP = () => {
+        setBadge("pp-badge", "—", "win-wait");
+        [
+          "pp-seq",
+          "pp-conf",
+          "pp-p1-kind",
+          "pp-p1-zone",
+          "pp-p1-eta",
+          "pp-p1-prob",
+          "pp-p2-kind",
+          "pp-p2-zone",
+          "pp-p2-eta",
+          "pp-p2-prob",
+          "pp-trend",
+          "pp-loc",
+          "pp-key",
+          "pp-source",
+          "pp-next",
+          "pp-rangepos",
+          "pp-current",
+          "pp-atr",
+          "pp-read"
+        ].forEach(id => set(id, "—"));
+      };
+
+      const pp =
+        root?.pivot_premonition_v1 ||
+        ui?.pivot_premonition_v1 ||
+        digest?.pivot_premonition_v1 ||
+        panel?.pivot_premonition_v1 ||
+        root?.exec_1x1?.pivot_premonition_v1 ||
+        root?.live?.pivot_premonition_v1 ||
+        null;
+
+      if (!pp || pp?.enabled === false) {
+        clearPP();
+      } else {
+        const summary = pp?.summary || {};
+        const context = pp?.context || {};
+        const p1 = pp?.pivot1 || {};
+        const p2 = pp?.pivot2 || {};
+
+        const toNum = (v) => {
+          const n = Number(v);
+          return Number.isFinite(n) ? n : null;
+        };
+
+        const fmtPct2 = (v) => {
+          const n = toNum(v);
+          return n == null ? "—" : `${n.toFixed(2)}%`;
+        };
+
+        const fmtBarsRange = (obj) => {
+          const p25 = toNum(obj?.eta_p25_bars);
+          const p50 = toNum(obj?.eta_p50_bars);
+          const p75 = toNum(obj?.eta_p75_bars);
+
+          if (p25 != null && p75 != null) return `${Math.round(p25)}b → ${Math.round(p75)}b`;
+          if (p50 != null) return `${Math.round(p50)}b`;
+          return "—";
+        };
+
+        const fmtZone = (obj) => {
+          const lo = toNum(obj?.zone_low);
+          const hi = toNum(obj?.zone_high);
+          if (lo == null && hi == null) return "—";
+          return `${fmt2(lo)} → ${fmt2(hi)}`;
+        };
+
+        const p1Prob = toNum(p1?.prob_pct);
+        const seqConf = toNum(summary?.sequence_confidence_pct);
+
+        let badgeTxt = "WAIT";
+        let badgeMode = "win-wait";
+
+        if (p1Prob != null) {
+          if (p1Prob >= 75 && (seqConf == null || seqConf >= 60)) {
+            badgeTxt = "STRONG PIVOT";
+            badgeMode = "win-now";
+          } else if (p1Prob >= 60) {
+            badgeTxt = "CAUTION";
+            badgeMode = "win-warn";
+          } else {
+            badgeTxt = "WAIT";
+            badgeMode = "win-wait";
+          }
+        }
+
+        const kind1 = String(p1?.kind || "").trim().toUpperCase() || "—";
+        const kind2 = String(p2?.kind || "").trim().toUpperCase() || "—";
+
+        const seqLabel =
+          String(summary?.sequence_label || "").trim() ||
+          ((kind1 !== "—" || kind2 !== "—") ? `${kind1} → ${kind2}` : "—");
+
+        const trend = String(context?.trend || "").trim().toUpperCase() || "—";
+        const loc = String(context?.range_location || "").trim().toUpperCase() || "—";
+        const ctxKey = String(context?.context_key || summary?.context_key || "").trim() || "—";
+        const ctxSource = String(summary?.context_source || pp?.source || "").trim() || "—";
+
+        const nextPivot = String(pp?.next_pivot_kind || p1?.kind || "").trim().toUpperCase() || "—";
+        const rangePos = fmtPct2(context?.range_pos_pct);
+        const currentTxt = toNum(pp?.current) == null ? "—" : fmt2(pp?.current);
+        const atrTxt = toNum(pp?.atr14) == null ? "—" : fmt2(pp?.atr14);
+
+        const tactical =
+          pp?.tactical_read_pt ||
+          pp?.tactical_read_en ||
+          "Próximos pivôs ainda sem leitura clara.";
+
+        setBadge("pp-badge", badgeTxt, badgeMode);
+
+        set("pp-seq", seqLabel);
+        set("pp-conf", fmtPct2(seqConf));
+
+        set("pp-p1-kind", kind1);
+        set("pp-p1-zone", fmtZone(p1));
+        set("pp-p1-eta", fmtBarsRange(p1));
+        set("pp-p1-prob", fmtPct2(p1?.prob_pct));
+
+        set("pp-p2-kind", kind2);
+        set("pp-p2-zone", fmtZone(p2));
+        set("pp-p2-eta", fmtBarsRange(p2));
+        set("pp-p2-prob", fmtPct2(p2?.prob_pct));
+
+        set("pp-trend", trend);
+        set("pp-loc", loc);
+        set("pp-key", ctxKey);
+        set("pp-source", ctxSource);
+
+        set("pp-next", nextPivot);
+        set("pp-rangepos", rangePos);
+        set("pp-current", currentTxt);
+        set("pp-atr", atrTxt);
+
+        set("pp-read", tactical);
+      }
     }
                 // ===== VOLUME PREMONITION (NEW BLOCK) =====
     {
