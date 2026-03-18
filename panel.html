@@ -3732,7 +3732,14 @@
   line-height:1.25;
   opacity:.88;
 }
-
+#entry-prem-card .entryprem-debug{
+  margin-top:8px;
+  font-size:13px !important;
+  line-height:1.35;
+  opacity:.74;
+  white-space:normal;
+  word-break:break-word;
+}
 #entry-prem-card .entryprem-grid{
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
@@ -5453,7 +5460,13 @@
         Exec <strong id="ep-exec">—</strong>
       </div>
     </div>
-
+    <div class="entryprem-debug">
+      Side <strong id="ep-side">—</strong>
+      <span style="opacity:.45;">|</span>
+      Side key <strong id="ep-sidekey">—</strong>
+      <span style="opacity:.45;">|</span>
+      Keys <strong id="ep-sidekeys">—</strong>
+    </div>
     <div class="entryprem-grid">
       <div class="entryprem-box">
         <div class="entryprem-k">WINDOW</div>
@@ -12217,11 +12230,14 @@ if (readingEl) {
     // ===== /ZIGZAG ROUTE ENGINE =====
         // ===== ENTRY PREMONITION =====
     {
-      const clearEntryPrem = () => {
+            const clearEntryPrem = () => {
         setBadge("ep-badge", "WAIT", "win-wait");
         set("ep-mode", "—");
         set("ep-style", "—");
         set("ep-exec", "—");
+        set("ep-side", "—");
+        set("ep-sidekey", "—");
+        set("ep-sidekeys", "—");
         set("ep-zone", "—");
         set("ep-touch", "—");
         set("ep-chase", "—");
@@ -12258,6 +12274,7 @@ if (readingEl) {
         const windowX = ep?.window || {};
         const odds = ep?.odds || {};
         const path = ep?.path_after_entry || {};
+        const runtime = ep?.runtime || {};
 
         const badgeRaw = String(
           ep?.status ||
@@ -12284,10 +12301,43 @@ if (readingEl) {
           ep?.labels?.best_entry_style ||
           "—";
 
-        const zoneTxt =
+                const zoneTxt =
           (windowX?.entry_zone_low != null || windowX?.entry_zone_high != null)
             ? `${fmt2(windowX?.entry_zone_low)} → ${fmt2(windowX?.entry_zone_high)}`
             : "—";
+
+        const resolvedSideRaw =
+          runtime?.resolved_side ??
+          runtime?.side ??
+          ep?.side ??
+          ep?.entry_side ??
+          summary?.side ??
+          summary?.entry_side ??
+          null;
+
+        const resolvedSide = (() => {
+          const s = String(resolvedSideRaw ?? '').trim().toLowerCase();
+          if (!s) return '—';
+          if (['buy','long','up','bull','bullish'].includes(s)) return 'buy';
+          if (['sell','short','down','bear','bearish'].includes(s)) return 'sell';
+          return s;
+        })();
+
+        const sideKeyTxt =
+          runtime?.side_specific_key ??
+          ep?.side_specific_key ??
+          summary?.side_specific_key ??
+          '—';
+
+        const sideKeysRaw =
+          runtime?.available_side_keys ??
+          ep?.available_side_keys ??
+          summary?.available_side_keys ??
+          [];
+
+        const sideKeysTxt = Array.isArray(sideKeysRaw)
+          ? (sideKeysRaw.length ? sideKeysRaw.join(', ') : '—')
+          : (typeof sideKeysRaw === 'string' && sideKeysRaw.trim() ? sideKeysRaw : '—');
 
         const pathTxt =
           `MAE p50 ${fmt2(path?.mae_usd?.p50)} | p75 ${fmt2(path?.mae_usd?.p75)} · ` +
@@ -12302,6 +12352,9 @@ if (readingEl) {
         set("ep-mode", modeTxt);
         set("ep-style", styleTxt);
         set("ep-exec", fmtPctSafe(ep?.execution_confidence_pct));
+        set("ep-side", resolvedSide);
+        set("ep-sidekey", sideKeyTxt);
+        set("ep-sidekeys", sideKeysTxt);
         set("ep-zone", zoneTxt);
         set("ep-touch", fmt2(windowX?.ideal_touch));
         set("ep-chase", fmt2(windowX?.max_chase));
