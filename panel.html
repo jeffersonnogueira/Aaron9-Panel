@@ -13431,11 +13431,13 @@ if (readingEl) {
       };
 
       const ep =
-        panel?.entry_premition_v1 || panel?.entry_premonition_v1 ||
-        ui?.entry_premition_v1 || ui?.entry_premonition_v1 ||
-        digest?.entry_premition_v1 || digest?.entry_premonition_v1 ||
-        data?.entry_premition_v1 || data?.entry_premonition_v1 ||
-        null;
+  root?.entry_premition_v1 || root?.entry_premonition_v1 ||
+  panel?.entry_premition_v1 || panel?.entry_premonition_v1 ||
+  ui?.entry_premition_v1 || ui?.entry_premonition_v1 ||
+  digest?.entry_premition_v1 || digest?.entry_premonition_v1 ||
+  root?.exec_1x1?.entry_premition_v1 || root?.exec_1x1?.entry_premonition_v1 ||
+  root?.live?.entry_premition_v1 || root?.live?.entry_premonition_v1 ||
+  null;
 
       if (!ep) {
         clearEntryPrem();
