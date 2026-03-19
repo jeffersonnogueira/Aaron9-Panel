@@ -3111,138 +3111,6 @@
   letter-spacing: .02em;
 }
 /* ===== /ENTRY ENGINE ===== */
-/* ===== FIRST HOUR PREMONITION — FULL WIDTH ABOVE INDICATORS ===== */
-#first-hour-prem-card{
-  margin-top: 10px !important;
-  grid-column: 1 / -1;
-}
-
-#first-hour-prem-card .prem-breakout-title{
-  font-size: 28px !important;
-  opacity: .92 !important;
-}
-
-#first-hour-prem-card .win-badge{
-  font-size: 22px !important;
-  padding: 10px 16px !important;
-}
-
-#first-hour-prem-card .fh-shell{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:16px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  margin-top:10px;
-}
-
-#first-hour-prem-card .fh-top{
-  display:grid;
-  grid-template-columns: 0.78fr 1.05fr 1.15fr 1.05fr;
-  gap:10px;
-  align-items:stretch;
-}
-
-#first-hour-prem-card .fh-bottom{
-  display:grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap:10px;
-  align-items:stretch;
-  margin-top:10px;
-}
-
-#first-hour-prem-card .fh-box{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  min-width:0;
-}
-
-#first-hour-prem-card .fh-k{
-  font-size:22px !important;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.72;
-  margin-bottom:6px;
-}
-
-#first-hour-prem-card .fh-v{
-  font-size:24px !important;
-  line-height:1.35;
-  font-weight:900;
-}
-
-#first-hour-prem-card .fh-v strong{
-  color:#ffcc66;
-}
-
-#first-hour-prem-card .fh-minute{
-  font-size:38px !important;
-  line-height:1.05;
-  font-weight:950;
-  color:#ffcc66;
-}
-
-#first-hour-prem-card .fh-prob-line,
-#first-hour-prem-card .fh-eta-line,
-#first-hour-prem-card .fh-target-line,
-#first-hour-prem-card .fh-trigger-line{
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  gap:12px;
-}
-
-#first-hour-prem-card .fh-prob-line + .fh-prob-line,
-#first-hour-prem-card .fh-eta-line + .fh-eta-line,
-#first-hour-prem-card .fh-target-line + .fh-target-line,
-#first-hour-prem-card .fh-trigger-line + .fh-trigger-line{
-  margin-top:8px;
-}
-
-#first-hour-prem-card .fh-soft{
-  opacity:.72;
-}
-
-#first-hour-prem-card .fh-reading{
-  margin-top:10px;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-}
-
-#first-hour-prem-card .fh-reading-title{
-  font-size:22px !important;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.72;
-  margin-bottom:6px;
-}
-
-#first-hour-prem-card .fh-reading-body{
-  font-size:30px !important;
-  line-height:1.22;
-  font-weight:950;
-  color:#ffcc66;
-}
-
-@media (max-width: 1400px){
-  #first-hour-prem-card .fh-top{
-    grid-template-columns: 1fr 1fr;
-  }
-  #first-hour-prem-card .fh-bottom{
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 980px){
-  #first-hour-prem-card .fh-top{
-    grid-template-columns: 1fr;
-  }
-}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -3350,160 +3218,6 @@
   }
 }
 /* ===== /ZIGZAG ROUTE ENGINE ===== */
-/* ===== EMA EXHAUSTION PREMONITION ===== */
-#ema-exhaust-card{
-  margin-top:0 !important;
-  min-width:0;
-  width:max-content;
-  justify-self:end;
-}
-
-#ema-exhaust-card .prem-breakout-title{
-  font-size:28px !important;
-  opacity:.90 !important;
-}
-
-#ema-exhaust-card .win-badge{
-  font-size:22px !important;
-  padding:10px 16px !important;
-}
-
-#ema-exhaust-card .eex-shell{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:16px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  margin-top:10px;
-  min-width:856px;
-}
-
-#ema-exhaust-card .eex-topline{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-#ema-exhaust-card .eex-state{
-  font-size:30px !important;
-  font-weight:950;
-  line-height:1.2;
-  color:#ffcc66;
-}
-
-#ema-exhaust-card .eex-sub{
-  font-size:22px !important;
-  line-height:1.25;
-  opacity:.88;
-}
-
-#ema-exhaust-card .eex-primary{
-  margin-top:10px;
-  font-size:24px !important;
-  line-height:1.28;
-  font-weight:900;
-}
-
-#ema-exhaust-card .eex-main-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);
-  gap:26px;
-  margin-top:12px;
-  align-items:start;
-}
-
-#ema-exhaust-card .eex-two-col{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:28px;
-  align-items:start;
-}
-
-#ema-exhaust-card .eex-col,
-#ema-exhaust-card .eex-side-col{
-  min-width:0;
-}
-
-#ema-exhaust-card .eex-side-col{
-  min-width:340px;
-}
-
-#ema-exhaust-card .eex-sec-title{
-  color:#ffcc66 !important;
-  font-size:26px !important;
-  font-weight:950 !important;
-  letter-spacing:.14em !important;
-  text-transform:uppercase !important;
-  opacity:1 !important;
-}
-
-#ema-exhaust-card .eex-sec-body{
-  margin-top:8px;
-  font-size:30px !important;
-  line-height:1.38 !important;
-  font-weight:900 !important;
-}
-
-#ema-exhaust-card .eex-sec-body > div + div{
-  margin-top:6px !important;
-}
-
-#ema-exhaust-card .eex-mini{
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  gap:18px;
-  font-weight:950;
-  font-size:24px !important;
-  line-height:1.28 !important;
-  white-space:nowrap;
-}
-
-#ema-exhaust-card .eex-mini + .eex-mini{
-  margin-top:10px;
-}
-
-#ema-exhaust-card .eex-soft{
-  opacity:.80;
-  font-size:24px !important;
-  white-space:nowrap;
-}
-
-#ema-exhaust-card .eex-reading{
-  margin-top:12px;
-  font-size:42px !important;
-  line-height:1.22 !important;
-  font-weight:950 !important;
-  color:#ffcc66;
-  opacity:1 !important;
-}
-
-@media (max-width: 1200px){
-  #ema-exhaust-card{
-    width:auto;
-    justify-self:stretch;
-  }
-
-  #ema-exhaust-card .eex-shell{
-    min-width:0;
-  }
-
-  #ema-exhaust-card .eex-main-grid{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  #ema-exhaust-card .eex-two-col{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  #ema-exhaust-card .eex-side-col{
-    min-width:0;
-  }
-}
-/* ===== /EMA EXHAUSTION PREMONITION ===== */
 /* ===== VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
 #zz-volume-row{
   display:grid;
@@ -3897,7 +3611,7 @@
 
 #replay-mode-card .replay-actions{
   display:grid;
-  grid-template-columns:repeat(7, max-content);
+  grid-template-columns:repeat(6, max-content);
   justify-content:space-between;
   gap:8px;
   margin-top:10px;
@@ -3971,132 +3685,7 @@
   opacity:.78;
   white-space:normal;
 }
-/* ===== ENTRY PREMONITION — BELOW ZIGZAG ROUTE ENGINE ===== */
-#entry-prem-card{
-  margin-top:0 !important;
-  min-width:0;
-  width:max-content;
-  justify-self:end;
-}
 
-#entry-prem-card .prem-breakout-title{
-  font-size:28px !important;
-  opacity:.90 !important;
-}
-
-#entry-prem-card .win-badge{
-  font-size:22px !important;
-  padding:10px 16px !important;
-}
-
-#entry-prem-card .entryprem-shell{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:16px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  margin-top:10px;
-  min-width:856px;
-}
-
-#entry-prem-card .entryprem-top{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-#entry-prem-card .entryprem-mode{
-  font-size:30px !important;
-  font-weight:950;
-  line-height:1.2;
-  color:#ffcc66;
-}
-
-#entry-prem-card .entryprem-sub{
-  font-size:22px !important;
-  line-height:1.25;
-  opacity:.88;
-}
-#entry-prem-card .entryprem-debug{
-  margin-top:8px;
-  font-size:13px !important;
-  line-height:1.35;
-  opacity:.74;
-  white-space:normal;
-  word-break:break-word;
-}
-#entry-prem-card .entryprem-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:10px;
-  margin-top:12px;
-}
-
-#entry-prem-card .entryprem-box{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-}
-
-#entry-prem-card .entryprem-k{
-  font-size:22px !important;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.72;
-  margin-bottom:6px;
-}
-
-#entry-prem-card .entryprem-v{
-  font-size:24px !important;
-  line-height:1.35;
-  font-weight:900;
-}
-
-#entry-prem-card .entryprem-v strong{
-  color:#ffcc66;
-}
-
-#entry-prem-card .entryprem-read{
-  margin-top:10px;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-}
-
-#entry-prem-card .entryprem-read-title{
-  font-size:22px !important;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.72;
-  margin-bottom:6px;
-}
-
-#entry-prem-card .entryprem-read-body{
-  font-size:30px !important;
-  line-height:1.22;
-  font-weight:950;
-  color:#ffcc66;
-}
-
-@media (max-width: 1200px){
-  #entry-prem-card{
-    width:auto;
-    justify-self:stretch;
-  }
-
-  #entry-prem-card .entryprem-shell{
-    min-width:0;
-  }
-
-  #entry-prem-card .entryprem-grid{
-    grid-template-columns:1fr;
-  }
-}
 @media (max-width: 1200px){
   #zz-side-stack{
     width:auto;
@@ -5419,82 +5008,6 @@
 
     <div class="premonition-chart">
       <!-- ===== INDICATORS (EMA / VWAP / RSI) — ABOVE ENTRY ENGINE ===== -->
-       <div class="prem-breakout-wrap" id="first-hour-prem-card">
-  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-    <div class="prem-breakout-title">FIRST HOUR PREMONITION</div>
-    <span id="fh-badge" class="win-badge win-wait">WAIT</span>
-  </div>
-
-  <div class="fh-shell">
-    <div class="fh-top">
-      <div class="fh-box">
-        <div class="fh-k">MINUTE</div>
-        <div class="fh-minute"><span id="fh-minute">—</span> / 60</div>
-      </div>
-
-      <div class="fh-box">
-        <div class="fh-k">PRE-MARKET</div>
-        <div class="fh-v">
-          Bias <strong id="fh-bias">—</strong><br>
-          Move <strong id="fh-pm-move">—</strong><br>
-          Range <strong id="fh-pm-range">—</strong><br>
-          Vol Ratio <strong id="fh-pm-vol-ratio">—</strong>
-        </div>
-      </div>
-
-      <div class="fh-box">
-        <div class="fh-k">STATE</div>
-        <div class="fh-v">
-          Phase <strong id="fh-phase">—</strong><br>
-          EMA <strong id="fh-ema-state">—</strong><br>
-          VWAP <strong id="fh-vwap-side">—</strong><br>
-          RSI <strong id="fh-rsi-state">—</strong>
-        </div>
-      </div>
-
-      <div class="fh-box">
-        <div class="fh-k">PROBABILITIES</div>
-        <div class="fh-v">
-          <div class="fh-prob-line"><span class="fh-soft">Continuation</span><strong id="fh-cont">—</strong></div>
-          <div class="fh-prob-line"><span class="fh-soft">Exhaustion</span><strong id="fh-exhaust">—</strong></div>
-          <div class="fh-prob-line"><span class="fh-soft">Reversal</span><strong id="fh-reversal">—</strong></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fh-bottom">
-      <div class="fh-box">
-        <div class="fh-k">ETA</div>
-        <div class="fh-v">
-          <div class="fh-eta-line"><span class="fh-soft">Up p50</span><strong id="fh-up-eta">—</strong></div>
-          <div class="fh-eta-line"><span class="fh-soft">Down p50</span><strong id="fh-down-eta">—</strong></div>
-        </div>
-      </div>
-
-      <div class="fh-box">
-        <div class="fh-k">TARGETS</div>
-        <div class="fh-v">
-          <div class="fh-target-line"><span class="fh-soft">Target Up p50</span><strong id="fh-target-up">—</strong></div>
-          <div class="fh-target-line"><span class="fh-soft">Target Down p50</span><strong id="fh-target-down">—</strong></div>
-        </div>
-      </div>
-
-      <div class="fh-box">
-        <div class="fh-k">TRIGGERS</div>
-        <div class="fh-v">
-          <div class="fh-trigger-line"><span class="fh-soft">Continue &gt;</span><strong id="fh-trigger-cont">—</strong></div>
-          <div class="fh-trigger-line"><span class="fh-soft">Reverse &lt;</span><strong id="fh-trigger-rev">—</strong></div>
-          <div class="fh-trigger-line"><span class="fh-soft">Invalidation</span><strong id="fh-invalid">—</strong></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fh-reading">
-      <div class="fh-reading-title">TACTICAL READ</div>
-      <div class="fh-reading-body" id="fh-reading">—</div>
-    </div>
-  </div>
-</div>
         <div class="prem-breakout-wrap" id="indicator-prem-card" style="margin-top:10px; grid-column: 1 / -1;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div class="prem-breakout-title">INDICATORS · EMA · VWAP · RSI</div>
@@ -5615,68 +5128,6 @@
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
                     <div id="zz-left-stack">
-                        <div class="prem-breakout-wrap" id="pivot-prem-card">
-    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap;">
-      <div class="prem-breakout-title">PIVOT PREMONITION</div>
-      <span id="pp-badge" class="win-badge win-wait">—</span>
-    </div>
-
-    <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:12px 14px; margin-top:10px;">
-      <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-        <div id="pp-seq" style="font-size:30px; font-weight:950; line-height:1.2; color:#ffcc66;">—</div>
-        <div style="font-size:22px; line-height:1.25; opacity:.88;">
-          Conf <strong id="pp-conf">—</strong>
-        </div>
-      </div>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px; margin-top:12px;">
-        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
-          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">PIVOT 1</div>
-          <div style="font-size:24px; line-height:1.35; font-weight:900;">
-            Kind <strong id="pp-p1-kind">—</strong><br>
-            Zone <strong id="pp-p1-zone">—</strong><br>
-            ETA <strong id="pp-p1-eta">—</strong><br>
-            Prob <strong id="pp-p1-prob">—</strong>
-          </div>
-        </div>
-
-        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
-          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">PIVOT 2</div>
-          <div style="font-size:24px; line-height:1.35; font-weight:900;">
-            Kind <strong id="pp-p2-kind">—</strong><br>
-            Zone <strong id="pp-p2-zone">—</strong><br>
-            ETA <strong id="pp-p2-eta">—</strong><br>
-            Prob <strong id="pp-p2-prob">—</strong>
-          </div>
-        </div>
-
-        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
-          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">CONTEXT</div>
-          <div style="font-size:24px; line-height:1.35; font-weight:900;">
-            Trend <strong id="pp-trend">—</strong><br>
-            Location <strong id="pp-loc">—</strong><br>
-            Key <strong id="pp-key">—</strong><br>
-            Source <strong id="pp-source">—</strong>
-          </div>
-        </div>
-
-        <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
-          <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">LIVE CONTEXT</div>
-          <div style="font-size:24px; line-height:1.35; font-weight:900;">
-            Next pivot <strong id="pp-next">—</strong><br>
-            Range pos <strong id="pp-rangepos">—</strong><br>
-            Current <strong id="pp-current">—</strong><br>
-            ATR14 <strong id="pp-atr">—</strong>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:10px; border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
-        <div style="font-size:22px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">TACTICAL READ</div>
-        <div id="pp-read" style="font-size:30px; line-height:1.22; font-weight:950; color:#ffcc66;">—</div>
-      </div>
-    </div>
-  </div>                                  
   <div class="prem-breakout-wrap" id="vol-engine-card">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
               <div class="prem-breakout-title">VOLUME PREMONITION</div>
@@ -5799,78 +5250,6 @@
 </div>
         </div>
                 <div id="zz-side-stack">
-                  <div class="prem-breakout-wrap" id="ema-exhaust-card" style="margin-top:0; min-width:0;">
-  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-    <div class="prem-breakout-title">EMA EXHAUSTION PREMONITION</div>
-    <span id="eex-badge" class="win-badge win-wait">WAIT</span>
-  </div>
-
-  <div class="eex-shell">
-    <div class="eex-topline">
-      <div class="eex-state" id="eex-state">—</div>
-      <div class="eex-sub">
-        EMA20 <strong id="eex-ema20">—</strong>
-        <span style="opacity:.55;">|</span>
-        EMA50 <strong id="eex-ema50">—</strong>
-        <span style="opacity:.55;">|</span>
-        Δ <strong id="eex-delta">—</strong>
-      </div>
-    </div>
-
-    <div class="eex-primary">
-      Exhaustion <strong id="eex-exhaust">—</strong>
-      <span style="opacity:.55;">|</span>
-      Continue <strong id="eex-cont">—</strong>
-      <span style="opacity:.55;">|</span>
-      ETA <strong id="eex-eta-head">—</strong>
-      <span style="opacity:.55;">|</span>
-      Hold <strong id="eex-hold">—</strong>
-    </div>
-
-    <div class="eex-main-grid">
-      <div>
-        <div class="eex-two-col">
-          <div class="eex-col">
-            <div class="eex-sec-title">CONTINUATION VS EXHAUSTION</div>
-
-            <div class="eex-sec-body">
-              <div><span style="opacity:.7;">Continue now</span> <span id="eex-cont-now" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">Continue next leg</span> <span id="eex-cont-next" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">Exhaust now</span> <span id="eex-exhaust-now" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">Weaken now</span> <span id="eex-weaken-now" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">Reversal risk</span> <span id="eex-reversal-risk" style="font-weight:950;">—</span></div>
-            </div>
-          </div>
-
-          <div class="eex-col">
-            <div class="eex-sec-title">ETA</div>
-
-            <div class="eex-sec-body">
-              <div><span style="opacity:.7;">ETA weaken</span> <span id="eex-eta-weaken" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">ETA exhaustion</span> <span id="eex-eta-exhaust" style="font-weight:950;">—</span></div>
-              <div><span style="opacity:.7;">ETA reversal window</span> <span id="eex-eta-reversal" style="font-weight:950;">—</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="eex-sec-title" style="margin-top:14px;">TACTICAL READ</div>
-        <div class="eex-reading" id="eex-read">—</div>
-      </div>
-
-      <div class="eex-side-col">
-        <div class="eex-sec-title">WINDOW PRESSURE</div>
-
-        <div style="margin-top:8px; font-size:12px; line-height:1.35;">
-          <div class="eex-mini"><span class="eex-soft">1m</span><span id="eex-w1">—</span></div>
-          <div class="eex-mini"><span class="eex-soft">5m</span><span id="eex-w5">—</span></div>
-          <div class="eex-mini"><span class="eex-soft">15m</span><span id="eex-w15">—</span></div>
-          <div class="eex-mini"><span class="eex-soft">30m</span><span id="eex-w30">—</span></div>
-          <div class="eex-mini"><span class="eex-soft">60m</span><span id="eex-w60">—</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
   <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
@@ -5941,71 +5320,6 @@
   <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
 </div>
         </div>
-        <div class="prem-breakout-wrap" id="entry-prem-card" style="margin-top:0; min-width:0;">
-  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-    <div class="prem-breakout-title">ENTRY PREMONITION</div>
-    <span id="ep-badge" class="win-badge win-wait">WAIT</span>
-  </div>
-
-  <div class="entryprem-shell">
-    <div class="entryprem-top">
-      <div class="entryprem-mode" id="ep-mode">—</div>
-      <div class="entryprem-sub">
-        Style <strong id="ep-style">—</strong>
-        <span style="opacity:.55;">|</span>
-        Exec <strong id="ep-exec">—</strong>
-      </div>
-    </div>
-    <div class="entryprem-debug">
-      Side <strong id="ep-side">—</strong>
-      <span style="opacity:.45;">|</span>
-      Side key <strong id="ep-sidekey">—</strong>
-      <span style="opacity:.45;">|</span>
-      Keys <strong id="ep-sidekeys">—</strong>
-    </div>
-    <div class="entryprem-grid">
-      <div class="entryprem-box">
-        <div class="entryprem-k">WINDOW</div>
-        <div class="entryprem-v">
-          Zone <strong id="ep-zone">—</strong><br>
-          Ideal touch <strong id="ep-touch">—</strong><br>
-          Max chase <strong id="ep-chase">—</strong><br>
-          Valid bars <strong id="ep-valid">—</strong>
-        </div>
-      </div>
-
-      <div class="entryprem-box">
-        <div class="entryprem-k">QUALITY / RISK</div>
-        <div class="entryprem-v">
-          Quality <strong id="ep-quality">—</strong><br>
-          Noise <strong id="ep-noise">—</strong><br>
-          Touch→Confirm <strong id="ep-t2c">—</strong><br>
-          False break <strong id="ep-fbr">—</strong>
-        </div>
-      </div>
-
-      <div class="entryprem-box">
-        <div class="entryprem-k">CONFIRM / CANCEL</div>
-        <div class="entryprem-v">
-          Confirm close <strong id="ep-confirm">—</strong><br>
-          Cancel close <strong id="ep-cancel">—</strong><br>
-          Cancel before confirm <strong id="ep-cbc">—</strong><br>
-          No-trade <strong id="ep-notrade">—</strong>
-        </div>
-      </div>
-
-      <div class="entryprem-box">
-        <div class="entryprem-k">PATH AFTER ENTRY</div>
-        <div class="entryprem-v" id="ep-path">—</div>
-      </div>
-    </div>
-
-    <div class="entryprem-read">
-      <div class="entryprem-read-title">TACTICAL READ</div>
-      <div class="entryprem-read-body" id="ep-read">—</div>
-    </div>
-  </div>
-</div>
                   <div class="prem-breakout-wrap" id="replay-mode-card" style="margin-top:0; min-width:0;">
             <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
               <div class="prem-breakout-title">REPLAY MODE</div>
@@ -6050,7 +5364,7 @@
                     min="07:30"
                     max="14:00"
                     step="60"
-                    value="07:31"
+                    value="07:30"
                   />
                 </div>
 
@@ -6062,7 +5376,6 @@
               </div>
 
               <div class="replay-actions">
-                <button id="replay-apply" class="replay-btn replay-btn-gold" type="button">APPLY</button>
                 <button id="replay-toggle" class="replay-btn replay-btn-gold" type="button">REPLAY MODE</button>
                 <button id="replay-prev" class="replay-btn" type="button">◀ PREV</button>
                 <button id="replay-next" class="replay-btn" type="button">NEXT ▶</button>
@@ -7988,15 +7301,7 @@
           <strong data-i18n="trade_card.entry_label">Entrada:</strong>
           <span id="trade-entry">492.80 – 493.10</span>
         </div>
-        <div class="trade-line">
-          <strong>Live Price:</strong>
-          <span id="trade-live-price">—</span>
-        </div>
 
-        <div class="trade-line">
-          <strong>Live Reflex:</strong>
-          <span id="trade-live-reflex">—</span>
-        </div>
         <div class="trade-line">
           <strong data-i18n="trade_card.stop_label">Stop:</strong>
           <span id="trade-stop">494.20</span>
@@ -8314,21 +7619,6 @@
   <script>
 // ======= CONFIG PAINEL (JSON) =======
 const PANEL_URL = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json';
-const PANEL_URL_REPLAY = 'https://jjjnogueira.app.n8n.cloud/webhook/aaron10_panel_json_bridge';
-
-function getPanelUrl() {
-  try {
-    const replayApi =
-      (window.__AARON_REPLAY__ && typeof window.__AARON_REPLAY__.getState === 'function')
-        ? window.__AARON_REPLAY__.getState()
-        : null;
-
-    return (replayApi && replayApi.enabled) ? PANEL_URL_REPLAY : PANEL_URL;
-  } catch (_) {
-    return PANEL_URL;
-  }
-}
-
 const REFRESH_MS = 60000; // 1 minuto
 
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
@@ -8394,8 +7684,8 @@ function replayNormalizeTradeDate(value){
 const replayState = {
   enabled: false,
   tradeDate: replayTodayIso(),
-  minute: REPLAY_START_MIN + 1,
-  anchorMinute: REPLAY_START_MIN + 1,
+  minute: REPLAY_START_MIN,
+  anchorMinute: REPLAY_START_MIN,
   playing: false,
   timer: null,
   speedMs: 900,
@@ -8471,41 +7761,10 @@ function replayGetEls(){
     next: document.getElementById("replay-next"),
     play: document.getElementById("replay-play"),
     pause: document.getElementById("replay-pause"),
-    apply: document.getElementById("replay-apply"),
     reset: document.getElementById("replay-reset"),
   };
-  function replaySyncInputsToState(){
-  const els = replayGetEls();
-
-  if (els.dateInput) {
-    replayState.tradeDate = replayNormalizeTradeDate(els.dateInput.value);
-  }
-
-  if (els.timeInput) {
-    const safeHhmm = replayNormalizeTimeValue(els.timeInput.value);
-    replayState.minute = replayHhmmToMinute(safeHhmm);
-  }
 }
-}
-function replaySyncInputsToState(){
-  const els = replayGetEls();
 
-  if (els.dateInput && els.dateInput.value) {
-    replayState.tradeDate = replayNormalizeTradeDate(els.dateInput.value);
-  }
-
-  if (els.timeInput && els.timeInput.value) {
-    const safeHhmm = replayNormalizeTimeValue(els.timeInput.value);
-    replayState.minute = replayHhmmToMinute(safeHhmm);
-    replayState.anchorMinute = replayState.minute;
-  }
-}
-async function replayCommitPicker(){
-  replayPause();
-  replaySyncInputsToState();
-  replayState.enabled = true;
-  await replayApplyMinute();
-}
 function replayRender(){
   const els = replayGetEls();
   if (!els.badge) return;
@@ -8524,19 +7783,16 @@ function replayRender(){
   if (els.current) els.current.textContent = currentTxt;
   if (els.dateTime) els.dateTime.textContent = snapshotTxt;
 
-  const isEditingDate = !!(els.dateInput && document.activeElement === els.dateInput);
-const isEditingTime = !!(els.timeInput && document.activeElement === els.timeInput);
-
-if (els.dateInput && !isEditingDate && els.dateInput.value !== tradeDate) {
-  els.dateInput.value = tradeDate;
-}
-
-if (els.timeInput && !isEditingTime) {
-  const hhmm = replayMinuteHhmm(replayState.minute);
-  if (els.timeInput.value !== hhmm) {
-    els.timeInput.value = hhmm;
+  if (els.dateInput && els.dateInput.value !== tradeDate) {
+    els.dateInput.value = tradeDate;
   }
-}
+
+  if (els.timeInput) {
+    const hhmm = replayMinuteHhmm(replayState.minute);
+    if (els.timeInput.value !== hhmm) {
+      els.timeInput.value = hhmm;
+    }
+  }
 
   if (els.window) els.window.textContent = `${startTxt} → ${endTxt}`;
   if (els.step) els.step.textContent = "1 MINUTE";
@@ -8570,7 +7826,6 @@ if (els.timeInput && !isEditingTime) {
 }
 
 async function replayApplyMinute(){
-  replaySyncInputsToState();
   replayRender();
 
   if (typeof loadPanel === "function") {
@@ -8646,53 +7901,31 @@ function initReplayModeUI(){
 
   window.__AARON_REPLAY_UI_READY__ = true;
 
-  els.toggle.addEventListener("click", async () => {
-  const nextEnabled = !replayState.enabled;
-
-  replayPause();
-
-  if (nextEnabled) {
-    if (els.dateInput && els.dateInput.value) {
-      replayState.tradeDate = replayNormalizeTradeDate(els.dateInput.value);
-    }
-
-    if (els.timeInput && els.timeInput.value) {
-      const safeHhmm = replayNormalizeTimeValue(els.timeInput.value);
-      replayState.minute = replayHhmmToMinute(safeHhmm);
-      replayState.anchorMinute = replayState.minute;
-    }
-  }
-
-  replayState.enabled = nextEnabled;
-  await replayApplyMinute();
-});
+  els.toggle.addEventListener("click", () => replaySetEnabled(!replayState.enabled));
   els.prev.addEventListener("click", () => replayStep(-1));
   els.next.addEventListener("click", () => replayStep(1));
   els.play.addEventListener("click", replayPlay);
   els.pause.addEventListener("click", replayPause);
-  if (els.apply) els.apply.addEventListener("click", replayCommitPicker);
 
-      if (els.dateInput) {
-  const onReplayDatePick = (ev) => {
-    replayState.tradeDate = replayNormalizeTradeDate(ev.target.value);
-    replayRender();
-  };
+    if (els.dateInput) {
+    els.dateInput.addEventListener("change", async (ev) => {
+      replayPause();
+      replayState.tradeDate = replayNormalizeTradeDate(ev.target.value);
+      replayState.enabled = true;
+      await replayApplyMinute();
+    });
+  }
 
-  els.dateInput.addEventListener("input", onReplayDatePick);
-  els.dateInput.addEventListener("change", onReplayDatePick);
-}
-
-if (els.timeInput) {
-  const onReplayTimePick = (ev) => {
-    const safeHhmm = replayNormalizeTimeValue(ev.target.value);
-    replayState.minute = replayHhmmToMinute(safeHhmm);
-    replayState.anchorMinute = replayState.minute;
-    replayRender();
-  };
-
-  els.timeInput.addEventListener("input", onReplayTimePick);
-  els.timeInput.addEventListener("change", onReplayTimePick);
-}
+  if (els.timeInput) {
+    els.timeInput.addEventListener("change", async (ev) => {
+      replayPause();
+      const safeHhmm = replayNormalizeTimeValue(ev.target.value);
+      replayState.minute = replayHhmmToMinute(safeHhmm);
+      replayState.anchorMinute = replayState.minute;
+      replayState.enabled = true;
+      await replayApplyMinute();
+    });
+  }
 
   els.reset.addEventListener("click", async () => {
     replayPause();
@@ -8946,7 +8179,7 @@ function a10LiveHandleMessage(payloadOrEvent) {
     return { t: bucketTime, o, h, l, c, v };
   }
 
-            function pushAggBar(bar){
+      function pushAggBar(bar){
     if (!bar) return;
 
     window.__A10_LIVE_HAS_BARS__ = true;
@@ -8959,18 +8192,6 @@ function a10LiveHandleMessage(payloadOrEvent) {
       timeframe: tfWanted,
       __live: true
     });
-
-    try {
-      a10UpdateTradeCardLiveReflex(bar);
-    } catch (e) {
-      console.warn('[A10] live reflex do Trade Card falhou:', e);
-    }
-        try {
-  a10UpdateEntryPremLive(bar);
-  a10ScheduleEntryPremLiveRefresh();
-} catch (e) {
-  console.warn('[A10] live do Entry Prem falhou:', e);
-}
   }
 
 
@@ -11755,228 +10976,7 @@ a10UpdatePremSignalCTA();
     // não quebra o painel por causa disso
   }
 }
-function updateFirstHourPremonitionPanel(payload){
-  try{
-    const root   = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
-    const panel  = root.panel || root.raw?.panel || root.data?.panel || root || {};
-    const ui0    = root.ui || panel.ui || root.raw?.ui || root.data?.ui || {};
-    const ui     = (ui0 && typeof ui0 === "object" && ui0.ui && typeof ui0.ui === "object") ? ui0.ui : ui0;
-    const digest0 = root.digest || panel.digest || root.raw?.digest || root.data?.digest || {};
-    const digest  = (digest0 && typeof digest0 === "object" && digest0.digest && typeof digest0.digest === "object") ? digest0.digest : digest0;
 
-    const deepFind = (obj, key, maxDepth = 6) => {
-      try{
-        const seen = new Set();
-        const q = [{ v: obj, d: 0 }];
-        while (q.length){
-          const { v, d } = q.shift();
-          if (!v || typeof v !== "object") continue;
-          if (seen.has(v)) continue;
-          seen.add(v);
-          if (Object.prototype.hasOwnProperty.call(v, key)) return v[key];
-          if (d >= maxDepth) continue;
-          for (const k of Object.keys(v)){
-            const child = v[k];
-            if (child && typeof child === "object") q.push({ v: child, d: d + 1 });
-          }
-        }
-      }catch(e){}
-      return null;
-    };
-
-    const fh =
-      ui.first_hour_live_premonition_v1 ||
-      digest.first_hour_live_premonition_v1 ||
-      panel.first_hour_live_premonition_v1 ||
-      root.first_hour_live_premonition_v1 ||
-      ui.first_hour_premarket_premonition_v1 ||
-      digest.first_hour_premarket_premonition_v1 ||
-      panel.first_hour_premarket_premonition_v1 ||
-      root.first_hour_premarket_premonition_v1 ||
-      deepFind(root, "first_hour_live_premonition_v1") ||
-      deepFind(root, "first_hour_premarket_premonition_v1") ||
-      null;
-
-    const set = (id, val) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = (val === null || val === undefined || val === "") ? "—" : String(val);
-    };
-
-    const setBadge = (id, txt, mode) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.classList.remove("win-now","win-warn","win-wait");
-      el.classList.add(mode || "win-wait");
-      el.textContent = txt || "—";
-    };
-
-    const num = (v) => {
-      if (v == null || v === "") return null;
-      const n = Number(v);
-      return Number.isFinite(n) ? n : null;
-    };
-
-    const fmtPct = (v) => Number.isFinite(num(v)) ? `${Number(v).toFixed(2)}%` : "—";
-    const fmtPrice = (v) => Number.isFinite(num(v)) ? Number(v).toFixed(2) : "—";
-    const fmtEta = (v) => Number.isFinite(num(v)) ? `${Number(v)} min` : "—";
-
-    const pm = fh?.premarket_summary || {};
-    const minute =
-      fh?.market_minute ??
-      fh?.minute ??
-      fh?.minute_index ??
-      fh?.session_minute ??
-      null;
-
-    const continuation =
-      fh?.continuation_pct ??
-      fh?.continue_pct ??
-      null;
-
-    const exhaustion =
-      fh?.exhaustion_pct ??
-      fh?.exhaust_pct ??
-      null;
-
-    const reversal =
-      fh?.reversal_pct ??
-      fh?.reverse_pct ??
-      null;
-
-    const upEta =
-      fh?.continuation_eta_p50_min ??
-      fh?.eta_up_p50_min ??
-      fh?.up_eta_p50_min ??
-      null;
-
-    const downEta =
-      fh?.reversal_eta_p50_min ??
-      fh?.eta_down_p50_min ??
-      fh?.down_eta_p50_min ??
-      null;
-
-    const targetUp =
-      fh?.target_up_p50 ??
-      fh?.target_up_price_p50 ??
-      fh?.up_target_p50 ??
-      null;
-
-    const targetDown =
-      fh?.target_down_p50 ??
-      fh?.target_down_price_p50 ??
-      fh?.down_target_p50 ??
-      null;
-
-    const triggerCont =
-      fh?.trigger_continue_above ??
-      fh?.trigger_up ??
-      fh?.continue_above ??
-      null;
-
-    const triggerRev =
-      fh?.trigger_reverse_below ??
-      fh?.trigger_down ??
-      fh?.reverse_below ??
-      null;
-
-    const invalid =
-      fh?.invalidation_price ??
-      fh?.invalid_price ??
-      fh?.invalidation ??
-      null;
-
-    const phase =
-      fh?.session_phase ??
-      fh?.phase ??
-      fh?.state ??
-      "—";
-
-    const emaState =
-      fh?.ema_state?.label ??
-      fh?.ema_state?.regime ??
-      fh?.ema_state ??
-      "—";
-
-    const vwapSide =
-      fh?.vwap_state?.side ??
-      fh?.vwap_side ??
-      fh?.vwap_state ??
-      "—";
-
-    const rsiState =
-      fh?.rsi_state?.rsi_regime ??
-      fh?.rsi_state?.label ??
-      fh?.rsi_state ??
-      "—";
-
-    const bias =
-      pm?.bias ??
-      fh?.premarket_bias ??
-      "—";
-
-    const pmMove =
-      fmtPct(pm?.move_pct ?? pm?.return_pct ?? fh?.premarket_move_pct);
-
-    const pmRange =
-      fmtPct(pm?.range_pct ?? fh?.premarket_range_pct);
-
-    const pmVolRatio =
-      Number.isFinite(num(pm?.volume_ratio ?? pm?.vol_ratio ?? fh?.premarket_vol_ratio))
-        ? `${Number(pm?.volume_ratio ?? pm?.vol_ratio ?? fh?.premarket_vol_ratio).toFixed(2)}x`
-        : "—";
-
-    const reading =
-      fh?.reading_pt ||
-      fh?.reading ||
-      fh?.summary_pt ||
-      fh?.summary ||
-      "—";
-
-    set("fh-minute", minute ?? "—");
-    set("fh-bias", bias);
-    set("fh-pm-move", pmMove);
-    set("fh-pm-range", pmRange);
-    set("fh-pm-vol-ratio", pmVolRatio);
-
-    set("fh-phase", phase);
-    set("fh-ema-state", typeof emaState === "object" ? "—" : emaState);
-    set("fh-vwap-side", typeof vwapSide === "object" ? "—" : vwapSide);
-    set("fh-rsi-state", typeof rsiState === "object" ? "—" : rsiState);
-
-    set("fh-cont", fmtPct(continuation));
-    set("fh-exhaust", fmtPct(exhaustion));
-    set("fh-reversal", fmtPct(reversal));
-
-    set("fh-up-eta", fmtEta(upEta));
-    set("fh-down-eta", fmtEta(downEta));
-
-    set("fh-target-up", fmtPrice(targetUp));
-    set("fh-target-down", fmtPrice(targetDown));
-
-    set("fh-trigger-cont", fmtPrice(triggerCont));
-    set("fh-trigger-rev", fmtPrice(triggerRev));
-    set("fh-invalid", fmtPrice(invalid));
-
-    set("fh-reading", reading);
-
-    const contN = num(continuation);
-    const exN   = num(exhaustion);
-    const revN  = num(reversal);
-
-    if (revN != null && revN >= 70){
-      setBadge("fh-badge", "REVERSAL RISK HIGH", "win-warn");
-    } else if (exN != null && exN >= 60){
-      setBadge("fh-badge", "EXHAUSTING", "win-warn");
-    } else if (contN != null && contN >= 65){
-      setBadge("fh-badge", "ARMED", "win-now");
-    } else {
-      setBadge("fh-badge", "WAIT", "win-wait");
-    }
-  }catch(e){
-    // não quebra o painel
-  }
-}
 function updateIndicatorPremonitionPanel(payload){
   try{
         const root  = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
@@ -12460,146 +11460,6 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
       set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
       set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
     }
-        // ===== PIVOT PREMONITION (NEW BLOCK) =====
-    {
-      const clearPP = () => {
-        setBadge("pp-badge", "—", "win-wait");
-        [
-          "pp-seq",
-          "pp-conf",
-          "pp-p1-kind",
-          "pp-p1-zone",
-          "pp-p1-eta",
-          "pp-p1-prob",
-          "pp-p2-kind",
-          "pp-p2-zone",
-          "pp-p2-eta",
-          "pp-p2-prob",
-          "pp-trend",
-          "pp-loc",
-          "pp-key",
-          "pp-source",
-          "pp-next",
-          "pp-rangepos",
-          "pp-current",
-          "pp-atr",
-          "pp-read"
-        ].forEach(id => set(id, "—"));
-      };
-
-      const pp =
-        root?.pivot_premonition_v1 ||
-        ui?.pivot_premonition_v1 ||
-        digest?.pivot_premonition_v1 ||
-        panel?.pivot_premonition_v1 ||
-        root?.exec_1x1?.pivot_premonition_v1 ||
-        root?.live?.pivot_premonition_v1 ||
-        null;
-
-      if (!pp || pp?.enabled === false) {
-        clearPP();
-      } else {
-        const summary = pp?.summary || {};
-        const context = pp?.context || {};
-        const p1 = pp?.pivot1 || {};
-        const p2 = pp?.pivot2 || {};
-
-        const toNum = (v) => {
-          const n = Number(v);
-          return Number.isFinite(n) ? n : null;
-        };
-
-        const fmtPct2 = (v) => {
-          const n = toNum(v);
-          return n == null ? "—" : `${n.toFixed(2)}%`;
-        };
-
-        const fmtBarsRange = (obj) => {
-          const p25 = toNum(obj?.eta_p25_bars);
-          const p50 = toNum(obj?.eta_p50_bars);
-          const p75 = toNum(obj?.eta_p75_bars);
-
-          if (p25 != null && p75 != null) return `${Math.round(p25)}b → ${Math.round(p75)}b`;
-          if (p50 != null) return `${Math.round(p50)}b`;
-          return "—";
-        };
-
-        const fmtZone = (obj) => {
-          const lo = toNum(obj?.zone_low);
-          const hi = toNum(obj?.zone_high);
-          if (lo == null && hi == null) return "—";
-          return `${fmt2(lo)} → ${fmt2(hi)}`;
-        };
-
-        const p1Prob = toNum(p1?.prob_pct);
-        const seqConf = toNum(summary?.sequence_confidence_pct);
-
-        let badgeTxt = "WAIT";
-        let badgeMode = "win-wait";
-
-        if (p1Prob != null) {
-          if (p1Prob >= 75 && (seqConf == null || seqConf >= 60)) {
-            badgeTxt = "STRONG PIVOT";
-            badgeMode = "win-now";
-          } else if (p1Prob >= 60) {
-            badgeTxt = "CAUTION";
-            badgeMode = "win-warn";
-          } else {
-            badgeTxt = "WAIT";
-            badgeMode = "win-wait";
-          }
-        }
-
-        const kind1 = String(p1?.kind || "").trim().toUpperCase() || "—";
-        const kind2 = String(p2?.kind || "").trim().toUpperCase() || "—";
-
-        const seqLabel =
-          String(summary?.sequence_label || "").trim() ||
-          ((kind1 !== "—" || kind2 !== "—") ? `${kind1} → ${kind2}` : "—");
-
-        const trend = String(context?.trend || "").trim().toUpperCase() || "—";
-        const loc = String(context?.range_location || "").trim().toUpperCase() || "—";
-        const ctxKey = String(context?.context_key || summary?.context_key || "").trim() || "—";
-        const ctxSource = String(summary?.context_source || pp?.source || "").trim() || "—";
-
-        const nextPivot = String(pp?.next_pivot_kind || p1?.kind || "").trim().toUpperCase() || "—";
-        const rangePos = fmtPct2(context?.range_pos_pct);
-        const currentTxt = toNum(pp?.current) == null ? "—" : fmt2(pp?.current);
-        const atrTxt = toNum(pp?.atr14) == null ? "—" : fmt2(pp?.atr14);
-
-        const tactical =
-          pp?.tactical_read_pt ||
-          pp?.tactical_read_en ||
-          "Próximos pivôs ainda sem leitura clara.";
-
-        setBadge("pp-badge", badgeTxt, badgeMode);
-
-        set("pp-seq", seqLabel);
-        set("pp-conf", fmtPct2(seqConf));
-
-        set("pp-p1-kind", kind1);
-        set("pp-p1-zone", fmtZone(p1));
-        set("pp-p1-eta", fmtBarsRange(p1));
-        set("pp-p1-prob", fmtPct2(p1?.prob_pct));
-
-        set("pp-p2-kind", kind2);
-        set("pp-p2-zone", fmtZone(p2));
-        set("pp-p2-eta", fmtBarsRange(p2));
-        set("pp-p2-prob", fmtPct2(p2?.prob_pct));
-
-        set("pp-trend", trend);
-        set("pp-loc", loc);
-        set("pp-key", ctxKey);
-        set("pp-source", ctxSource);
-
-        set("pp-next", nextPivot);
-        set("pp-rangepos", rangePos);
-        set("pp-current", currentTxt);
-        set("pp-atr", atrTxt);
-
-        set("pp-read", tactical);
-      }
-    }
                 // ===== VOLUME PREMONITION (NEW BLOCK) =====
     {
       const clearVP = () => {
@@ -12895,319 +11755,6 @@ if (readingEl) {
       }
     }
     // ===== /VOLUME PREMONITION =====
-        // ===== EMA EXHAUSTION PREMONITION =====
-    {
-      const clearEmaEx = () => {
-        setBadge("eex-badge", "WAIT", "win-wait");
-        set("eex-state", "—");
-        set("eex-ema20", "—");
-        set("eex-ema50", "—");
-        set("eex-delta", "—");
-        set("eex-exhaust", "—");
-        set("eex-cont", "—");
-        set("eex-eta-head", "—");
-        set("eex-hold", "—");
-        set("eex-cont-now", "—");
-        set("eex-cont-next", "—");
-        set("eex-exhaust-now", "—");
-        set("eex-weaken-now", "—");
-        set("eex-reversal-risk", "—");
-        set("eex-eta-weaken", "—");
-        set("eex-eta-exhaust", "—");
-        set("eex-eta-reversal", "—");
-        set("eex-w1", "—");
-        set("eex-w5", "—");
-        set("eex-w15", "—");
-        set("eex-w30", "—");
-        set("eex-w60", "—");
-        set("eex-read", "—");
-
-        const readEl = document.getElementById("eex-read");
-        if (readEl) readEl.style.color = "#ffcc66";
-      };
-
-      const fmtPctSafe = (v) =>
-        Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)}%` : "—";
-
-      const fmtSignedPctSafe = (v) =>
-        Number.isFinite(Number(v))
-          ? `${Number(v) >= 0 ? "+" : ""}${Number(v).toFixed(2)}%`
-          : "—";
-
-      const fmtBars = (v) =>
-        Number.isFinite(Number(v)) ? `${Math.max(1, Math.round(Number(v)))} bars` : "—";
-
-      const fmtBarsRange = (a, b) => {
-        const aa = Number(a);
-        const bb = Number(b);
-        if (Number.isFinite(aa) && Number.isFinite(bb)) {
-          return `${Math.max(1, Math.round(aa))}–${Math.max(1, Math.round(bb))} bars`;
-        }
-        if (Number.isFinite(aa)) return `${Math.max(1, Math.round(aa))} bars`;
-        if (Number.isFinite(bb)) return `${Math.max(1, Math.round(bb))} bars`;
-        return "—";
-      };
-
-      const fmtPressure = (obj) => {
-        if (obj == null) return "—";
-        if (typeof obj === "string") return obj;
-        if (typeof obj === "number") return fmtPctSafe(obj);
-
-        const label =
-          obj.label ||
-          obj.reading ||
-          obj.state ||
-          obj.status ||
-          obj.mode ||
-          "—";
-
-        const pct =
-          obj.pct ??
-          obj.prob_pct ??
-          obj.probability_pct ??
-          obj.score_pct ??
-          obj.value_pct ??
-          obj.confidence_pct;
-
-        if (label !== "—" && Number.isFinite(Number(pct))) {
-          return `${String(label).toUpperCase()} | ${fmtPctSafe(pct)}`;
-        }
-
-        return String(label).toUpperCase();
-      };
-
-      const pick = (...vals) => {
-        for (const v of vals) {
-          if (v !== null && v !== undefined && v !== "") return v;
-        }
-        return null;
-      };
-
-      const eex =
-  panel?.ema_volume_exhaustion_premonition_v1 ||
-  ui?.ema_volume_exhaustion_premonition_v1 ||
-  digest?.ema_volume_exhaustion_premonition_v1 ||
-  root?.ema_volume_exhaustion_premonition_v1 ||
-  root?.exec_1x1?.ema_volume_exhaustion_premonition_v1 ||
-
-  panel?.ema_exhaustion_premonition ||
-  panel?.ema_exhaustion_premonition_v1 ||
-  ui?.ema_exhaustion_premonition ||
-  ui?.ema_exhaustion_premonition_v1 ||
-  digest?.ema_exhaustion_premonition ||
-  digest?.ema_exhaustion_premonition_v1 ||
-  root?.ema_exhaustion_premonition ||
-  root?.ema_exhaustion_premonition_v1 ||
-
-  deepFind(root, "ema_volume_exhaustion_premonition_v1") ||
-  deepFind(root, "ema_exhaustion_premonition") ||
-  deepFind(root, "ema_exhaustion_premonition_v1") ||
-  null;
-
-      if (!eex) {
-        clearEmaEx();
-      } else {
-        const summary = eex?.summary || eex || {};
-        const ema = eex?.ema || eex?.ema_structure || eex?.structure || {};
-        const cve =
-          eex?.continuation_vs_exhaustion ||
-          eex?.cve ||
-          eex?.probabilities ||
-          {};
-        const eta = eex?.eta || eex?.timing || {};
-        const wp =
-          eex?.window_pressure ||
-          eex?.pressure ||
-          eex?.windows ||
-          {};
-
-        const stateTxt = String(
-          pick(
-            summary?.state,
-            summary?.motor_state,
-            eex?.state,
-            eex?.reading,
-            summary?.reading
-          ) || "—"
-        ).toUpperCase();
-
-        const primaryTxt =
-          pick(
-            eex?.primary_read,
-            summary?.primary_read,
-            eex?.headline,
-            summary?.headline,
-            stateTxt
-          ) || "—";
-
-        const holdTxt =
-          pick(
-            eex?.hold,
-            summary?.hold,
-            eex?.hold_text,
-            summary?.hold_text,
-            eex?.tactical_read_pt,
-            eex?.tactical_read_en,
-            summary?.tactical_read_pt,
-            summary?.tactical_read_en
-          ) || "—";
-
-        const sideRaw = String(
-          pick(summary?.bias, summary?.side, eex?.bias, eex?.side) || ""
-        ).toLowerCase();
-
-        const badgeTxt =
-          sideRaw
-            ? sideRaw.toUpperCase()
-            : stateTxt.includes("SHORT")
-            ? "SHORT"
-            : stateTxt.includes("LONG")
-            ? "LONG"
-            : "WAIT";
-
-        const badgeMode =
-          badgeTxt === "LONG" ? "win-now" :
-          badgeTxt === "SHORT" ? "win-warn" :
-          "win-wait";
-
-        const ema20 = pick(ema?.ema20, ema?.ema_20, ema?.fast, ema?.ema_fast);
-        const ema50 = pick(ema?.ema50, ema?.ema_50, ema?.slow, ema?.ema_slow);
-        const deltaPct = pick(ema?.delta_pct, ema?.spread_pct, ema?.diff_pct);
-
-        const contNow = pick(
-          cve?.continue_now_pct,
-          cve?.continuation_now_pct,
-          eex?.continue_now_pct,
-          eex?.continuation_pct
-        );
-
-        const contNext = pick(
-          cve?.continue_next_leg_pct,
-          cve?.continue_next_pct,
-          cve?.continuation_next_leg_pct,
-          eex?.continue_next_leg_pct
-        );
-
-        const exhaustNow = pick(
-          cve?.exhaust_now_pct,
-          cve?.exhaustion_now_pct,
-          eex?.exhaust_now_pct,
-          eex?.exhaustion_pct
-        );
-
-        const weakenNow = pick(
-          cve?.weaken_now_pct,
-          cve?.weakening_now_pct,
-          eex?.weaken_now_pct,
-          eex?.weakening_pct
-        );
-
-        const reversalRisk = pick(
-          cve?.reversal_risk_pct,
-          eex?.reversal_risk_pct
-        );
-
-        const etaWeaken = pick(
-          eta?.weaken_bars_p50,
-          eta?.weaken_bars,
-          eta?.eta_weaken_bars,
-          eex?.eta_weaken_bars
-        );
-
-        const etaExhaust = pick(
-          eta?.exhaustion_bars_p50,
-          eta?.exhaustion_bars,
-          eta?.eta_exhaustion_bars,
-          eex?.eta_exhaustion_bars
-        );
-
-        const etaRevLow = pick(
-          eta?.reversal_window_bars_low,
-          eta?.reversal_bars_p25,
-          eta?.eta_reversal_low,
-          eex?.reversal_window_bars_low
-        );
-
-        const etaRevHigh = pick(
-          eta?.reversal_window_bars_high,
-          eta?.reversal_bars_p75,
-          eta?.eta_reversal_high,
-          eex?.reversal_window_bars_high
-        );
-
-        const headEtaLow = pick(
-          eta?.exhaustion_bars_p25,
-          eta?.exhaustion_bars_low,
-          eta?.exhaustion_eta_low
-        );
-
-        const headEtaHigh = pick(
-          eta?.exhaustion_bars_p75,
-          eta?.exhaustion_bars_high,
-          eta?.exhaustion_eta_high
-        );
-
-        const wp1  = pick(wp["1m"],  wp.m1,  wp.tf_1m,  eex?.pressure_1m,  eex?.window_pressure_1m);
-        const wp5  = pick(wp["5m"],  wp.m5,  wp.tf_5m,  eex?.pressure_5m,  eex?.window_pressure_5m);
-        const wp15 = pick(wp["15m"], wp.m15, wp.tf_15m, eex?.pressure_15m, eex?.window_pressure_15m);
-        const wp30 = pick(wp["30m"], wp.m30, wp.tf_30m, eex?.pressure_30m, eex?.window_pressure_30m);
-        const wp60 = pick(wp["60m"], wp.m60, wp.tf_60m, eex?.pressure_60m, eex?.window_pressure_60m);
-
-        const readTxt =
-          pick(
-            eex?.tactical_read_pt,
-            eex?.tactical_read_en,
-            summary?.tactical_read_pt,
-            summary?.tactical_read_en,
-            holdTxt,
-            primaryTxt
-          ) || "—";
-
-        setBadge("eex-badge", badgeTxt, badgeMode);
-        set("eex-state", stateTxt);
-        set("eex-ema20", fmt2(ema20));
-        set("eex-ema50", fmt2(ema50));
-        set("eex-delta", fmtSignedPctSafe(deltaPct));
-
-        set("eex-exhaust", fmtPctSafe(exhaustNow));
-        set("eex-cont", fmtPctSafe(contNow));
-        set("eex-eta-head", fmtBarsRange(headEtaLow, headEtaHigh));
-        set("eex-hold", holdTxt);
-
-        set("eex-cont-now", fmtPctSafe(contNow));
-        set("eex-cont-next", fmtPctSafe(contNext));
-        set("eex-exhaust-now", fmtPctSafe(exhaustNow));
-        set("eex-weaken-now", fmtPctSafe(weakenNow));
-        set("eex-reversal-risk", fmtPctSafe(reversalRisk));
-
-        set("eex-eta-weaken", fmtBars(etaWeaken));
-        set("eex-eta-exhaust", fmtBars(etaExhaust));
-        set("eex-eta-reversal", fmtBarsRange(etaRevLow, etaRevHigh));
-
-        set("eex-w1", fmtPressure(wp1));
-        set("eex-w5", fmtPressure(wp5));
-        set("eex-w15", fmtPressure(wp15));
-        set("eex-w30", fmtPressure(wp30));
-        set("eex-w60", fmtPressure(wp60));
-
-        set("eex-read", readTxt);
-
-        const readEl = document.getElementById("eex-read");
-        if (readEl) {
-          const upper = String(readTxt || "").toUpperCase();
-          if (upper.includes("REDUCE") || upper.includes("EXIT") || upper.includes("WEAKEN")) {
-            readEl.style.color = "#f87171";
-          } else if (upper.includes("CAUTION") || upper.includes("WARN")) {
-            readEl.style.color = "#ffcc66";
-          } else if (upper.includes("HOLD")) {
-            readEl.style.color = "#e5e7eb";
-          } else {
-            readEl.style.color = "#ffcc66";
-          }
-        }
-      }
-    }
-    // ===== /EMA EXHAUSTION PREMONITION =====
         // ===== ZIGZAG ROUTE ENGINE (NEW BLOCK) =====
     {
       const clearZZRoute = () => {
@@ -13398,152 +11945,6 @@ if (readingEl) {
       }
     }
     // ===== /ZIGZAG ROUTE ENGINE =====
-        // ===== ENTRY PREMONITION =====
-    {
-            const clearEntryPrem = () => {
-        setBadge("ep-badge", "WAIT", "win-wait");
-        set("ep-mode", "—");
-        set("ep-style", "—");
-        set("ep-exec", "—");
-        set("ep-side", "—");
-        set("ep-sidekey", "—");
-        set("ep-sidekeys", "—");
-        set("ep-zone", "—");
-        set("ep-touch", "—");
-        set("ep-chase", "—");
-        set("ep-valid", "—");
-        set("ep-quality", "—");
-        set("ep-noise", "—");
-        set("ep-t2c", "—");
-        set("ep-fbr", "—");
-        set("ep-confirm", "—");
-        set("ep-cancel", "—");
-        set("ep-cbc", "—");
-        set("ep-notrade", "—");
-        set("ep-path", "—");
-        set("ep-read", "—");
-      };
-
-      const fmtPctSafe = (v) => {
-        const n = Number(v);
-        if (!Number.isFinite(n)) return "—";
-        return `${n.toFixed(2).replace(/\.00$/, "")}%`;
-      };
-
-      const ep =
-  root?.entry_premition_v1 || root?.entry_premonition_v1 ||
-  panel?.entry_premition_v1 || panel?.entry_premonition_v1 ||
-  ui?.entry_premition_v1 || ui?.entry_premonition_v1 ||
-  digest?.entry_premition_v1 || digest?.entry_premonition_v1 ||
-  root?.exec_1x1?.entry_premition_v1 || root?.exec_1x1?.entry_premonition_v1 ||
-  root?.live?.entry_premition_v1 || root?.live?.entry_premonition_v1 ||
-  null;
-
-      if (!ep) {
-        clearEntryPrem();
-      } else {
-        const summary = ep?.summary || {};
-        const windowX = ep?.window || {};
-        const odds = ep?.odds || {};
-        const path = ep?.path_after_entry || {};
-        const runtime = ep?.runtime || {};
-
-        const badgeRaw = String(
-          ep?.status ||
-          summary?.badge ||
-          ep?.labels?.badge ||
-          "WAIT"
-        ).toUpperCase();
-
-        let badgeMode = "win-wait";
-        if (badgeRaw.includes("HOT")) badgeMode = "win-now";
-        else if (badgeRaw.includes("ARMED")) badgeMode = "win-warn";
-        else if (badgeRaw.includes("NO TRADE")) badgeMode = "win-wait";
-
-        const modeTxt =
-          ep?.entry_mode ||
-          summary?.entry_mode ||
-          ep?.official_label ||
-          summary?.official_label ||
-          "—";
-
-        const styleTxt =
-          ep?.best_entry_style ||
-          summary?.best_entry_style ||
-          ep?.labels?.best_entry_style ||
-          "—";
-
-                const zoneTxt =
-          (windowX?.entry_zone_low != null || windowX?.entry_zone_high != null)
-            ? `${fmt2(windowX?.entry_zone_low)} → ${fmt2(windowX?.entry_zone_high)}`
-            : "—";
-
-        const resolvedSideRaw =
-          runtime?.resolved_side ??
-          runtime?.side ??
-          ep?.side ??
-          ep?.entry_side ??
-          summary?.side ??
-          summary?.entry_side ??
-          null;
-
-        const resolvedSide = (() => {
-          const s = String(resolvedSideRaw ?? '').trim().toLowerCase();
-          if (!s) return '—';
-          if (['buy','long','up','bull','bullish'].includes(s)) return 'buy';
-          if (['sell','short','down','bear','bearish'].includes(s)) return 'sell';
-          return s;
-        })();
-
-        const sideKeyTxt =
-          runtime?.side_specific_key ??
-          ep?.side_specific_key ??
-          summary?.side_specific_key ??
-          '—';
-
-        const sideKeysRaw =
-          runtime?.available_side_keys ??
-          ep?.available_side_keys ??
-          summary?.available_side_keys ??
-          [];
-
-        const sideKeysTxt = Array.isArray(sideKeysRaw)
-          ? (sideKeysRaw.length ? sideKeysRaw.join(', ') : '—')
-          : (typeof sideKeysRaw === 'string' && sideKeysRaw.trim() ? sideKeysRaw : '—');
-
-        const pathTxt =
-          `MAE p50 ${fmt2(path?.mae_usd?.p50)} | p75 ${fmt2(path?.mae_usd?.p75)} · ` +
-          `MFE p50 ${fmt2(path?.mfe_usd?.p50)} | p75 ${fmt2(path?.mfe_usd?.p75)}`;
-
-        const readTxt =
-          ep?.tactical_read_pt ||
-          ep?.tactical_read_en ||
-          "—";
-
-        setBadge("ep-badge", badgeRaw, badgeMode);
-        set("ep-mode", modeTxt);
-        set("ep-style", styleTxt);
-        set("ep-exec", fmtPctSafe(ep?.execution_confidence_pct));
-        set("ep-side", resolvedSide);
-        set("ep-sidekey", sideKeyTxt);
-        set("ep-sidekeys", sideKeysTxt);
-        set("ep-zone", zoneTxt);
-        set("ep-touch", fmt2(windowX?.ideal_touch));
-        set("ep-chase", fmt2(windowX?.max_chase));
-        set("ep-valid", summary?.window_valid_bars ?? ep?.window_valid_bars ?? "—");
-        set("ep-quality", fmtPctSafe(ep?.entry_quality_pct ?? summary?.entry_quality_pct));
-        set("ep-noise", fmtPctSafe(ep?.noise_penalty_pct ?? summary?.noise_penalty_pct));
-        set("ep-t2c", fmtPctSafe(odds?.touch_to_confirm_pct));
-        set("ep-fbr", fmtPctSafe(odds?.false_break_risk_pct));
-        set("ep-confirm", fmt2(windowX?.confirm_close));
-        set("ep-cancel", fmt2(windowX?.cancel_close));
-        set("ep-cbc", fmtPctSafe(odds?.cancel_before_confirm_pct));
-        set("ep-notrade", fmtPctSafe(odds?.no_trade_pct));
-        set("ep-path", pathTxt);
-        set("ep-read", readTxt);
-      }
-    }
-    // ===== /ENTRY PREMONITION =====
   }catch(e){
     // não quebra o painel
   }
@@ -15296,361 +13697,8 @@ setFormattedComment(els.tradeComment, parsed.comment || commentText);
     badge.textContent = text;
   }
 }
-function a10ParsePriceRange(text) {
-  const nums = String(text || '')
-    .replace(/,/g, '.')
-    .match(/\d+(?:\.\d+)?/g);
 
-  if (!nums || !nums.length) return null;
 
-  const vals = nums.map(Number).filter(Number.isFinite);
-  if (!vals.length) return null;
-
-  if (vals.length === 1) {
-    return { lo: vals[0], hi: vals[0] };
-  }
-
-  return {
-    lo: Math.min(vals[0], vals[1]),
-    hi: Math.max(vals[0], vals[1]),
-  };
-}
-
-function a10LiveNum(v) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-
-function a10UpdateTradeCardLiveReflex(bar) {
-  if (!els.tradeCard) return;
-
-  const livePx =
-    a10LiveNum(bar?.c) ??
-    a10LiveNum(bar?.close) ??
-    a10LiveNum(bar?.price) ??
-    a10LiveNum(bar?.p);
-
-  if (livePx == null) return;
-
-  const liveEl = document.getElementById('trade-live-price');
-  const reflexEl = document.getElementById('trade-live-reflex');
-
-  if (liveEl) liveEl.textContent = livePx.toFixed(2);
-
-  const ap = (typeof apLoad === 'function') ? apLoad() : null;
-  const inPosition = !!(ap && ap.enabled && ap.active);
-
-  const entryRange = a10ParsePriceRange(els.tradeEntry?.textContent || '');
-  const stopRange  = a10ParsePriceRange(els.tradeStop?.textContent || '');
-  const tp1Range   = a10ParsePriceRange(els.tradeTP1?.textContent || '');
-  const dirTxt = String(els.tradeDirection?.textContent || '').toLowerCase();
-
-  const isBuy  = /buy|compra|comprar|long/.test(dirTxt);
-  const isSell = /sell|venda|vender|short/.test(dirTxt);
-
-  if (!entryRange || (!isBuy && !isSell)) {
-    if (reflexEl) reflexEl.textContent = '—';
-    return;
-  }
-
-  const stopPx = stopRange ? stopRange.lo : null;
-  const tpPx   = tp1Range ? tp1Range.lo : null;
-
-  const zoneLo  = entryRange.lo;
-  const zoneHi  = entryRange.hi;
-  const zoneMid = (zoneLo + zoneHi) / 2;
-
-  const zoneHit = livePx >= zoneLo && livePx <= zoneHi;
-
-  const fallbackBuffer =
-    Math.max(
-      0.03,
-      Math.abs(zoneHi - zoneLo),
-      stopPx != null ? Math.abs(stopPx - zoneMid) * 0.20 : 0.08
-    );
-
-  const nearZone = !zoneHit && Math.abs(livePx - zoneMid) <= fallbackBuffer;
-
-  let reflex = 'ESPERAR';
-  let cardClass = 'status-wait';
-  let badgeText = 'WAIT';
-
-  if (isBuy) {
-    if (stopPx != null && livePx <= stopPx) {
-      reflex = 'INVALIDADO';
-      cardClass = 'status-no-trade';
-      badgeText = 'INVALID';
-    } else if (tpPx != null && livePx >= tpPx) {
-      reflex = 'ALVO PEGANDO';
-      cardClass = 'status-buy';
-      badgeText = 'RUNNING';
-    } else if (zoneHit) {
-      reflex = 'EXECUTAR AGORA';
-      cardClass = 'status-buy';
-      badgeText = 'BUY NOW';
-    } else if (nearZone) {
-      reflex = 'PREPARAR';
-      cardClass = 'status-wait';
-      badgeText = 'PREPARE';
-    }
-  }
-
-  if (isSell) {
-    if (stopPx != null && livePx >= stopPx) {
-      reflex = 'INVALIDADO';
-      cardClass = 'status-no-trade';
-      badgeText = 'INVALID';
-    } else if (tpPx != null && livePx <= tpPx) {
-      reflex = 'ALVO PEGANDO';
-      cardClass = 'status-sell';
-      badgeText = 'RUNNING';
-    } else if (zoneHit) {
-      reflex = 'EXECUTAR AGORA';
-      cardClass = 'status-sell';
-      badgeText = 'SELL NOW';
-    } else if (nearZone) {
-      reflex = 'PREPARAR';
-      cardClass = 'status-wait';
-      badgeText = 'PREPARE';
-    }
-  }
-
-  if (reflexEl) {
-    reflexEl.textContent = `${reflex} • zone ${zoneLo.toFixed(2)} – ${zoneHi.toFixed(2)}`;
-  }
-
-  if (!inPosition) {
-    els.tradeCard.classList.remove('status-buy', 'status-sell', 'status-wait', 'status-no-trade');
-    els.tradeCard.classList.add(cardClass);
-
-    if (els.tradeBadge) {
-      els.tradeBadge.classList.remove('buy', 'sell', 'wait', 'no-trade');
-
-      if (badgeText === 'BUY NOW') {
-        els.tradeBadge.classList.add('buy');
-      } else if (badgeText === 'SELL NOW') {
-        els.tradeBadge.classList.add('sell');
-      } else if (badgeText === 'INVALID') {
-        els.tradeBadge.classList.add('no-trade');
-      } else {
-        els.tradeBadge.classList.add('wait');
-      }
-
-      els.tradeBadge.textContent = badgeText;
-    }
-  }
-}
-function a10UpdateEntryPremLive(bar) {
-  const livePx =
-    a10LiveNum(bar?.c) ??
-    a10LiveNum(bar?.close) ??
-    a10LiveNum(bar?.price) ??
-    a10LiveNum(bar?.p);
-
-  if (livePx == null) return;
-
-  const modeEl    = document.getElementById('ep-mode');
-  const badgeEl   = document.getElementById('ep-badge');
-  const readEl    = document.getElementById('ep-read');
-  const zoneEl    = document.getElementById('ep-zone');
-  const touchEl   = document.getElementById('ep-touch');
-  const chaseEl   = document.getElementById('ep-chase');
-  const confirmEl = document.getElementById('ep-confirm');
-  const cancelEl  = document.getElementById('ep-cancel');
-
-  const modeTxt = String(modeEl?.textContent || '').toLowerCase();
-  const isBuy  = /buy|compra|long/.test(modeTxt);
-  const isSell = /sell|venda|short/.test(modeTxt);
-
-  if (!isBuy && !isSell) return;
-
-  const zone    = a10ParsePriceRange(zoneEl?.textContent || '');
-  const touchR  = a10ParsePriceRange(touchEl?.textContent || '');
-  const chaseR  = a10ParsePriceRange(chaseEl?.textContent || '');
-  const confR   = a10ParsePriceRange(confirmEl?.textContent || '');
-  const cancR   = a10ParsePriceRange(cancelEl?.textContent || '');
-
-  const touchPx   = touchR ? touchR.lo : null;
-  const chasePx   = chaseR ? chaseR.lo : null;
-  const confirmPx = confR ? confR.lo : null;
-  const cancelPx  = cancR ? cancR.lo : null;
-
-  const zoneLo  = zone ? zone.lo : touchPx;
-  const zoneHi  = zone ? zone.hi : touchPx;
-  const zoneMid = (zoneLo != null && zoneHi != null) ? ((zoneLo + zoneHi) / 2) : null;
-
-  const inZone = (zoneLo != null && zoneHi != null)
-    ? (livePx >= zoneLo && livePx <= zoneHi)
-    : false;
-
-  const zoneWidth =
-    (zoneLo != null && zoneHi != null)
-      ? Math.max(0.03, Math.abs(zoneHi - zoneLo))
-      : 0.08;
-
-  const nearZone = (zoneMid != null)
-    ? (Math.abs(livePx - zoneMid) <= Math.max(zoneWidth, 0.08))
-    : false;
-
-  // ===== memória live do setup atual =====
-  const fp = [
-    modeTxt,
-    zoneLo, zoneHi,
-    touchPx, chasePx,
-    confirmPx, cancelPx
-  ].join('|');
-
-  const st = (window.__A10_EP_LIVE_STATE__ ||= {});
-
-  if (st.fp !== fp) {
-    st.fp = fp;
-    st.touched = false;
-    st.missed = false;
-  }
-
-  // registrou toque real na zona
-  if (inZone) {
-    st.touched = true;
-  } else if (touchPx != null) {
-    if (isSell && livePx <= touchPx) st.touched = true;
-    if (isBuy  && livePx >= touchPx) st.touched = true;
-  }
-
-  const missBuffer = Math.max(zoneWidth, 0.08);
-  const flipBuffer = Math.max(zoneWidth * 2, 0.16);
-
-  // ===== lógica "não bateu e foi embora" =====
-  if (!st.touched) {
-    if (isSell) {
-      const missRef = chasePx ?? zoneHi ?? touchPx ?? confirmPx;
-      if (missRef != null && livePx > (missRef + missBuffer)) {
-        st.missed = true;
-      }
-    }
-
-    if (isBuy) {
-      const missRef = chasePx ?? zoneLo ?? touchPx ?? confirmPx;
-      if (missRef != null && livePx < (missRef - missBuffer)) {
-        st.missed = true;
-      }
-    }
-  }
-
-  let badgeText = 'WAIT';
-  let badgeMode = 'win-wait';
-  let liveRead  = `LIVE ${livePx.toFixed(2)} · WAIT`;
-
-  // ===== se perdeu a entrada, não continua fingindo que ela está viva =====
-  if (st.missed) {
-    if (isSell) {
-      const flipRef = zoneHi ?? chasePx ?? touchPx ?? confirmPx;
-      if (flipRef != null && livePx > (flipRef + flipBuffer)) {
-        badgeText = 'FLIP UP';
-        badgeMode = 'win-now';
-        liveRead  = `LIVE ${livePx.toFixed(2)} · MISSED SHORT / FLOW UP`;
-      } else {
-        badgeText = 'MISSED';
-        badgeMode = 'win-wait';
-        liveRead  = `LIVE ${livePx.toFixed(2)} · SHORT LEFT BEHIND`;
-      }
-    } else if (isBuy) {
-      const flipRef = zoneLo ?? chasePx ?? touchPx ?? confirmPx;
-      if (flipRef != null && livePx < (flipRef - flipBuffer)) {
-        badgeText = 'FLIP DOWN';
-        badgeMode = 'win-now';
-        liveRead  = `LIVE ${livePx.toFixed(2)} · MISSED LONG / FLOW DOWN`;
-      } else {
-        badgeText = 'MISSED';
-        badgeMode = 'win-wait';
-        liveRead  = `LIVE ${livePx.toFixed(2)} · LONG LEFT BEHIND`;
-      }
-    }
-  } else if (isBuy) {
-    if (cancelPx != null && livePx <= cancelPx) {
-      badgeText = 'NO TRADE';
-      badgeMode = 'win-wait';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · CANCEL HIT`;
-    } else if (confirmPx != null && livePx >= confirmPx) {
-      badgeText = 'HOT';
-      badgeMode = 'win-now';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · CONFIRM HIT`;
-    } else if ((touchPx != null && livePx >= touchPx) || inZone) {
-      badgeText = 'ARMED';
-      badgeMode = 'win-warn';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · TOUCH / ZONE HIT`;
-    } else if (nearZone) {
-      badgeText = 'WAIT';
-      badgeMode = 'win-wait';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · APPROACHING ZONE`;
-    }
-  } else if (isSell) {
-    if (cancelPx != null && livePx >= cancelPx) {
-      badgeText = 'NO TRADE';
-      badgeMode = 'win-wait';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · CANCEL HIT`;
-    } else if (confirmPx != null && livePx <= confirmPx) {
-      badgeText = 'HOT';
-      badgeMode = 'win-now';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · CONFIRM HIT`;
-    } else if ((touchPx != null && livePx <= touchPx) || inZone) {
-      badgeText = 'ARMED';
-      badgeMode = 'win-warn';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · TOUCH / ZONE HIT`;
-    } else if (nearZone) {
-      badgeText = 'WAIT';
-      badgeMode = 'win-wait';
-      liveRead  = `LIVE ${livePx.toFixed(2)} · APPROACHING ZONE`;
-    }
-  }
-
-  if (typeof setBadge === 'function') {
-    setBadge('ep-badge', badgeText, badgeMode);
-  } else if (badgeEl) {
-    badgeEl.textContent = badgeText;
-    badgeEl.className = `win-badge ${badgeMode}`;
-  }
-
-  if (readEl) {
-    readEl.textContent = liveRead;
-  }
-}
-async function a10RefreshEntryPremLiveFromBackend() {
-  try {
-    const replayApi =
-      (window.__AARON_REPLAY__ && typeof window.__AARON_REPLAY__.getState === 'function')
-        ? window.__AARON_REPLAY__.getState()
-        : null;
-
-    // nunca força refresh live enquanto replay estiver ligado
-    if (replayApi && replayApi.enabled) return;
-
-    const now = Date.now();
-    if ((now - a10EntryPremLastRefreshAt) < ENTRY_PREM_LIVE_REFRESH_MS) return;
-
-    a10EntryPremLastRefreshAt = now;
-
-    if (typeof loadPanel === 'function') {
-      await loadPanel(false);
-    }
-  } catch (e) {
-    console.warn('[A10] refresh live do Entry Prem falhou:', e);
-  }
-}
-
-function a10ScheduleEntryPremLiveRefresh() {
-  const replayApi =
-    (window.__AARON_REPLAY__ && typeof window.__AARON_REPLAY__.getState === 'function')
-      ? window.__AARON_REPLAY__.getState()
-      : null;
-
-  if (replayApi && replayApi.enabled) return;
-  if (a10EntryPremRefreshTimer) return;
-
-  a10EntryPremRefreshTimer = setTimeout(async () => {
-    a10EntryPremRefreshTimer = null;
-    await a10RefreshEntryPremLiveFromBackend();
-  }, ENTRY_PREM_LIVE_REFRESH_MS);
-}
 function applyHeroDecision(executionPlan, riskLevel, finalSummary) {
   const lang = (typeof currentLang !== 'undefined' ? currentLang : 'pt');
 
@@ -16762,8 +14810,7 @@ function adaptPanelToTradeCard(panel, raw, fallbackSymbol){
 
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
 async function loadPanel(showSpinner) {
-  const panelUrlBase = getPanelUrl();
-if (!panelUrlBase) return;
+  if (!PANEL_URL) return;
   try {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
@@ -16783,46 +14830,13 @@ if (!panelUrlBase) return;
     });
 
     if (replayApi && replayApi.enabled) {
-  const replayDateInputEl = document.getElementById('replay-date-input');
-const replayTimeInputEl = document.getElementById('replay-time-input');
+      qs.set('replay', '1');
+      qs.set('tradeDate', replayApi.tradeDate || '');
+      qs.set('replay_minute', replayApi.replay_minute || '07:30');
+      qs.set('replay_idx', String(Math.max(0, Number(replayApi.replay_idx || 0))));
+    }
 
-const replayTradeDate =
-  (replayDateInputEl && replayDateInputEl.value)
-    ? replayNormalizeTradeDate(replayDateInputEl.value)
-    : (replayApi.tradeDate || '');
-
-const replayMinute =
-  (replayTimeInputEl && replayTimeInputEl.value)
-    ? replayNormalizeTimeValue(replayTimeInputEl.value)
-    : (replayApi.replay_minute || '07:30');
-
-const replayIdx =
-  String(Math.max(
-    0,
-    replayHhmmToMinute(replayMinute) - REPLAY_START_MIN
-  ));
-
-  qs.set('replay', '1');
-
-  // DATA
-  qs.set('tradeDate', replayTradeDate);
-  qs.set('date', replayTradeDate);
-  qs.set('day', replayTradeDate);
-  qs.set('replay_date', replayTradeDate);
-  qs.set('snapshot_date', replayTradeDate);
-
-  // HORA
-  qs.set('replay_minute', replayMinute);
-  qs.set('minute', replayMinute);
-  qs.set('time', replayMinute);
-
-  // ÍNDICE / SNAPSHOT
-  qs.set('replay_idx', replayIdx);
-  qs.set('snapshot', `${replayTradeDate} ${replayMinute}`);
-  qs.set('snapshotLabel', `${replayTradeDate} ${replayMinute}`);
-}
-
-    const url = `${panelUrlBase}?${qs.toString()}`;
+    const url = `${PANEL_URL}?${qs.toString()}`;
     const res = await fetch(url, { cache: 'no-store' });
 
 
@@ -16857,9 +14871,6 @@ if (typeof updateRespiroReversaoPanel === "function") {
 }
 if (typeof updateAaronCommentaryBlock === "function") {
   updateAaronCommentaryBlock(payload);
-}
-if (typeof updateFirstHourPremonitionPanel === "function") {
-  updateFirstHourPremonitionPanel(payload);
 }
 if (typeof updateIndicatorPremonitionPanel === "function") {
   updateIndicatorPremonitionPanel(payload);
@@ -16975,12 +14986,7 @@ try {
   }
 } catch (e) {}
 
-try {
-  if (window.__A10_LIVE_LAST_45__) {
-    a10UpdateTradeCardLiveReflex(window.__A10_LIVE_LAST_45__);
-        a10UpdateEntryPremLive(window.__A10_LIVE_LAST_45__);
-  }
-} catch (e) {}
+
 
     // Cabeçalho
     safeText(els.symbol, panel.symbol || raw.symbol || '—');
