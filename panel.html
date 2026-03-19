@@ -3111,6 +3111,138 @@
   letter-spacing: .02em;
 }
 /* ===== /ENTRY ENGINE ===== */
+/* ===== FIRST HOUR PREMONITION — FULL WIDTH ABOVE INDICATORS ===== */
+#first-hour-prem-card{
+  margin-top: 10px !important;
+  grid-column: 1 / -1;
+}
+
+#first-hour-prem-card .prem-breakout-title{
+  font-size: 28px !important;
+  opacity: .92 !important;
+}
+
+#first-hour-prem-card .win-badge{
+  font-size: 22px !important;
+  padding: 10px 16px !important;
+}
+
+#first-hour-prem-card .fh-shell{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+  margin-top:10px;
+}
+
+#first-hour-prem-card .fh-top{
+  display:grid;
+  grid-template-columns: 0.78fr 1.05fr 1.15fr 1.05fr;
+  gap:10px;
+  align-items:stretch;
+}
+
+#first-hour-prem-card .fh-bottom{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:10px;
+  align-items:stretch;
+  margin-top:10px;
+}
+
+#first-hour-prem-card .fh-box{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+  min-width:0;
+}
+
+#first-hour-prem-card .fh-k{
+  font-size:22px !important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+  margin-bottom:6px;
+}
+
+#first-hour-prem-card .fh-v{
+  font-size:24px !important;
+  line-height:1.35;
+  font-weight:900;
+}
+
+#first-hour-prem-card .fh-v strong{
+  color:#ffcc66;
+}
+
+#first-hour-prem-card .fh-minute{
+  font-size:38px !important;
+  line-height:1.05;
+  font-weight:950;
+  color:#ffcc66;
+}
+
+#first-hour-prem-card .fh-prob-line,
+#first-hour-prem-card .fh-eta-line,
+#first-hour-prem-card .fh-target-line,
+#first-hour-prem-card .fh-trigger-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:12px;
+}
+
+#first-hour-prem-card .fh-prob-line + .fh-prob-line,
+#first-hour-prem-card .fh-eta-line + .fh-eta-line,
+#first-hour-prem-card .fh-target-line + .fh-target-line,
+#first-hour-prem-card .fh-trigger-line + .fh-trigger-line{
+  margin-top:8px;
+}
+
+#first-hour-prem-card .fh-soft{
+  opacity:.72;
+}
+
+#first-hour-prem-card .fh-reading{
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+}
+
+#first-hour-prem-card .fh-reading-title{
+  font-size:22px !important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+  margin-bottom:6px;
+}
+
+#first-hour-prem-card .fh-reading-body{
+  font-size:30px !important;
+  line-height:1.22;
+  font-weight:950;
+  color:#ffcc66;
+}
+
+@media (max-width: 1400px){
+  #first-hour-prem-card .fh-top{
+    grid-template-columns: 1fr 1fr;
+  }
+  #first-hour-prem-card .fh-bottom{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px){
+  #first-hour-prem-card .fh-top{
+    grid-template-columns: 1fr;
+  }
+}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -5133,6 +5265,82 @@
 
     <div class="premonition-chart">
       <!-- ===== INDICATORS (EMA / VWAP / RSI) — ABOVE ENTRY ENGINE ===== -->
+       <div class="prem-breakout-wrap" id="first-hour-prem-card">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">FIRST HOUR PREMONITION</div>
+    <span id="fh-badge" class="win-badge win-wait">WAIT</span>
+  </div>
+
+  <div class="fh-shell">
+    <div class="fh-top">
+      <div class="fh-box">
+        <div class="fh-k">MINUTE</div>
+        <div class="fh-minute"><span id="fh-minute">—</span> / 60</div>
+      </div>
+
+      <div class="fh-box">
+        <div class="fh-k">PRE-MARKET</div>
+        <div class="fh-v">
+          Bias <strong id="fh-bias">—</strong><br>
+          Move <strong id="fh-pm-move">—</strong><br>
+          Range <strong id="fh-pm-range">—</strong><br>
+          Vol Ratio <strong id="fh-pm-vol-ratio">—</strong>
+        </div>
+      </div>
+
+      <div class="fh-box">
+        <div class="fh-k">STATE</div>
+        <div class="fh-v">
+          Phase <strong id="fh-phase">—</strong><br>
+          EMA <strong id="fh-ema-state">—</strong><br>
+          VWAP <strong id="fh-vwap-side">—</strong><br>
+          RSI <strong id="fh-rsi-state">—</strong>
+        </div>
+      </div>
+
+      <div class="fh-box">
+        <div class="fh-k">PROBABILITIES</div>
+        <div class="fh-v">
+          <div class="fh-prob-line"><span class="fh-soft">Continuation</span><strong id="fh-cont">—</strong></div>
+          <div class="fh-prob-line"><span class="fh-soft">Exhaustion</span><strong id="fh-exhaust">—</strong></div>
+          <div class="fh-prob-line"><span class="fh-soft">Reversal</span><strong id="fh-reversal">—</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fh-bottom">
+      <div class="fh-box">
+        <div class="fh-k">ETA</div>
+        <div class="fh-v">
+          <div class="fh-eta-line"><span class="fh-soft">Up p50</span><strong id="fh-up-eta">—</strong></div>
+          <div class="fh-eta-line"><span class="fh-soft">Down p50</span><strong id="fh-down-eta">—</strong></div>
+        </div>
+      </div>
+
+      <div class="fh-box">
+        <div class="fh-k">TARGETS</div>
+        <div class="fh-v">
+          <div class="fh-target-line"><span class="fh-soft">Target Up p50</span><strong id="fh-target-up">—</strong></div>
+          <div class="fh-target-line"><span class="fh-soft">Target Down p50</span><strong id="fh-target-down">—</strong></div>
+        </div>
+      </div>
+
+      <div class="fh-box">
+        <div class="fh-k">TRIGGERS</div>
+        <div class="fh-v">
+          <div class="fh-trigger-line"><span class="fh-soft">Continue &gt;</span><strong id="fh-trigger-cont">—</strong></div>
+          <div class="fh-trigger-line"><span class="fh-soft">Reverse &lt;</span><strong id="fh-trigger-rev">—</strong></div>
+          <div class="fh-trigger-line"><span class="fh-soft">Invalidation</span><strong id="fh-invalid">—</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fh-reading">
+      <div class="fh-reading-title">TACTICAL READ</div>
+      <div class="fh-reading-body" id="fh-reading">—</div>
+    </div>
+  </div>
+</div>
         <div class="prem-breakout-wrap" id="indicator-prem-card" style="margin-top:10px; grid-column: 1 / -1;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div class="prem-breakout-title">INDICATORS · EMA · VWAP · RSI</div>
@@ -11321,7 +11529,228 @@ a10UpdatePremSignalCTA();
     // não quebra o painel por causa disso
   }
 }
+function updateFirstHourPremonitionPanel(payload){
+  try{
+    const root   = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
+    const panel  = root.panel || root.raw?.panel || root.data?.panel || root || {};
+    const ui0    = root.ui || panel.ui || root.raw?.ui || root.data?.ui || {};
+    const ui     = (ui0 && typeof ui0 === "object" && ui0.ui && typeof ui0.ui === "object") ? ui0.ui : ui0;
+    const digest0 = root.digest || panel.digest || root.raw?.digest || root.data?.digest || {};
+    const digest  = (digest0 && typeof digest0 === "object" && digest0.digest && typeof digest0.digest === "object") ? digest0.digest : digest0;
 
+    const deepFind = (obj, key, maxDepth = 6) => {
+      try{
+        const seen = new Set();
+        const q = [{ v: obj, d: 0 }];
+        while (q.length){
+          const { v, d } = q.shift();
+          if (!v || typeof v !== "object") continue;
+          if (seen.has(v)) continue;
+          seen.add(v);
+          if (Object.prototype.hasOwnProperty.call(v, key)) return v[key];
+          if (d >= maxDepth) continue;
+          for (const k of Object.keys(v)){
+            const child = v[k];
+            if (child && typeof child === "object") q.push({ v: child, d: d + 1 });
+          }
+        }
+      }catch(e){}
+      return null;
+    };
+
+    const fh =
+      ui.first_hour_live_premonition_v1 ||
+      digest.first_hour_live_premonition_v1 ||
+      panel.first_hour_live_premonition_v1 ||
+      root.first_hour_live_premonition_v1 ||
+      ui.first_hour_premarket_premonition_v1 ||
+      digest.first_hour_premarket_premonition_v1 ||
+      panel.first_hour_premarket_premonition_v1 ||
+      root.first_hour_premarket_premonition_v1 ||
+      deepFind(root, "first_hour_live_premonition_v1") ||
+      deepFind(root, "first_hour_premarket_premonition_v1") ||
+      null;
+
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = (val === null || val === undefined || val === "") ? "—" : String(val);
+    };
+
+    const setBadge = (id, txt, mode) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove("win-now","win-warn","win-wait");
+      el.classList.add(mode || "win-wait");
+      el.textContent = txt || "—";
+    };
+
+    const num = (v) => {
+      if (v == null || v === "") return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const fmtPct = (v) => Number.isFinite(num(v)) ? `${Number(v).toFixed(2)}%` : "—";
+    const fmtPrice = (v) => Number.isFinite(num(v)) ? Number(v).toFixed(2) : "—";
+    const fmtEta = (v) => Number.isFinite(num(v)) ? `${Number(v)} min` : "—";
+
+    const pm = fh?.premarket_summary || {};
+    const minute =
+      fh?.market_minute ??
+      fh?.minute ??
+      fh?.minute_index ??
+      fh?.session_minute ??
+      null;
+
+    const continuation =
+      fh?.continuation_pct ??
+      fh?.continue_pct ??
+      null;
+
+    const exhaustion =
+      fh?.exhaustion_pct ??
+      fh?.exhaust_pct ??
+      null;
+
+    const reversal =
+      fh?.reversal_pct ??
+      fh?.reverse_pct ??
+      null;
+
+    const upEta =
+      fh?.continuation_eta_p50_min ??
+      fh?.eta_up_p50_min ??
+      fh?.up_eta_p50_min ??
+      null;
+
+    const downEta =
+      fh?.reversal_eta_p50_min ??
+      fh?.eta_down_p50_min ??
+      fh?.down_eta_p50_min ??
+      null;
+
+    const targetUp =
+      fh?.target_up_p50 ??
+      fh?.target_up_price_p50 ??
+      fh?.up_target_p50 ??
+      null;
+
+    const targetDown =
+      fh?.target_down_p50 ??
+      fh?.target_down_price_p50 ??
+      fh?.down_target_p50 ??
+      null;
+
+    const triggerCont =
+      fh?.trigger_continue_above ??
+      fh?.trigger_up ??
+      fh?.continue_above ??
+      null;
+
+    const triggerRev =
+      fh?.trigger_reverse_below ??
+      fh?.trigger_down ??
+      fh?.reverse_below ??
+      null;
+
+    const invalid =
+      fh?.invalidation_price ??
+      fh?.invalid_price ??
+      fh?.invalidation ??
+      null;
+
+    const phase =
+      fh?.session_phase ??
+      fh?.phase ??
+      fh?.state ??
+      "—";
+
+    const emaState =
+      fh?.ema_state?.label ??
+      fh?.ema_state?.regime ??
+      fh?.ema_state ??
+      "—";
+
+    const vwapSide =
+      fh?.vwap_state?.side ??
+      fh?.vwap_side ??
+      fh?.vwap_state ??
+      "—";
+
+    const rsiState =
+      fh?.rsi_state?.rsi_regime ??
+      fh?.rsi_state?.label ??
+      fh?.rsi_state ??
+      "—";
+
+    const bias =
+      pm?.bias ??
+      fh?.premarket_bias ??
+      "—";
+
+    const pmMove =
+      fmtPct(pm?.move_pct ?? pm?.return_pct ?? fh?.premarket_move_pct);
+
+    const pmRange =
+      fmtPct(pm?.range_pct ?? fh?.premarket_range_pct);
+
+    const pmVolRatio =
+      Number.isFinite(num(pm?.volume_ratio ?? pm?.vol_ratio ?? fh?.premarket_vol_ratio))
+        ? `${Number(pm?.volume_ratio ?? pm?.vol_ratio ?? fh?.premarket_vol_ratio).toFixed(2)}x`
+        : "—";
+
+    const reading =
+      fh?.reading_pt ||
+      fh?.reading ||
+      fh?.summary_pt ||
+      fh?.summary ||
+      "—";
+
+    set("fh-minute", minute ?? "—");
+    set("fh-bias", bias);
+    set("fh-pm-move", pmMove);
+    set("fh-pm-range", pmRange);
+    set("fh-pm-vol-ratio", pmVolRatio);
+
+    set("fh-phase", phase);
+    set("fh-ema-state", typeof emaState === "object" ? "—" : emaState);
+    set("fh-vwap-side", typeof vwapSide === "object" ? "—" : vwapSide);
+    set("fh-rsi-state", typeof rsiState === "object" ? "—" : rsiState);
+
+    set("fh-cont", fmtPct(continuation));
+    set("fh-exhaust", fmtPct(exhaustion));
+    set("fh-reversal", fmtPct(reversal));
+
+    set("fh-up-eta", fmtEta(upEta));
+    set("fh-down-eta", fmtEta(downEta));
+
+    set("fh-target-up", fmtPrice(targetUp));
+    set("fh-target-down", fmtPrice(targetDown));
+
+    set("fh-trigger-cont", fmtPrice(triggerCont));
+    set("fh-trigger-rev", fmtPrice(triggerRev));
+    set("fh-invalid", fmtPrice(invalid));
+
+    set("fh-reading", reading);
+
+    const contN = num(continuation);
+    const exN   = num(exhaustion);
+    const revN  = num(reversal);
+
+    if (revN != null && revN >= 70){
+      setBadge("fh-badge", "REVERSAL RISK HIGH", "win-warn");
+    } else if (exN != null && exN >= 60){
+      setBadge("fh-badge", "EXHAUSTING", "win-warn");
+    } else if (contN != null && contN >= 65){
+      setBadge("fh-badge", "ARMED", "win-now");
+    } else {
+      setBadge("fh-badge", "WAIT", "win-wait");
+    }
+  }catch(e){
+    // não quebra o painel
+  }
+}
 function updateIndicatorPremonitionPanel(payload){
   try{
         const root  = Array.isArray(payload) ? (payload[0] ?? {}) : (payload ?? {});
@@ -15887,6 +16316,9 @@ if (typeof updateRespiroReversaoPanel === "function") {
 }
 if (typeof updateAaronCommentaryBlock === "function") {
   updateAaronCommentaryBlock(payload);
+}
+if (typeof updateFirstHourPremonitionPanel === "function") {
+  updateFirstHourPremonitionPanel(payload);
 }
 if (typeof updateIndicatorPremonitionPanel === "function") {
   updateIndicatorPremonitionPanel(payload);
