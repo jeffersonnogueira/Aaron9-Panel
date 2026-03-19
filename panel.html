@@ -3350,6 +3350,160 @@
   }
 }
 /* ===== /ZIGZAG ROUTE ENGINE ===== */
+/* ===== EMA EXHAUSTION PREMONITION ===== */
+#ema-exhaust-card{
+  margin-top:0 !important;
+  min-width:0;
+  width:max-content;
+  justify-self:end;
+}
+
+#ema-exhaust-card .prem-breakout-title{
+  font-size:28px !important;
+  opacity:.90 !important;
+}
+
+#ema-exhaust-card .win-badge{
+  font-size:22px !important;
+  padding:10px 16px !important;
+}
+
+#ema-exhaust-card .eex-shell{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+  margin-top:10px;
+  min-width:856px;
+}
+
+#ema-exhaust-card .eex-topline{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+#ema-exhaust-card .eex-state{
+  font-size:30px !important;
+  font-weight:950;
+  line-height:1.2;
+  color:#ffcc66;
+}
+
+#ema-exhaust-card .eex-sub{
+  font-size:22px !important;
+  line-height:1.25;
+  opacity:.88;
+}
+
+#ema-exhaust-card .eex-primary{
+  margin-top:10px;
+  font-size:24px !important;
+  line-height:1.28;
+  font-weight:900;
+}
+
+#ema-exhaust-card .eex-main-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);
+  gap:26px;
+  margin-top:12px;
+  align-items:start;
+}
+
+#ema-exhaust-card .eex-two-col{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:28px;
+  align-items:start;
+}
+
+#ema-exhaust-card .eex-col,
+#ema-exhaust-card .eex-side-col{
+  min-width:0;
+}
+
+#ema-exhaust-card .eex-side-col{
+  min-width:340px;
+}
+
+#ema-exhaust-card .eex-sec-title{
+  color:#ffcc66 !important;
+  font-size:26px !important;
+  font-weight:950 !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase !important;
+  opacity:1 !important;
+}
+
+#ema-exhaust-card .eex-sec-body{
+  margin-top:8px;
+  font-size:30px !important;
+  line-height:1.38 !important;
+  font-weight:900 !important;
+}
+
+#ema-exhaust-card .eex-sec-body > div + div{
+  margin-top:6px !important;
+}
+
+#ema-exhaust-card .eex-mini{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:18px;
+  font-weight:950;
+  font-size:24px !important;
+  line-height:1.28 !important;
+  white-space:nowrap;
+}
+
+#ema-exhaust-card .eex-mini + .eex-mini{
+  margin-top:10px;
+}
+
+#ema-exhaust-card .eex-soft{
+  opacity:.80;
+  font-size:24px !important;
+  white-space:nowrap;
+}
+
+#ema-exhaust-card .eex-reading{
+  margin-top:12px;
+  font-size:42px !important;
+  line-height:1.22 !important;
+  font-weight:950 !important;
+  color:#ffcc66;
+  opacity:1 !important;
+}
+
+@media (max-width: 1200px){
+  #ema-exhaust-card{
+    width:auto;
+    justify-self:stretch;
+  }
+
+  #ema-exhaust-card .eex-shell{
+    min-width:0;
+  }
+
+  #ema-exhaust-card .eex-main-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  #ema-exhaust-card .eex-two-col{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  #ema-exhaust-card .eex-side-col{
+    min-width:0;
+  }
+}
+/* ===== /EMA EXHAUSTION PREMONITION ===== */
 /* ===== VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
 #zz-volume-row{
   display:grid;
@@ -5645,6 +5799,78 @@
 </div>
         </div>
                 <div id="zz-side-stack">
+                  <div class="prem-breakout-wrap" id="ema-exhaust-card" style="margin-top:0; min-width:0;">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">EMA EXHAUSTION PREMONITION</div>
+    <span id="eex-badge" class="win-badge win-wait">WAIT</span>
+  </div>
+
+  <div class="eex-shell">
+    <div class="eex-topline">
+      <div class="eex-state" id="eex-state">—</div>
+      <div class="eex-sub">
+        EMA20 <strong id="eex-ema20">—</strong>
+        <span style="opacity:.55;">|</span>
+        EMA50 <strong id="eex-ema50">—</strong>
+        <span style="opacity:.55;">|</span>
+        Δ <strong id="eex-delta">—</strong>
+      </div>
+    </div>
+
+    <div class="eex-primary">
+      Exhaustion <strong id="eex-exhaust">—</strong>
+      <span style="opacity:.55;">|</span>
+      Continue <strong id="eex-cont">—</strong>
+      <span style="opacity:.55;">|</span>
+      ETA <strong id="eex-eta-head">—</strong>
+      <span style="opacity:.55;">|</span>
+      Hold <strong id="eex-hold">—</strong>
+    </div>
+
+    <div class="eex-main-grid">
+      <div>
+        <div class="eex-two-col">
+          <div class="eex-col">
+            <div class="eex-sec-title">CONTINUATION VS EXHAUSTION</div>
+
+            <div class="eex-sec-body">
+              <div><span style="opacity:.7;">Continue now</span> <span id="eex-cont-now" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Continue next leg</span> <span id="eex-cont-next" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Exhaust now</span> <span id="eex-exhaust-now" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Weaken now</span> <span id="eex-weaken-now" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">Reversal risk</span> <span id="eex-reversal-risk" style="font-weight:950;">—</span></div>
+            </div>
+          </div>
+
+          <div class="eex-col">
+            <div class="eex-sec-title">ETA</div>
+
+            <div class="eex-sec-body">
+              <div><span style="opacity:.7;">ETA weaken</span> <span id="eex-eta-weaken" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">ETA exhaustion</span> <span id="eex-eta-exhaust" style="font-weight:950;">—</span></div>
+              <div><span style="opacity:.7;">ETA reversal window</span> <span id="eex-eta-reversal" style="font-weight:950;">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="eex-sec-title" style="margin-top:14px;">TACTICAL READ</div>
+        <div class="eex-reading" id="eex-read">—</div>
+      </div>
+
+      <div class="eex-side-col">
+        <div class="eex-sec-title">WINDOW PRESSURE</div>
+
+        <div style="margin-top:8px; font-size:12px; line-height:1.35;">
+          <div class="eex-mini"><span class="eex-soft">1m</span><span id="eex-w1">—</span></div>
+          <div class="eex-mini"><span class="eex-soft">5m</span><span id="eex-w5">—</span></div>
+          <div class="eex-mini"><span class="eex-soft">15m</span><span id="eex-w15">—</span></div>
+          <div class="eex-mini"><span class="eex-soft">30m</span><span id="eex-w30">—</span></div>
+          <div class="eex-mini"><span class="eex-soft">60m</span><span id="eex-w60">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
   <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
@@ -12669,6 +12895,311 @@ if (readingEl) {
       }
     }
     // ===== /VOLUME PREMONITION =====
+        // ===== EMA EXHAUSTION PREMONITION =====
+    {
+      const clearEmaEx = () => {
+        setBadge("eex-badge", "WAIT", "win-wait");
+        set("eex-state", "—");
+        set("eex-ema20", "—");
+        set("eex-ema50", "—");
+        set("eex-delta", "—");
+        set("eex-exhaust", "—");
+        set("eex-cont", "—");
+        set("eex-eta-head", "—");
+        set("eex-hold", "—");
+        set("eex-cont-now", "—");
+        set("eex-cont-next", "—");
+        set("eex-exhaust-now", "—");
+        set("eex-weaken-now", "—");
+        set("eex-reversal-risk", "—");
+        set("eex-eta-weaken", "—");
+        set("eex-eta-exhaust", "—");
+        set("eex-eta-reversal", "—");
+        set("eex-w1", "—");
+        set("eex-w5", "—");
+        set("eex-w15", "—");
+        set("eex-w30", "—");
+        set("eex-w60", "—");
+        set("eex-read", "—");
+
+        const readEl = document.getElementById("eex-read");
+        if (readEl) readEl.style.color = "#ffcc66";
+      };
+
+      const fmtPctSafe = (v) =>
+        Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)}%` : "—";
+
+      const fmtSignedPctSafe = (v) =>
+        Number.isFinite(Number(v))
+          ? `${Number(v) >= 0 ? "+" : ""}${Number(v).toFixed(2)}%`
+          : "—";
+
+      const fmtBars = (v) =>
+        Number.isFinite(Number(v)) ? `${Math.max(1, Math.round(Number(v)))} bars` : "—";
+
+      const fmtBarsRange = (a, b) => {
+        const aa = Number(a);
+        const bb = Number(b);
+        if (Number.isFinite(aa) && Number.isFinite(bb)) {
+          return `${Math.max(1, Math.round(aa))}–${Math.max(1, Math.round(bb))} bars`;
+        }
+        if (Number.isFinite(aa)) return `${Math.max(1, Math.round(aa))} bars`;
+        if (Number.isFinite(bb)) return `${Math.max(1, Math.round(bb))} bars`;
+        return "—";
+      };
+
+      const fmtPressure = (obj) => {
+        if (obj == null) return "—";
+        if (typeof obj === "string") return obj;
+        if (typeof obj === "number") return fmtPctSafe(obj);
+
+        const label =
+          obj.label ||
+          obj.reading ||
+          obj.state ||
+          obj.status ||
+          obj.mode ||
+          "—";
+
+        const pct =
+          obj.pct ??
+          obj.prob_pct ??
+          obj.probability_pct ??
+          obj.score_pct ??
+          obj.value_pct ??
+          obj.confidence_pct;
+
+        if (label !== "—" && Number.isFinite(Number(pct))) {
+          return `${String(label).toUpperCase()} | ${fmtPctSafe(pct)}`;
+        }
+
+        return String(label).toUpperCase();
+      };
+
+      const pick = (...vals) => {
+        for (const v of vals) {
+          if (v !== null && v !== undefined && v !== "") return v;
+        }
+        return null;
+      };
+
+      const eex =
+        panel?.ema_exhaustion_premonition ||
+        panel?.ema_exhaustion_premonition_v1 ||
+        ui?.ema_exhaustion_premonition ||
+        ui?.ema_exhaustion_premonition_v1 ||
+        digest?.ema_exhaustion_premonition ||
+        digest?.ema_exhaustion_premonition_v1 ||
+        root?.ema_exhaustion_premonition ||
+        root?.ema_exhaustion_premonition_v1 ||
+        deepFind(root, "ema_exhaustion_premonition") ||
+        deepFind(root, "ema_exhaustion_premonition_v1") ||
+        null;
+
+      if (!eex) {
+        clearEmaEx();
+      } else {
+        const summary = eex?.summary || eex || {};
+        const ema = eex?.ema || eex?.ema_structure || eex?.structure || {};
+        const cve =
+          eex?.continuation_vs_exhaustion ||
+          eex?.cve ||
+          eex?.probabilities ||
+          {};
+        const eta = eex?.eta || eex?.timing || {};
+        const wp =
+          eex?.window_pressure ||
+          eex?.pressure ||
+          eex?.windows ||
+          {};
+
+        const stateTxt = String(
+          pick(
+            summary?.state,
+            summary?.motor_state,
+            eex?.state,
+            eex?.reading,
+            summary?.reading
+          ) || "—"
+        ).toUpperCase();
+
+        const primaryTxt =
+          pick(
+            eex?.primary_read,
+            summary?.primary_read,
+            eex?.headline,
+            summary?.headline,
+            stateTxt
+          ) || "—";
+
+        const holdTxt =
+          pick(
+            eex?.hold,
+            summary?.hold,
+            eex?.hold_text,
+            summary?.hold_text,
+            eex?.tactical_read_pt,
+            eex?.tactical_read_en,
+            summary?.tactical_read_pt,
+            summary?.tactical_read_en
+          ) || "—";
+
+        const sideRaw = String(
+          pick(summary?.bias, summary?.side, eex?.bias, eex?.side) || ""
+        ).toLowerCase();
+
+        const badgeTxt =
+          sideRaw
+            ? sideRaw.toUpperCase()
+            : stateTxt.includes("SHORT")
+            ? "SHORT"
+            : stateTxt.includes("LONG")
+            ? "LONG"
+            : "WAIT";
+
+        const badgeMode =
+          badgeTxt === "LONG" ? "win-now" :
+          badgeTxt === "SHORT" ? "win-warn" :
+          "win-wait";
+
+        const ema20 = pick(ema?.ema20, ema?.ema_20, ema?.fast, ema?.ema_fast);
+        const ema50 = pick(ema?.ema50, ema?.ema_50, ema?.slow, ema?.ema_slow);
+        const deltaPct = pick(ema?.delta_pct, ema?.spread_pct, ema?.diff_pct);
+
+        const contNow = pick(
+          cve?.continue_now_pct,
+          cve?.continuation_now_pct,
+          eex?.continue_now_pct,
+          eex?.continuation_pct
+        );
+
+        const contNext = pick(
+          cve?.continue_next_leg_pct,
+          cve?.continue_next_pct,
+          cve?.continuation_next_leg_pct,
+          eex?.continue_next_leg_pct
+        );
+
+        const exhaustNow = pick(
+          cve?.exhaust_now_pct,
+          cve?.exhaustion_now_pct,
+          eex?.exhaust_now_pct,
+          eex?.exhaustion_pct
+        );
+
+        const weakenNow = pick(
+          cve?.weaken_now_pct,
+          cve?.weakening_now_pct,
+          eex?.weaken_now_pct,
+          eex?.weakening_pct
+        );
+
+        const reversalRisk = pick(
+          cve?.reversal_risk_pct,
+          eex?.reversal_risk_pct
+        );
+
+        const etaWeaken = pick(
+          eta?.weaken_bars_p50,
+          eta?.weaken_bars,
+          eta?.eta_weaken_bars,
+          eex?.eta_weaken_bars
+        );
+
+        const etaExhaust = pick(
+          eta?.exhaustion_bars_p50,
+          eta?.exhaustion_bars,
+          eta?.eta_exhaustion_bars,
+          eex?.eta_exhaustion_bars
+        );
+
+        const etaRevLow = pick(
+          eta?.reversal_window_bars_low,
+          eta?.reversal_bars_p25,
+          eta?.eta_reversal_low,
+          eex?.reversal_window_bars_low
+        );
+
+        const etaRevHigh = pick(
+          eta?.reversal_window_bars_high,
+          eta?.reversal_bars_p75,
+          eta?.eta_reversal_high,
+          eex?.reversal_window_bars_high
+        );
+
+        const headEtaLow = pick(
+          eta?.exhaustion_bars_p25,
+          eta?.exhaustion_bars_low,
+          eta?.exhaustion_eta_low
+        );
+
+        const headEtaHigh = pick(
+          eta?.exhaustion_bars_p75,
+          eta?.exhaustion_bars_high,
+          eta?.exhaustion_eta_high
+        );
+
+        const wp1  = pick(wp["1m"],  wp.m1,  wp.tf_1m,  eex?.pressure_1m,  eex?.window_pressure_1m);
+        const wp5  = pick(wp["5m"],  wp.m5,  wp.tf_5m,  eex?.pressure_5m,  eex?.window_pressure_5m);
+        const wp15 = pick(wp["15m"], wp.m15, wp.tf_15m, eex?.pressure_15m, eex?.window_pressure_15m);
+        const wp30 = pick(wp["30m"], wp.m30, wp.tf_30m, eex?.pressure_30m, eex?.window_pressure_30m);
+        const wp60 = pick(wp["60m"], wp.m60, wp.tf_60m, eex?.pressure_60m, eex?.window_pressure_60m);
+
+        const readTxt =
+          pick(
+            eex?.tactical_read_pt,
+            eex?.tactical_read_en,
+            summary?.tactical_read_pt,
+            summary?.tactical_read_en,
+            holdTxt,
+            primaryTxt
+          ) || "—";
+
+        setBadge("eex-badge", badgeTxt, badgeMode);
+        set("eex-state", stateTxt);
+        set("eex-ema20", fmt2(ema20));
+        set("eex-ema50", fmt2(ema50));
+        set("eex-delta", fmtSignedPctSafe(deltaPct));
+
+        set("eex-exhaust", fmtPctSafe(exhaustNow));
+        set("eex-cont", fmtPctSafe(contNow));
+        set("eex-eta-head", fmtBarsRange(headEtaLow, headEtaHigh));
+        set("eex-hold", holdTxt);
+
+        set("eex-cont-now", fmtPctSafe(contNow));
+        set("eex-cont-next", fmtPctSafe(contNext));
+        set("eex-exhaust-now", fmtPctSafe(exhaustNow));
+        set("eex-weaken-now", fmtPctSafe(weakenNow));
+        set("eex-reversal-risk", fmtPctSafe(reversalRisk));
+
+        set("eex-eta-weaken", fmtBars(etaWeaken));
+        set("eex-eta-exhaust", fmtBars(etaExhaust));
+        set("eex-eta-reversal", fmtBarsRange(etaRevLow, etaRevHigh));
+
+        set("eex-w1", fmtPressure(wp1));
+        set("eex-w5", fmtPressure(wp5));
+        set("eex-w15", fmtPressure(wp15));
+        set("eex-w30", fmtPressure(wp30));
+        set("eex-w60", fmtPressure(wp60));
+
+        set("eex-read", readTxt);
+
+        const readEl = document.getElementById("eex-read");
+        if (readEl) {
+          const upper = String(readTxt || "").toUpperCase();
+          if (upper.includes("REDUCE") || upper.includes("EXIT") || upper.includes("WEAKEN")) {
+            readEl.style.color = "#f87171";
+          } else if (upper.includes("CAUTION") || upper.includes("WARN")) {
+            readEl.style.color = "#ffcc66";
+          } else if (upper.includes("HOLD")) {
+            readEl.style.color = "#e5e7eb";
+          } else {
+            readEl.style.color = "#ffcc66";
+          }
+        }
+      }
+    }
+    // ===== /EMA EXHAUSTION PREMONITION =====
         // ===== ZIGZAG ROUTE ENGINE (NEW BLOCK) =====
     {
       const clearZZRoute = () => {
