@@ -12984,17 +12984,25 @@ if (readingEl) {
       };
 
       const eex =
-        panel?.ema_exhaustion_premonition ||
-        panel?.ema_exhaustion_premonition_v1 ||
-        ui?.ema_exhaustion_premonition ||
-        ui?.ema_exhaustion_premonition_v1 ||
-        digest?.ema_exhaustion_premonition ||
-        digest?.ema_exhaustion_premonition_v1 ||
-        root?.ema_exhaustion_premonition ||
-        root?.ema_exhaustion_premonition_v1 ||
-        deepFind(root, "ema_exhaustion_premonition") ||
-        deepFind(root, "ema_exhaustion_premonition_v1") ||
-        null;
+  panel?.ema_volume_exhaustion_premonition_v1 ||
+  ui?.ema_volume_exhaustion_premonition_v1 ||
+  digest?.ema_volume_exhaustion_premonition_v1 ||
+  root?.ema_volume_exhaustion_premonition_v1 ||
+  root?.exec_1x1?.ema_volume_exhaustion_premonition_v1 ||
+
+  panel?.ema_exhaustion_premonition ||
+  panel?.ema_exhaustion_premonition_v1 ||
+  ui?.ema_exhaustion_premonition ||
+  ui?.ema_exhaustion_premonition_v1 ||
+  digest?.ema_exhaustion_premonition ||
+  digest?.ema_exhaustion_premonition_v1 ||
+  root?.ema_exhaustion_premonition ||
+  root?.ema_exhaustion_premonition_v1 ||
+
+  deepFind(root, "ema_volume_exhaustion_premonition_v1") ||
+  deepFind(root, "ema_exhaustion_premonition") ||
+  deepFind(root, "ema_exhaustion_premonition_v1") ||
+  null;
 
       if (!eex) {
         clearEmaEx();
