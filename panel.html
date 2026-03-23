@@ -327,6 +327,190 @@
       background: rgba(34, 211, 238, 0.16);
       color: #e0f2fe;
     }
+    /* ===== HEADER XXL PREMIUM (UI ONLY) ===== */
+.top-bar{
+  padding: 24px 30px !important;
+  border-radius: 22px !important;
+  gap: 22px !important;
+  min-height: 122px !important;
+}
+
+.top-left,
+.top-right{
+  gap: 12px 20px !important;
+  align-items: center !important;
+}
+
+.brand-logo{
+  gap: 16px !important;
+  margin-bottom: 0 !important;
+}
+
+.brand-logo-img{
+  height: 74px !important;
+  width: auto !important;
+  filter: drop-shadow(0 0 16px rgba(248, 250, 252, 0.98)) !important;
+}
+
+.brand-logo-main{
+  font-size: 18px !important;
+  letter-spacing: 0.24em !important;
+  font-weight: 900 !important;
+}
+
+.brand-logo-sub{
+  font-size: 13px !important;
+  letter-spacing: 0.26em !important;
+}
+
+.brand-title{
+  font-size: 17px !important;
+  letter-spacing: 0.20em !important;
+  font-weight: 900 !important;
+}
+
+.status-dot-live{
+  font-size: 14px !important;
+  padding: 7px 14px !important;
+}
+
+.status-dot-live::before{
+  width: 11px !important;
+  height: 11px !important;
+}
+
+.pill-small{
+  font-size: 14px !important;
+  padding: 7px 14px !important;
+}
+
+.pill-small strong{
+  font-size: 14px !important;
+}
+
+.tf-picker{
+  padding: 5px 10px !important;
+  gap: 9px !important;
+}
+
+.tf-btn{
+  font-size: 13px !important;
+  padding: 7px 13px !important;
+}
+
+.lang-toggle{
+  padding: 5px 9px !important;
+}
+
+.lang-btn{
+  font-size: 12px !important;
+  padding: 5px 9px !important;
+}
+
+.pill-state{
+  font-size: 14px !important;
+  padding: 7px 14px !important;
+  letter-spacing: 0.16em !important;
+}
+
+.pill-state::before{
+  width: 9px !important;
+  height: 9px !important;
+}
+
+.pill-soft{
+  font-size: 13px !important;
+  padding: 7px 14px !important;
+}
+
+.btn-refresh{
+  font-size: 13px !important;
+  padding: 8px 16px !important;
+}
+
+.top-right .kv{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:3px;
+  min-height:50px;
+}
+
+.top-right .kv .k{
+  font-size: 11px !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  opacity: .88;
+}
+
+.top-right .kv .v{
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  color: #ffcc66;
+  line-height: 1.08;
+}
+
+/* tablet / monitor menor */
+@media (max-width: 1400px){
+  .top-bar{
+    padding: 18px 22px !important;
+    min-height: 104px !important;
+  }
+
+  .brand-logo-img{
+    height: 60px !important;
+  }
+
+  .brand-logo-main{
+    font-size: 15px !important;
+  }
+
+  .brand-logo-sub{
+    font-size: 11px !important;
+  }
+
+  .brand-title{
+    font-size: 14px !important;
+  }
+}
+
+/* tela menor */
+@media (max-width: 980px){
+  .top-bar{
+    padding: 14px 16px !important;
+    min-height: auto !important;
+  }
+
+  .brand-logo-img{
+    height: 48px !important;
+  }
+
+  .brand-logo-main{
+    font-size: 13px !important;
+  }
+
+  .brand-logo-sub{
+    font-size: 10px !important;
+  }
+
+  .brand-title{
+    font-size: 12px !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  .pill-small,
+  .pill-state,
+  .pill-soft,
+  .btn-refresh,
+  .tf-btn{
+    font-size: 11px !important;
+  }
+
+  .top-right .kv .v{
+    font-size: 15px !important;
+  }
+}
 /* ===== HEADER PREMIUM SCALE (UI ONLY) ===== */
 .top-bar{
   padding: 18px 22px !important;
