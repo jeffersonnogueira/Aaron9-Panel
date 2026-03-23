@@ -3504,6 +3504,32 @@
   }
 }
 /* ===== /EMA EXHAUSTION PREMONITION ===== */
+/* ===== PIVOT / EMA COLOR TUNING (UI ONLY) ===== */
+.ui-value-yellow{
+  color:#ffcc66 !important;
+}
+
+.ui-bullish-green{
+  color:#4ade80 !important;
+}
+
+.ui-bearish-red{
+  color:#f87171 !important;
+}
+
+/* Pivot Premonition: números amarelos */
+#pivot-prem-card #pp-conf,
+#pivot-prem-card #pp-p1-zone,
+#pivot-prem-card #pp-p1-eta,
+#pivot-prem-card #pp-p1-prob,
+#pivot-prem-card #pp-p2-zone,
+#pivot-prem-card #pp-p2-eta,
+#pivot-prem-card #pp-p2-prob,
+#pivot-prem-card #pp-rangepos,
+#pivot-prem-card #pp-current,
+#pivot-prem-card #pp-atr{
+  color:#ffcc66 !important;
+}
 /* ===== VOLUME PREMONITION + ZIGZAG ROUTE ENGINE ROW ===== */
 #zz-volume-row{
   display:grid;
@@ -12058,7 +12084,32 @@ function updateIndicatorPremonitionPanel(payload){
       if (!el) return;
       el.textContent = (val === null || val === undefined || val === "") ? "—" : String(val);
     };
+const setHtml = (id, html) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = (html === null || html === undefined || html === "") ? "—" : String(html);
+};
 
+const escHtml = (s) =>
+  String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+const colorPivotSemanticHtml = (txt) => {
+  const raw = escHtml(txt == null ? "—" : txt);
+  return raw
+    .replace(/\b(BULLISH|BULL|HIGH)\b/gi, '<span class="ui-bullish-green">$1</span>')
+    .replace(/\b(BEARISH|BEAR|LOW)\b/gi, '<span class="ui-bearish-red">$1</span>')
+    .replace(/\b(MID|NEUTRAL|RANGE)\b/gi, '<span class="ui-value-yellow">$1</span>');
+};
+
+const highlightPctHtml = (txt) => {
+  const raw = escHtml(txt == null ? "—" : txt);
+  return raw.replace(/([+-]?\d+(?:\.\d+)?%)/g, '<span class="ui-value-yellow">$1</span>');
+};
     const setBadge = (id, txt, mode) => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -12611,6 +12662,12 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
         set("pp-atr", atrTxt);
 
         set("pp-read", tactical);
+        setHtml("pp-seq", colorPivotSemanticHtml(seqLabel));
+        setHtml("pp-p1-kind", colorPivotSemanticHtml(kind1));
+        setHtml("pp-p2-kind", colorPivotSemanticHtml(kind2));
+        setHtml("pp-trend", colorPivotSemanticHtml(trend));
+        setHtml("pp-loc", colorPivotSemanticHtml(loc));
+        setHtml("pp-next", colorPivotSemanticHtml(nextPivot));
       }
     }
                 // ===== VOLUME PREMONITION (NEW BLOCK) =====
@@ -13202,7 +13259,25 @@ if (readingEl) {
         set("eex-w15", fmtPressure(wp15));
         set("eex-w30", fmtPressure(wp30));
         set("eex-w60", fmtPressure(wp60));
-
+[
+  "eex-delta",
+  "eex-exhaust",
+  "eex-cont",
+  "eex-cont-now",
+  "eex-cont-next",
+  "eex-exhaust-now",
+  "eex-weaken-now",
+  "eex-reversal-risk",
+  "eex-w1",
+  "eex-w5",
+  "eex-w15",
+  "eex-w30",
+  "eex-w60"
+].forEach((id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = highlightPctHtml(el.textContent);
+});
         set("eex-read", readTxt);
 
         const readEl = document.getElementById("eex-read");
