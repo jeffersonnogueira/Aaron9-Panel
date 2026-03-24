@@ -17549,126 +17549,126 @@ try {
   if (mpEl) mpEl.value = (pxNum != null) ? pxNum.toFixed(2) : "—";
 } catch (e) {}
 
-updateGarimpoTodayCard(panel?.garimpo_today || null);
+const statusGeral = panel.status_geral || {};
+const aiAdvisor = panel.ai_advisor || {};
+const patterns = panel.patterns || {};
+const patternDay = patterns.day || {};
+const patternShort = patterns.short || {};
+const meta = panel.meta || {};
 
+// ===== HEADER FIRST =====
+safeText(els.symbol, panel.symbol || raw.symbol || sym || '—');
+safeText(
+  els.timeframe,
+  panel.timeframe ||
+    raw.timeframe ||
+    panel.timeframe_label ||
+    tf ||
+    '—'
+);
+safeText(
+  els.session,
+  panel.session || raw.session || panel.session_label || '—'
+);
 
-    // Preenche ATR + preço de entrada
-    prefillAtrFromPanel(panel, raw);
+const micro = panel.microcontexto || {};
+const flowLabel = panel.flow_label || panel.flow || micro.direcao;
+safeText(els.flow, flowLabel || 'Neutro');
 
-    const statusGeral = panel.status_geral || {};
-    const aiAdvisor = panel.ai_advisor || {};
-    const patterns = panel.patterns || {};
-    const patternDay = patterns.day || {};
-    const patternShort = patterns.short || {};
-    const meta = panel.meta || {};
+const stateText =
+  (panel.status && (panel.status.label || panel.status.state)) ||
+  statusGeral.tendencia ||
+  'ONLINE';
+safeText(els.state, stateText);
 
-    // "cérebro" de pullback vindo do n8n
-    const pullbackBrain =
-      panel.pullback_brain ||
-      panel.pullbackBrain ||
-      
-      panel.pullback ||
-      {};
-    updatePullbackBrain(pullbackBrain);
-
-    // PB Candle (Digest V20)
-if (typeof updatePullbackCandleFromDigest === "function") {
-  updatePullbackCandleFromDigest(payload);
-}
-
-
-        const sizingBrain =
-      panel.sizing_brain ||
-      panel.sizingBrain ||
-      panel.capital_brain ||
-      {};
-    updateSizingBrain(sizingBrain);
-
-            // Cartão de trade (Citadel / cartão atual)
-const tradeCard =
-  panel.trade_card ||
-  panel.current_trade ||
-  panel.citadel_card ||
-  panel.trade ||
-  null;
-
-// 1) Se o backend já trouxe um cartão pronto, usa ele
-if (tradeCard && typeof tradeCard === "object" && Object.keys(tradeCard).length) {
-  updateTradeCard(tradeCard);
-} else {
-  // 2) Senão, ADAPTA do panel.ai_advisor + panel.status_geral (sem inventar)
-  const adapted = adaptPanelToTradeCard(panel, raw, sym);
-  if (adapted) {
-    window.__AARON_TRADE_FROM_PANEL__ = adapted; // debug (opcional)
-    updateTradeCard(adapted);
-  }
-}
-
-// ✅ GARANTIA: depois que o loadPanel atualizar o cartão, re-aplica o output do RESPONDER
-try {
-  if (typeof applyResponderIntoTradeCard === "function") {
-    applyResponderIntoTradeCard(payload);
-  }
-  if (typeof renderResponderInline === "function") {
-    renderResponderInline(payload);
-  }
-} catch (e) {}
-
-try {
-  if (window.__A10_LIVE_LAST_45__) {
-    a10UpdateTradeCardLiveReflex(window.__A10_LIVE_LAST_45__);
-        a10UpdateEntryPremLive(window.__A10_LIVE_LAST_45__);
-  }
-} catch (e) {}
-
-    // Cabeçalho
-    safeText(els.symbol, panel.symbol || raw.symbol || '—');
-    safeText(
-      els.timeframe,
-      panel.timeframe ||
-        raw.timeframe ||
-        panel.timeframe_label ||
-        '—'
-    );
-    safeText(
-      els.session,
-      panel.session || raw.session || panel.session_label || '—'
-    );
-
-    const micro = panel.microcontexto || {};
-    const flowLabel = panel.flow_label || panel.flow || micro.direcao;
-    safeText(els.flow, flowLabel || 'Neutro');
-
-    const stateText =
-      (panel.status && (panel.status.label || panel.status.state)) ||
-      statusGeral.tendencia ||
-      'ONLINE';
-    safeText(els.state, stateText);
-
-    const ts =
+const ts =
   meta.panel_ts ||
   meta.timestamp ||
   panel.timestamp ||
   panel.updated_at || panel.updatedAt || panel.updated_at_ms ||
   raw.time;
 
-    if (els.lastUpdate) {
-      if (!ts) {
-        els.lastUpdate.textContent = 'sem timestamp';
-      } else {
-        try {
-          const d =
-            typeof ts === 'number'
-              ? new Date(ts)
-              : new Date(String(ts));
-          els.lastUpdate.textContent = d.toLocaleString('pt-BR', {
-            timeZone: 'America/Denver',
-          });
-        } catch (e) {
-          els.lastUpdate.textContent = String(ts);
-        }
-      }
+if (els.lastUpdate) {
+  if (!ts) {
+    els.lastUpdate.textContent = 'sem timestamp';
+  } else {
+    try {
+      const d =
+        typeof ts === 'number'
+          ? new Date(ts)
+          : new Date(String(ts));
+      els.lastUpdate.textContent = d.toLocaleString('pt-BR', {
+        timeZone: 'America/Denver',
+      });
+    } catch (e) {
+      els.lastUpdate.textContent = String(ts);
     }
+  }
+}
+
+// ===== RISKY CALLS SAFE =====
+safeRun("updateGarimpoTodayCard", updateGarimpoTodayCard, panel?.garimpo_today || null);
+
+safeRun("prefillAtrFromPanel", () => prefillAtrFromPanel(panel, raw));
+
+const pullbackBrain =
+  panel.pullback_brain ||
+  panel.pullbackBrain ||
+  panel.pullback ||
+  {};
+
+safeRun("updatePullbackBrain", updatePullbackBrain, pullbackBrain);
+
+safeRun("updatePullbackCandleFromDigest", () => {
+  if (typeof updatePullbackCandleFromDigest === "function") {
+    updatePullbackCandleFromDigest(payload);
+  }
+});
+
+const sizingBrain =
+  panel.sizing_brain ||
+  panel.sizingBrain ||
+  panel.capital_brain ||
+  {};
+
+safeRun("updateSizingBrain", updateSizingBrain, sizingBrain);
+
+safeRun("updateTradeCard/adaptPanelToTradeCard", () => {
+  const tradeCard =
+    panel.trade_card ||
+    panel.current_trade ||
+    panel.citadel_card ||
+    panel.trade ||
+    null;
+
+  if (tradeCard && typeof tradeCard === "object" && Object.keys(tradeCard).length) {
+    updateTradeCard(tradeCard);
+  } else {
+    const adapted = adaptPanelToTradeCard(panel, raw, sym);
+    if (adapted) {
+      window.__AARON_TRADE_FROM_PANEL__ = adapted;
+      updateTradeCard(adapted);
+    }
+  }
+});
+
+safeRun("applyResponderIntoTradeCard", () => {
+  if (typeof applyResponderIntoTradeCard === "function") {
+    applyResponderIntoTradeCard(payload);
+  }
+  if (typeof renderResponderInline === "function") {
+    renderResponderInline(payload);
+  }
+});
+
+safeRun("a10UpdateTradeCardLiveReflex", () => {
+  if (window.__A10_LIVE_LAST_45__) {
+    a10UpdateTradeCardLiveReflex(window.__A10_LIVE_LAST_45__);
+    a10UpdateEntryPremLive(window.__A10_LIVE_LAST_45__);
+  }
+});
+
+    
 
     // Padrões / Direções
     const patternDayName =
