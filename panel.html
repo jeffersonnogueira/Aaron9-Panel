@@ -17346,7 +17346,160 @@ const payload = {
   panel,
   raw,
 };
+// ============================================================
+// BRIDGE: Firestore payload novo -> contrato legado do front
+// COLE LOGO APÓS: const payload = { ...stage2, panel, raw };
+// ============================================================
+(function bridgeFirestoreToLegacyContracts(p) {
+  try {
+    if (!p || typeof p !== "object") return;
 
+    p.panel = (p.panel && typeof p.panel === "object") ? p.panel : {};
+    p.raw   = (p.raw   && typeof p.raw   === "object") ? p.raw   : {};
+
+    const panel = p.panel;
+    const raw   = p.raw;
+
+    const bw =
+      panel.breakout_window_card ||
+      p.breakout_window_card ||
+      {};
+
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const priceNow =
+      num(panel.price_now) ??
+      num(panel.last_price) ??
+      num(bw.price_now) ??
+      num(raw?.candle?.close);
+
+    const dirRaw = String(
+      bw.dir ||
+      panel.action ||
+      panel.direction ||
+      ""
+    ).toUpperCase();
+
+    const isUp =
+      dirRaw.includes("UP") ||
+      dirRaw.includes("BUY") ||
+      dirRaw.includes("LONG") ||
+      dirRaw.includes("BULL");
+
+    const isDown =
+      dirRaw.includes("DOWN") ||
+      dirRaw.includes("SELL") ||
+      dirRaw.includes("SHORT") ||
+      dirRaw.includes("BEAR");
+
+    const confText = bw.confidence || "—";
+
+    const contPct =
+      num(bw.next_5min_prob_pct) ??
+      num(bw.prob_until_end_pct);
+
+    const revPct =
+      contPct != null ? Math.max(0, 100 - contPct) : null;
+
+    const etaP50 =
+      num(bw.median_minutes) ??
+      num(bw.p50_minutes);
+
+    const etaP25 = num(bw.p25_minutes);
+    const etaP75 = num(bw.p75_minutes) ?? num(bw.p90_minutes);
+
+    // --------------------------------------------------------
+    // 1) FIRST HOUR helper legado
+    // --------------------------------------------------------
+    if (!panel.first_hour_live_premonition_v1 && !panel.first_hour_premarket_premonition_v1) {
+      const fh = {
+        market_minute:
+          num(panel.market_minute) ??
+          num(panel.minute) ??
+          null,
+
+        continuation_pct: contPct,
+        exhaustion_pct: null,
+        reversal_pct: revPct,
+
+        continuation_eta_p50_min: etaP50,
+        reversal_eta_p50_min: etaP50,
+
+        target_up_p50: isUp ? priceNow : null,
+        target_down_p50: isDown ? priceNow : null,
+
+        trigger_up: isUp ? priceNow : null,
+        trigger_down: isDown ? priceNow : null,
+
+        invalidation: null,
+
+        tactical_read:
+          bw.miss_line ||
+          `${confText} · ${dirRaw || "NEUTRAL"}`,
+
+        premarket_summary: {
+          bias: dirRaw || "—",
+          move: confText,
+          range: bw.n_total ?? "—",
+          vol_ratio: "—",
+        },
+
+        state: {
+          phase: dirRaw || "—",
+          ema: "—",
+          vwap: "—",
+          rsi: "—",
+        }
+      };
+
+      panel.first_hour_live_premonition_v1 = fh;
+      panel.first_hour_premarket_premonition_v1 = fh;
+      p.first_hour_live_premonition_v1 = fh;
+      p.first_hour_premarket_premonition_v1 = fh;
+    }
+
+    // --------------------------------------------------------
+    // 2) INDICATOR helper legado
+    // --------------------------------------------------------
+    if (!panel.indicator_premonition) {
+      panel.indicator_premonition = {
+        breakout_window_card: bw,
+        price_now: priceNow,
+        action: panel.action || dirRaw || "—",
+        confidence: confText,
+        eta_p25: etaP25,
+        eta_p50: etaP50,
+        eta_p75: etaP75,
+        eta_p90: num(bw.p90_minutes),
+        prob_until_end_pct: num(bw.prob_until_end_pct),
+        next_5min_prob_pct: num(bw.next_5min_prob_pct),
+        miss_line: bw.miss_line || "—",
+        n_total: bw.n_total ?? null,
+      };
+    }
+
+    // reforço para deepFind/root
+    p.indicator_premonition = p.indicator_premonition || panel.indicator_premonition;
+
+    // alguns helpers leem digest/ui/root
+    p.digest = (p.digest && typeof p.digest === "object") ? p.digest : {};
+    p.digest.breakout_window_card = p.digest.breakout_window_card || bw;
+    p.digest.indicator_premonition = p.digest.indicator_premonition || panel.indicator_premonition;
+
+    p.ui = (p.ui && typeof p.ui === "object") ? p.ui : {};
+    p.ui.indicator_premonition = p.ui.indicator_premonition || panel.indicator_premonition;
+
+    // campos básicos para topo / fallback
+    if (panel.price_now == null && priceNow != null) panel.price_now = priceNow;
+    if (!panel.symbol && p.symbol) panel.symbol = p.symbol;
+    if (!panel.timeframe && p.timeframe) panel.timeframe = p.timeframe;
+  } catch (e) {
+    console.warn("[AARON UI] bridgeFirestoreToLegacyContracts falhou", e);
+  }
+})(payload);
 // salva debug
 window.__AARON_LAST_PAYLOAD__ = payload;
 
