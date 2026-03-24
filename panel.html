@@ -17351,33 +17351,23 @@ const payload = {
 window.__AARON_LAST_PAYLOAD__ = payload;
 
 // responder output / trade card / painéis
-if (typeof renderTradeResponderOutput === "function") {
-  renderTradeResponderOutput(payload);
-}
-if (typeof applyResponderIntoTradeCard === "function") {
-  applyResponderIntoTradeCard(payload);
-}
-if (typeof updatePremonitionPanel === "function") {
-  updatePremonitionPanel(payload);
-}
-if (typeof updateRespiroReversaoPanel === "function") {
-  updateRespiroReversaoPanel(payload);
-}
-if (typeof updateAaronCommentaryBlock === "function") {
-  updateAaronCommentaryBlock(payload);
-}
-if (typeof updateFirstHourPremonitionPanel === "function") {
-  updateFirstHourPremonitionPanel(payload);
-}
-if (typeof updateIndicatorPremonitionPanel === "function") {
-  updateIndicatorPremonitionPanel(payload);
-}
-if (typeof a10UpdateWindowsCardFromPayload === "function") {
-  a10UpdateWindowsCardFromPayload(payload);
-}
-if (typeof renderResponderInline === "function") {
-  renderResponderInline(payload);
-}
+const safeRun = (label, fn, arg) => {
+  try {
+    if (typeof fn === "function") fn(arg);
+  } catch (e) {
+    console.warn(`[AARON UI] ${label} falhou`, e);
+  }
+};
+
+safeRun("renderTradeResponderOutput", renderTradeResponderOutput, payload);
+safeRun("applyResponderIntoTradeCard", applyResponderIntoTradeCard, payload);
+safeRun("updatePremonitionPanel", updatePremonitionPanel, payload);
+safeRun("updateRespiroReversaoPanel", updateRespiroReversaoPanel, payload);
+safeRun("updateAaronCommentaryBlock", updateAaronCommentaryBlock, payload);
+safeRun("updateFirstHourPremonitionPanel", updateFirstHourPremonitionPanel, payload);
+safeRun("updateIndicatorPremonitionPanel", updateIndicatorPremonitionPanel, payload);
+safeRun("a10UpdateWindowsCardFromPayload", a10UpdateWindowsCardFromPayload, payload);
+safeRun("renderResponderInline", renderResponderInline, payload);
 
 window.dispatchEvent(new Event("aaron:panelUpdated"));
 
