@@ -17319,22 +17319,41 @@ const replayIdx =
 
 const data = await res.json();
 
-// n8n pode devolver: {panel, raw, ui, digest}  OU  [ { json: {...} } ]  OU  [ {...} ]
+// 1) raiz segura
 const root = Array.isArray(data) ? (data[0] || {}) : (data || {});
-const payload =
+
+// 2) suporta:
+//    - n8n antigo: { panel, raw, ui, digest }
+//    - n8n array: [ { json:{...} } ]
+//    - Cloud Run novo: { ok, symbol, timeframe, docId, data:{...} }
+const stage1 =
   (root && typeof root === 'object' && root.json && typeof root.json === 'object')
     ? root.json
     : root;
 
+const stage2 =
+  (stage1 && typeof stage1 === 'object' && stage1.data && typeof stage1.data === 'object')
+    ? stage1.data
+    : stage1;
+
+// 3) normaliza panel/raw
+const panel = stage2.panel || stage2;
+const raw = stage2.raw || stage2.raw_eye || {};
+
+// 4) payload normalizado para TODAS as funções
+const payload = {
+  ...stage2,
+  panel,
+  raw,
+};
+
 // salva debug
 window.__AARON_LAST_PAYLOAD__ = payload;
 
-// ✅ 1) Preenche o bloco “RESPONDER OUTPUT” (KPI + colunas panel/ui/digest)
+// responder output / trade card / painéis
 if (typeof renderTradeResponderOutput === "function") {
   renderTradeResponderOutput(payload);
 }
-
-// ✅ 2) Injeta dentro do Trade Card (campos “na sua cara”)
 if (typeof applyResponderIntoTradeCard === "function") {
   applyResponderIntoTradeCard(payload);
 }
@@ -17353,23 +17372,16 @@ if (typeof updateFirstHourPremonitionPanel === "function") {
 if (typeof updateIndicatorPremonitionPanel === "function") {
   updateIndicatorPremonitionPanel(payload);
 }
-// ✅ WINDOWS: sempre preencher pelo payload (mesmo sem candles)
 if (typeof a10UpdateWindowsCardFromPayload === "function") {
   a10UpdateWindowsCardFromPayload(payload);
 }
-// ✅ 3) Mini-resumo dentro do Trade Card (se o anchor existir)
 if (typeof renderResponderInline === "function") {
   renderResponderInline(payload);
 }
 
 window.dispatchEvent(new Event("aaron:panelUpdated"));
 
-// segue o fluxo normal do seu loadPanel
-
-const panel = payload.panel || payload;
-const raw = payload.raw || payload.raw_eye || {};
-
-// alimenta Autopilot 2.0 com o preço atual (sem inventar)
+// segue o fluxo normal
 const pxNow =
   panel.price_now ||
   panel.last_price ||
@@ -17381,25 +17393,20 @@ if (pxNow != null && isFinite(Number(pxNow))) {
 }
 apRenderSizing();
 
-// ✅ SYNC do dropdown PREÇO (Matcher Picker) + fonte de quote
 try {
   const pxNum = (pxNow != null && isFinite(Number(pxNow))) ? Number(pxNow) : null;
 
-  // alimenta o getQuote() do dropdown
   window.__AARON_LAST_PANEL_JSON__ = {
     symbol: panel?.symbol || raw?.symbol || sym,
     price: pxNum,
     last_price: pxNum,
   };
 
-  // atualiza o campo "PREÇO" do dropdown
   const mpEl = document.getElementById("mp-price");
   if (mpEl) mpEl.value = (pxNum != null) ? pxNum.toFixed(2) : "—";
 } catch (e) {}
 
-
-
-    updateGarimpoTodayCard(panel?.garimpo_today || null);
+updateGarimpoTodayCard(panel?.garimpo_today || null);
 
 
     // Preenche ATR + preço de entrada
