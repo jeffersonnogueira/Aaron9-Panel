@@ -14467,7 +14467,24 @@ const els = {
   sizingPhraseDetail: document.getElementById('sizing-phrase-detail'),
 
 };
+// ===== DEBUG BOOT VISIBLE =====
+(function aaronBootProbe() {
+  try {
+    console.log("[AARON DEBUG] boot probe executou");
 
+    const s = document.getElementById("symbol-label");
+    const t = document.getElementById("timeframe-label");
+    const st = document.getElementById("state-pill");
+    const lu = document.getElementById("last-update-label");
+
+    if (s) s.textContent = "BOOT";
+    if (t) t.textContent = "JS";
+    if (st) st.textContent = "SCRIPT OK";
+    if (lu) lu.textContent = "BOOT OK";
+  } catch (e) {
+    console.error("[AARON DEBUG] boot probe falhou", e);
+  }
+})();
 // ===============================
 // AUTOPILOT v1 (simulação local)
 // ===============================
