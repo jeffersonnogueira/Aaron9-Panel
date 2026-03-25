@@ -17487,10 +17487,75 @@ const payload = {
     const etaP25 = num(bw.p25_minutes);
     const etaP75 = num(bw.p75_minutes) ?? num(bw.p90_minutes);
 
+        // --------------------------------------------------------
+    // 1) FIRST HOUR + INDICATORS — bridge seguro
+    // NÃO deixa o helper legado sobrescrever o payload real
     // --------------------------------------------------------
-    // 1) FIRST HOUR helper legado
-    // --------------------------------------------------------
-        if (!panel.first_hour_live_premonition_v1 && !panel.first_hour_premarket_premonition_v1) {
+    const deepFindKey = (obj, key, maxDepth = 8) => {
+      try {
+        const seen = new Set();
+        const q = [{ v: obj, d: 0 }];
+        while (q.length) {
+          const { v, d } = q.shift();
+          if (!v || typeof v !== "object") continue;
+          if (seen.has(v)) continue;
+          seen.add(v);
+
+          if (Object.prototype.hasOwnProperty.call(v, key)) {
+            return v[key];
+          }
+
+          if (d >= maxDepth) continue;
+
+          for (const k of Object.keys(v)) {
+            const child = v[k];
+            if (child && typeof child === "object") {
+              q.push({ v: child, d: d + 1 });
+            }
+          }
+        }
+      } catch (e) {}
+      return null;
+    };
+
+    const looksLikeFirstHour = (x) =>
+      !!(x && typeof x === "object" && (
+        x.market_minute != null ||
+        x.minute != null ||
+        x.session_phase != null ||
+        x.phase != null ||
+        x.continuation_pct != null ||
+        x.continue_pct != null ||
+        x.reversal_pct != null ||
+        x.reverse_pct != null
+      ));
+
+    const looksLikeRichIndicator = (x) =>
+      !!(x && typeof x === "object" && (
+        (x.vwap && typeof x.vwap === "object") ||
+        (x.rsi && typeof x.rsi === "object") ||
+        (x.ema && typeof x.ema === "object")
+      ));
+
+    const foundFirstHourLive = deepFindKey(p, "first_hour_live_premonition_v1");
+    const foundFirstHourPremarket = deepFindKey(p, "first_hour_premarket_premonition_v1");
+
+    const realFirstHour =
+      (looksLikeFirstHour(panel.first_hour_live_premonition_v1) ? panel.first_hour_live_premonition_v1 : null) ||
+      (looksLikeFirstHour(panel.first_hour_premarket_premonition_v1) ? panel.first_hour_premarket_premonition_v1 : null) ||
+      (looksLikeFirstHour(p.first_hour_live_premonition_v1) ? p.first_hour_live_premonition_v1 : null) ||
+      (looksLikeFirstHour(p.first_hour_premarket_premonition_v1) ? p.first_hour_premarket_premonition_v1 : null) ||
+      (looksLikeFirstHour(foundFirstHourLive) ? foundFirstHourLive : null) ||
+      (looksLikeFirstHour(foundFirstHourPremarket) ? foundFirstHourPremarket : null) ||
+      null;
+
+    if (realFirstHour) {
+      panel.first_hour_live_premonition_v1 =
+        panel.first_hour_live_premonition_v1 || realFirstHour;
+
+      panel.first_hour_premarket_premonition_v1 =
+        panel.first_hour_premarket_premonition_v1 || realFirstHour;
+    } else {
       const phaseTxt = String(dirRaw || "NEUTRAL").toUpperCase();
       const readTxt =
         bw.miss_line ||
@@ -17567,14 +17632,22 @@ const payload = {
 
       panel.first_hour_live_premonition_v1 = fh;
       panel.first_hour_premarket_premonition_v1 = fh;
-      p.first_hour_live_premonition_v1 = fh;
-      p.first_hour_premarket_premonition_v1 = fh;
     }
 
-    // --------------------------------------------------------
-    // 2) INDICATOR helper legado
-    // --------------------------------------------------------
-    if (!panel.indicator_premonition) {
+    const foundIndicator =
+      deepFindKey(p, "indicator_premonition") ||
+      deepFindKey(p, "indicator_premonition_v1");
+
+    const realIndicator =
+      (looksLikeRichIndicator(panel.indicator_premonition) ? panel.indicator_premonition : null) ||
+      (looksLikeRichIndicator(p.indicator_premonition) ? p.indicator_premonition : null) ||
+      (looksLikeRichIndicator(foundIndicator) ? foundIndicator : null) ||
+      null;
+
+    if (realIndicator) {
+      panel.indicator_premonition =
+        panel.indicator_premonition || realIndicator;
+    } else if (!panel.indicator_premonition) {
       panel.indicator_premonition = {
         breakout_window_card: bw,
         price_now: priceNow,
@@ -17591,16 +17664,22 @@ const payload = {
       };
     }
 
-    // reforço para deepFind/root
-    p.indicator_premonition = p.indicator_premonition || panel.indicator_premonition;
+    if (!looksLikeRichIndicator(p.indicator_premonition)) {
+      p.indicator_premonition = panel.indicator_premonition || p.indicator_premonition;
+    }
 
-    // alguns helpers leem digest/ui/root
     p.digest = (p.digest && typeof p.digest === "object") ? p.digest : {};
     p.digest.breakout_window_card = p.digest.breakout_window_card || bw;
-    p.digest.indicator_premonition = p.digest.indicator_premonition || panel.indicator_premonition;
+    if (!looksLikeRichIndicator(p.digest.indicator_premonition)) {
+      p.digest.indicator_premonition =
+        panel.indicator_premonition || p.digest.indicator_premonition;
+    }
 
     p.ui = (p.ui && typeof p.ui === "object") ? p.ui : {};
-    p.ui.indicator_premonition = p.ui.indicator_premonition || panel.indicator_premonition;
+    if (!looksLikeRichIndicator(p.ui.indicator_premonition)) {
+      p.ui.indicator_premonition =
+        panel.indicator_premonition || p.ui.indicator_premonition;
+    }
 
     // campos básicos para topo / fallback
     if (panel.price_now == null && priceNow != null) panel.price_now = priceNow;
