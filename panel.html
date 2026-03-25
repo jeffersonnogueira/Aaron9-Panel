@@ -11062,70 +11062,64 @@ const breathMoveP50 = pickFirst(
   pp?.breath_move_usd?.p50
 );
 
-const toNumOrNull = (v) => {
-  if (v == null || v === "") return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-};
-
-const upRefNum = toNumOrNull(pickFirst(triggerUp, pivotPrice, priceNow));
-const downRefNum = toNumOrNull(pickFirst(triggerDown, pivotPrice, priceNow));
+const upRefNum = Number(pickFirst(triggerUp, pivotPrice, priceNow));
+const downRefNum = Number(pickFirst(triggerDown, pivotPrice, priceNow));
 
 const target1 = (() => {
-  const raw = toNumOrNull(rawTarget1);
-  const move = toNumOrNull(targetMoveP50);
+  const raw = Number(rawTarget1);
+  const move = Number(targetMoveP50);
 
   if (dirNorm === "UP") {
-    if (raw != null && (upRefNum == null || raw > upRefNum)) return raw;
-    if (move != null && upRefNum != null) return upRefNum + move;
-    return raw;
+    if (Number.isFinite(raw) && (!Number.isFinite(upRefNum) || raw > upRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(upRefNum)) return upRefNum + move;
+    return Number.isFinite(raw) ? raw : null;
   }
 
   if (dirNorm === "DOWN") {
-    if (raw != null && (downRefNum == null || raw < downRefNum)) return raw;
-    if (move != null && downRefNum != null) return downRefNum - move;
-    return raw;
+    if (Number.isFinite(raw) && (!Number.isFinite(downRefNum) || raw < downRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(downRefNum)) return downRefNum - move;
+    return Number.isFinite(raw) ? raw : null;
   }
 
-  return raw;
+  return Number.isFinite(raw) ? raw : null;
 })();
 
 const invalidation = (() => {
-  const raw = toNumOrNull(rawInvalidation);
-  const move = toNumOrNull(invalidationMoveP50);
+  const raw = Number(rawInvalidation);
+  const move = Number(invalidationMoveP50);
 
   if (dirNorm === "UP") {
-    if (raw != null && (upRefNum == null || raw < upRefNum)) return raw;
-    if (move != null && upRefNum != null) return upRefNum - move;
-    return raw;
+    if (Number.isFinite(raw) && (!Number.isFinite(upRefNum) || raw < upRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(upRefNum)) return upRefNum - move;
+    return Number.isFinite(raw) ? raw : null;
   }
 
   if (dirNorm === "DOWN") {
-    if (raw != null && (downRefNum == null || raw > downRefNum)) return raw;
-    if (move != null && downRefNum != null) return downRefNum + move;
-    return raw;
+    if (Number.isFinite(raw) && (!Number.isFinite(downRefNum) || raw > downRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(downRefNum)) return downRefNum + move;
+    return Number.isFinite(raw) ? raw : null;
   }
 
-  return raw;
+  return Number.isFinite(raw) ? raw : null;
 })();
 
 const breath = (() => {
-  const raw = toNumOrNull(rawBreath);
-  const move = toNumOrNull(breathMoveP50);
+  const raw = Number(rawBreath);
+  const move = Number(breathMoveP50);
 
   if (dirNorm === "UP") {
-    if (raw != null && (upRefNum == null || raw < upRefNum)) return raw;
-    if (move != null && upRefNum != null) return upRefNum - move;
-    return raw;
+    if (Number.isFinite(raw) && (!Number.isFinite(upRefNum) || raw < upRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(upRefNum)) return upRefNum - move;
+    return Number.isFinite(raw) ? raw : null;
   }
 
   if (dirNorm === "DOWN") {
-    if (raw != null && (downRefNum == null || raw > downRefNum)) return raw;
-    if (move != null && downRefNum != null) return downRefNum + move;
-    return raw;
+    if (Number.isFinite(raw) && (!Number.isFinite(downRefNum) || raw > downRefNum)) return raw;
+    if (Number.isFinite(move) && Number.isFinite(downRefNum)) return downRefNum + move;
+    return Number.isFinite(raw) ? raw : null;
   }
 
-  return raw;
+  return Number.isFinite(raw) ? raw : null;
 })();
 
 const vwapState = pickFirst(
@@ -12608,25 +12602,14 @@ set("indip-vwap-hold-phrase","—");
 set("indip-rsi-hold-phrase","—");
 set("indip-ema-hold-phrase","—");
     const pxLive =
-  num(panel?.price_now ?? panel?.last_price ?? payload?.price_now ?? payload?.last_price);
+      num(panel?.price_now ?? panel?.last_price ?? payload?.price_now ?? payload?.last_price);
 
-const hasAnyLive =
-  Number.isFinite(liveVwap) ||
-  Number.isFinite(liveRsi14) ||
-  (Number.isFinite(liveEmaFast) && Number.isFinite(liveEmaSlow));
+    const hasAnyLive =
+      Number.isFinite(liveVwap) || Number.isFinite(liveRsi14) ||
+      (Number.isFinite(liveEmaFast) && Number.isFinite(liveEmaSlow));
 
-const ipMissingCore =
-  !ip ||
-  ip.enabled === false ||
-  (!ip.vwap && !ip.rsi && !ip.ema) ||
-  (
-    (!ip?.vwap || (ip.vwap.price == null && ip.vwap.vwap == null && ip.vwap.state == null && !ip.vwap.cross && !ip.vwap.hold)) &&
-    (!ip?.rsi  || (ip.rsi.rsi == null && ip.rsi.state_50 == null && !ip.rsi.cross_50 && !ip.rsi.hold_50)) &&
-    (!ip?.ema  || (ip.ema.state == null && ip.ema.ema_fast == null && ip.ema.ema_slow == null && ip.ema.fast == null && ip.ema.slow == null && ip.ema.ema20 == null && ip.ema.ema50 == null && !ip.ema.cross && !ip.ema.hold))
-  );
-
-// Se o indicator_premonition não veio OU veio vazio demais, mas temos live_*, preenche os cards
-if (ipMissingCore && hasAnyLive) {
+    // Se o indicator_premonition não veio (ou veio disabled/vazio), mas temos live_*, preenche os cards
+    if ((!ip || ip.enabled === false) && hasAnyLive) {
       // VWAP
       if (Number.isFinite(pxLive) && Number.isFinite(liveVwap)) {
         const diff = pxLive - liveVwap;
@@ -17458,9 +17441,7 @@ const payload = {
       p.breakout_window_card ||
       {};
 
-        const num = (v) => {
-      if (v == null) return null;
-      if (typeof v === "string" && v.trim() === "") return null;
+    const num = (v) => {
       const n = Number(v);
       return Number.isFinite(n) ? n : null;
     };
@@ -17509,127 +17490,17 @@ const payload = {
     // --------------------------------------------------------
     // 1) FIRST HOUR helper legado
     // --------------------------------------------------------
-            const tsBase =
-      panel?.updated_at ||
-      panel?.updatedAt ||
-      panel?.timestamp ||
-      p?.timestamp ||
-      p?.time ||
-      raw?.time ||
-      null;
-
-    const calcMarketMinute = (ts) => {
-      try {
-        if (!ts) return null;
-        const d = new Date(ts);
-        if (Number.isNaN(d.getTime())) return null;
-
-        const parts = Object.fromEntries(
-          new Intl.DateTimeFormat("en-US", {
-            timeZone: "America/New_York",
-            hour12: false,
-            hour: "2-digit",
-            minute: "2-digit"
-          })
-          .formatToParts(d)
-          .filter(x => x.type !== "literal")
-          .map(x => [x.type, x.value])
-        );
-
-        const hh = Number(parts.hour);
-        const mm = Number(parts.minute);
-        if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
-
-        const total = hh * 60 + mm;
-        const open = 9 * 60 + 30;
-        const diff = total - open;
-
-        return diff >= 0 ? Math.min(diff + 1, 390) : null;
-      } catch (_e) {
-        return null;
-      }
-    };
-
-    const liveVwapHeu = num(
-      panel?.live_vwap ??
-      p?.live_vwap ??
-      raw?.live_vwap ??
-      panel?.market_state?.indicators?.vwap ??
-      raw?.market_state?.indicators?.vwap
-    );
-
-    const liveRsiHeu = num(
-      panel?.live_rsi14 ??
-      p?.live_rsi14 ??
-      raw?.live_rsi14 ??
-      panel?.market_state?.indicators?.rsi14 ??
-      raw?.market_state?.indicators?.rsi14
-    );
-
-    const liveEmaFastHeu = num(
-      panel?.live_ema_fast ??
-      p?.live_ema_fast ??
-      raw?.live_ema_fast ??
-      panel?.ema9 ??
-      p?.ema9 ??
-      raw?.ema9 ??
-      panel?.ema20 ??
-      p?.ema20 ??
-      raw?.ema20
-    );
-
-    const liveEmaSlowHeu = num(
-      panel?.live_ema_slow ??
-      p?.live_ema_slow ??
-      raw?.live_ema_slow ??
-      panel?.ema20 ??
-      p?.ema20 ??
-      raw?.ema20 ??
-      panel?.ema50 ??
-      p?.ema50 ??
-      raw?.ema50
-    );
-
-    const marketMinuteHeu =
-      num(panel?.market_minute) ??
-      num(panel?.minute) ??
-      calcMarketMinute(tsBase);
-
-    const phaseFromMinute = (m) => {
-      if (!Number.isFinite(m)) return String(dirRaw || "NONE").toUpperCase();
-      if (m <= 5) return "OPENING DRIVE";
-      if (m <= 15) return "EARLY OPEN";
-      if (m <= 30) return "OPEN HOUR";
-      if (m <= 60) return "LATE FIRST HOUR";
-      return "AFTER FIRST HOUR";
-    };
-
-    if (!panel.first_hour_live_premonition_v1 && !panel.first_hour_premarket_premonition_v1) {
-      const phaseTxt = phaseFromMinute(marketMinuteHeu);
+        if (!panel.first_hour_live_premonition_v1 && !panel.first_hour_premarket_premonition_v1) {
+      const phaseTxt = String(dirRaw || "NEUTRAL").toUpperCase();
       const readTxt =
         bw.miss_line ||
         `${confText} · ${phaseTxt}`;
 
-      const vwapSideHeu =
-        (priceNow != null && liveVwapHeu != null)
-          ? (priceNow >= liveVwapHeu ? "ABOVE" : "BELOW")
-          : "—";
-
-      const emaStateHeu =
-        (liveEmaFastHeu != null && liveEmaSlowHeu != null)
-          ? (liveEmaFastHeu >= liveEmaSlowHeu ? "ABOVE" : "BELOW")
-          : "—";
-
-      const rsiStateHeu =
-        (liveRsiHeu != null)
-          ? (liveRsiHeu >= 50 ? "ABOVE 50" : "BELOW 50")
-          : "—";
-
       const fh = {
         enabled: true,
 
-        market_minute: marketMinuteHeu,
-        minute: marketMinuteHeu,
+        market_minute: num(panel.market_minute) ?? num(panel.minute) ?? null,
+        minute: num(panel.market_minute) ?? num(panel.minute) ?? null,
 
         session_phase: phaseTxt,
         phase: phaseTxt,
@@ -17689,9 +17560,9 @@ const payload = {
         premarket_range_pct: null,
         premarket_vol_ratio: null,
 
-        ema_state: { label: emaStateHeu, regime: emaStateHeu },
-        vwap_state: { side: vwapSideHeu },
-        rsi_state: { label: rsiStateHeu, rsi_regime: rsiStateHeu }
+        ema_state: { label: "—", regime: "—" },
+        vwap_state: { side: "—" },
+        rsi_state: { label: "—", rsi_regime: "—" }
       };
 
       panel.first_hour_live_premonition_v1 = fh;
