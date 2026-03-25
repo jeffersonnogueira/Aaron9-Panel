@@ -10790,16 +10790,19 @@ const scTxt = (score != null && isFinite(Number(score))) ? ` (Score ${Number(sco
 const confTxt = bw?.confidence ? ` · ${bw.confidence}` : "";
 
 const pctTxt = (v) => {
+  if (v == null || v === "") return "—";
   const n = Number(v);
   return Number.isFinite(n) ? `${Math.round(n)}%` : "—";
 };
 
 const pxTxt = (v) => {
+  if (v == null || v === "") return "—";
   const n = Number(v);
   return Number.isFinite(n) ? n.toFixed(2) : "—";
 };
 
 const minTxt = (v) => {
+  if (v == null || v === "") return "—";
   const n = Number(v);
   return Number.isFinite(n) ? `~${Math.round(n)}m` : "—";
 };
