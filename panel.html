@@ -12326,32 +12326,28 @@ function updateFirstHourPremonitionPanel(payload){
       fh?.invalidation ??
       null;
 
-        const phase =
-      (typeof fh?.session_phase === "string" && fh.session_phase.trim()) ? fh.session_phase.trim() :
-      (typeof fh?.phase === "string" && fh.phase.trim()) ? fh.phase.trim() :
-      (typeof fh?.state === "string" && fh.state.trim()) ? fh.state.trim() :
-      (typeof fh?.state?.phase === "string" && fh.state.phase.trim()) ? fh.state.phase.trim() :
+    const phase =
+      fh?.session_phase ??
+      fh?.phase ??
+      fh?.state ??
       "—";
 
     const emaState =
-      (typeof fh?.ema_state?.label === "string" && fh.ema_state.label.trim()) ? fh.ema_state.label.trim() :
-      (typeof fh?.ema_state?.regime === "string" && fh.ema_state.regime.trim()) ? fh.ema_state.regime.trim() :
-      (typeof fh?.state?.ema === "string" && fh.state.ema.trim()) ? fh.state.ema.trim() :
-      (typeof fh?.ema_state === "string" && fh.ema_state.trim()) ? fh.ema_state.trim() :
+      fh?.ema_state?.label ??
+      fh?.ema_state?.regime ??
+      fh?.ema_state ??
       "—";
 
     const vwapSide =
-      (typeof fh?.vwap_state?.side === "string" && fh.vwap_state.side.trim()) ? fh.vwap_state.side.trim() :
-      (typeof fh?.vwap_side === "string" && fh.vwap_side.trim()) ? fh.vwap_side.trim() :
-      (typeof fh?.state?.vwap === "string" && fh.state.vwap.trim()) ? fh.state.vwap.trim() :
-      (typeof fh?.vwap_state === "string" && fh.vwap_state.trim()) ? fh.vwap_state.trim() :
+      fh?.vwap_state?.side ??
+      fh?.vwap_side ??
+      fh?.vwap_state ??
       "—";
 
     const rsiState =
-      (typeof fh?.rsi_state?.rsi_regime === "string" && fh.rsi_state.rsi_regime.trim()) ? fh.rsi_state.rsi_regime.trim() :
-      (typeof fh?.rsi_state?.label === "string" && fh.rsi_state.label.trim()) ? fh.rsi_state.label.trim() :
-      (typeof fh?.state?.rsi === "string" && fh.state.rsi.trim()) ? fh.state.rsi.trim() :
-      (typeof fh?.rsi_state === "string" && fh.rsi_state.trim()) ? fh.rsi_state.trim() :
+      fh?.rsi_state?.rsi_regime ??
+      fh?.rsi_state?.label ??
+      fh?.rsi_state ??
       "—";
 
     const bias =
@@ -12664,8 +12660,8 @@ set("indip-rsi-hold-phrase",
   );
 
   // labels (assumindo FAST=20 / SLOW=50)
-  set("indip-ema-fast-span", "9");
-  set("indip-ema-slow-span", "20");
+  set("indip-ema-fast-span", "20");
+  set("indip-ema-slow-span", "50");
 
   set("indip-ema-fast", fmt2(liveEmaFast));
   set("indip-ema-slow", fmt2(liveEmaSlow));
@@ -12747,7 +12743,7 @@ set("indip-vwap-hold-phrase",
     set("indip-rsi-cross-eta", fmtEta(rCross?.eta_p50_min));
 
     const rHold = (r.hold_50 && r.hold_50.highlight_5min) ? r.hold_50.highlight_5min : null;
-        set("indip-rsi-hold-pct", fmtPct(rHold?.prob_hold_pct_dyn ?? rHold?.prob_hold_pct ?? rHold?.prob_hold_pct_base));
+    set("indip-rsi-hold-pct", fmtPct(rHold?.prob_hold_pct));
 const rHoldTxt = document.getElementById("indip-rsi-hold-pct")?.textContent || "—";
 set("indip-rsi-hold-phrase",
   (rState === "above") ? `HOLD ${rHoldTxt} → RSI likely stays ABOVE 50 (~5m).` :
@@ -12779,8 +12775,8 @@ setBadge(
   eState === "above" ? "win-now" : (eState === "below" ? "win-warn" : "win-wait")
 );
 
-set("indip-ema-fast-span", Number.isFinite(num(e.fast_span)) ? String(num(e.fast_span)) : "9");
-set("indip-ema-slow-span", Number.isFinite(num(e.slow_span)) ? String(num(e.slow_span)) : "20");
+set("indip-ema-fast-span", Number.isFinite(eFast) ? "20" : "—");
+set("indip-ema-slow-span", Number.isFinite(eSlow) ? "50" : "—");
 
 set("indip-ema-fast", Number.isFinite(eFast) ? fmt2(eFast) : "—");
 set("indip-ema-slow", Number.isFinite(eSlow) ? fmt2(eSlow) : "—");
@@ -13935,79 +13931,11 @@ if (readingEl) {
       if (!ep) {
         clearEntryPrem();
       } else {
-                const runtime = ep?.runtime || {};
         const summary = ep?.summary || {};
-        const styles = ep?.styles || {};
-
-        const hasWindowNumbers = (obj) => {
-          if (!obj || typeof obj !== "object") return false;
-          return [
-            obj.entry_zone_low,
-            obj.entry_zone_high,
-            obj.ideal_touch,
-            obj.max_chase,
-            obj.confirm_close,
-            obj.cancel_close
-          ].some(v => v != null && Number.isFinite(Number(v)));
-        };
-
-        const preferredStyleKey = String(
-          runtime?.selected_style_key ||
-          ep?.best_entry_style ||
-          summary?.best_entry_style ||
-          ""
-        ).trim().toLowerCase();
-
-        const candidateKeys = [
-          preferredStyleKey,
-          "break_confirm",
-          "first_touch",
-          "pullback_reclaim",
-          "failed_retest",
-          "chop_box"
-        ].filter(Boolean);
-
-        let styleStats = null;
-
-        for (const key of candidateKeys) {
-          const s = styles?.[key];
-          if (!s || typeof s !== "object") continue;
-          if (String(s.status || "").toUpperCase() === "PLACEHOLDER_ONLY") continue;
-          if (!hasWindowNumbers(s)) continue;
-          styleStats = s;
-          break;
-        }
-
-        if (!styleStats) {
-          for (const [key, s] of Object.entries(styles || {})) {
-            if (!s || typeof s !== "object") continue;
-            if (String(s.status || "").toUpperCase() === "PLACEHOLDER_ONLY") continue;
-            if (!hasWindowNumbers(s)) continue;
-            styleStats = s;
-            break;
-          }
-        }
-
-        const windowX = hasWindowNumbers(ep?.window) ? ep.window : {
-          entry_zone_low: styleStats?.entry_zone_low ?? null,
-          entry_zone_high: styleStats?.entry_zone_high ?? null,
-          ideal_touch: styleStats?.ideal_touch ?? null,
-          max_chase: styleStats?.max_chase ?? null,
-          confirm_close: styleStats?.confirm_close ?? null,
-          cancel_close: styleStats?.cancel_close ?? null
-        };
-
-        const odds = {
-          touch_to_confirm_pct: ep?.odds?.touch_to_confirm_pct ?? styleStats?.touch_to_confirm_pct ?? null,
-          cancel_before_confirm_pct: ep?.odds?.cancel_before_confirm_pct ?? styleStats?.cancel_before_confirm_pct ?? null,
-          false_break_risk_pct: ep?.odds?.false_break_risk_pct ?? styleStats?.false_break_risk_pct ?? null,
-          no_trade_pct: ep?.odds?.no_trade_pct ?? styleStats?.no_trade_pct ?? null
-        };
-
-        const path = {
-          mae_usd: ep?.path_after_entry?.mae_usd || styleStats?.mae_usd || {},
-          mfe_usd: ep?.path_after_entry?.mfe_usd || styleStats?.mfe_usd || {}
-        };
+        const windowX = ep?.window || {};
+        const odds = ep?.odds || {};
+        const path = ep?.path_after_entry || {};
+        const runtime = ep?.runtime || {};
 
         const badgeRaw = String(
           ep?.status ||
@@ -14028,11 +13956,10 @@ if (readingEl) {
           summary?.official_label ||
           "—";
 
-                const styleTxt =
-          (typeof ep?.best_entry_style === "string" && ep.best_entry_style.trim()) ? ep.best_entry_style.trim().toUpperCase() :
-          (typeof summary?.best_entry_style === "string" && summary.best_entry_style.trim()) ? summary.best_entry_style.trim().toUpperCase() :
-          (typeof runtime?.selected_style_key === "string" && runtime.selected_style_key.trim()) ? runtime.selected_style_key.trim().toUpperCase() :
-          (typeof ep?.labels?.best_entry_style === "string" && ep.labels.best_entry_style.trim()) ? ep.labels.best_entry_style.trim() :
+        const styleTxt =
+          ep?.best_entry_style ||
+          summary?.best_entry_style ||
+          ep?.labels?.best_entry_style ||
           "—";
 
                 const zoneTxt =
@@ -17487,79 +17414,45 @@ const payload = {
     // --------------------------------------------------------
     // 1) FIRST HOUR helper legado
     // --------------------------------------------------------
-        if (!panel.first_hour_live_premonition_v1 && !panel.first_hour_premarket_premonition_v1) {
-      const phaseTxt = String(dirRaw || "NEUTRAL").toUpperCase();
-      const readTxt =
-        bw.miss_line ||
-        `${confText} · ${phaseTxt}`;
-
+    if (!panel.first_hour_live_premonition_v1 && !panel.first_hour_premarket_premonition_v1) {
       const fh = {
-        enabled: true,
-
-        market_minute: num(panel.market_minute) ?? num(panel.minute) ?? null,
-        minute: num(panel.market_minute) ?? num(panel.minute) ?? null,
-
-        session_phase: phaseTxt,
-        phase: phaseTxt,
-        state: phaseTxt,
+        market_minute:
+          num(panel.market_minute) ??
+          num(panel.minute) ??
+          null,
 
         continuation_pct: contPct,
-        continue_pct: contPct,
-
         exhaustion_pct: null,
-        exhaust_pct: null,
-
         reversal_pct: revPct,
-        reverse_pct: revPct,
 
         continuation_eta_p50_min: etaP50,
-        eta_up_p50_min: etaP50,
-        up_eta_p50_min: etaP50,
-
         reversal_eta_p50_min: etaP50,
-        eta_down_p50_min: etaP50,
-        down_eta_p50_min: etaP50,
 
         target_up_p50: isUp ? priceNow : null,
-        target_up_price_p50: isUp ? priceNow : null,
-        up_target_p50: isUp ? priceNow : null,
-
         target_down_p50: isDown ? priceNow : null,
-        target_down_price_p50: isDown ? priceNow : null,
-        down_target_p50: isDown ? priceNow : null,
 
-        trigger_continue_above: isUp ? priceNow : null,
         trigger_up: isUp ? priceNow : null,
-        continue_above: isUp ? priceNow : null,
-
-        trigger_reverse_below: isDown ? priceNow : null,
         trigger_down: isDown ? priceNow : null,
-        reverse_below: isDown ? priceNow : null,
 
-        invalidation_price: null,
-        invalid_price: null,
         invalidation: null,
 
-        reading: readTxt,
-        reading_pt: readTxt,
-        summary: readTxt,
-        summary_pt: readTxt,
+        tactical_read:
+          bw.miss_line ||
+          `${confText} · ${dirRaw || "NEUTRAL"}`,
 
         premarket_summary: {
           bias: dirRaw || "—",
-          move_pct: null,
-          range_pct: null,
-          volume_ratio: null,
+          move: confText,
+          range: bw.n_total ?? "—",
+          vol_ratio: "—",
         },
 
-        premarket_bias: dirRaw || "—",
-        premarket_move_pct: null,
-        premarket_range_pct: null,
-        premarket_vol_ratio: null,
-
-        ema_state: { label: "—", regime: "—" },
-        vwap_state: { side: "—" },
-        rsi_state: { label: "—", rsi_regime: "—" }
+        state: {
+          phase: dirRaw || "—",
+          ema: "—",
+          vwap: "—",
+          rsi: "—",
+        }
       };
 
       panel.first_hour_live_premonition_v1 = fh;
