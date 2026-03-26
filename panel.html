@@ -3706,79 +3706,7 @@
 #first-hour-prem-card .fh-soft-dim{
   color: rgba(148,163,184,.86);
 }
-#first-hour-prem-card .fh-state-line{
-  align-items: center;
-}
 
-#first-hour-prem-card .fh-state-left{
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-#first-hour-prem-card .fh-state-left::before{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  min-width: 24px;
-  font-size: 20px;
-  font-weight: 900;
-  opacity: .92;
-}
-
-#first-hour-prem-card .fh-state-phase .fh-state-left::before{
-  content: "◷";
-  color: rgba(226,232,240,.88);
-}
-
-#first-hour-prem-card .fh-state-ema .fh-state-left::before{
-  content: "∿";
-  color: rgba(226,232,240,.88);
-}
-
-#first-hour-prem-card .fh-state-vwap .fh-state-left::before{
-  content: "≋";
-  color: rgba(226,232,240,.88);
-}
-
-#first-hour-prem-card .fh-state-rsi .fh-state-left::before{
-  content: "∿";
-  color: rgba(226,232,240,.88);
-}
-
-#first-hour-prem-card .fh-state-pill{
-  min-width: 210px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 4px 0 4px 12px;
-  font-size: 30px !important;
-  font-weight: 950;
-  letter-spacing: .01em;
-}
-
-#first-hour-prem-card .fh-state-pill::after{
-  content: attr(data-signal);
-  display: inline-block;
-  min-width: 24px;
-  text-align: center;
-  font-size: 30px;
-  font-weight: 950;
-}
-
-#first-hour-prem-card .fh-state-pill.is-up{
-  color: #4ade80;
-}
-
-#first-hour-prem-card .fh-state-pill.is-down{
-  color: #f87171;
-}
-
-#first-hour-prem-card .fh-state-pill.is-neutral{
-  color: #ffcc66;
-}
 #first-hour-prem-card .fh-prob-right{
   display: inline-flex;
   align-items: center;
@@ -6124,31 +6052,12 @@
           </div>
 
           <div class="fh-box fh-box-state">
-  <div class="fh-k">STATE</div>
-  <div class="fh-v">
-
-    <div class="fh-state-line fh-state-phase">
-      <span class="fh-state-left fh-soft">Phase</span>
-      <strong id="fh-phase" class="fh-state-pill is-neutral" data-signal="—">—</strong>
-    </div>
-
-    <div class="fh-state-line fh-state-ema">
-      <span class="fh-state-left fh-soft">EMA</span>
-      <strong id="fh-ema-state" class="fh-state-pill is-neutral" data-signal="—">—</strong>
-    </div>
-
-    <div class="fh-state-line fh-state-vwap">
-      <span class="fh-state-left fh-soft">VWAP</span>
-      <strong id="fh-vwap-side" class="fh-state-pill is-neutral" data-signal="—">—</strong>
-    </div>
-
-    <div class="fh-state-line fh-state-rsi">
-      <span class="fh-state-left fh-soft">RSI</span>
-      <strong id="fh-rsi-state" class="fh-state-pill is-neutral" data-signal="—">—</strong>
-    </div>
-
-  </div>
-</div>
+            <div class="fh-k">STATE</div>
+            <div class="fh-v">
+              <div class="fh-state-line"><span class="fh-soft">Phase</span><strong id="fh-phase">—</strong></div>
+              <div class="fh-state-line"><span class="fh-soft">EMA</span><strong id="fh-ema-state">—</strong></div>
+              <div class="fh-state-line"><span class="fh-soft">VWAP</span><strong id="fh-vwap-side">—</strong></div>
+              <div class="fh-state-line"><span class="fh-soft">RSI</span><strong id="fh-rsi-state">—</strong></div>
             </div>
           </div>
 
@@ -12791,43 +12700,7 @@ function updateFirstHourPremonitionPanel(payload){
       el.classList.add(mode || "win-wait");
       el.textContent = txt || "—";
     };
-const classifyFhState = (raw, fallback = "neutral") => {
-  const s = String(raw ?? "").trim().toUpperCase();
 
-  if (!s || s === "—") return "neutral";
-
-  if (["NONE","NEUTRAL","WAIT","FLAT","AT VWAP","NO DATA"].some(x => s.includes(x))) {
-    return "neutral";
-  }
-
-  if (["UP","ABOVE","LONG","BULL","BULLISH","HIGH","ALTA"].some(x => s.includes(x))) {
-    return "up";
-  }
-
-  if (["DOWN","BELOW","SHORT","BEAR","BEARISH","LOW","BAIXA"].some(x => s.includes(x))) {
-    return "down";
-  }
-
-  return fallback || "neutral";
-};
-
-const paintFhState = (id, rawValue, forcedSide = null) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-
-  const txt = (rawValue === null || rawValue === undefined || rawValue === "") ? "—" : String(rawValue);
-  const side = forcedSide || classifyFhState(txt, "neutral");
-
-  el.textContent = txt;
-  el.dataset.signal = side === "up" ? "↑" : side === "down" ? "↓" : "—";
-
-  el.classList.remove("is-up", "is-down", "is-neutral");
-  el.classList.add(
-    side === "up" ? "is-up" :
-    side === "down" ? "is-down" :
-    "is-neutral"
-  );
-};
     const num = (v) => {
       if (v == null || v === "") return null;
       const n = Number(v);
@@ -13318,15 +13191,10 @@ const paintFhState = (id, rawValue, forcedSide = null) => {
     set("fh-pm-range", pmRange);
     set("fh-pm-vol-ratio", pmVolRatio);
 
-    const phaseSide = classifyFhState(
-  phase,
-  (normSide(bias) || primarySide || "neutral")
-);
-
-paintFhState("fh-phase", phase, phaseSide);
-paintFhState("fh-ema-state", typeof emaState === "object" ? "—" : emaState);
-paintFhState("fh-vwap-side", typeof vwapSide === "object" ? "—" : vwapSide);
-paintFhState("fh-rsi-state", typeof rsiState === "object" ? "—" : rsiState);
+    set("fh-phase", phase);
+    set("fh-ema-state", typeof emaState === "object" ? "—" : emaState);
+    set("fh-vwap-side", typeof vwapSide === "object" ? "—" : vwapSide);
+    set("fh-rsi-state", typeof rsiState === "object" ? "—" : rsiState);
 
     set("fh-cont", fmtPct(continuation));
     set("fh-exhaust", fmtPct(exhaustion));
