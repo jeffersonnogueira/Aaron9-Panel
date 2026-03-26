@@ -17487,89 +17487,384 @@ function updatePatternReference(panel, patterns) {
 
   if (!img) img = 'F(1).jpg';
 
-  // textos
-  if (els.refPatternLabel) els.refPatternLabel.textContent = (currentLang === 'en') ? nameEn : namePt;
-  if (els.refPatternSetup) els.refPatternSetup.textContent = (currentLang === 'en') ? setupEn : setupPt;
-  if (els.refPatternNotes) els.refPatternNotes.textContent = (currentLang === 'en') ? notesEn : notesPt;
-  if (els.refPatternMini) els.refPatternMini.textContent = (currentLang === 'en') ? nameEn : namePt;
+      // --------------------------------------------------------
+    // 1) FIRST HOUR helper legado
+    // prioriza bloco real; se não vier, monta fallback rico
+    // --------------------------------------------------------
+    const deepFindKey = (obj, key, maxDepth = 8) => {
+      try {
+        const seen = new Set();
+        const q = [{ v: obj, d: 0 }];
+        while (q.length) {
+          const { v, d } = q.shift();
+          if (!v || typeof v !== "object") continue;
+          if (seen.has(v)) continue;
+          seen.add(v);
+          if (Object.prototype.hasOwnProperty.call(v, key)) return v[key];
+          if (d >= maxDepth) continue;
+          for (const k of Object.keys(v)) {
+            const child = v[k];
+            if (child && typeof child === "object") q.push({ v: child, d: d + 1 });
+          }
+        }
+      } catch (e) {}
+      return null;
+    };
 
-  const isUrl = /^https?:\/\//i.test(img);
+    const looksLikeFirstHour = (x) => !!(
+      x && typeof x === "object" && (
+        x.market_minute != null ||
+        x.minute != null ||
+        x.session_phase != null ||
+        x.phase != null ||
+        x.continuation_pct != null ||
+        x.continue_pct != null ||
+        x.reversal_pct != null ||
+        x.reverse_pct != null ||
+        x.premarket_summary
+      )
+    );
 
-  if (isUrl) {
-    const finalSrc = `${img}${img.includes('?') ? '&' : '?'}t=${Date.now()}`;
-    els.refPatternImg.src = finalSrc;
-    if (els.refPatternLink) els.refPatternLink.href = img;
-  } else {
-    setRefImageWithFallback(img);
-  }
+    const foundFirstHourLive = deepFindKey(p, "first_hour_live_premonition_v1");
+    const foundFirstHourPremarket = deepFindKey(p, "first_hour_premarket_premonition_v1");
 
-  // Abrir/Fechar
-  if (els.refDetails && els.refSummaryRight) {
-    els.refSummaryRight.textContent = els.refDetails.open
-      ? (currentLang === 'en' ? 'Close' : 'Fechar')
-      : (currentLang === 'en' ? 'Open' : 'Abrir');
-  }
-}
+    const realFirstHour =
+      (looksLikeFirstHour(panel.first_hour_live_premonition_v1) ? panel.first_hour_live_premonition_v1 : null) ||
+      (looksLikeFirstHour(panel.first_hour_premarket_premonition_v1) ? panel.first_hour_premarket_premonition_v1 : null) ||
+      (looksLikeFirstHour(p.first_hour_live_premonition_v1) ? p.first_hour_live_premonition_v1 : null) ||
+      (looksLikeFirstHour(p.first_hour_premarket_premonition_v1) ? p.first_hour_premarket_premonition_v1 : null) ||
+      (looksLikeFirstHour(foundFirstHourLive) ? foundFirstHourLive : null) ||
+      (looksLikeFirstHour(foundFirstHourPremarket) ? foundFirstHourPremarket : null) ||
+      null;
 
-// ===============================
-// ADAPTER: panel_json -> trade card model (Citadel)
-// (não mexe no dropdown, não mexe no autopilot)
-// ===============================
-function adaptPanelToTradeCard(panel, raw, fallbackSymbol){
-  if (!panel || typeof panel !== "object") return null;
+    if (realFirstHour) {
+      panel.first_hour_live_premonition_v1 = panel.first_hour_live_premonition_v1 || realFirstHour;
+      panel.first_hour_premarket_premonition_v1 = panel.first_hour_premarket_premonition_v1 || realFirstHour;
+      p.first_hour_live_premonition_v1 = p.first_hour_live_premonition_v1 || realFirstHour;
+      p.first_hour_premarket_premonition_v1 = p.first_hour_premarket_premonition_v1 || realFirstHour;
+    } else {
+      const _fhSide = (v) => {
+        const s = String(v || "").trim().toUpperCase();
+        if (!s) return null;
+        if (s.includes("UP") || s.includes("BUY") || s.includes("LONG") || s.includes("BULL")) return "up";
+        if (s.includes("DOWN") || s.includes("SELL") || s.includes("SHORT") || s.includes("BEAR")) return "down";
+        return null;
+      };
 
-  const statusGeral = panel.status_geral || {};
-  const ai = panel.ai_advisor || panel.aiAdvisor || {};
-  const meta = panel.meta || {};
+      const _fhMid = (row) => {
+        if (!row || typeof row !== "object") return null;
+        const a = num(row.price_p50 ?? row.target_price_p50 ?? row.p50 ?? row.price ?? row.mid);
+        if (a != null) return a;
+        const lo = num(row.zone_low ?? row.low ?? row.price_p25);
+        const hi = num(row.zone_high ?? row.high ?? row.price_p75);
+        return (lo != null && hi != null) ? ((lo + hi) / 2) : null;
+      };
 
-  const sym = String(panel.symbol || raw?.symbol || fallbackSymbol || "").toUpperCase().trim() || "—";
-  const tf  = String(panel.timeframe || raw?.timeframe || panel.timeframe_label || "").trim() || "—";
+      const _fhCandleRows = (() => {
+        const packs = [
+          raw?.candles, raw?.bars, raw?.ohlcv, raw?.rows, raw?.data,
+          p?.candles, p?.bars, p?.ohlcv, p?.rows, p?.data,
+          panel?.candles, panel?.bars
+        ];
+        for (const arr of packs) if (Array.isArray(arr) && arr.length) return arr;
+        return [];
+      })();
 
-  const parseBoolish = (v) => {
-    if (typeof v === "boolean") return v;
-    if (typeof v === "number") return v > 0;
-    const s = String(v ?? "").trim().toLowerCase();
-    if (!s) return false;
-    if (/(false|não|nao|no|0)/.test(s)) return false;
-    if (/(true|sim|yes|1|válido|valido|valid)/.test(s)) return true;
-    return false;
-  };
+      let minute =
+        num(panel.market_minute) ?? num(p.market_minute) ??
+        num(panel.minute) ?? num(p.minute) ??
+        num(panel.minute_index) ?? num(p.minute_index) ?? null;
 
-  const setupOk = parseBoolish(statusGeral.setup_valido ?? statusGeral.setupValido ?? statusGeral.setup);
+      if (minute == null && _fhCandleRows.length) minute = _fhCandleRows.length;
 
-  const actionRaw = String(ai.acao_recomendada || ai.action || ai.recommendation || "").toLowerCase();
-  const dirInfo =
-    (actionRaw.includes("buy") || actionRaw.includes("compra")) ? { pt:"COMPRA", en:"BUY",  cls:"status-buy",  side:"buy" } :
-    (actionRaw.includes("sell")|| actionRaw.includes("venda"))  ? { pt:"VENDA",  en:"SELL", cls:"status-sell", side:"sell"} :
-    (actionRaw.includes("close")|| actionRaw.includes("fechar"))? { pt:"FECHAR", en:"CLOSE",cls:"status-wait", side:"close"} :
-    (actionRaw.includes("wait")|| actionRaw.includes("aguard")) ? { pt:"AGUARDAR",en:"WAIT", cls:"status-wait", side:"wait"} :
-                                                                 { pt:"NEUTRO", en:"NEUTRAL",cls:"status-wait", side:"neutral" };
+      if (minute == null) {
+        const clock = String(p?.hud?.clock_mt || panel?.hud?.clock_mt || "").trim();
+        const mClock = clock.match(/^(\d{1,2}):(\d{2})$/);
+        if (mClock) {
+          minute = ((Number(mClock[1]) * 60) + Number(mClock[2])) - ((6 * 60) + 30);
+        } else {
+          const updated = String(panel?.updated_at || p?.updated_at || "").trim();
+          const mTs = updated.match(/T(\d{2}):(\d{2})/);
+          if (mTs) minute = ((Number(mTs[1]) * 60) + Number(mTs[2])) - ((6 * 60) + 30);
+        }
+      }
 
-  const updatedAt =
-    panel.updated_at || panel.updated || meta.panel_ts || meta.timestamp || panel.timestamp || raw?.time || "—";
-  const session = panel.session || raw?.session || "—";
-  const flow =
-    panel.flow_label || panel.flow || statusGeral.tendencia || "—";
+      if (minute != null) minute = Math.max(0, Math.min(60, Math.round(minute)));
 
-  const status_text_pt = setupOk ? `✅ Setup válido | ${dirInfo.pt}` : `⏳ Aguardando | ${dirInfo.pt}`;
-  const status_text_en = setupOk ? `✅ Valid setup | ${dirInfo.en}` : `⏳ Waiting | ${dirInfo.en}`;
+      const phaseTxt =
+        minute == null || minute <= 0 ? "WAIT" :
+        minute <= 10 ? "OPEN DRIVE" :
+        minute <= 20 ? "EARLY TREND" :
+        minute <= 40 ? "MID FIRST HOUR" :
+        minute <= 60 ? "LATE FIRST HOUR" :
+        "AFTER FIRST HOUR";
 
-  const pulse_line_pt = `${session} • ${flow} • atualizado: ${updatedAt}`;
-  const pulse_line_en = `${session} • ${flow} • updated: ${updatedAt}`;
+      const liveVwap =
+        num(panel.live_vwap) ?? num(p.live_vwap) ?? num(p?.now?.session_vwap) ??
+        num(panel.vwap) ?? num(p.vwap) ?? null;
 
-  const mode_pt =
-    String(ai.modo_pt || ai.modo || ai.motivo || "").trim() || (setupOk ? "Setup identificado" : "Aguardando confirmação");
-  const mode_en =
-    String(ai.modo_en || ai.mode || ai.motivo_en || ai.motivo || "").trim() || (setupOk ? "Setup identified" : "Waiting confirmation");
+      const liveRsi =
+        num(panel.live_rsi14) ?? num(p.live_rsi14) ??
+        num(panel.rsi14) ?? num(p.rsi14) ?? num(panel.rsi) ?? num(p.rsi) ?? null;
 
-  const entry_text = ai.gatilho_entrada || ai.entry || ai.entrada || "—";
+      const liveEmaFast =
+        num(panel.live_ema_fast) ?? num(p.live_ema_fast) ??
+        num(p?.now?.ema20) ?? num(panel.ema20) ?? num(p.ema20) ?? null;
 
-  const firstNum = (x) => {
-    if (x == null) return null;
-    if (typeof x === "number" && isFinite(x)) return x;
-    const m = String(x).match(/-?\d+(?:\.\d+)?/);
-    return m ? Number(m[0]) : null;
-  };
+      const liveEmaSlow =
+        num(panel.live_ema_slow) ?? num(p.live_ema_slow) ??
+        num(p?.now?.ema50) ?? num(panel.ema50) ?? num(p.ema50) ?? null;
+
+      const priceSide =
+        priceNow != null && liveVwap != null
+          ? (priceNow > liveVwap ? "up" : (priceNow < liveVwap ? "down" : null))
+          : null;
+
+      const emaSide =
+        liveEmaFast != null && liveEmaSlow != null
+          ? (liveEmaFast > liveEmaSlow ? "up" : (liveEmaFast < liveEmaSlow ? "down" : null))
+          : null;
+
+      const rsiSide =
+        liveRsi != null
+          ? (liveRsi >= 52 ? "up" : (liveRsi <= 48 ? "down" : null))
+          : null;
+
+      const volSide = _fhSide(
+        p?.volume_premonition_selected_side ||
+        p?.volume_premonition_direction_now ||
+        p?.volume_premonition_v1?.selected_side ||
+        p?.volume_premonition_v1?.direction_now
+      );
+
+      const sideVotes = [priceSide, emaSide, rsiSide, volSide].filter(v => v === "up" || v === "down");
+      const sideScore = sideVotes.reduce((acc, v) => acc + (v === "up" ? 1 : -1), 0);
+
+      const primarySide =
+        sideScore > 0 ? "up" :
+        sideScore < 0 ? "down" :
+        volSide || emaSide || priceSide || rsiSide || _fhSide(dirRaw) || "up";
+
+      const upPath = num(p?.now?.path_prob_up_pct);
+      const downPath = num(p?.now?.path_prob_down_pct);
+
+      const continuation =
+        num(p.volume_premonition_continuation_pct) ??
+        (primarySide === "up" ? upPath : downPath) ??
+        contPct ??
+        55;
+
+      const exhaustion =
+        num(p.volume_premonition_exhaustion_pct) ??
+        num(p.volume_premonition_weakening_pct) ??
+        25;
+
+      const reversal =
+        (primarySide === "up" ? downPath : upPath) ??
+        revPct ??
+        Math.max(0, 100 - (continuation ?? 0));
+
+      const pivot = p.pivot_premonition_v1 || {};
+      const p1 = pivot.pivot1 || {};
+      const p2 = pivot.pivot2 || {};
+
+      const nextHigh = String(p1.kind || "").toUpperCase() === "HIGH" ? p1 : (String(p2.kind || "").toUpperCase() === "HIGH" ? p2 : null);
+      const nextLow  = String(p1.kind || "").toUpperCase() === "LOW"  ? p1 : (String(p2.kind || "").toUpperCase() === "LOW"  ? p2 : null);
+
+      const atr14 = num(p?.hud?.atr_14) ?? num(p?.now?.atr14) ?? null;
+
+      const upEta =
+        num(p?.now?.eta_up?.p50) ??
+        (primarySide === "up" ? num(p.volume_premonition_eta_p50_min) : null) ??
+        num(nextHigh?.eta_p50_min ?? nextHigh?.eta_p50_bars) ??
+        etaP50;
+
+      const downEta =
+        num(p?.now?.eta_down?.p50) ??
+        (primarySide === "down" ? num(p.volume_premonition_eta_p50_min) : null) ??
+        num(nextLow?.eta_p50_min ?? nextLow?.eta_p50_bars) ??
+        etaP50;
+
+      const targetUp =
+        num(p?.now?.micro_ceiling) ??
+        num(p?.volume_premonition_target_price_p50) ??
+        _fhMid(nextHigh) ??
+        (priceNow != null && atr14 != null ? priceNow + (atr14 * 0.75) : null);
+
+      const targetDown =
+        num(p?.now?.micro_floor) ??
+        _fhMid(nextLow) ??
+        (priceNow != null && atr14 != null ? priceNow - (atr14 * 0.75) : null);
+
+      const triggerRefs = [priceNow, liveVwap, liveEmaFast, liveEmaSlow].filter(v => v != null);
+      const step = Math.max(atr14 != null ? atr14 : (priceNow != null ? priceNow * 0.0015 : 0.01), 0.01);
+
+      const triggerCont =
+        _fhMid(nextHigh) ??
+        (triggerRefs.length ? Math.max(...triggerRefs) + (step * 0.10) : null);
+
+      const triggerRev =
+        _fhMid(nextLow) ??
+        (triggerRefs.length ? Math.min(...triggerRefs) - (step * 0.10) : null);
+
+      const invalid = primarySide === "up" ? triggerRev : triggerCont;
+
+      let sessionOpen = num(p.session_open) ?? num(panel.session_open) ?? null;
+      let sessionHigh = num(p.session_high) ?? num(panel.session_high) ?? null;
+      let sessionLow  = num(p.session_low)  ?? num(panel.session_low)  ?? null;
+
+      let volRatio =
+        num(p.premarket_vol_ratio) ??
+        num(panel.premarket_vol_ratio) ??
+        num(p?.hud?.rvol_short_vs_long) ??
+        null;
+
+      if (_fhCandleRows.length) {
+        const highs = [];
+        const lows = [];
+        const vols = [];
+        for (const c of _fhCandleRows) {
+          if (!c || typeof c !== "object") continue;
+          if (sessionOpen == null) sessionOpen = num(c.open ?? c.o);
+          const hh = num(c.high ?? c.h);
+          const ll = num(c.low ?? c.l);
+          const vv = num(c.volume ?? c.v ?? c.vol);
+          if (hh != null) highs.push(hh);
+          if (ll != null) lows.push(ll);
+          if (vv != null && vv > 0) vols.push(vv);
+        }
+        if (sessionHigh == null && highs.length) sessionHigh = Math.max(...highs);
+        if (sessionLow == null && lows.length) sessionLow = Math.min(...lows);
+        if (volRatio == null && vols.length >= 2) {
+          const head = vols.slice(0, Math.min(5, vols.length));
+          const tail = vols.slice(-Math.min(20, vols.length));
+          const avg = (arr) => arr.reduce((a, b) => a + b, 0) / (arr.length || 1);
+          const avgHead = avg(head);
+          const avgTail = avg(tail);
+          if (avgTail > 0) volRatio = avgHead / avgTail;
+        }
+      }
+
+      const pmMove =
+        num(p.premarket_move_pct) ??
+        num(panel.premarket_move_pct) ??
+        (sessionOpen != null && priceNow != null && sessionOpen !== 0 ? (((priceNow - sessionOpen) / sessionOpen) * 100) : null);
+
+      const pmRange =
+        num(p.premarket_range_pct) ??
+        num(panel.premarket_range_pct) ??
+        (sessionOpen != null && sessionHigh != null && sessionLow != null && sessionOpen !== 0
+          ? (((sessionHigh - sessionLow) / sessionOpen) * 100)
+          : (priceNow != null && sessionHigh != null && sessionLow != null && priceNow !== 0
+              ? (((sessionHigh - sessionLow) / priceNow) * 100)
+              : null));
+
+      const pmBias = String(
+        p.premarket_bias ||
+        panel.premarket_bias ||
+        (pmMove != null ? (pmMove >= 0 ? "UP" : "DOWN") : (primarySide === "up" ? "UP" : "DOWN"))
+      ).toUpperCase();
+
+      const emaLabel =
+        emaSide === "up" ? "ABOVE" :
+        emaSide === "down" ? "BELOW" :
+        (liveEmaFast != null && liveEmaSlow != null ? "FLAT" : "—");
+
+      const vwapLabel =
+        priceSide === "up" ? "ABOVE" :
+        priceSide === "down" ? "BELOW" :
+        (liveVwap != null && priceNow != null ? "AT VWAP" : "—");
+
+      const rsiLabel =
+        liveRsi == null ? "—" :
+        liveRsi >= 60 ? "ABOVE 60" :
+        liveRsi >= 50 ? "ABOVE 50" :
+        liveRsi <= 40 ? "BELOW 40" :
+        "BELOW 50";
+
+      const readingPt =
+        reversal != null && reversal >= 70 ? "Risco alto de reversão na primeira hora." :
+        exhaustion != null && exhaustion >= 60 ? `Primeira hora ainda favorece ${primarySide === "up" ? "alta" : "baixa"}, mas o motor já enfraquece.` :
+        continuation != null && continuation >= 65 ? `Primeira hora favorece continuidade para ${primarySide === "up" ? "alta" : "baixa"}.` :
+        continuation != null && continuation >= 52 ? `Leitura moderada de continuidade para ${primarySide === "up" ? "alta" : "baixa"}.` :
+        "Leitura mista na primeira hora.";
+
+      const fh = {
+        enabled: true,
+        schema: "first_hour_live_premonition_v1_now",
+        source: "ui_bridge_first_hour_fallback_v2",
+
+        market_minute: minute,
+        minute,
+
+        session_phase: phaseTxt,
+        phase: phaseTxt,
+        state: phaseTxt,
+
+        continuation_pct: continuation,
+        continue_pct: continuation,
+
+        exhaustion_pct: exhaustion,
+        exhaust_pct: exhaustion,
+
+        reversal_pct: reversal,
+        reverse_pct: reversal,
+
+        continuation_eta_p50_min: upEta,
+        eta_up_p50_min: upEta,
+        up_eta_p50_min: upEta,
+
+        reversal_eta_p50_min: downEta,
+        eta_down_p50_min: downEta,
+        down_eta_p50_min: downEta,
+
+        target_up_p50: targetUp,
+        target_up_price_p50: targetUp,
+        up_target_p50: targetUp,
+
+        target_down_p50: targetDown,
+        target_down_price_p50: targetDown,
+        down_target_p50: targetDown,
+
+        trigger_continue_above: triggerCont,
+        trigger_up: triggerCont,
+        continue_above: triggerCont,
+
+        trigger_reverse_below: triggerRev,
+        trigger_down: triggerRev,
+        reverse_below: triggerRev,
+
+        invalidation_price: invalid,
+        invalid_price: invalid,
+        invalidation: invalid,
+
+        reading: readingPt,
+        reading_pt: readingPt,
+        summary: readingPt,
+        summary_pt: readingPt,
+
+        premarket_summary: {
+          bias: pmBias || "—",
+          move_pct: pmMove,
+          range_pct: pmRange,
+          volume_ratio: volRatio
+        },
+
+        premarket_bias: pmBias || "—",
+        premarket_move_pct: pmMove,
+        premarket_range_pct: pmRange,
+        premarket_vol_ratio: volRatio,
+
+        ema_state: { label: emaLabel, regime: emaLabel },
+        vwap_state: { side: vwapLabel },
+        rsi_state: { label: rsiLabel, rsi_regime: rsiLabel }
+      };
+
+      panel.first_hour_live_premonition_v1 = fh;
+      panel.first_hour_premarket_premonition_v1 = fh;
+      p.first_hour_live_premonition_v1 = fh;
+      p.first_hour_premarket_premonition_v1 = fh;
+    }
 
   const stopRaw = (ai.stop_loss_plano ?? ai.stop_loss ?? ai.stop);
   const stopNum = firstNum(stopRaw);
