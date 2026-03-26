@@ -12844,11 +12844,33 @@ set(
   "indip-ema-cross-dir",
   e.cross?.direction || (eState === "above" ? "UP" : (eState === "below" ? "DOWN" : "—"))
 );
-set("indip-ema-cross-pct", fmtPct(eCross?.prob_hit_pct_dyn ?? eCross?.prob_hit_pct ?? eCross?.prob_hit_pct_base));
-set("indip-ema-cross-eta", fmtEta(eCross?.eta_p50_min));
+set(
+  "indip-ema-cross-pct",
+  fmtPct(
+    eCross?.prob_hit_pct_dyn ??
+    eCross?.prob_hit_pct ??
+    eCross?.prob_hit_pct_base ??
+    liveEmaCrossPct
+  )
+);
+set(
+  "indip-ema-cross-eta",
+  fmtEta(
+    eCross?.eta_p50_min ??
+    liveEmaCrossEta
+  )
+);
 
 const eHold = (e.hold && e.hold.highlight_5min) ? e.hold.highlight_5min : null;
-set("indip-ema-hold-pct", fmtPct(eHold?.prob_hold_pct_dyn ?? eHold?.prob_hold_pct ?? eHold?.prob_hold_pct_base));
+set(
+  "indip-ema-hold-pct",
+  fmtPct(
+    eHold?.prob_hold_pct_dyn ??
+    eHold?.prob_hold_pct ??
+    eHold?.prob_hold_pct_base ??
+    liveEmaHoldPct
+  )
+);
 
 const eHoldTxt = document.getElementById("indip-ema-hold-pct")?.textContent || "—";
 set("indip-ema-hold-phrase",
