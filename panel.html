@@ -12436,6 +12436,13 @@ function updateFirstHourPremonitionPanel(payload){
       return null;
     };
 
+        const pick = (...vals) => {
+      for (const v of vals) {
+        if (v !== undefined && v !== null && v !== "") return v;
+      }
+      return null;
+    };
+
     const fh =
       ui.first_hour_live_premonition_v1 ||
       digest.first_hour_live_premonition_v1 ||
@@ -12471,125 +12478,483 @@ function updateFirstHourPremonitionPanel(payload){
 
     const fmtPct = (v) => Number.isFinite(num(v)) ? `${Number(v).toFixed(2)}%` : "—";
     const fmtPrice = (v) => Number.isFinite(num(v)) ? Number(v).toFixed(2) : "—";
-    const fmtEta = (v) => Number.isFinite(num(v)) ? `${Number(v)} min` : "—";
+    const fmtEta = (v) => Number.isFinite(num(v)) ? `${Math.round(Number(v))} min` : "—";
 
-    const pm = fh?.premarket_summary || {};
-    const minute =
-      fh?.market_minute ??
-      fh?.minute ??
-      fh?.minute_index ??
-      fh?.session_minute ??
+    const normSide = (v) => {
+      const s = String(v || "").trim().toUpperCase();
+      if (!s) return null;
+      if (["UP","BUY","LONG","BULL","BULLISH","ABOVE"].some(x => s.includes(x))) return "up";
+      if (["DOWN","SELL","SHORT","BEAR","BEARISH","BELOW"].some(x => s.includes(x))) return "down";
+      return null;
+    };
+
+    const zoneMid = (row) => {
+      if (!row || typeof row !== "object") return null;
+      const mid = num(row.price_p50 ?? row.target_price_p50 ?? row.mid ?? row.price);
+      if (mid != null) return mid;
+      const lo = num(row.zone_low ?? row.low ?? row.price_p25);
+      const hi = num(row.zone_high ?? row.high ?? row.price_p75);
+      return (lo != null && hi != null) ? ((lo + hi) / 2) : null;
+    };
+
+    const mtToEtClock = (clockMt) => {
+      const raw = String(clockMt || "").trim();
+      const m = raw.match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return "";
+      const hh = Number(m[1]);
+      const mm = Number(m[2]);
+      const total = (hh * 60) + mm + 120;
+      const et = ((total % 1440) + 1440) % 1440;
+      const h2 = Math.floor(et / 60);
+      const m2 = et % 60;
+      return `${String(h2).padStart(2, "0")}:${String(m2).padStart(2, "0")}`;
+    };
+
+    const clockEtToMinute = (clockEt) => {
+      const raw = String(clockEt || "").trim();
+      const m = raw.match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return null;
+      const hh = Number(m[1]);
+      const mm = Number(m[2]);
+      const total = (hh * 60) + mm;
+      return total - ((9 * 60) + 30); // 09:30 ET
+    };
+
+    const hud = pick(
+      digest.hud,
+      panel.hud,
+      root.hud,
+      deepFind(root, "hud"),
+      {}
+    ) || {};
+
+    const now1 = pick(
+      digest.now,
+      panel.now,
+      root.now,
+      deepFind(root, "now"),
+      {}
+    ) || {};
+
+    const vol1 = pick(
+      digest.volume_premonition_v1,
+      panel.volume_premonition_v1,
+      root.volume_premonition_v1,
+      deepFind(root, "volume_premonition_v1"),
+      {}
+    ) || {};
+
+    const piv1 = pick(
+      digest.pivot_premonition_v1,
+      panel.pivot_premonition_v1,
+      root.pivot_premonition_v1,
+      deepFind(root, "pivot_premonition_v1"),
+      {}
+    ) || {};
+
+    const day1 = pick(
+      digest.day,
+      panel.day,
+      root.day,
+      deepFind(root, "day"),
+      {}
+    ) || {};
+
+    const bw1 = pick(
+      digest.macro_window_card_hours,
+      digest.macro_window_card_eod,
+      panel.macro_window_card_hours,
+      panel.macro_window_card_eod,
+      root.macro_window_card_hours,
+      root.macro_window_card_eod,
+      digest.breakout_window_card,
+      panel.breakout_window_card,
+      root.breakout_window_card,
+      deepFind(root, "macro_window_card_hours"),
+      deepFind(root, "macro_window_card_eod"),
+      deepFind(root, "breakout_window_card"),
+      {}
+    ) || {};
+
+    const pm = (fh && typeof fh.premarket_summary === "object") ? fh.premarket_summary : {};
+
+    const priceNow = num(pick(
+      panel.price_now, digest.price_now, root.price_now,
+      panel.last_price, digest.last_price, root.last_price,
+      now1.current
+    ));
+
+    const liveVwap = num(pick(
+      panel.live_vwap, digest.live_vwap, root.live_vwap,
+      now1.session_vwap,
+      panel.vwap, digest.vwap, root.vwap
+    ));
+
+    const liveRsi = num(pick(
+      panel.live_rsi14, digest.live_rsi14, root.live_rsi14,
+      panel.rsi14, digest.rsi14, root.rsi14,
+      panel.rsi, digest.rsi, root.rsi
+    ));
+
+    const liveEmaFast = num(pick(
+      panel.live_ema_fast, digest.live_ema_fast, root.live_ema_fast,
+      now1.ema20,
+      panel.ema20, digest.ema20, root.ema20
+    ));
+
+    const liveEmaSlow = num(pick(
+      panel.live_ema_slow, digest.live_ema_slow, root.live_ema_slow,
+      now1.ema50,
+      panel.ema50, digest.ema50, root.ema50
+    ));
+
+    const atr14 = num(pick(
+      hud.atr_14,
+      now1.atr14,
+      digest.atr14,
+      panel.atr14,
+      root.atr14
+    ));
+
+    const sessionLabel = String(pick(
+      hud.session_label,
+      panel.session_label,
+      digest.session_label,
+      root.session_label,
+      ""
+    ) || "").trim().toUpperCase();
+
+    const windowLabel = String(pick(
+      hud.window_label,
+      panel.window_label,
+      digest.window_label,
+      root.window_label,
+      ""
+    ) || "").trim().toUpperCase();
+
+    const isPremarket =
+      sessionLabel === "PRE" ||
+      windowLabel.includes("PREMARKET");
+
+    let minute = num(pick(
+      fh?.market_minute,
+      fh?.minute,
+      fh?.minute_index,
+      fh?.session_minute
+    ));
+
+    if (minute == null) {
+      const etClock = String(pick(hud.clock_et, "") || "").trim();
+      const mtClock = String(pick(hud.clock_mt, "") || "").trim();
+      minute = clockEtToMinute(etClock);
+      if (minute == null && mtClock) {
+        minute = clockEtToMinute(mtToEtClock(mtClock));
+      }
+    }
+
+    if (minute == null && isPremarket) minute = 0;
+    if (minute != null) minute = Math.max(0, Math.min(60, Math.round(minute)));
+
+    const p1 = (piv1 && typeof piv1.pivot1 === "object") ? piv1.pivot1 : {};
+    const p2 = (piv1 && typeof piv1.pivot2 === "object") ? piv1.pivot2 : {};
+
+    const highPivot =
+      String(p1.kind || "").toUpperCase() === "HIGH" ? p1 :
+      String(p2.kind || "").toUpperCase() === "HIGH" ? p2 :
       null;
 
-    const continuation =
-      fh?.continuation_pct ??
-      fh?.continue_pct ??
+    const lowPivot =
+      String(p1.kind || "").toUpperCase() === "LOW" ? p1 :
+      String(p2.kind || "").toUpperCase() === "LOW" ? p2 :
       null;
 
-    const exhaustion =
-      fh?.exhaustion_pct ??
-      fh?.exhaust_pct ??
-      null;
+    let upVotes = 0;
+    let downVotes = 0;
 
-    const reversal =
-      fh?.reversal_pct ??
-      fh?.reverse_pct ??
-      null;
+    if (priceNow != null && liveVwap != null) {
+      if (priceNow >= liveVwap) upVotes += 1;
+      else downVotes += 1;
+    }
 
-    const upEta =
-      fh?.continuation_eta_p50_min ??
-      fh?.eta_up_p50_min ??
-      fh?.up_eta_p50_min ??
-      null;
+    if (liveEmaFast != null && liveEmaSlow != null) {
+      if (liveEmaFast >= liveEmaSlow) upVotes += 1;
+      else downVotes += 1;
+    }
 
-    const downEta =
-      fh?.reversal_eta_p50_min ??
-      fh?.eta_down_p50_min ??
-      fh?.down_eta_p50_min ??
-      null;
+    if (liveRsi != null) {
+      if (liveRsi >= 52) upVotes += 1;
+      else if (liveRsi <= 48) downVotes += 1;
+    }
 
-    const targetUp =
-      fh?.target_up_p50 ??
-      fh?.target_up_price_p50 ??
-      fh?.up_target_p50 ??
-      null;
+    const volumeSide = normSide(pick(
+      fh?.primary_side,
+      vol1.direction_now,
+      vol1.selected_side,
+      digest.volume_premonition_direction_now,
+      digest.volume_premonition_selected_side,
+      root.volume_premonition_direction_now,
+      root.volume_premonition_selected_side
+    ));
 
-    const targetDown =
-      fh?.target_down_p50 ??
-      fh?.target_down_price_p50 ??
-      fh?.down_target_p50 ??
-      null;
+    if (volumeSide === "up") upVotes += 1;
+    if (volumeSide === "down") downVotes += 1;
 
-    const triggerCont =
-      fh?.trigger_continue_above ??
-      fh?.trigger_up ??
-      fh?.continue_above ??
-      null;
+    const primarySide =
+      normSide(pick(
+        fh?.primary_side,
+        vol1.direction_now,
+        vol1.selected_side,
+        digest.volume_premonition_direction_now,
+        digest.volume_premonition_selected_side,
+        root.volume_premonition_direction_now,
+        root.volume_premonition_selected_side
+      )) ||
+      (upVotes > downVotes ? "up" : (downVotes > upVotes ? "down" : null)) ||
+      ((num(now1.path_prob_up_pct) != null && num(now1.path_prob_down_pct) != null)
+        ? (Number(now1.path_prob_up_pct) >= Number(now1.path_prob_down_pct) ? "up" : "down")
+        : null) ||
+      "neutral";
 
-    const triggerRev =
-      fh?.trigger_reverse_below ??
-      fh?.trigger_down ??
-      fh?.reverse_below ??
-      null;
+    let continuation = num(pick(
+      fh?.continuation_pct,
+      fh?.continue_pct,
+      digest.volume_premonition_continuation_pct,
+      root.volume_premonition_continuation_pct,
+      vol1.continuation_premonition_pct,
+      primarySide === "down" ? now1.path_prob_down_pct : now1.path_prob_up_pct,
+      bw1.next_5min_prob_pct,
+      bw1.prob_until_end_pct
+    ));
 
-    const invalid =
-      fh?.invalidation_price ??
-      fh?.invalid_price ??
-      fh?.invalidation ??
-      null;
+    let exhaustion = num(pick(
+      fh?.exhaustion_pct,
+      fh?.exhaust_pct,
+      digest.volume_premonition_exhaustion_pct,
+      root.volume_premonition_exhaustion_pct,
+      vol1.exhaustion_premonition_pct,
+      digest.volume_premonition_weakening_pct,
+      root.volume_premonition_weakening_pct,
+      vol1.weakening_premonition_pct
+    ));
 
-        const phase =
-      (typeof fh?.session_phase === "string" && fh.session_phase.trim()) ? fh.session_phase.trim() :
-      (typeof fh?.phase === "string" && fh.phase.trim()) ? fh.phase.trim() :
-      (typeof fh?.state === "string" && fh.state.trim()) ? fh.state.trim() :
-      (typeof fh?.state?.phase === "string" && fh.state.phase.trim()) ? fh.state.phase.trim() :
-      "—";
+    let reversal = num(pick(
+      fh?.reversal_pct,
+      fh?.reverse_pct,
+      primarySide === "up" ? now1.path_prob_down_pct : now1.path_prob_up_pct
+    ));
+
+    if (reversal == null && continuation != null) {
+      reversal = Math.max(0, 100 - continuation);
+    }
+
+    const upEta = num(pick(
+      fh?.continuation_eta_p50_min,
+      fh?.eta_up_p50_min,
+      fh?.up_eta_p50_min,
+      now1?.eta_up?.p50,
+      highPivot?.eta_p50_min,
+      highPivot?.eta_p50_bars,
+      String(piv1?.next_pivot_kind || "").toUpperCase() === "HIGH" ? piv1?.next_pivot_eta_p50_min : null,
+      digest.volume_premonition_eta_p50_min,
+      root.volume_premonition_eta_p50_min,
+      vol1.next_impulse_eta_p50_min,
+      digest.macro_eta_min,
+      bw1.median_minutes
+    ));
+
+    const downEta = num(pick(
+      fh?.reversal_eta_p50_min,
+      fh?.eta_down_p50_min,
+      fh?.down_eta_p50_min,
+      now1?.eta_down?.p50,
+      lowPivot?.eta_p50_min,
+      lowPivot?.eta_p50_bars,
+      String(piv1?.next_pivot_kind || "").toUpperCase() === "LOW" ? piv1?.next_pivot_eta_p50_min : null,
+      digest.macro_eta_min,
+      bw1.median_minutes
+    ));
+
+    const targetUp = num(pick(
+      fh?.target_up_p50,
+      fh?.target_up_price_p50,
+      fh?.up_target_p50,
+      now1.micro_ceiling,
+      digest.volume_premonition_target_price_p50,
+      root.volume_premonition_target_price_p50,
+      vol1.next_impulse_target_price_p50,
+      zoneMid(highPivot),
+      (priceNow != null && atr14 != null) ? (priceNow + atr14) : null
+    ));
+
+    const targetDown = num(pick(
+      fh?.target_down_p50,
+      fh?.target_down_price_p50,
+      fh?.down_target_p50,
+      now1.micro_floor,
+      zoneMid(lowPivot),
+      (priceNow != null && atr14 != null) ? (priceNow - atr14) : null
+    ));
+
+    const refs = [priceNow, liveVwap, liveEmaFast, liveEmaSlow].filter(v => v != null);
+    const trigStep = Math.max(
+      atr14 != null ? (atr14 * 0.12) : ((priceNow != null ? priceNow : 1) * 0.0008),
+      0.01
+    );
+
+    const triggerCont = num(pick(
+      fh?.trigger_continue_above,
+      fh?.trigger_up,
+      fh?.continue_above,
+      highPivot?.zone_low,
+      highPivot?.price_p50,
+      targetUp,
+      refs.length ? (Math.max(...refs) + trigStep) : null
+    ));
+
+    const triggerRev = num(pick(
+      fh?.trigger_reverse_below,
+      fh?.trigger_down,
+      fh?.reverse_below,
+      lowPivot?.zone_high,
+      lowPivot?.price_p50,
+      targetDown,
+      refs.length ? (Math.min(...refs) - trigStep) : null
+    ));
+
+    const invalid = num(pick(
+      fh?.invalidation_price,
+      fh?.invalid_price,
+      fh?.invalidation,
+      primarySide === "up" ? triggerRev : null,
+      primarySide === "down" ? triggerCont : null
+    ));
+
+    const pmMoveRaw = pick(
+      pm?.move_pct,
+      pm?.return_pct,
+      fh?.premarket_move_pct,
+      digest.premarket_move_pct,
+      panel.premarket_move_pct,
+      root.premarket_move_pct,
+      (priceNow != null && liveVwap != null && liveVwap !== 0)
+        ? (((priceNow - liveVwap) / liveVwap) * 100)
+        : null
+    );
+
+    const pmRangeRaw = pick(
+      pm?.range_pct,
+      fh?.premarket_range_pct,
+      digest.premarket_range_pct,
+      panel.premarket_range_pct,
+      root.premarket_range_pct,
+      (num(day1.day_range) != null && priceNow != null && priceNow !== 0)
+        ? ((Number(day1.day_range) / priceNow) * 100)
+        : null
+    );
+
+    const pmVolRatioRaw = pick(
+      pm?.volume_ratio,
+      pm?.vol_ratio,
+      fh?.premarket_vol_ratio,
+      digest.premarket_vol_ratio,
+      panel.premarket_vol_ratio,
+      root.premarket_vol_ratio,
+      hud.rvol_short_vs_long
+    );
 
     const emaState =
       (typeof fh?.ema_state?.label === "string" && fh.ema_state.label.trim()) ? fh.ema_state.label.trim() :
       (typeof fh?.ema_state?.regime === "string" && fh.ema_state.regime.trim()) ? fh.ema_state.regime.trim() :
       (typeof fh?.state?.ema === "string" && fh.state.ema.trim()) ? fh.state.ema.trim() :
       (typeof fh?.ema_state === "string" && fh.ema_state.trim()) ? fh.ema_state.trim() :
-      "—";
+      (liveEmaFast != null && liveEmaSlow != null
+        ? (liveEmaFast > liveEmaSlow ? "ABOVE" : (liveEmaFast < liveEmaSlow ? "BELOW" : "FLAT"))
+        : "—");
 
     const vwapSide =
       (typeof fh?.vwap_state?.side === "string" && fh.vwap_state.side.trim()) ? fh.vwap_state.side.trim() :
       (typeof fh?.vwap_side === "string" && fh.vwap_side.trim()) ? fh.vwap_side.trim() :
       (typeof fh?.state?.vwap === "string" && fh.state.vwap.trim()) ? fh.state.vwap.trim() :
       (typeof fh?.vwap_state === "string" && fh.vwap_state.trim()) ? fh.vwap_state.trim() :
-      "—";
+      (priceNow != null && liveVwap != null
+        ? (priceNow > liveVwap ? "ABOVE" : (priceNow < liveVwap ? "BELOW" : "AT VWAP"))
+        : "—");
 
     const rsiState =
       (typeof fh?.rsi_state?.rsi_regime === "string" && fh.rsi_state.rsi_regime.trim()) ? fh.rsi_state.rsi_regime.trim() :
       (typeof fh?.rsi_state?.label === "string" && fh.rsi_state.label.trim()) ? fh.rsi_state.label.trim() :
       (typeof fh?.state?.rsi === "string" && fh.state.rsi.trim()) ? fh.state.rsi.trim() :
       (typeof fh?.rsi_state === "string" && fh.rsi_state.trim()) ? fh.rsi_state.trim() :
-      "—";
+      (liveRsi != null
+        ? (liveRsi >= 60 ? "ABOVE 60" : (liveRsi >= 50 ? "ABOVE 50" : (liveRsi <= 40 ? "BELOW 40" : "BELOW 50")))
+        : "—");
 
-    const bias =
-      pm?.bias ??
-      fh?.premarket_bias ??
-      "—";
+    const phase =
+      (typeof fh?.session_phase === "string" && fh.session_phase.trim()) ? fh.session_phase.trim() :
+      (typeof fh?.phase === "string" && fh.phase.trim()) ? fh.phase.trim() :
+      (typeof fh?.state === "string" && fh.state.trim()) ? fh.state.trim() :
+      (typeof fh?.state?.phase === "string" && fh.state.phase.trim()) ? fh.state.phase.trim() :
+      (isPremarket ? "PRE-MARKET" :
+        (minute == null ? "WAIT" :
+          minute <= 0 ? "OPENING PRINT" :
+          minute <= 10 ? "OPEN DRIVE" :
+          minute <= 20 ? "EARLY TREND" :
+          minute <= 40 ? "MID FIRST HOUR" :
+          minute <= 60 ? "LATE FIRST HOUR" :
+          "AFTER FIRST HOUR"));
 
-    const pmMove =
-      fmtPct(pm?.move_pct ?? pm?.return_pct ?? fh?.premarket_move_pct);
+    let biasRaw = pick(
+      pm?.bias,
+      fh?.premarket_bias,
+      digest.premarket_bias,
+      panel.premarket_bias,
+      root.premarket_bias
+    );
 
-    const pmRange =
-      fmtPct(pm?.range_pct ?? fh?.premarket_range_pct);
+    if (!biasRaw) {
+      if (num(pmMoveRaw) != null) {
+        biasRaw = Number(pmMoveRaw) > 0 ? "UP" : (Number(pmMoveRaw) < 0 ? "DOWN" : "NONE");
+      } else if (primarySide === "up") {
+        biasRaw = "UP";
+      } else if (primarySide === "down") {
+        biasRaw = "DOWN";
+      } else {
+        biasRaw = "NONE";
+      }
+    }
 
+    const bias = String(biasRaw || "—").toUpperCase();
+    const pmMove = fmtPct(pmMoveRaw);
+    const pmRange = fmtPct(pmRangeRaw);
     const pmVolRatio =
-      Number.isFinite(num(pm?.volume_ratio ?? pm?.vol_ratio ?? fh?.premarket_vol_ratio))
-        ? `${Number(pm?.volume_ratio ?? pm?.vol_ratio ?? fh?.premarket_vol_ratio).toFixed(2)}x`
+      Number.isFinite(num(pmVolRatioRaw))
+        ? `${Number(pmVolRatioRaw).toFixed(2)}x`
         : "—";
 
-    const reading =
-      fh?.reading_pt ||
-      fh?.reading ||
-      fh?.summary_pt ||
-      fh?.summary ||
-      "—";
+    let reading = pick(
+      fh?.reading_pt,
+      fh?.reading,
+      fh?.summary_pt,
+      fh?.summary
+    );
 
-    set("fh-minute", minute ?? "—");
+    if (!reading) {
+      if (isPremarket && minute === 0) {
+        reading = "Pré-mercado: usar este bloco como contexto até a abertura. A 1ª hora ainda não começou.";
+      } else if (reversal != null && reversal >= 70) {
+        reading = "Risco alto de reversão na primeira hora.";
+      } else if (exhaustion != null && exhaustion >= 60) {
+        reading = `Primeira hora ainda favorece ${primarySide === "down" ? "baixa" : "alta"}, mas o motor já enfraquece.`;
+      } else if (continuation != null && continuation >= 65) {
+        reading = `Primeira hora favorece continuidade para ${primarySide === "down" ? "baixa" : "alta"}.`;
+      } else if (continuation != null && continuation >= 52) {
+        reading = `Leitura moderada de continuidade para ${primarySide === "down" ? "baixa" : "alta"}.`;
+      } else {
+        reading = bw1?.miss_line || "Leitura mista para a primeira hora.";
+      }
+    }
+
+    set("fh-minute", minute ?? 0);
     set("fh-bias", bias);
     set("fh-pm-move", pmMove);
     set("fh-pm-range", pmRange);
@@ -12617,14 +12982,16 @@ function updateFirstHourPremonitionPanel(payload){
     set("fh-reading", reading);
 
     const contN = num(continuation);
-    const exN   = num(exhaustion);
-    const revN  = num(reversal);
+    const exN = num(exhaustion);
+    const revN = num(reversal);
 
-    if (revN != null && revN >= 70){
+    if (isPremarket && minute === 0) {
+      setBadge("fh-badge", "PRE-MARKET CONTEXT", "win-wait");
+    } else if (revN != null && revN >= 70) {
       setBadge("fh-badge", "REVERSAL RISK HIGH", "win-warn");
-    } else if (exN != null && exN >= 60){
+    } else if (exN != null && exN >= 60) {
       setBadge("fh-badge", "EXHAUSTING", "win-warn");
-    } else if (contN != null && contN >= 65){
+    } else if (contN != null && contN >= 65) {
       setBadge("fh-badge", "ARMED", "win-now");
     } else {
       setBadge("fh-badge", "WAIT", "win-wait");
