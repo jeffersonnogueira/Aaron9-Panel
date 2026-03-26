@@ -10832,29 +10832,6 @@ const normDir = (v) => {
   return "NEUTRAL";
 };
 
-const sf =
-  digest?.shape_focus ||
-  deepFind(root, "shape_focus") ||
-  {};
-
-const sr =
-  digest?.sr_proxy ||
-  deepFind(root, "sr_proxy") ||
-  {};
-
-const geom =
-  digest?.shape_runtime_geometry_v1 ||
-  deepFind(root, "shape_runtime_geometry_v1") ||
-  {};
-
-const pp =
-  digest?.shape_trigger_premonition_v1 ||
-  deepFind(root, "shape_trigger_premonition_v1") ||
-  digest?.pattern_premonition_v1 ||
-  deepFind(root, "pattern_premonition_v1") ||
-  deepFind(root, "structural_pattern_premonition_v1") ||
-  {};
-
 const priceNow = pickFirst(
   panel?.price_now,
   ui?.price_now,
@@ -10865,15 +10842,247 @@ const priceNow = pickFirst(
   root?.indicator_premonition?.vwap?.price
 );
 
+const nzNum = (v, fb = null) => {
+  const n = Number(v);
+  return Number.isFinite(n) && n !== 0 ? n : fb;
+};
+
+const sfRaw =
+  digest?.shape_focus ||
+  deepFind(root, "shape_focus") ||
+  {};
+
+const srRaw =
+  digest?.sr_proxy ||
+  deepFind(root, "sr_proxy") ||
+  {};
+
+const geomRaw =
+  digest?.shape_runtime_geometry_v1 ||
+  deepFind(root, "shape_runtime_geometry_v1") ||
+  {};
+
+const ppRaw =
+  digest?.shape_trigger_premonition_v1 ||
+  deepFind(root, "shape_trigger_premonition_v1") ||
+  digest?.pattern_premonition_v1 ||
+  deepFind(root, "pattern_premonition_v1") ||
+  deepFind(root, "structural_pattern_premonition_v1") ||
+  {};
+
+const nowShape = digest?.now || deepFind(root, "now") || {};
+const dayBox = digest?.day_structure || deepFind(root, "day_structure") || {};
+const pivotNow = digest?.pivot_premonition_v1 || deepFind(root, "pivot_premonition_v1") || {};
+
+const livePxNum = Number(priceNow);
+const liveVwapNum = Number(pickFirst(digest?.live_vwap, root?.live_vwap, nowShape?.session_vwap));
+const liveRsiNum = Number(pickFirst(digest?.live_rsi14, root?.live_rsi14));
+const liveEmaFastNum = Number(pickFirst(digest?.live_ema_fast, root?.live_ema_fast, nowShape?.ema20));
+const liveEmaSlowNum = Number(pickFirst(digest?.live_ema_slow, root?.live_ema_slow, nowShape?.ema50));
+const atrShapeNum = Number(pickFirst(digest?.hud?.atr_14, nowShape?.atr14, digest?.zigzag_premonition_v1?.atr14));
+
+const boxTopNum = nzNum(pickFirst(
+  nowShape?.active_top,
+  pivotNow?.pivot1?.zone_high,
+  pivotNow?.next_pivot_zone_high,
+  dayBox?.box_top
+));
+
+const boxBottomNum = nzNum(pickFirst(
+  nowShape?.active_bottom,
+  pivotNow?.pivot2?.zone_low,
+  pivotNow?.next_pivot_zone_low,
+  dayBox?.box_bottom
+));
+
+const pivotMidNum =
+  Number.isFinite(boxTopNum) && Number.isFinite(boxBottomNum)
+    ? ((boxTopNum + boxBottomNum) / 2)
+    : (Number.isFinite(livePxNum) ? livePxNum : null);
+
+let shapeUpVotes = 0;
+let shapeDownVotes = 0;
+
+if (Number.isFinite(livePxNum) && Number.isFinite(liveVwapNum)) {
+  if (livePxNum >= liveVwapNum) shapeUpVotes += 1;
+  else shapeDownVotes += 1;
+}
+
+if (Number.isFinite(liveEmaFastNum) && Number.isFinite(liveEmaSlowNum)) {
+  if (liveEmaFastNum >= liveEmaSlowNum) shapeUpVotes += 1;
+  else shapeDownVotes += 1;
+}
+
+if (Number.isFinite(liveRsiNum)) {
+  if (liveRsiNum >= 55) shapeUpVotes += 1;
+  else if (liveRsiNum <= 45) shapeDownVotes += 1;
+}
+
+const dayBoxPos = Number(dayBox?.pos_in_box);
+if (Number.isFinite(dayBoxPos)) {
+  if (dayBoxPos >= 0.66) shapeUpVotes += 1;
+  else if (dayBoxPos <= 0.34) shapeDownVotes += 1;
+}
+
+const inferredShapeDir =
+  shapeUpVotes > shapeDownVotes ? "up" :
+  shapeDownVotes > shapeUpVotes ? "down" :
+  String(pickFirst(digest?.shape_trigger_direction, geomRaw?.direction, ppRaw?.direction, "neutral"));
+
+const shapeUpProbFallback = Number(pickFirst(
+  nowShape?.path_prob_up_pct,
+  inferredShapeDir === "up" ? 64 : (inferredShapeDir === "down" ? 41 : 50)
+));
+
+const shapeDownProbFallback = Number(pickFirst(
+  nowShape?.path_prob_down_pct,
+  Number.isFinite(shapeUpProbFallback) ? (100 - shapeUpProbFallback) : null,
+  inferredShapeDir === "down" ? 64 : (inferredShapeDir === "up" ? 41 : 50)
+));
+
+const shapeDetectorKey = String(pickFirst(
+  digest?.shape_trigger_detector_key,
+  geomRaw?.detector_key,
+  ppRaw?.detector_key,
+  sfRaw?.detector_key,
+  "range"
+) || "range");
+
+const shapeLabelFallback = shapeDetectorKey.replace(/_/g, " ");
+const shapeConfFallback = Math.max(shapeUpProbFallback || 0, shapeDownProbFallback || 0);
+
+const intendedEta = inferredShapeDir === "up"
+  ? (nowShape?.eta_up || {})
+  : inferredShapeDir === "down"
+    ? (nowShape?.eta_down || {})
+    : {
+        p25: pickFirst(nowShape?.eta_up?.p25, nowShape?.eta_down?.p25),
+        p50: pickFirst(nowShape?.eta_up?.p50, nowShape?.eta_down?.p50),
+        p75: pickFirst(nowShape?.eta_up?.p75, nowShape?.eta_down?.p75)
+      };
+
+const targetUpNum = nzNum(pickFirst(nowShape?.micro_ceiling, boxTopNum, pivotNow?.pivot1?.price_p50));
+const targetDownNum = nzNum(pickFirst(nowShape?.micro_floor, boxBottomNum, pivotNow?.pivot2?.price_p50));
+
+const fallbackInvalidationUp = nzNum(pickFirst(
+  boxBottomNum,
+  dayBox?.box_bottom,
+  Number.isFinite(livePxNum) && Number.isFinite(atrShapeNum) ? (livePxNum - atrShapeNum) : null
+));
+
+const fallbackInvalidationDown = nzNum(pickFirst(
+  boxTopNum,
+  dayBox?.box_top,
+  Number.isFinite(livePxNum) && Number.isFinite(atrShapeNum) ? (livePxNum + atrShapeNum) : null
+));
+
+const fallbackBreathUp = Number.isFinite(livePxNum) && Number.isFinite(atrShapeNum) ? (livePxNum - atrShapeNum) : fallbackInvalidationUp;
+const fallbackBreathDown = Number.isFinite(livePxNum) && Number.isFinite(atrShapeNum) ? (livePxNum + atrShapeNum) : fallbackInvalidationDown;
+
+const rawShapeHasEdge = [
+  ppRaw?.pivot_price,
+  ppRaw?.trigger_up,
+  ppRaw?.trigger_down,
+  ppRaw?.prob_break_up_pct,
+  ppRaw?.prob_break_down_pct,
+  geomRaw?.pivot_price,
+  geomRaw?.trigger_up,
+  geomRaw?.trigger_down
+].some((v) => Number.isFinite(Number(v)) && Number(v) !== 0);
+
+const rawShapeNoContext = Array.isArray(ppRaw?.notes) && ppRaw.notes.includes("no_context_row_found");
+const useShapeFallback = !rawShapeHasEdge || rawShapeNoContext;
+
+const sf = useShapeFallback ? {
+  ...sfRaw,
+  detector_key: pickFirst(sfRaw?.detector_key, shapeDetectorKey),
+  name_pt: pickFirst(sfRaw?.name_pt, shapeLabelFallback),
+  name_en: pickFirst(sfRaw?.name_en, shapeLabelFallback),
+  label: pickFirst(sfRaw?.label, shapeLabelFallback),
+  direction: inferredShapeDir,
+  bias: inferredShapeDir,
+  confidence_pct: nzNum(sfRaw?.confidence_pct, shapeConfFallback)
+} : sfRaw;
+
+const sr = useShapeFallback ? {
+  ...srRaw,
+  breakout_level: nzNum(srRaw?.breakout_level, pivotMidNum),
+  recent_high: nzNum(srRaw?.recent_high, boxTopNum),
+  recent_low: nzNum(srRaw?.recent_low, boxBottomNum)
+} : srRaw;
+
+const geom = useShapeFallback ? {
+  ...geomRaw,
+  detector_key: pickFirst(geomRaw?.detector_key, shapeDetectorKey),
+  direction: inferredShapeDir,
+  pivot_price: nzNum(geomRaw?.pivot_price, pivotMidNum),
+  trigger_up: nzNum(geomRaw?.trigger_up, boxTopNum),
+  trigger_down: nzNum(geomRaw?.trigger_down, boxBottomNum),
+  target_1: nzNum(geomRaw?.target_1, inferredShapeDir === "down" ? targetDownNum : targetUpNum),
+  invalidation: nzNum(geomRaw?.invalidation, inferredShapeDir === "down" ? fallbackInvalidationDown : fallbackInvalidationUp),
+  respiro_before_break: nzNum(geomRaw?.respiro_before_break, inferredShapeDir === "down" ? fallbackBreathDown : fallbackBreathUp)
+} : geomRaw;
+
+const pp = useShapeFallback ? {
+  ...ppRaw,
+  detector_key: pickFirst(ppRaw?.detector_key, shapeDetectorKey),
+  setup_label: pickFirst(ppRaw?.setup_label, shapeLabelFallback),
+  pattern_label: pickFirst(ppRaw?.pattern_label, shapeLabelFallback),
+  pattern_name: pickFirst(ppRaw?.pattern_name, shapeLabelFallback),
+  structure_name: pickFirst(ppRaw?.structure_name, shapeLabelFallback),
+  direction: inferredShapeDir,
+  bias: inferredShapeDir,
+  confidence_pct: nzNum(ppRaw?.confidence_pct, shapeConfFallback),
+  pivot_price: nzNum(ppRaw?.pivot_price, pivotMidNum),
+  trigger_up: nzNum(ppRaw?.trigger_up, boxTopNum),
+  trigger_down: nzNum(ppRaw?.trigger_down, boxBottomNum),
+  prob_break_up_pct: nzNum(pickFirst(ppRaw?.prob_break_up_pct, ppRaw?.break_up_pct), shapeUpProbFallback),
+  prob_break_down_pct: nzNum(pickFirst(ppRaw?.prob_break_down_pct, ppRaw?.break_down_pct), shapeDownProbFallback),
+  eta_break_bars: {
+    ...(ppRaw?.eta_break_bars || {}),
+    up: {
+      ...(ppRaw?.eta_break_bars?.up || {}),
+      p25: nzNum(ppRaw?.eta_break_bars?.up?.p25, nowShape?.eta_up?.p25),
+      p50: nzNum(ppRaw?.eta_break_bars?.up?.p50, nowShape?.eta_up?.p50),
+      p75: nzNum(ppRaw?.eta_break_bars?.up?.p75, nowShape?.eta_up?.p75)
+    },
+    down: {
+      ...(ppRaw?.eta_break_bars?.down || {}),
+      p25: nzNum(ppRaw?.eta_break_bars?.down?.p25, nowShape?.eta_down?.p25),
+      p50: nzNum(ppRaw?.eta_break_bars?.down?.p50, nowShape?.eta_down?.p50),
+      p75: nzNum(ppRaw?.eta_break_bars?.down?.p75, nowShape?.eta_down?.p75)
+    },
+    intended: {
+      ...(ppRaw?.eta_break_bars?.intended || {}),
+      p25: nzNum(ppRaw?.eta_break_bars?.intended?.p25, intendedEta?.p25),
+      p50: nzNum(ppRaw?.eta_break_bars?.intended?.p50, intendedEta?.p50),
+      p75: nzNum(ppRaw?.eta_break_bars?.intended?.p75, intendedEta?.p75)
+    }
+  },
+  target_1: nzNum(pickFirst(ppRaw?.target_1, ppRaw?.target1), inferredShapeDir === "down" ? targetDownNum : targetUpNum),
+  invalidation_price: nzNum(pickFirst(ppRaw?.invalidation_price, ppRaw?.fail_price), inferredShapeDir === "down" ? fallbackInvalidationDown : fallbackInvalidationUp),
+  respiro_before_break: nzNum(ppRaw?.respiro_before_break, inferredShapeDir === "down" ? fallbackBreathDown : fallbackBreathUp),
+  vwap_side: pickFirst(ppRaw?.vwap_side, digest?.shape_trigger_vwap_side,
+    Number.isFinite(livePxNum) && Number.isFinite(liveVwapNum) ? (livePxNum >= liveVwapNum ? "above" : "below") : null),
+  ema_state: pickFirst(ppRaw?.ema_state, digest?.shape_trigger_ema_state,
+    Number.isFinite(liveEmaFastNum) && Number.isFinite(liveEmaSlowNum) ? (liveEmaFastNum >= liveEmaSlowNum ? "bullish" : "bearish") : null),
+  rsi_bucket: pickFirst(ppRaw?.rsi_bucket, digest?.shape_trigger_rsi_bucket,
+    Number.isFinite(liveRsiNum) ? (liveRsiNum >= 60 ? "60_69" : liveRsiNum >= 50 ? "50_59" : liveRsiNum >= 40 ? "40_49" : "lt_40") : null),
+  volume_regime: pickFirst(ppRaw?.volume_regime, digest?.shape_trigger_volume_regime, digest?.volume_regime_label_en, digest?.volume_regime_context_state),
+  zigzag_state: pickFirst(ppRaw?.zigzag_state, digest?.shape_trigger_zigzag_state, pivotNow?.state?.next_pivot_kind)
+} : ppRaw;
+
 const setupLabelRaw = pickFirst(
   pp?.setup_label,
   pp?.pattern_label,
   pp?.pattern_name,
   pp?.structure_name,
+  pp?.detector_key,
   sf?.name_pt,
   sf?.label,
   sf?.name_en,
   sf?.detector_key,
+  digest?.shape_trigger_detector_key,
   "—"
 );
 
