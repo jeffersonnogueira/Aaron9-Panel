@@ -12733,47 +12733,80 @@ set("indip-ema-cross-dir","—"); set("indip-ema-cross-pct","—"); set("indip-e
       return;
     }
 
-    // ===== VWAP =====
-    const v = ip.vwap || {};
-    const vState = String(v.state || "").toLowerCase();
-    setBadge("indip-vwap-state", (vState ? vState.toUpperCase() : "—"), vState === "above" ? "win-now" : (vState === "below" ? "win-warn" : "win-wait"));
-    set("indip-vwap-price", fmt2(v.price ?? panel.price_now ?? panel.last_price));
-    set("indip-vwap-vwap",  fmt2(v.vwap));
-    set("indip-vwap-diff",  fmt4(v.diff));
+        // ===== VWAP =====
+    const v = (ip && typeof ip.vwap === "object" && ip.vwap) ? ip.vwap : null;
 
-    const vCross = (v.cross && v.cross.highlight_5min) ? v.cross.highlight_5min : null;
-    set("indip-vwap-cross-dir", v.cross?.direction || "—");
+    const vLiveState =
+      (Number.isFinite(pxLive) && Number.isFinite(liveVwap))
+        ? (pxLive >= liveVwap ? "above" : "below")
+        : "";
+
+    const vState = String(v?.state || vLiveState || "").toLowerCase();
+
+    setBadge(
+      "indip-vwap-state",
+      (vState ? vState.toUpperCase() : "—"),
+      vState === "above" ? "win-now" : (vState === "below" ? "win-warn" : "win-wait")
+    );
+
+    set("indip-vwap-price", fmt2(v?.price ?? pxLive ?? panel.price_now ?? panel.last_price));
+    set("indip-vwap-vwap",  fmt2(v?.vwap ?? liveVwap));
+    set(
+      "indip-vwap-diff",
+      fmt4(
+        v?.diff ??
+        ((Number.isFinite(pxLive) && Number.isFinite(liveVwap)) ? (pxLive - liveVwap) : null)
+      )
+    );
+
+    const vCross = (v?.cross && v.cross.highlight_5min) ? v.cross.highlight_5min : null;
+    set("indip-vwap-cross-dir", v?.cross?.direction || (vState ? vState.toUpperCase() : "—"));
     set("indip-vwap-cross-pct", fmtPct(vCross?.prob_hit_pct_dyn ?? vCross?.prob_hit_pct ?? vCross?.prob_hit_pct_base));
     set("indip-vwap-cross-eta", fmtEta(vCross?.eta_p50_min));
 
-    const vHold = (v.hold && v.hold.highlight_5min) ? v.hold.highlight_5min : null;
+    const vHold = (v?.hold && v.hold.highlight_5min) ? v.hold.highlight_5min : null;
     set("indip-vwap-hold-pct", fmtPct(vHold?.prob_hold_pct_dyn ?? vHold?.prob_hold_pct ?? vHold?.prob_hold_pct_base));
-const vHoldTxt = document.getElementById("indip-vwap-hold-pct")?.textContent || "—";
-set("indip-vwap-hold-phrase",
-  (vState === "above") ? `HOLD ${vHoldTxt} → Price likely stays ABOVE VWAP (~5m).` :
-  (vState === "below") ? `HOLD ${vHoldTxt} → Price likely stays BELOW VWAP (~5m).` :
-  `HOLD ${vHoldTxt} → Price likely stays in the current VWAP state (~5m).`
-);
+    const vHoldTxt = document.getElementById("indip-vwap-hold-pct")?.textContent || "—";
+    set(
+      "indip-vwap-hold-phrase",
+      (vState === "above") ? `HOLD ${vHoldTxt} → Price likely stays ABOVE VWAP (~5m).` :
+      (vState === "below") ? `HOLD ${vHoldTxt} → Price likely stays BELOW VWAP (~5m).` :
+      `HOLD ${vHoldTxt} → Price likely stays in the current VWAP state (~5m).`
+    );
+
     // ===== RSI =====
-    const r = ip.rsi || {};
-    const rState = String(r.state_50 || "").toLowerCase();
-    setBadge("indip-rsi-state", (rState ? rState.toUpperCase() : "—"), rState === "above" ? "win-now" : (rState === "below" ? "win-warn" : "win-wait"));
-    set("indip-rsi-val", fmt2(r.rsi));
+    const r = (ip && typeof ip.rsi === "object" && ip.rsi) ? ip.rsi : null;
+
+    const rLiveState =
+      Number.isFinite(liveRsi14)
+        ? (liveRsi14 >= 50 ? "above" : "below")
+        : "";
+
+    const rState = String(r?.state_50 || rLiveState || "").toLowerCase();
+
+    setBadge(
+      "indip-rsi-state",
+      (rState ? rState.toUpperCase() : "—"),
+      rState === "above" ? "win-now" : (rState === "below" ? "win-warn" : "win-wait")
+    );
+
+    set("indip-rsi-val", fmt2(r?.rsi ?? liveRsi14));
     set("indip-rsi-50", "50");
 
-    const rCross = (r.cross_50 && r.cross_50.highlight_5min) ? r.cross_50.highlight_5min : null;
-    set("indip-rsi-cross-dir", r.cross_50?.direction || "—");
+    const rCross = (r?.cross_50 && r.cross_50.highlight_5min) ? r.cross_50.highlight_5min : null;
+    set("indip-rsi-cross-dir", r?.cross_50?.direction || (rState ? rState.toUpperCase() : "—"));
     set("indip-rsi-cross-pct", fmtPct(rCross?.prob_hit_pct_dyn ?? rCross?.prob_hit_pct ?? rCross?.prob_hit_pct_base));
     set("indip-rsi-cross-eta", fmtEta(rCross?.eta_p50_min));
 
-    const rHold = (r.hold_50 && r.hold_50.highlight_5min) ? r.hold_50.highlight_5min : null;
-        set("indip-rsi-hold-pct", fmtPct(rHold?.prob_hold_pct_dyn ?? rHold?.prob_hold_pct ?? rHold?.prob_hold_pct_base));
-const rHoldTxt = document.getElementById("indip-rsi-hold-pct")?.textContent || "—";
-set("indip-rsi-hold-phrase",
-  (rState === "above") ? `HOLD ${rHoldTxt} → RSI likely stays ABOVE 50 (~5m).` :
-  (rState === "below") ? `HOLD ${rHoldTxt} → RSI likely stays BELOW 50 (~5m).` :
-  `HOLD ${rHoldTxt} → RSI likely stays on the current side of 50 (~5m).`
-);
+    const rHold = (r?.hold_50 && r.hold_50.highlight_5min) ? r.hold_50.highlight_5min : null;
+    set("indip-rsi-hold-pct", fmtPct(rHold?.prob_hold_pct_dyn ?? rHold?.prob_hold_pct ?? rHold?.prob_hold_pct_base));
+    const rHoldTxt = document.getElementById("indip-rsi-hold-pct")?.textContent || "—";
+    set(
+      "indip-rsi-hold-phrase",
+      (rState === "above") ? `HOLD ${rHoldTxt} → RSI likely stays ABOVE 50 (~5m).` :
+      (rState === "below") ? `HOLD ${rHoldTxt} → RSI likely stays BELOW 50 (~5m).` :
+      `HOLD ${rHoldTxt} → RSI likely stays on the current side of 50 (~5m).`
+    );
     // ===== EMA =====
     const e = ip.ema || {};
 
