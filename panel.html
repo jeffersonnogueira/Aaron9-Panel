@@ -12456,12 +12456,24 @@ function updateIndicatorPremonitionPanel(payload){
       return null;
     };
 
+        const looksRichIndicator = (x) =>
+      !!(x && typeof x === "object" && (
+        (x.vwap && typeof x.vwap === "object") ||
+        (x.rsi  && typeof x.rsi  === "object") ||
+        (x.ema  && typeof x.ema  === "object")
+      ));
+
+    const ipCandidates = [
+      ui.indicator_premonition,
+      digest.indicator_premonition,
+      panel.indicator_premonition,
+      root.indicator_premonition,
+      deepFind(root, "indicator_premonition")
+    ];
+
     const ip =
-      ui.indicator_premonition ||
-      digest.indicator_premonition ||
-      panel.indicator_premonition ||
-      root.indicator_premonition ||
-      deepFind(root, "indicator_premonition") ||
+      ipCandidates.find(looksRichIndicator) ||
+      ipCandidates.find(x => x && typeof x === "object") ||
       null;
 
     const attachedAt =
