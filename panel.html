@@ -28,7 +28,10 @@
    body {
   margin: 0;
   padding: 0;
-  background: #020617;
+  background:
+    radial-gradient(1200px 520px at 18% 0%, rgba(59,130,246,0.10), transparent 58%),
+    radial-gradient(1000px 460px at 85% 6%, rgba(245,158,11,0.07), transparent 52%),
+    linear-gradient(180deg, #08111f 0%, #030817 52%, #02040c 100%);
   color: var(--text-main);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
@@ -3512,136 +3515,320 @@
   letter-spacing: .02em;
 }
 /* ===== /ENTRY ENGINE ===== */
-/* ===== FIRST HOUR PREMONITION — FULL WIDTH ABOVE INDICATORS ===== */
+/* ===== FIRST HOUR PREMONITION — IMAGE STYLE ===== */
 #first-hour-prem-card{
-  margin-top: 10px !important;
+  margin-top: 12px !important;
   grid-column: 1 / -1;
+  position: relative;
 }
 
 #first-hour-prem-card .prem-breakout-title{
-  font-size: 28px !important;
-  opacity: .92 !important;
+  font-size: 18px !important;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(241,245,249,.96);
+  opacity: 1 !important;
 }
 
 #first-hour-prem-card .win-badge{
-  font-size: 22px !important;
-  padding: 10px 16px !important;
+  font-size: 14px !important;
+  font-weight: 900;
+  letter-spacing: .08em;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(34,197,94,.35);
+  background: linear-gradient(180deg, rgba(34,197,94,.18), rgba(16,185,129,.10));
+  color: #86efac !important;
+  box-shadow:
+    0 0 0 1px rgba(34,197,94,.08),
+    0 0 18px rgba(34,197,94,.12);
 }
 
 #first-hour-prem-card .fh-shell{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:16px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  margin-top:10px;
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(96,165,250,.22);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(59,130,246,.12), transparent 36%),
+    radial-gradient(circle at 100% 0%, rgba(245,158,11,.08), transparent 30%),
+    linear-gradient(180deg, rgba(13,23,39,.98) 0%, rgba(7,13,24,.99) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 18px 40px rgba(2,6,23,.72),
+    0 0 0 1px rgba(15,23,42,.45);
 }
 
-#first-hour-prem-card .fh-top{
-  display:grid;
-  grid-template-columns: 0.78fr 1.05fr 1.15fr 1.05fr;
-  gap:10px;
-  align-items:stretch;
+#first-hour-prem-card .fh-grid{
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 14px;
+  align-items: stretch;
 }
 
-#first-hour-prem-card .fh-bottom{
-  display:grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap:10px;
-  align-items:stretch;
-  margin-top:10px;
+#first-hour-prem-card .fh-left,
+#first-hour-prem-card .fh-right{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#first-hour-prem-card .fh-left-top{
+  display: grid;
+  grid-template-columns: 1.08fr 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+#first-hour-prem-card .fh-right-top{
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+#first-hour-prem-card .fh-right-bottom{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
 }
 
 #first-hour-prem-card .fh-box{
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
-  min-width:0;
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(148,163,184,.16);
+  background:
+    linear-gradient(180deg, rgba(20,31,49,.78) 0%, rgba(8,14,26,.92) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 10px 24px rgba(2,6,23,.28);
+}
+
+#first-hour-prem-card .fh-box-minute{
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 22% 12%, rgba(59,130,246,.12), transparent 38%),
+    linear-gradient(180deg, rgba(24,38,62,.94) 0%, rgba(12,20,35,.98) 100%);
+}
+
+#first-hour-prem-card .fh-box-state,
+#first-hour-prem-card .fh-box-prob{
+  min-height: 170px;
+}
+
+#first-hour-prem-card .fh-box-summary,
+#first-hour-prem-card .fh-box-mini{
+  min-height: 116px;
 }
 
 #first-hour-prem-card .fh-k{
-  font-size:22px !important;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.72;
-  margin-bottom:6px;
+  font-size: 11px !important;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(148,163,184,.88);
+  margin-bottom: 10px;
 }
 
-#first-hour-prem-card .fh-v{
-  font-size:24px !important;
-  line-height:1.35;
-  font-weight:900;
-}
-
-#first-hour-prem-card .fh-v strong{
-  color:#ffcc66;
+#first-hour-prem-card .fh-minute-head{
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #f8fafc;
+  margin-bottom: 8px;
 }
 
 #first-hour-prem-card .fh-minute{
-  font-size:38px !important;
-  line-height:1.05;
-  font-weight:950;
-  color:#ffcc66;
+  font-size: 62px !important;
+  line-height: .95;
+  font-weight: 950;
+  letter-spacing: -.03em;
+  color: #f8fafc;
 }
 
+#first-hour-prem-card .fh-minute span{
+  color: #f8fafc;
+}
+
+#first-hour-prem-card .fh-minute-sub{
+  margin-top: 10px;
+  font-size: 14px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(148,163,184,.84);
+}
+
+#first-hour-prem-card .fh-v{
+  font-size: 16px !important;
+  line-height: 1.48;
+  font-weight: 700;
+  color: #e5e7eb;
+}
+
+#first-hour-prem-card .fh-v strong{
+  color: #f7c66a;
+  font-weight: 900;
+}
+
+#first-hour-prem-card .fh-state-line,
 #first-hour-prem-card .fh-prob-line,
 #first-hour-prem-card .fh-eta-line,
 #first-hour-prem-card .fh-target-line,
-#first-hour-prem-card .fh-trigger-line{
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  gap:12px;
+#first-hour-prem-card .fh-trigger-line,
+#first-hour-prem-card .fh-summary-line{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 }
 
+#first-hour-prem-card .fh-state-line + .fh-state-line,
 #first-hour-prem-card .fh-prob-line + .fh-prob-line,
 #first-hour-prem-card .fh-eta-line + .fh-eta-line,
 #first-hour-prem-card .fh-target-line + .fh-target-line,
-#first-hour-prem-card .fh-trigger-line + .fh-trigger-line{
-  margin-top:8px;
+#first-hour-prem-card .fh-trigger-line + .fh-trigger-line,
+#first-hour-prem-card .fh-summary-line + .fh-summary-line{
+  margin-top: 8px;
 }
 
 #first-hour-prem-card .fh-soft{
-  opacity:.72;
+  color: rgba(226,232,240,.92);
 }
 
-#first-hour-prem-card .fh-reading{
-  margin-top:10px;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-  padding:12px 14px;
+#first-hour-prem-card .fh-soft-dim{
+  color: rgba(148,163,184,.86);
+}
+
+#first-hour-prem-card .fh-prob-right{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#first-hour-prem-card .fh-bar{
+  width: 112px;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(148,163,184,.20);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+#first-hour-prem-card .fh-bar-fill{
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+#first-hour-prem-card .fh-bar-fill.is-cont{
+  width: 72%;
+  background: linear-gradient(90deg, #60a5fa 0%, #34d399 100%);
+}
+
+#first-hour-prem-card .fh-bar-fill.is-exhaust{
+  width: 34%;
+  background: linear-gradient(90deg, #60a5fa 0%, #fbbf24 100%);
+}
+
+#first-hour-prem-card .fh-bar-fill.is-reversal{
+  width: 26%;
+  background: linear-gradient(90deg, #60a5fa 0%, #fb7185 100%);
+}
+
+#first-hour-prem-card .fh-bottom-read{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(148,163,184,.16);
+  background:
+    linear-gradient(180deg, rgba(18,29,45,.82) 0%, rgba(8,14,25,.96) 100%);
+}
+
+#first-hour-prem-card .fh-reading-copy{
+  flex: 1;
+  min-width: 0;
 }
 
 #first-hour-prem-card .fh-reading-title{
-  font-size:22px !important;
-  font-weight:950;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.72;
-  margin-bottom:6px;
+  font-size: 11px !important;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(148,163,184,.88);
+  margin-bottom: 8px;
 }
 
 #first-hour-prem-card .fh-reading-body{
-  font-size:30px !important;
-  line-height:1.22;
-  font-weight:950;
-  color:#ffcc66;
+  font-size: 15px !important;
+  line-height: 1.4;
+  font-weight: 900;
+  color: #f7c66a;
+}
+
+#first-hour-prem-card .fh-armed{
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(34,197,94,.38);
+  background: linear-gradient(180deg, rgba(34,197,94,.20), rgba(16,185,129,.10));
+  color: #4ade80;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow: 0 0 22px rgba(34,197,94,.10);
+}
+
+#first-hour-prem-card .fh-armed-dot{
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #4ade80;
+  box-shadow: 0 0 18px rgba(74,222,128,.65);
 }
 
 @media (max-width: 1400px){
-  #first-hour-prem-card .fh-top{
+  #first-hour-prem-card .fh-grid{
+    grid-template-columns: 1fr;
+  }
+
+  #first-hour-prem-card .fh-left-top{
     grid-template-columns: 1fr 1fr;
   }
-  #first-hour-prem-card .fh-bottom{
-    grid-template-columns: 1fr;
+
+  #first-hour-prem-card .fh-box-minute{
+    grid-column: 1 / -1;
   }
 }
 
 @media (max-width: 980px){
-  #first-hour-prem-card .fh-top{
+  #first-hour-prem-card .fh-left-top,
+  #first-hour-prem-card .fh-right-top,
+  #first-hour-prem-card .fh-right-bottom{
     grid-template-columns: 1fr;
+  }
+
+  #first-hour-prem-card .fh-bottom-read{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #first-hour-prem-card .fh-minute{
+    font-size: 48px !important;
   }
 }
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
@@ -5847,78 +6034,122 @@
     <div class="premonition-chart">
       <!-- ===== INDICATORS (EMA / VWAP / RSI) — ABOVE ENTRY ENGINE ===== -->
        <div class="prem-breakout-wrap" id="first-hour-prem-card">
-  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
     <div class="prem-breakout-title">FIRST HOUR PREMONITION</div>
     <span id="fh-badge" class="win-badge win-wait">WAIT</span>
   </div>
 
   <div class="fh-shell">
-    <div class="fh-top">
-      <div class="fh-box">
-        <div class="fh-k">MINUTE</div>
-        <div class="fh-minute"><span id="fh-minute">—</span> / 60</div>
-      </div>
+    <div class="fh-grid">
 
-      <div class="fh-box">
-        <div class="fh-k">PRE-MARKET</div>
-        <div class="fh-v">
-          Bias <strong id="fh-bias">—</strong><br>
-          Move <strong id="fh-pm-move">—</strong><br>
-          Range <strong id="fh-pm-range">—</strong><br>
-          Vol Ratio <strong id="fh-pm-vol-ratio">—</strong>
+      <div class="fh-left">
+        <div class="fh-left-top">
+
+          <div class="fh-box fh-box-minute">
+            <div class="fh-minute-head">FIRST HOUR PREMONITION</div>
+            <div class="fh-minute"><span id="fh-minute">—</span> / 60</div>
+            <div class="fh-minute-sub">MINUTE</div>
+          </div>
+
+          <div class="fh-box fh-box-state">
+            <div class="fh-k">STATE</div>
+            <div class="fh-v">
+              <div class="fh-state-line"><span class="fh-soft">Phase</span><strong id="fh-phase">—</strong></div>
+              <div class="fh-state-line"><span class="fh-soft">EMA</span><strong id="fh-ema-state">—</strong></div>
+              <div class="fh-state-line"><span class="fh-soft">VWAP</span><strong id="fh-vwap-side">—</strong></div>
+              <div class="fh-state-line"><span class="fh-soft">RSI</span><strong id="fh-rsi-state">—</strong></div>
+            </div>
+          </div>
+
+          <div class="fh-box fh-box-prob">
+            <div class="fh-k">PROBABILITIES</div>
+            <div class="fh-v">
+              <div class="fh-prob-line">
+                <span class="fh-soft">Continuation</span>
+                <span class="fh-prob-right">
+                  <span class="fh-bar"><span class="fh-bar-fill is-cont"></span></span>
+                  <strong id="fh-cont">—</strong>
+                </span>
+              </div>
+
+              <div class="fh-prob-line">
+                <span class="fh-soft">Exhaustion</span>
+                <span class="fh-prob-right">
+                  <span class="fh-bar"><span class="fh-bar-fill is-exhaust"></span></span>
+                  <strong id="fh-exhaust">—</strong>
+                </span>
+              </div>
+
+              <div class="fh-prob-line">
+                <span class="fh-soft">Reversal</span>
+                <span class="fh-prob-right">
+                  <span class="fh-bar"><span class="fh-bar-fill is-reversal"></span></span>
+                  <strong id="fh-reversal">—</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="fh-bottom-read">
+          <div class="fh-reading-copy">
+            <div class="fh-reading-title">TACTICAL READ</div>
+            <div class="fh-reading-body" id="fh-reading">—</div>
+          </div>
+
+          <div class="fh-armed">
+            ARMED
+            <span class="fh-armed-dot"></span>
+          </div>
         </div>
       </div>
 
-      <div class="fh-box">
-        <div class="fh-k">STATE</div>
-        <div class="fh-v">
-          Phase <strong id="fh-phase">—</strong><br>
-          EMA <strong id="fh-ema-state">—</strong><br>
-          VWAP <strong id="fh-vwap-side">—</strong><br>
-          RSI <strong id="fh-rsi-state">—</strong>
+      <div class="fh-right">
+        <div class="fh-right-top">
+
+          <div class="fh-box fh-box-summary">
+            <div class="fh-k">PRE-MARKET CONTEXT</div>
+            <div class="fh-v">
+              <div class="fh-summary-line"><span class="fh-soft-dim">Bias</span><strong id="fh-bias">—</strong></div>
+              <div class="fh-summary-line"><span class="fh-soft-dim">Move</span><strong id="fh-pm-move">—</strong></div>
+              <div class="fh-summary-line"><span class="fh-soft-dim">Range</span><strong id="fh-pm-range">—</strong></div>
+              <div class="fh-summary-line"><span class="fh-soft-dim">Vol Ratio</span><strong id="fh-pm-vol-ratio">—</strong></div>
+            </div>
+          </div>
+
+          <div class="fh-box fh-box-mini">
+            <div class="fh-k">ETA</div>
+            <div class="fh-v">
+              <div class="fh-eta-line"><span class="fh-soft-dim">Up p50</span><strong id="fh-up-eta">—</strong></div>
+              <div class="fh-eta-line"><span class="fh-soft-dim">Down p50</span><strong id="fh-down-eta">—</strong></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="fh-right-bottom">
+
+          <div class="fh-box fh-box-mini">
+            <div class="fh-k">TARGETS</div>
+            <div class="fh-v">
+              <div class="fh-target-line"><span class="fh-soft-dim">Target Up p50</span><strong id="fh-target-up">—</strong></div>
+              <div class="fh-target-line"><span class="fh-soft-dim">Target Down p50</span><strong id="fh-target-down">—</strong></div>
+            </div>
+          </div>
+
+          <div class="fh-box fh-box-mini">
+            <div class="fh-k">TRIGGERS</div>
+            <div class="fh-v">
+              <div class="fh-trigger-line"><span class="fh-soft-dim">Continue &gt;</span><strong id="fh-trigger-cont">—</strong></div>
+              <div class="fh-trigger-line"><span class="fh-soft-dim">Reverse &lt;</span><strong id="fh-trigger-rev">—</strong></div>
+              <div class="fh-trigger-line"><span class="fh-soft-dim">Invalidation</span><strong id="fh-invalid">—</strong></div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div class="fh-box">
-        <div class="fh-k">PROBABILITIES</div>
-        <div class="fh-v">
-          <div class="fh-prob-line"><span class="fh-soft">Continuation</span><strong id="fh-cont">—</strong></div>
-          <div class="fh-prob-line"><span class="fh-soft">Exhaustion</span><strong id="fh-exhaust">—</strong></div>
-          <div class="fh-prob-line"><span class="fh-soft">Reversal</span><strong id="fh-reversal">—</strong></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fh-bottom">
-      <div class="fh-box">
-        <div class="fh-k">ETA</div>
-        <div class="fh-v">
-          <div class="fh-eta-line"><span class="fh-soft">Up p50</span><strong id="fh-up-eta">—</strong></div>
-          <div class="fh-eta-line"><span class="fh-soft">Down p50</span><strong id="fh-down-eta">—</strong></div>
-        </div>
-      </div>
-
-      <div class="fh-box">
-        <div class="fh-k">TARGETS</div>
-        <div class="fh-v">
-          <div class="fh-target-line"><span class="fh-soft">Target Up p50</span><strong id="fh-target-up">—</strong></div>
-          <div class="fh-target-line"><span class="fh-soft">Target Down p50</span><strong id="fh-target-down">—</strong></div>
-        </div>
-      </div>
-
-      <div class="fh-box">
-        <div class="fh-k">TRIGGERS</div>
-        <div class="fh-v">
-          <div class="fh-trigger-line"><span class="fh-soft">Continue &gt;</span><strong id="fh-trigger-cont">—</strong></div>
-          <div class="fh-trigger-line"><span class="fh-soft">Reverse &lt;</span><strong id="fh-trigger-rev">—</strong></div>
-          <div class="fh-trigger-line"><span class="fh-soft">Invalidation</span><strong id="fh-invalid">—</strong></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fh-reading">
-      <div class="fh-reading-title">TACTICAL READ</div>
-      <div class="fh-reading-body" id="fh-reading">—</div>
     </div>
   </div>
 </div>
