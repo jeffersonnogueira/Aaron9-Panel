@@ -12879,40 +12879,88 @@ set("indip-ema-hold-phrase",
   `HOLD ${eHoldTxt} → Fast EMA likely stays on the same side (~5m).`
 );
     // ===== PREMONITION DAY (NEW CARD) =====
-    const sfDay = digest?.shape_focus || deepFind(digest,"shape_focus") || deepFind(root,"shape_focus") || {};
-    const pday = deepFind(root, "premonition_day") || deepFind(root,"premonition_day_v1") || digest?.premonition_day || ui?.premonition_day || null;
+        const sfDay = digest?.shape_focus || deepFind(digest,"shape_focus") || deepFind(root,"shape_focus") || {};
+    const pday =
+      deepFind(root, "premonition_day") ||
+      deepFind(root, "premonition_day_v1") ||
+      digest?.premonition_day ||
+      ui?.premonition_day ||
+      null;
+
+    const dayStructObj =
+      root?.day_structure ||
+      digest?.day_structure ||
+      panel?.day_structure ||
+      deepFind(root, "day_structure") ||
+      deepFind(digest, "day_structure") ||
+      null;
+
+    const dayStructSummaryRaw =
+      root?.day_structure_summary_pt ||
+      digest?.day_structure_summary_pt ||
+      dayStructObj?.summary_pt ||
+      dayStructObj?.summary ||
+      "";
+
+    const dayStructSummary = String(dayStructSummaryRaw || "")
+      .replace(/^BOX DOMINANTE \(DIA\):\s*/i, "")
+      .trim();
+
+    const dsPos = num(dayStructObj?.pos_in_box);
+    const inferredDayBias =
+      Number.isFinite(dsPos)
+        ? (dsPos >= 0.66 ? "bullish" : (dsPos <= 0.33 ? "bearish" : "neutral"))
+        : null;
 
     const dayName =
-      (pday?.structure_name || pday?.structure || pday?.label ||
-       sfDay?.name_en || sfDay?.name_pt || sfDay?.family_en || sfDay?.family || "—");
+      dayStructSummary ||
+      pday?.structure_name ||
+      pday?.structure ||
+      pday?.label ||
+      sfDay?.name_en ||
+      sfDay?.name_pt ||
+      sfDay?.family_en ||
+      sfDay?.family ||
+      "—";
 
-    const dayBiasRaw = (pday?.bias || sfDay?.bias || sfDay?.trend_bias || "neutral");
+    const dayBiasRaw =
+      pday?.bias ||
+      sfDay?.bias ||
+      sfDay?.trend_bias ||
+      ((String(pday?.mode || "").toLowerCase() !== "unknown") ? pday?.mode : null) ||
+      inferredDayBias ||
+      "neutral";
+
     const dayBias = String(dayBiasRaw).toUpperCase();
-    const dayConf = (pday?.confidence_pct ?? sfDay?.confidence_pct ?? (Number.isFinite(sfDay?.score) ? (sfDay.score * 100) : null));
+    const dayConf =
+      pday?.confidence_pct ??
+      sfDay?.confidence_pct ??
+      (Number.isFinite(sfDay?.score) ? (sfDay.score * 100) : null);
 
-    const dayStructTxt = (dayConf != null && isFinite(dayConf))
-      ? `${dayName} · ${String(dayBiasRaw)} · ${Math.round(dayConf)}%`
-      : `${dayName} · ${String(dayBiasRaw)}`;
+    const dayStructTxt =
+      dayStructSummary ||
+      ((dayConf != null && isFinite(dayConf))
+        ? `${dayName} · ${String(dayBiasRaw)} · ${Math.round(dayConf)}%`
+        : `${dayName} · ${String(dayBiasRaw)}`);
 
     set("pday-structure", dayStructTxt);
-// (FIX) Day window/ETA: fallback para premonition_hours / premonition_eod (payload real)
-const dayWin =
-  pday?.day_window || pday?.breakout_window || pday?.window ||
-  deepFind(root, "premonition_hours") ||
-  deepFind(root, "premonition_eod") ||
-  deepFind(digest, "premonition_hours") ||
-  deepFind(digest, "premonition_eod") ||
-  null;
 
-const dayDir = dayWin?.breakout_dir || dayWin?.dir || pday?.breakout_dir || "—";
-const dayEtaMedRaw = dayWin?.eta_median || dayWin?.eta_med || dayWin?.eta?.median || pday?.eta_median || "—";
-const dayEtaP75Raw = dayWin?.eta_p75 || dayWin?.eta?.p75 || pday?.eta_p75 || "—";
+    const dayWin =
+      pday?.day_window || pday?.breakout_window || pday?.window ||
+      deepFind(root, "premonition_hours") ||
+      deepFind(root, "premonition_eod") ||
+      deepFind(digest, "premonition_hours") ||
+      deepFind(digest, "premonition_eod") ||
+      null;
 
-const _clock = (v)=> (typeof fmtClock === "function" ? fmtClock(v) : String(v ?? "—"));
+    const dayDir = dayWin?.breakout_dir || dayWin?.dir || pday?.breakout_dir || "—";
+    const dayEtaMedRaw = dayWin?.eta_median || dayWin?.eta_med || dayWin?.eta?.median || pday?.eta_median || "—";
+    const dayEtaP75Raw = dayWin?.eta_p75 || dayWin?.eta?.p75 || pday?.eta_p75 || "—";
 
-set("pday-window", (dayDir && dayDir !== "—") ? String(dayDir).toUpperCase() : "—");
-set("pday-eta", `${_clock(dayEtaMedRaw)} → ${_clock(dayEtaP75Raw)}`);
-    
+    const _clock = (v)=> (typeof fmtClock === "function" ? fmtClock(v) : String(v ?? "—"));
+
+    set("pday-window", (dayDir && dayDir !== "—") ? String(dayDir).toUpperCase() : "—");
+    set("pday-eta", `${_clock(dayEtaMedRaw)} → ${_clock(dayEtaP75Raw)}`);
 
     const biasLow = String(dayBiasRaw).toLowerCase();
     const dayMode =
@@ -12920,9 +12968,10 @@ set("pday-eta", `${_clock(dayEtaMedRaw)} → ${_clock(dayEtaP75Raw)}`);
       (biasLow.includes("down") || biasLow.includes("bear")) ? "win-warn" :
       "win-wait";
 
-    const dayBadgeTxt = (dayConf != null && isFinite(dayConf))
-      ? `DAY: ${dayBias} · ${Math.round(dayConf)}%`
-      : `DAY: ${dayBias}`;
+    const dayBadgeTxt =
+      (dayConf != null && isFinite(dayConf))
+        ? `DAY: ${dayBias} · ${Math.round(dayConf)}%`
+        : `DAY: ${dayBias}`;
 
     setBadge("pday-badge", dayBadgeTxt, dayMode);
 
