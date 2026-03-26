@@ -12613,8 +12613,13 @@ const liveEmaHoldPct = num(
 set("indip-vwap-hold-phrase","—");
 set("indip-rsi-hold-phrase","—");
 set("indip-ema-hold-phrase","—");
-    const pxLive =
-      num(panel?.price_now ?? panel?.last_price ?? payload?.price_now ?? payload?.last_price);
+      const pxLive = num(
+      panel?.price_now ?? panel?.last_price ??
+      payload?.price_now ?? payload?.last_price ??
+      root?.price_now ?? root?.last_price ??
+      root?.current ?? payload?.current ??
+      root?.entry_ideal_touch ?? payload?.entry_ideal_touch
+    );
 
     const hasAnyLive =
       Number.isFinite(liveVwap) || Number.isFinite(liveRsi14) ||
