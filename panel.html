@@ -5850,11 +5850,13 @@
 }
 /* ===== FIX STABILITY — RIGHT COLUMN / STRUCTURAL CARD ===== */
 
+/* 1) a linha principal para de dimensionar pela largura do conteúdo */
 #zz-volume-row{
   grid-template-columns: minmax(0, 1fr) minmax(760px, 1.02fr) !important;
   align-items: start !important;
 }
 
+/* 2) a stack da direita passa a respeitar a coluna */
 #zz-side-stack{
   width: 100% !important;
   max-width: 100% !important;
@@ -5864,6 +5866,7 @@
   grid-template-columns: minmax(0, 1fr) !important;
 }
 
+/* 3) todos os cards da direita passam a ocupar a largura da coluna, não do texto */
 #bw-prem-card,
 #ema-exhaust-card,
 #replay-mode-card,
@@ -5874,6 +5877,7 @@
   justify-self: stretch !important;
 }
 
+/* 4) shells internos sem largura mínima fixa */
 #bw-prem-card .bwp-shell,
 #ema-exhaust-card .eex-shell,
 #replay-mode-card .replay-shell,
@@ -5884,6 +5888,7 @@
   overflow: hidden !important;
 }
 
+/* 5) STRUCTURAL vira 3 colunas estáveis: SETUP | PIVOT | BREAK */
 #bw-prem-card .bwp-main-grid{
   display: grid !important;
   grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr) minmax(0, 1fr) !important;
@@ -5891,6 +5896,7 @@
   align-items: start !important;
 }
 
+/* achata os wrappers sem mudar o HTML */
 #bw-prem-card .bwp-main-grid > div{
   display: contents !important;
 }
@@ -5904,7 +5910,6 @@
   min-width: 0 !important;
   width: auto !important;
 }
-
 #bw-prem-card .bwp-side-col{
   display: flex;
   flex-direction: column;
@@ -5919,7 +5924,7 @@
 #bw-prem-card .bwp-side-col .bwp-risk-block .bwp-sec-body{
   margin-top: 0 !important;
 }
-
+/* 6) texto pode quebrar, então o dado não arrebenta o card */
 #bw-prem-card .bwp-sec-body,
 #bw-prem-card .bwp-reading,
 #bw-prem-card .bwp-foot,
@@ -5933,6 +5938,7 @@
   word-break: break-word !important;
 }
 
+/* 7) linhas internas mais estáveis */
 #bw-prem-card .bwp-sec-body > div,
 #ema-exhaust-card .eex-sec-body > div{
   display: flex;
@@ -5940,7 +5946,6 @@
   align-items: baseline;
   gap: 14px;
 }
-
 #bw-prem-card .bwp-tactical-block{
   margin-top: 18px;
   padding-top: 12px;
@@ -5965,7 +5970,22 @@
   word-break: normal !important;
   overflow-wrap: break-word !important;
 }
+/* 8) badges e títulos não espremem o card */
+#bw-prem-card .prem-breakout-title,
+#ema-exhaust-card .prem-breakout-title,
+#replay-mode-card .prem-breakout-title,
+#entry-prem-card .prem-breakout-title{
+  min-width: 0 !important;
+}
 
+#bw-prem-card .win-badge,
+#ema-exhaust-card .win-badge,
+#replay-mode-card .win-badge,
+#entry-prem-card .win-badge{
+  flex-shrink: 0 !important;
+}
+
+/* 9) responsivo: abaixo disso empilha de novo para não quebrar */
 @media (max-width: 1400px){
   #zz-volume-row{
     grid-template-columns: 1fr !important;
@@ -6554,55 +6574,22 @@
                     
         </div>
                 <div id="zz-side-stack">
-                  <div class="bwp-main-grid">
-  <div>
-    <div class="bwp-two-col">
-      <div class="bwp-col">
-        <div class="bwp-sec-title">SETUP</div>
-
-        <div class="bwp-sec-body">
-          <div><span style="opacity:.7;">Pattern</span> <span id="bwp-setup" style="font-weight:950;">—</span></div>
-          <div><span style="opacity:.7;">Bias</span> <span id="bwp-bias" style="font-weight:950;">—</span></div>
-          <div><span style="opacity:.7;">Confidence</span> <span id="bwp-conf" style="font-weight:950;">—</span></div>
-          <div><span style="opacity:.7;">Price now</span> <span id="bwp-price-now" style="font-weight:950; color:#ffcc66;">—</span></div>
-        </div>
-
-        <div class="bwp-tactical-block">
-          <div class="bwp-sec-title">TACTICAL READ</div>
-          <div class="bwp-reading" id="bwp-reading">—</div>
-          <div class="bwp-foot" id="bwp-foot">—</div>
-        </div>
-      </div>
-
-      <div class="bwp-col">
-        <div class="bwp-sec-title">PIVOT / TRIGGERS</div>
-
-        <div class="bwp-sec-body">
-          <div><span style="opacity:.7;">Pivot price</span> <span id="bwp-pivot" style="font-weight:950;">—</span></div>
-          <div><span id="bwp-trigger-up-label" style="opacity:.7;">Trigger up</span> <span id="bwp-trigger-up" style="font-weight:950;">—</span></div>
-          <div><span id="bwp-trigger-down-label" style="opacity:.7;">Trigger down</span> <span id="bwp-trigger-down" style="font-weight:950;">—</span></div>
-          <div><span style="opacity:.7;">Respiro before break</span> <span id="bwp-breath" style="font-weight:950; color:#ffcc66;">—</span></div>
-        </div>
-      </div>
-    </div>
+                  <div class="prem-breakout-wrap" id="bw-prem-card">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+    <div class="prem-breakout-title">STRUCTURAL PATTERN PREMONITION</div>
+    <span id="bwp-badge" class="win-badge win-wait">—</span>
   </div>
 
-  <div class="bwp-side-col">
-    <div class="bwp-sec-title">BREAK / ETA / RISK</div>
-
-    <div class="bwp-risk-block">
-      <div class="bwp-sec-body">
-        <div><span style="opacity:.7;">Break up</span> <span id="bwp-break-up" style="font-weight:950;">—</span></div>
-        <div><span style="opacity:.7;">Break down</span> <span id="bwp-break-down" style="font-weight:950;">—</span></div>
-        <div><span style="opacity:.7;">ETA p25</span> <span id="bwp-eta-p25" style="font-weight:950;">—</span></div>
-        <div><span style="opacity:.7;">ETA p50</span> <span id="bwp-eta-p50" style="font-weight:950;">—</span></div>
-        <div><span style="opacity:.7;">ETA p75</span> <span id="bwp-eta-p75" style="font-weight:950;">—</span></div>
-        <div><span style="opacity:.7;">Target 1</span> <span id="bwp-target1" style="font-weight:950;">—</span></div>
-        <div><span style="opacity:.7;">Invalidation</span> <span id="bwp-invalidation" style="font-weight:950;">—</span></div>
-      </div>
+  <div class="bwp-shell">
+    <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">
+      PRIMARY READ
     </div>
-  </div>
-</div>
+
+    <div class="bwp-primary">
+      <span id="bwp-primary">—</span>
+    </div>
+
+    <div class="bwp-main-grid">
       <div>
         <div class="bwp-two-col">
           <div class="bwp-col">
