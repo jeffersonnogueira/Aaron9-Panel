@@ -5888,21 +5888,23 @@
   overflow: hidden !important;
 }
 
-/* 5) STRUCTURAL vira 3 colunas estáveis: SETUP | PIVOT | BREAK */
+/* 5) STRUCTURAL em 2 colunas: colunas em cima + tactical embaixo */
 #bw-prem-card .bwp-main-grid{
-  display: grid !important;
-  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr) minmax(0, 1fr) !important;
-  gap: 26px !important;
-  align-items: start !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1.10fr) minmax(360px,.92fr) !important;
+  gap:26px !important;
+  align-items:start !important;
 }
 
-/* achata os wrappers sem mudar o HTML */
 #bw-prem-card .bwp-main-grid > div{
-  display: contents !important;
+  display:block !important;
 }
 
 #bw-prem-card .bwp-two-col{
-  display: contents !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  gap:28px !important;
+  align-items:start !important;
 }
 
 #bw-prem-card .bwp-col,
@@ -6602,11 +6604,7 @@
               <div><span style="opacity:.7;">Price now</span> <span id="bwp-price-now" style="font-weight:950; color:#ffcc66;">—</span></div>
             </div>
 
-            <div class="bwp-tactical-block">
-              <div class="bwp-sec-title">TACTICAL READ</div>
-              <div class="bwp-reading" id="bwp-reading">—</div>
-              <div class="bwp-foot" id="bwp-foot">—</div>
-            </div>
+            
           </div>
 
           <div class="bwp-col">
@@ -6640,6 +6638,11 @@
         
       </div>
     </div>
+    <div class="bwp-tactical-block">
+              <div class="bwp-sec-title">TACTICAL READ</div>
+              <div class="bwp-reading" id="bwp-reading">—</div>
+              <div class="bwp-foot" id="bwp-foot">—</div>
+            </div>
   </div>
 </div>
                   <div class="prem-breakout-wrap" id="ema-exhaust-card" style="margin-top:0; min-width:0;">
