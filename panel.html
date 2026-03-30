@@ -5890,49 +5890,49 @@
 
 /* 5) STRUCTURAL vira 3 colunas estáveis: SETUP | PIVOT | BREAK */
 #bw-prem-card .bwp-main-grid{
-  display: grid !important;
-  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr) minmax(0, 1fr) !important;
-  gap: 26px !important;
-  align-items: start !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) !important;
+  gap:26px !important;
+  align-items:start !important;
 }
 
-/* achata os wrappers sem mudar o HTML */
-#bw-prem-card .bwp-main-grid > div{
-  display: contents !important;
-}
-
+#bw-prem-card .bwp-main-grid > div,
 #bw-prem-card .bwp-two-col{
-  display: contents !important;
+  display:contents !important;
 }
 
 #bw-prem-card .bwp-col,
 #bw-prem-card .bwp-side-col{
-  min-width: 0 !important;
-  width: auto !important;
+  min-width:0 !important;
+  width:auto !important;
 }
 
 #bw-prem-card .bwp-side-col{
-  display: flex;
-  flex-direction: column;
-  align-self: start;
-  width: 100% !important;
-  min-width: 0 !important;
+  display:block !important;
+  align-self:start !important;
 }
 
 #bw-prem-card .bwp-risk-block{
-  margin-top: 10px;
-  display: block;
-  width: 100% !important;
-  min-width: 0 !important;
+  display:contents !important;
+  margin-top:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  width:auto !important;
+  min-width:0 !important;
 }
 
-#bw-prem-card .bwp-side-col .bwp-risk-block .bwp-sec-body{
-  margin-top: 0 !important;
-  width: 100% !important;
+#bw-prem-card .bwp-side-col .bwp-sec-body{
+  margin-top:8px !important;
+  width:auto !important;
 }
 
-#bw-prem-card .bwp-side-col .bwp-risk-block .bwp-sec-body > div{
-  width: 100% !important;
+#bw-prem-card .bwp-side-col .bwp-sec-body > div{
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:baseline !important;
+  gap:14px !important;
+  width:100% !important;
 }
 /* 6) texto pode quebrar, então o dado não arrebenta o card */
 #bw-prem-card .bwp-sec-body,
