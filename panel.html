@@ -5848,7 +5848,128 @@
   font-size: 13px;
   opacity: .82;
 }
+/* ===== FIX STABILITY — RIGHT COLUMN / STRUCTURAL CARD ===== */
 
+/* 1) a linha principal para de dimensionar pela largura do conteúdo */
+#zz-volume-row{
+  grid-template-columns: minmax(0, 1fr) minmax(760px, 1.02fr) !important;
+  align-items: start !important;
+}
+
+/* 2) a stack da direita passa a respeitar a coluna */
+#zz-side-stack{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  justify-self: stretch !important;
+  align-self: start !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+/* 3) todos os cards da direita passam a ocupar a largura da coluna, não do texto */
+#bw-prem-card,
+#ema-exhaust-card,
+#replay-mode-card,
+#entry-prem-card{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  justify-self: stretch !important;
+}
+
+/* 4) shells internos sem largura mínima fixa */
+#bw-prem-card .bwp-shell,
+#ema-exhaust-card .eex-shell,
+#replay-mode-card .replay-shell,
+#entry-prem-card .entryprem-shell{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* 5) STRUCTURAL vira 3 colunas estáveis: SETUP | PIVOT | BREAK */
+#bw-prem-card .bwp-main-grid{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 26px !important;
+  align-items: start !important;
+}
+
+/* achata os wrappers sem mudar o HTML */
+#bw-prem-card .bwp-main-grid > div{
+  display: contents !important;
+}
+
+#bw-prem-card .bwp-two-col{
+  display: contents !important;
+}
+
+#bw-prem-card .bwp-col,
+#bw-prem-card .bwp-side-col{
+  min-width: 0 !important;
+  width: auto !important;
+}
+
+/* 6) texto pode quebrar, então o dado não arrebenta o card */
+#bw-prem-card .bwp-sec-body,
+#bw-prem-card .bwp-reading,
+#bw-prem-card .bwp-foot,
+#ema-exhaust-card .eex-sec-body,
+#ema-exhaust-card .eex-reading,
+#replay-mode-card .replay-value,
+#entry-prem-card .entryprem-v,
+#entry-prem-card .entryprem-read-body{
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* 7) linhas internas mais estáveis */
+#bw-prem-card .bwp-sec-body > div,
+#ema-exhaust-card .eex-sec-body > div{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+}
+
+/* 8) badges e títulos não espremem o card */
+#bw-prem-card .prem-breakout-title,
+#ema-exhaust-card .prem-breakout-title,
+#replay-mode-card .prem-breakout-title,
+#entry-prem-card .prem-breakout-title{
+  min-width: 0 !important;
+}
+
+#bw-prem-card .win-badge,
+#ema-exhaust-card .win-badge,
+#replay-mode-card .win-badge,
+#entry-prem-card .win-badge{
+  flex-shrink: 0 !important;
+}
+
+/* 9) responsivo: abaixo disso empilha de novo para não quebrar */
+@media (max-width: 1400px){
+  #zz-volume-row{
+    grid-template-columns: 1fr !important;
+  }
+
+  #bw-prem-card .bwp-main-grid{
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  #bw-prem-card .bwp-main-grid > div{
+    display: block !important;
+  }
+
+  #bw-prem-card .bwp-two-col{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
   </style>
 </head>
 
