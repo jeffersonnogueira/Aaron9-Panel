@@ -4216,7 +4216,26 @@
 #bw-prem-card .bwp-side-col{
   min-width:360px;
 }
+#bw-prem-card .bwp-side-col{
+  min-width:360px;
+  display:flex;
+  flex-direction:column;
+  align-self:start;
+}
 
+#bw-prem-card .bwp-risk-block{
+  margin-top:10px;
+  width:100%;
+  padding:12px 14px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+#bw-prem-card .bwp-risk-block .bwp-sec-body{
+  margin-top:0 !important;
+}
 #bw-prem-card .bwp-sec-title{
   color:#ffcc66 !important;
   font-size:26px !important;
@@ -6580,23 +6599,21 @@
     <span id="bwp-badge" class="win-badge win-wait">—</span>
   </div>
 
-  <div class="bwp-shell">
-    <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">
-      PRIMARY READ
-    </div>
+        <div class="bwp-side-col">
+        <div class="bwp-sec-title">BREAK / ETA / RISK</div>
 
-    <div class="bwp-primary">
-      <span id="bwp-primary">—</span>
-    </div>
-
-    <div class="bwp-main-grid">
-      <div>
-        <div class="bwp-two-col">
-          <div class="bwp-col">
-            <div class="bwp-sec-title">SETUP</div>
-
-                                    <div class="bwp-sec-body">
-              <div><span style="opacity:.7;">Pattern</span> <span id="bwp-setup" style="font-weight:950;">—</span></div>
+        <div class="bwp-risk-block">
+          <div class="bwp-sec-body">
+            <div><span style="opacity:.7;">Break up</span> <span id="bwp-break-up" style="font-weight:950;">—</span></div>
+            <div><span style="opacity:.7;">Break down</span> <span id="bwp-break-down" style="font-weight:950;">—</span></div>
+            <div><span style="opacity:.7;">ETA p25</span> <span id="bwp-eta-p25" style="font-weight:950;">—</span></div>
+            <div><span style="opacity:.7;">ETA p50</span> <span id="bwp-eta-p50" style="font-weight:950;">—</span></div>
+            <div><span style="opacity:.7;">ETA p75</span> <span id="bwp-eta-p75" style="font-weight:950;">—</span></div>
+            <div><span style="opacity:.7;">Target 1</span> <span id="bwp-target1" style="font-weight:950;">—</span></div>
+            <div><span style="opacity:.7;">Invalidation</span> <span id="bwp-invalidation" style="font-weight:950;">—</span></div>
+          </div>
+        </div>
+      </div>
               <div><span style="opacity:.7;">Bias</span> <span id="bwp-bias" style="font-weight:950;">—</span></div>
               <div><span style="opacity:.7;">Confidence</span> <span id="bwp-conf" style="font-weight:950;">—</span></div>
               <div><span style="opacity:.7;">Price now</span> <span id="bwp-price-now" style="font-weight:950; color:#ffcc66;">—</span></div>
