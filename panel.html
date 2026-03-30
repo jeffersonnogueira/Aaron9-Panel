@@ -5915,15 +5915,24 @@
   display: flex;
   flex-direction: column;
   align-self: start;
+  width: 100% !important;
+  min-width: 0 !important;
 }
 
 #bw-prem-card .bwp-risk-block{
   margin-top: 10px;
   display: block;
+  width: 100% !important;
+  min-width: 0 !important;
 }
 
 #bw-prem-card .bwp-side-col .bwp-risk-block .bwp-sec-body{
   margin-top: 0 !important;
+  width: 100% !important;
+}
+
+#bw-prem-card .bwp-side-col .bwp-risk-block .bwp-sec-body > div{
+  width: 100% !important;
 }
 /* 6) texto pode quebrar, então o dado não arrebenta o card */
 #bw-prem-card .bwp-sec-body,
