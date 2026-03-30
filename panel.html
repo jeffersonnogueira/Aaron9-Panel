@@ -4732,6 +4732,115 @@
     grid-template-columns:1fr;
   }
 }
+/* ===== EXHAUSTION REVERSAL PREMONITION — ABOVE PIVOT ===== */
+#exhaust-reversal-card{
+  margin-top:0 !important;
+  min-width:0;
+  width:100%;
+}
+
+#exhaust-reversal-card .prem-breakout-title{
+  font-size:28px !important;
+  opacity:.90 !important;
+}
+
+#exhaust-reversal-card .win-badge{
+  font-size:22px !important;
+  padding:10px 16px !important;
+}
+
+#exhaust-reversal-card .entryprem-shell{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+  margin-top:10px;
+  min-width:0;
+}
+
+#exhaust-reversal-card .entryprem-top{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+#exhaust-reversal-card .entryprem-mode{
+  font-size:30px !important;
+  font-weight:950;
+  line-height:1.2;
+  color:#ffcc66;
+}
+
+#exhaust-reversal-card .entryprem-sub{
+  font-size:22px !important;
+  line-height:1.25;
+  opacity:.88;
+}
+
+#exhaust-reversal-card .entryprem-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+
+#exhaust-reversal-card .entryprem-box{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+}
+
+#exhaust-reversal-card .entryprem-k{
+  font-size:22px !important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+  margin-bottom:6px;
+}
+
+#exhaust-reversal-card .entryprem-v{
+  font-size:24px !important;
+  line-height:1.35;
+  font-weight:900;
+}
+
+#exhaust-reversal-card .entryprem-v strong{
+  color:#ffcc66;
+}
+
+#exhaust-reversal-card .entryprem-read{
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+}
+
+#exhaust-reversal-card .entryprem-read-title{
+  font-size:22px !important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+  margin-bottom:6px;
+}
+
+#exhaust-reversal-card .entryprem-read-body{
+  font-size:30px !important;
+  line-height:1.22;
+  font-weight:950;
+  color:#ffcc66;
+}
+
+@media (max-width: 1200px){
+  #exhaust-reversal-card .entryprem-grid{
+    grid-template-columns:1fr;
+  }
+}
 @media (max-width: 1200px){
   #zz-side-stack{
     width:auto;
@@ -6453,6 +6562,68 @@
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
                     <div id="zz-left-stack">
+                      <div class="prem-breakout-wrap" id="exhaust-reversal-card">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">EXHAUSTION REVERSAL PREMONITION</div>
+    <span id="erp-badge" class="win-badge win-wait">NO SETUP</span>
+  </div>
+
+  <div class="entryprem-shell">
+    <div class="entryprem-top">
+      <div class="entryprem-mode" id="erp-mode">—</div>
+      <div class="entryprem-sub">
+        Setup <strong id="erp-style">—</strong>
+        <span style="opacity:.55;">|</span>
+        Watch <strong id="erp-watch">—</strong>
+      </div>
+    </div>
+
+    <div class="entryprem-grid">
+      <div class="entryprem-box">
+        <div class="entryprem-k">WINDOW</div>
+        <div class="entryprem-v">
+          Zone <strong id="erp-zone">—</strong><br>
+          Reference candle <strong id="erp-ref">—</strong><br>
+          Same-level match <strong id="erp-same">—</strong><br>
+          Valid bars <strong id="erp-valid">—</strong>
+        </div>
+      </div>
+
+      <div class="entryprem-box">
+        <div class="entryprem-k">EXHAUSTION / FLOW</div>
+        <div class="entryprem-v">
+          Candle <strong id="erp-candle">—</strong><br>
+          Volume fade <strong id="erp-vfade">—</strong><br>
+          Effort→Result weak <strong id="erp-evr">—</strong><br>
+          Exhaustion score <strong id="erp-score">—</strong>
+        </div>
+      </div>
+
+      <div class="entryprem-box">
+        <div class="entryprem-k">CONFIRM / CANCEL</div>
+        <div class="entryprem-v">
+          Confirm <strong id="erp-confirm">—</strong><br>
+          Cancel <strong id="erp-cancel">—</strong><br>
+          Confirmation needed <strong id="erp-needed">—</strong><br>
+          False reversal risk <strong id="erp-risk">—</strong>
+        </div>
+      </div>
+
+      <div class="entryprem-box">
+        <div class="entryprem-k">PATH AFTER CONFIRM</div>
+        <div class="entryprem-v">
+          MAE p50 <strong id="erp-mae50">—</strong> | p75 <strong id="erp-mae75">—</strong><br>
+          MFE p50 <strong id="erp-mfe50">—</strong> | p75 <strong id="erp-mfe75">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="entryprem-read">
+      <div class="entryprem-read-title">TACTICAL READ</div>
+      <div class="entryprem-read-body" id="erp-read">—</div>
+    </div>
+  </div>
+</div>
                         <div class="prem-breakout-wrap" id="pivot-prem-card">
     <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap;">
       <div class="prem-breakout-title">PIVOT PREMONITION</div>
@@ -14048,6 +14219,160 @@ if (Number.isFinite(pnum) && pnum >= STRONG_MIN && !isWide) zzb.classList.add("p
       set("zz-next","—"); set("zz-hz","—"); set("zz-conf","—");
       set("zz-zone","—"); set("zz-eta","—"); set("zz-context","—");
     }
+        // ===== EXHAUSTION REVERSAL PREMONITION =====
+    {
+      const clearERP = () => {
+        setBadge("erp-badge", "NO SETUP", "win-wait");
+        [
+          "erp-mode",
+          "erp-style",
+          "erp-watch",
+          "erp-zone",
+          "erp-ref",
+          "erp-same",
+          "erp-valid",
+          "erp-candle",
+          "erp-vfade",
+          "erp-evr",
+          "erp-score",
+          "erp-confirm",
+          "erp-cancel",
+          "erp-needed",
+          "erp-risk",
+          "erp-mae50",
+          "erp-mae75",
+          "erp-mfe50",
+          "erp-mfe75",
+          "erp-read"
+        ].forEach(id => set(id, "—"));
+      };
+
+      const erp =
+        root?.exhaustion_reversal_premonition_v1 ||
+        ui?.exhaustion_reversal_premonition_v1 ||
+        digest?.exhaustion_reversal_premonition_v1 ||
+        panel?.exhaustion_reversal_premonition_v1 ||
+        root?.exec_1x1?.exhaustion_reversal_premonition_v1 ||
+        root?.live?.exhaustion_reversal_premonition_v1 ||
+        null;
+
+      if (!erp) {
+        clearERP();
+      } else {
+        const toNum = (v) => {
+          const n = Number(v);
+          return Number.isFinite(n) ? n : null;
+        };
+
+        const fmtPctSafe = (v) => {
+          const n = toNum(v);
+          if (n == null) return "—";
+          return `${n.toFixed(2).replace(/\.00$/, "")}%`;
+        };
+
+        const fmtBool = (v) => {
+          if (v === true) return "YES";
+          if (v === false) return "NO";
+          return "—";
+        };
+
+        const sideRaw = String(
+          erp?.selected_side ||
+          erp?.direction_now ||
+          erp?.setup_label ||
+          ""
+        ).toLowerCase();
+
+        const side =
+          sideRaw.includes("short") ? "short" :
+          sideRaw.includes("long")  ? "long"  :
+          null;
+
+        const stateRaw = String(erp?.status || erp?.state || "NO_SETUP").toUpperCase();
+        const headline = String(erp?.headline || stateRaw.replace(/_/g, " ")).trim() || "NO SETUP";
+        const setupTxt = String(erp?.setup_label || erp?.candle_type || "—").trim() || "—";
+
+        const windowX = erp?.window || {};
+        const flow = erp?.exhaustion_flow || {};
+        const cc = erp?.confirm_cancel || {};
+        const path = erp?.path_after_confirm || {};
+
+        let badgeTxt = "NO SETUP";
+        let badgeMode = "win-wait";
+
+        if (stateRaw.includes("CONFIRMED")) {
+          badgeTxt = "CONFIRMED";
+          badgeMode = "win-now";
+        } else if (stateRaw.includes("ARMING")) {
+          badgeTxt = "ARMING";
+          badgeMode = "win-warn";
+        } else if (stateRaw.includes("WATCH")) {
+          badgeTxt = "WATCH";
+          badgeMode = "win-warn";
+        }
+
+        const confirmAbove = cc?.confirm_above ?? erp?.confirm_above ?? erp?.trigger_up;
+        const confirmBelow = cc?.confirm_below ?? erp?.confirm_below ?? erp?.trigger_down;
+        const cancelAbove  = cc?.cancel_above  ?? erp?.cancel_above;
+        const cancelBelow  = cc?.cancel_below  ?? erp?.cancel_below;
+
+        let confirmTxt = "—";
+        let cancelTxt = "—";
+
+        if (side === "short") {
+          confirmTxt = toNum(confirmBelow) == null ? "—" : `Below ${fmt2(confirmBelow)}`;
+          cancelTxt  = toNum(cancelAbove)  == null ? "—" : `Above ${fmt2(cancelAbove)}`;
+        } else if (side === "long") {
+          confirmTxt = toNum(confirmAbove) == null ? "—" : `Above ${fmt2(confirmAbove)}`;
+          cancelTxt  = toNum(cancelBelow)  == null ? "—" : `Below ${fmt2(cancelBelow)}`;
+        } else {
+          if (toNum(confirmAbove) != null) confirmTxt = `Above ${fmt2(confirmAbove)}`;
+          else if (toNum(confirmBelow) != null) confirmTxt = `Below ${fmt2(confirmBelow)}`;
+
+          if (toNum(cancelAbove) != null) cancelTxt = `Above ${fmt2(cancelAbove)}`;
+          else if (toNum(cancelBelow) != null) cancelTxt = `Below ${fmt2(cancelBelow)}`;
+        }
+
+        const zoneTxt =
+          (windowX?.zone_low != null || windowX?.zone_high != null)
+            ? `${fmt2(windowX?.zone_low)} → ${fmt2(windowX?.zone_high)}`
+            : "—";
+
+        setBadge("erp-badge", badgeTxt, badgeMode);
+
+        set("erp-mode", headline);
+        set("erp-style", setupTxt.toUpperCase());
+        set("erp-watch", fmtPctSafe(erp?.reversal_watch_pct));
+
+        set("erp-zone", zoneTxt);
+        set("erp-ref", fmt2(windowX?.reference_candle ?? erp?.setup_price_ref));
+        set("erp-same", fmtPctSafe(windowX?.same_level_match_pct ?? erp?.same_level_match_pct));
+        set("erp-valid", windowX?.valid_bars ?? cc?.valid_bars ?? 2);
+
+        set("erp-candle", String(erp?.candle_type || "—").toUpperCase());
+        set("erp-vfade", fmtPctSafe(flow?.volume_fade_pct ?? erp?.volume_fade_pct));
+        set("erp-evr", fmtPctSafe(flow?.effort_vs_result_weak_pct ?? erp?.effort_vs_result_weak_pct));
+        set("erp-score", fmtPctSafe(erp?.exhaustion_score_pct));
+
+        set("erp-confirm", confirmTxt);
+        set("erp-cancel", cancelTxt);
+        set("erp-needed", fmtBool(cc?.confirmation_needed ?? erp?.confirmation_needed));
+        set("erp-risk", fmtPctSafe(cc?.false_reversal_risk_pct ?? erp?.false_reversal_risk_pct));
+
+        set("erp-mae50", fmt2(path?.mae_usd?.p50));
+        set("erp-mae75", fmt2(path?.mae_usd?.p75));
+        set("erp-mfe50", fmt2(path?.mfe_usd?.p50));
+        set("erp-mfe75", fmt2(path?.mfe_usd?.p75));
+
+        set(
+          "erp-read",
+          erp?.tactical_read_pt ||
+          erp?.tactical_read_en ||
+          "Sem setup claro de reversão por exaustão agora."
+        );
+      }
+    }
+    // ===== /EXHAUSTION REVERSAL PREMONITION =====
         // ===== PIVOT PREMONITION (NEW BLOCK) =====
     {
       const clearPP = () => {
