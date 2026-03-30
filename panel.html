@@ -5915,24 +5915,34 @@
   display: flex;
   flex-direction: column;
   align-self: start;
-  width: 100% !important;
+  width: auto !important;
   min-width: 0 !important;
 }
 
 #bw-prem-card .bwp-risk-block{
   margin-top: 10px;
-  display: block;
-  width: 100% !important;
-  min-width: 0 !important;
+  display: inline-block;
+  width: auto !important;
+  min-width: 280px;
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: rgba(0,0,0,.22);
 }
 
 #bw-prem-card .bwp-side-col .bwp-risk-block .bwp-sec-body{
   margin-top: 0 !important;
-  width: 100% !important;
+  width: auto !important;
 }
 
 #bw-prem-card .bwp-side-col .bwp-risk-block .bwp-sec-body > div{
-  width: 100% !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 18px;
+  width: auto !important;
+  white-space: nowrap;
 }
 /* 6) texto pode quebrar, então o dado não arrebenta o card */
 #bw-prem-card .bwp-sec-body,
