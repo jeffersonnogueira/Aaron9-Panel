@@ -1424,8 +1424,15 @@ setTimeout(flicker,2500);
   function updateStructural(payload){
     const sp = shapeParse(payload);
     const p = payload.panel;
+    const geom = pick(p.shape_runtime_geometry_v1, deepFind(payload.root, 'shape_runtime_geometry_v1'), {}) || {};
     const dir = String(sp.direction || '').toUpperCase();
     const dirLabel = dir === 'UP' ? 'UP BIAS' : (dir === 'DOWN' ? 'DOWN BIAS' : 'RANGE');
+    const upPct = num(sp.upPct, geom.break_up_pct, geom.prob_up_pct);
+    const downPct = num(sp.downPct, geom.break_down_pct, geom.prob_down_pct);
+    const etaP50 = pick(sp.etaP50, fmtBars(num(geom.eta_p50_bars)), fmtMin(num(geom.eta_p50_min)), '—');
+    const etaP75 = pick(sp.etaP75, fmtBars(num(geom.eta_p75_bars)), fmtMin(num(geom.eta_p75_min)), '—');
+    const target1 = num(sp.target1, geom.target_1, geom.target1);
+    const invalidation = num(sp.invalidation, geom.invalidation, geom.cancel_if_below);
     setText('a15-struct-badge', p.shape_trigger_enabled ? 'Triggered' : 'Watching');
     setBadgeClass('a15-struct-badge', p.shape_trigger_enabled ? 'b-g' : 'b-gray');
     setHTML('a15-struct-pattern', `${humanPattern(sp.detector)} <span style="font-size:14px;font-weight:600;color:rgba(255,255,255,.5);margin-left:6px">| ${dirLabel} |</span>`);
@@ -1433,27 +1440,34 @@ setTimeout(flicker,2500);
     setText('a15-struct-trigger-badge', dir === 'UP' ? '⬆ Trigger Up' : (dir === 'DOWN' ? '⬇ Trigger Down' : '⟂ Range'));
     setBadgeClass('a15-struct-trigger-badge', dir === 'UP' ? 'b-b' : (dir === 'DOWN' ? 'b-r' : 'b-gray'));
     setText('a15-struct-tactical', pick(p.shape_trigger_card_lines?.[1], p.shape_trigger_line, '—'));
-    setText('a15-struct-respiro', fmtPrice(sp.respiro));
+    setText('a15-struct-respiro', fmtPrice(num(sp.respiro, geom.respiro_before_break, geom.respiro)));
     setText('a15-struct-kv-pattern', humanPattern(sp.detector));
     setText('a15-struct-kv-bias', dirLabel);
-    setText('a15-struct-kv-confidence', fmtPct(Math.max(num(sp.upPct), num(sp.downPct))));
+    setText('a15-struct-kv-confidence', fmtPct(Math.max(num(upPct), num(downPct))));
     setText('a15-struct-kv-price-now', fmtPrice(num(p.price_now, p.last_price, p.reference_price)));
     setText('a15-struct-kv-mode', cap(p.shape_trigger_stage || 'formed'));
-    setText('a15-struct-kv-formed-bars', pick(p.shape_runtime_geometry_v1?.bars, '—'));
-    setText('a15-struct-kv-pivot-price', fmtPrice(sp.pivot));
-    setText('a15-struct-kv-trigger-up', fmtPrice(sp.triggerUp));
-    setText('a15-struct-kv-trigger-down', fmtPrice(sp.triggerDown));
-    setText('a15-struct-kv-cancel-if-below', fmtPrice(sp.invalidation));
-    setText('a15-struct-kv-req-before-break', fmtPrice(sp.respiro));
-    setText('a15-struct-kv-hold-min', pick(sp.etaP50, '—'));
-    setText('a15-struct-metric-target-1', fmtPrice(sp.target1));
-    setText('a15-struct-metric-target-2', fmtPrice(num(p.pivot2_price_p50)));
-    setText('a15-struct-metric-target-3', fmtPrice(num(p.macro_take)));
-    setText('a15-struct-metric-invalidation', fmtPrice(sp.invalidation));
-    setText('a15-struct-metric-eta-p50', pick(sp.etaP50, '—'));
-    setText('a15-struct-metric-eta-p75', pick(sp.etaP75, '—'));
-    setText('a15-struct-note', pick(p.shape_trigger_card_lines?.slice(2).join(' • '), p.shape_trigger_card_text, '—'));
-    updLineChart('structChart', ['TriggerDn','Now','TriggerUp','Target'], [sp.triggerDown ?? 0, num(p.price_now,p.last_price,p.reference_price) ?? 0, sp.triggerUp ?? 0, sp.target1 ?? sp.triggerUp ?? 0], {
+    setText('a15-struct-kv-formed-bars', pick(geom.bars, geom.formed_bars, '—'));
+    setText('a15-struct-kv-pivot-price', fmtPrice(num(sp.pivot, geom.pivot_price, geom.pivot)));
+    setText('a15-struct-kv-trigger-up', fmtPrice(num(sp.triggerUp, geom.trigger_up, geom.triggerUp)));
+    setText('a15-struct-kv-trigger-down', fmtPrice(num(sp.triggerDown, geom.trigger_down, geom.triggerDown)));
+    setText('a15-struct-kv-cancel-if-below', fmtPrice(invalidation));
+    setText('a15-struct-kv-req-before-break', fmtPrice(num(sp.respiro, geom.respiro_before_break, geom.respiro)));
+    setText('a15-struct-kv-hold-min', etaP50);
+    setText('a15-struct-kv-break-up', fmtPct(upPct));
+    setText('a15-struct-kv-break-down', fmtPct(downPct));
+    setText('a15-struct-kv-eta-p50', etaP50);
+    setText('a15-struct-kv-eta-p75', etaP75);
+    setText('a15-struct-kv-target-1', fmtPrice(target1));
+    setText('a15-struct-kv-invalidation', fmtPrice(invalidation));
+    setText('a15-struct-metric-target-1', fmtPrice(target1));
+    setText('a15-struct-metric-target-2', fmtPrice(num(p.pivot2_price_p50, geom.target_2, geom.target2)));
+    setText('a15-struct-metric-target-3', fmtPrice(num(p.macro_take, geom.target_3, geom.target3)));
+    setText('a15-struct-metric-invalidation', fmtPrice(invalidation));
+    setText('a15-struct-metric-eta-p50', etaP50);
+    setText('a15-struct-metric-eta-p75', etaP75);
+    const structNote = byId('a15-struct-note');
+    if (structNote) structNote.title = pick(p.shape_trigger_card_lines?.slice(2).join(' • '), p.shape_trigger_card_text, '—');
+    updLineChart('structChart', ['TriggerDn','Now','TriggerUp','Target'], [num(sp.triggerDown, geom.trigger_down) ?? 0, num(p.price_now,p.last_price,p.reference_price) ?? 0, num(sp.triggerUp, geom.trigger_up) ?? 0, target1 ?? num(sp.triggerUp, geom.trigger_up) ?? 0], {
       pointRadius:[4,5,5,6],
       pointBackgroundColor:['#FF453A','#0A84FF','#64D2FF','#30D158']
     });
@@ -1461,7 +1475,6 @@ setTimeout(flicker,2500);
 
   function updateEMAEx(payload){
     const ema = pick(payload.panel.ema_volume_exhaustion_premonition_v1, deepFind(payload.root,'ema_volume_exhaustion_premonition_v1'), {}) || {};
-    const current = num(payload.panel.price_now, payload.panel.last_price, payload.panel.reference_price);
     const ema20 = num(ema.ema?.ema20, payload.panel.live_ema_fast, payload.root.live_ema_fast);
     const ema50 = num(ema.ema?.ema50, payload.panel.live_ema_slow, payload.root.live_ema_slow);
     const deltaPct = num(ema.ema?.delta_pct, ema.delta_pct);
@@ -1482,9 +1495,8 @@ setTimeout(flicker,2500);
     setText('a15-emaex-kv-eta-weaken', fmtMin(num(ema.turn_eta_p50_min, ema.reversal_eta_p50_min)));
     setText('a15-emaex-kv-eta-exhaust', fmtMin(num(ema.exhaustion_eta_p50_min)));
     setText('a15-emaex-kv-rev-window', `${fmtBars(num(ema.eta?.reversal_window_bars_low))} → ${fmtBars(num(ema.eta?.reversal_window_bars_high))}`);
-    setText('a15-emaex-kv-hold-noise', pick(ema.hold_text, '—'));
+    setText('a15-emaex-kv-hold---noise', pick(ema.hold_text, '—'));
     setText('a15-emaex-kv-next-leg', cap(pick(ema.next_impulse_kind, '—')));
-    // metrics
     setText('a15-emaex-metric-continue', fmtPct(num(ema.continuation_pct, ema.continuation_premonition_pct)));
     setText('a15-emaex-metric-exhaust', fmtPct(num(ema.exhaustion_pct, ema.exhaustion_premonition_pct)));
     setText('a15-emaex-metric-rev-risk', fmtPct(num(ema.reversal_pct, ema.reversal_premonition_pct)));
@@ -1492,33 +1504,25 @@ setTimeout(flicker,2500);
     setText('a15-emaex-metric-eta-weaken', fmtBars(num(ema.turn_eta_p50_min, ema.reversal_eta_p50_min)));
     setText('a15-emaex-metric-eta-exhaust', fmtBars(num(ema.exhaustion_eta_p50_min)));
     const wp = [
-      num(ema.window_pressure_1m?.pct, ema.pressure_1m?.pct),
-      num(ema.window_pressure_5m?.pct, ema.pressure_5m?.pct),
-      num(ema.window_pressure_15m?.pct, ema.pressure_15m?.pct),
-      num(ema.window_pressure_30m?.pct, ema.pressure_30m?.pct),
-      num(ema.window_pressure_60m?.pct, ema.pressure_60m?.pct)
+      [pick(ema.window_pressure_1m?.label, ema.pressure_1m?.label), num(ema.window_pressure_1m?.pct, ema.pressure_1m?.pct)],
+      [pick(ema.window_pressure_5m?.label, ema.pressure_5m?.label), num(ema.window_pressure_5m?.pct, ema.pressure_5m?.pct)],
+      [pick(ema.window_pressure_15m?.label, ema.pressure_15m?.label), num(ema.window_pressure_15m?.pct, ema.pressure_15m?.pct)],
+      [pick(ema.window_pressure_30m?.label, ema.pressure_30m?.label), num(ema.window_pressure_30m?.pct, ema.pressure_30m?.pct)],
+      [pick(ema.window_pressure_60m?.label, ema.pressure_60m?.label), num(ema.window_pressure_60m?.pct, ema.pressure_60m?.pct)]
     ];
-    updBarChart('emaPressChart',['1m','5m','15m','30m','60m'], wp.map(x=>x??0));
-    const wpRows = [
-      ['1m', pick(ema.window_pressure_1m?.label, ema.pressure_1m?.label), wp[0]],
-      ['5m', pick(ema.window_pressure_5m?.label, ema.pressure_5m?.label), wp[1]],
-      ['15m', pick(ema.window_pressure_15m?.label, ema.pressure_15m?.label), wp[2]],
-      ['30m', pick(ema.window_pressure_30m?.label, ema.pressure_30m?.label), wp[3]],
-      ['60m', pick(ema.window_pressure_60m?.label, ema.pressure_60m?.label), wp[4]],
-    ];
-    wpRows.forEach((row, idx) => {
-      const el = byId(`a15-emaex-kv-${idx}`); // none
+    updBarChart('emaPressChart',['1m','5m','15m','30m','60m'], wp.map(x=>x[1]??0));
+    ['1m','5m','15m','30m','60m'].forEach((tf, i) => {
+      setText(`a15-emaex-kv-${tf}`, `${pick(wp[i][0],'—')} · ${fmtPct(wp[i][1])}`);
     });
-    // direct row texts
-    const rowEls = byId('a15-emaex-card').querySelectorAll('.wp-row');
-    wpRows.forEach((row, i) => {
+    const card = byId('a15-emaex-card');
+    const rowEls = card ? card.querySelectorAll('.wp-row') : [];
+    wp.forEach((row, i) => {
       const el = rowEls[i]; if (!el) return;
       const spans = el.querySelectorAll('span');
-      if (spans[0]) spans[0].textContent = row[0];
-      if (spans[1]) spans[1].textContent = row[1] || '—';
-      if (spans[2]) spans[2].textContent = fmtPct(row[2]);
+      if (spans[0]) spans[0].textContent = ['1m','5m','15m','30m','60m'][i];
+      if (spans[1]) spans[1].textContent = row[0] || '—';
+      if (spans[2]) spans[2].textContent = fmtPct(row[1]);
     });
-    setText('a15-emaex-reading', pick(ema.tactical_read_pt, ema.reading, '—'));
   }
 
   function updateVolume(payload){
@@ -1542,11 +1546,9 @@ setTimeout(flicker,2500);
     });
     setText('a15-vol-eta-target', fmtPrice(num(vol.next_impulse_target_price_p50, payload.panel.volume_premonition_target_price_p50)));
     const byH = vol.by_horizon || {};
-    const wpRows = [
-      ['1m', byH['1']], ['5m', byH['5']], ['15m', byH['15']], ['30m', byH['30']], ['60m', byH['60']]
-    ];
-    wpRows.forEach(([tf,obj], idx) => {
-      const row = byId(`a15-vol-wp-${idx+1}`); if (!row) return;
+    const rowIds = ['a15-vol-wp-1','a15-vol-wp-2','a15-vol-wp-3','a15-vol-wp-4','a15-vol-note'];
+    [['1m', byH['1']], ['5m', byH['5']], ['15m', byH['15']], ['30m', byH['30']], ['60m', byH['60']]].forEach(([tf,obj], idx) => {
+      const row = byId(rowIds[idx]); if (!row) return;
       const spans = row.querySelectorAll('span');
       const cont = num(obj?.continuation_premonition_pct), ex = num(obj?.exhaustion_premonition_pct), wk = num(obj?.weakening_premonition_pct);
       let label = 'Mixed';
@@ -1557,7 +1559,6 @@ setTimeout(flicker,2500);
       if (spans[1]) spans[1].textContent = `C${Math.round(cont ?? 0)}/E${Math.round(ex ?? 0)}/W${Math.round(wk ?? 0)}`;
       if (spans[2]) spans[2].textContent = label;
     });
-    setText('a15-vol-note', pick(vol.state_en, vol.state_pt, '—'));
     updBarChart('volChart',['Cont.','Exh.','Weak.','Dir.','Cont.↻','Exh.↻','Worth'], vals.map(v=>v??0));
   }
 
@@ -1570,6 +1571,7 @@ setTimeout(flicker,2500);
     setText('a15-pivot-conf', fmtPct(num(pv.summary?.sequence_confidence_pct, pv.next_pivot_prob_pct, payload.panel.pivot_premonition_sequence_confidence_pct)));
     setBadgeClass('a15-pivot-conf', 'b-g');
     setText('a15-pivot-now-price', fmtPrice(current));
+    setText('a15-pivot-now-eta', 'Current');
     setText('a15-pivot-step1-price', fmtPrice(num(p1.price_p25, p1.price_p50, payload.panel.pivot1_price_p50)));
     setText('a15-pivot-pivot1-price', fmtPrice(num(p1.price_p50, payload.panel.pivot1_price_p50)));
     setText('a15-pivot-pivot2-price', fmtPrice(num(p2.price_p50, payload.panel.pivot2_price_p50)));
@@ -1667,6 +1669,36 @@ setTimeout(flicker,2500);
     setText('a15-replay-snapshot', `${date} · ${time}`);
   }
 
+
+  function hydrateA15BindAll(payload){
+    const {panel, root} = payload;
+    const ts = pick(panel.updated_at, root.updated_at, panel.timestamp, root.timestamp);
+    if (ts){
+      try{
+        const d = new Date(ts);
+        setText('clock', d.toLocaleTimeString('en-US',{hour12:false}));
+      }catch(_){ }
+    }
+    const scoreLabel = byId('a15-score-label');
+    if (scoreLabel) scoreLabel.textContent = pick(panel.breakout_window_card?.title, root.breakout_window_card?.title, 'Premonition Score');
+    const tactTitle = byId('a15-hero-tact-title');
+    if (tactTitle) tactTitle.textContent = pick(panel.breakout_window_card?.title, root.breakout_window_card?.title, 'Tactical Read');
+    const pmCardBias = pick(panel.hud?.window_label, root.hud?.window_label, panel.session, root.session);
+    if (pmCardBias) setText('a15-pm-bias', pmCardBias);
+    const movePct = (() => { const p=num(panel.price_now,root.price_now); const o=num(panel.day?.day_open,root.day?.day_open,panel.open,root.open); return (p!==null&&o!==null&&o!==0)?((p-o)/o*100):null; })();
+    if (movePct!==null) setText('a15-pm-move', `${movePct>0?'+':''}${movePct.toFixed(2)}%`);
+    const dayHi=num(panel.day?.day_high, root.day?.day_high), dayLo=num(panel.day?.day_low, root.day?.day_low);
+    if (dayHi!==null && dayLo!==null && dayLo!==0) setText('a15-pm-range', (((dayHi-dayLo)/Math.abs(dayLo))*100).toFixed(2)+'%');
+    const rvol = num(panel.hud?.rvol_short_vs_long, root.hud?.rvol_short_vs_long);
+    if (rvol!==null) setText('a15-pm-vol', rvol.toFixed(2)+'×');
+    const pmEta = num(panel.macro_eta_min, root.macro_eta_min, panel.breakout_window_card?.median_minutes, root.breakout_window_card?.median_minutes);
+    if (pmEta!==null){ setText('a15-pm-eta-up', String(Math.round(pmEta))); setText('a15-pm-eta-down', String(Math.round(pmEta))); }
+    setText('a15-pm-target-up', fmtPrice(num(panel.pivot2_price_p50, root.pivot2_price_p50)));
+    setText('a15-pm-target-down', fmtPrice(num(panel.pivot1_price_p50, root.pivot1_price_p50)));
+    setText('a15-pm-conf-zz', fmtPct(num(panel.zigzag_premonition_v1?.chosen?.highlight?.prob_pivot_pct, root.zigzag_premonition_v1?.chosen?.highlight?.prob_pivot_pct, panel.zigzag_premonition_v1?.highlight?.prob_pivot_pct, root.zigzag_premonition_v1?.highlight?.prob_pivot_pct)));
+    setText('a15-pm-window-eta', `${pick(panel.breakout_window_card?.window_start_label, root.breakout_window_card?.window_start_label, '—')}→${pick(panel.breakout_window_card?.window_end_label, root.breakout_window_card?.window_end_label, '—')}`);
+  }
+
   function render(payload){
     updateTop(payload);
     updateIndicators(payload);
@@ -1679,6 +1711,7 @@ setTimeout(flicker,2500);
     updateZZ(payload);
     updateEntry(payload);
     updateReplay(payload);
+    hydrateA15BindAll(payload);
   }
 
   async function loadA15(){
