@@ -1057,7 +1057,9 @@ setTimeout(flicker,2500);
 <script>
 (function(){
   const PANEL_URL = 'https://n8n-888402066046.us-central1.run.app/webhook/aaron10_panel_json';
-  const REFRESH_MS = 60000;
+  const REFRESH_MS = 5000;
+  const TAPE_REFRESH_MS = 5000;
+  const TAPE_SYMBOLS = ['SPY','QQQ','NVDA','TSLA','AAPL','VIX','META','AMD'];
 
   const byId = (id) => document.getElementById(id);
   const setText = (id, val) => { const el = byId(id); if (el) el.textContent = (val === null || val === undefined || val === '') ? '—' : String(val); };
@@ -1115,6 +1117,58 @@ setTimeout(flicker,2500);
     const u = new URL(location.href);
     return String(u.searchParams.get('timeframe') || localStorage.getItem('aaron_selected_timeframe') || '1m').trim();
   };
+
+  const tapeRoot = () => document.querySelector('.ticker-t');
+
+  const fmtTapePct = (v) => {
+    const n = num1(v);
+    if (n === null) return '—';
+    const sign = n > 0 ? '+' : '';
+    return `${sign}${n.toFixed(2)}%`;
+  };
+
+  const tapePctClass = (v) => {
+    const n = num1(v);
+    if (n === null) return '';
+    return n >= 0 ? 'u' : 'd';
+  };
+
+  function tapeItemHTML(sym, price, pct){
+    const cls = tapePctClass(pct);
+    return `<div class="tk"><span class="tk-s">${sym}</span><span class="tk-p">${fmtPrice(price)}</span><span class="tk-c ${cls}">${fmtTapePct(pct)}</span></div>`;
+  }
+
+  async function fetchTapeSymbol(sym){
+    const qs = new URLSearchParams({ symbol: sym, timeframe: '1m', t: String(Date.now()) });
+    const res = await fetch(`${PANEL_URL}?${qs.toString()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const payload = normalize(data);
+    const panel = payload.panel || {};
+    const root = payload.root || {};
+    const price = num(panel.price_now, panel.last_price, panel.reference_price, root.price_now, root.last_price);
+    const dayOpen = num(panel.day?.day_open, root.day?.day_open, panel.session_open, root.session_open, panel.open, root.open);
+    const pct = (price !== null && dayOpen !== null && dayOpen !== 0) ? (((price - dayOpen) / dayOpen) * 100) : null;
+    return { sym, price, pct };
+  }
+
+  async function loadTape(){
+    const host = tapeRoot();
+    if (!host) return;
+    try{
+      const rows = await Promise.allSettled(TAPE_SYMBOLS.map(fetchTapeSymbol));
+      const items = rows.map((r, i) => {
+        if (r.status === 'fulfilled') return r.value;
+        return { sym: TAPE_SYMBOLS[i], price: null, pct: null };
+      });
+      const html = items.map(x => tapeItemHTML(x.sym, x.price, x.pct)).join('') +
+                   items.map(x => tapeItemHTML(x.sym, x.price, x.pct)).join('');
+      host.innerHTML = html;
+    }catch(err){
+      console.error('[A15] tape load failed', err);
+    }
+  }
+
   const setBadgeClass = (id, mode) => {
     const el = byId(id); if (!el) return;
     el.classList.remove('b-g','b-r','b-o','b-b','b-p','b-gray');
@@ -1643,7 +1697,9 @@ setTimeout(flicker,2500);
 
   document.addEventListener('DOMContentLoaded', () => {
     loadA15();
+    loadTape();
     setInterval(loadA15, REFRESH_MS);
+    setInterval(loadTape, TAPE_REFRESH_MS);
   });
 })();
 </script></body>
