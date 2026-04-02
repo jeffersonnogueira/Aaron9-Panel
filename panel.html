@@ -24462,5 +24462,389 @@ const tpTxt = (() => {
 })();
 </script>
 
+
+<script>
+(function(){
+  const iframe = document.getElementById('fusion-host');
+  if (!iframe) return;
+
+  function toneClassFromText(text){
+    const t = String(text || '').toLowerCase().trim();
+    if (!t) return '';
+    if (/(buy|long|bull|up|above|green|continue|continuation|confirmed|armed|trigger|healthy|on|strong|\+\d)/.test(t)) return 'av-tone-green';
+    if (/(sell|short|bear|down|below|red|reversal|reverse|invalid|cancel|fail|risk|danger|off|low|-\d)/.test(t)) return 'av-tone-red';
+    if (/(wait|aguarde|hold|noise|neutral|mixed|caution|warn|warning|watch|range|chop)/.test(t)) return 'av-tone-yellow';
+    return '';
+  }
+
+  function clearToneClasses(el){
+    el.classList.remove('av-tone-green','av-tone-red','av-tone-yellow','av-tone-white');
+  }
+
+  function applySemanticTones(doc){
+    const selectors = [
+      '.kv-v','.ind-val','.prob-pct','.chip-v','.stat-mini-val','.wp-stat',
+      '.rep-fld-val','.pt-price','.vmed','.vbig','.mono','.score-big',
+      '.tact-text','.prob-name','.ft-val','.live-badge','.badge','.soft'
+    ];
+    doc.querySelectorAll(selectors.join(',')).forEach(el=>{
+      clearToneClasses(el);
+      const tc = toneClassFromText(el.textContent);
+      if (tc) el.classList.add(tc);
+      else if (el.matches('.ind-val,.kv-v,.stat-mini-val,.vmed,.vbig,.score-big,.mono,.rep-fld-val,.pt-price,.chip-v,.prob-pct')) {
+        el.classList.add('av-tone-white');
+      }
+    });
+
+    doc.querySelectorAll('.badge,.live-badge').forEach(el=>{
+      clearToneClasses(el);
+      const tc = toneClassFromText(el.textContent);
+      if (tc) el.classList.add(tc);
+    });
+
+    doc.querySelectorAll('.ind-sub b,.soft b,.stack-rows b').forEach(el=>{
+      clearToneClasses(el);
+      const tc = toneClassFromText(el.textContent);
+      if (tc) el.classList.add(tc);
+      else el.classList.add('av-tone-yellow');
+    });
+  }
+
+  function injectStyle(doc){
+    if (doc.getElementById('aaron-vibrant-xxl-override')) return;
+    const style = doc.createElement('style');
+    style.id = 'aaron-vibrant-xxl-override';
+    style.textContent = `
+:root{
+  --green:#39FF74 !important;
+  --green-d:rgba(57,255,116,.18) !important;
+  --red:#FF3B30 !important;
+  --red-d:rgba(255,59,48,.18) !important;
+  --orange:#FFD60A !important;
+  --orange-d:rgba(255,214,10,.18) !important;
+  --blue:#29A3FF !important;
+  --blue-d:rgba(41,163,255,.18) !important;
+  --purple:#D16BFF !important;
+  --teal:#73E6FF !important;
+  --t1:#FFFFFF !important;
+  --t2:rgba(255,255,255,.82) !important;
+  --t3:rgba(255,255,255,.62) !important;
+  --t4:rgba(255,255,255,.18) !important;
+  --glass:rgba(255,255,255,.072) !important;
+  --glass2:rgba(255,255,255,.11) !important;
+  --border:rgba(255,255,255,.12) !important;
+  --border2:rgba(255,255,255,.22) !important;
+}
+html,body{background:#050a12 !important}
+body{filter:saturate(1.18) contrast(1.08)}
+.card{
+  box-shadow:
+    0 20px 54px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+.card:hover{border-color:rgba(255,255,255,.26) !important}
+.sidebar{
+  width:78px !important;
+  padding:18px 0 !important;
+  background:linear-gradient(180deg,#09111d 0%,#0c1524 100%) !important;
+}
+.sb-logo{
+  width:48px !important;
+  height:48px !important;
+  font-size:20px !important;
+  box-shadow:0 0 28px rgba(41,163,255,.48) !important;
+}
+.sb-btn{
+  width:58px !important;
+  height:58px !important;
+  border-radius:16px !important;
+  font-size:19px !important;
+  gap:4px !important;
+}
+.sb-btn span{
+  font-size:10px !important;
+  color:rgba(255,255,255,.70) !important;
+}
+.sb-btn.active{
+  background:rgba(41,163,255,.16) !important;
+  color:var(--blue) !important;
+  border-color:rgba(41,163,255,.34) !important;
+  box-shadow:0 0 22px rgba(41,163,255,.16) !important;
+}
+.topbar{
+  height:68px !important;
+  padding:0 24px !important;
+  gap:18px !important;
+}
+.topbar-title{
+  font-size:24px !important;
+  font-weight:800 !important;
+}
+.tk{
+  font-size:15px !important;
+  gap:8px !important;
+  padding:0 20px !important;
+}
+.live-tag{
+  font-size:15px !important;
+  padding:7px 14px !important;
+  border-width:1px !important;
+}
+.tb-clock{
+  font-size:16px !important;
+  color:rgba(255,255,255,.88) !important;
+}
+.content{
+  padding:18px 20px 30px !important;
+}
+.sec-lbl{
+  font-size:14px !important;
+  letter-spacing:.16em !important;
+  color:rgba(255,255,255,.80) !important;
+  margin-bottom:14px !important;
+}
+.score-lbl,.inner-lbl,.ind-card-title,.rep-fld-lbl,.stat-mini-lbl,.soft,.chip-k,.kv-k,.prob-name{
+  color:rgba(255,255,255,.74) !important;
+}
+.score-big{
+  font-size:96px !important;
+  line-height:.92 !important;
+  font-weight:900 !important;
+  letter-spacing:-4px !important;
+  text-shadow:0 0 24px rgba(255,255,255,.12) !important;
+}
+.score-den{
+  font-size:38px !important;
+  color:rgba(255,255,255,.82) !important;
+}
+.tact-banner{
+  border-color:rgba(255,214,10,.32) !important;
+  box-shadow:0 0 30px rgba(255,214,10,.08) inset !important;
+}
+.tact-text{
+  font-size:38px !important;
+  line-height:1.18 !important;
+  font-weight:800 !important;
+  color:var(--orange) !important;
+  text-shadow:0 0 18px rgba(255,214,10,.14) !important;
+}
+.chip{
+  padding:8px 12px !important;
+  border-radius:10px !important;
+}
+.chip-k{
+  font-size:13px !important;
+}
+.chip-v{
+  font-size:28px !important;
+  font-weight:800 !important;
+}
+.prob-name{
+  font-size:22px !important;
+  font-weight:700 !important;
+}
+.prob-pct{
+  font-size:34px !important;
+  font-weight:900 !important;
+}
+.prob-track{
+  height:9px !important;
+}
+.ind-card{
+  padding:18px 16px !important;
+  border-radius:20px !important;
+}
+.ind-card-title{
+  font-size:17px !important;
+  font-weight:800 !important;
+}
+.ind-val{
+  font-size:38px !important;
+  line-height:1.1 !important;
+  font-weight:900 !important;
+  margin-bottom:8px !important;
+  text-shadow:0 0 16px rgba(255,255,255,.06) !important;
+}
+.ind-sub{
+  font-size:20px !important;
+  line-height:1.55 !important;
+  color:rgba(255,255,255,.86) !important;
+}
+.ind-sub b{
+  font-size:20px !important;
+  font-weight:900 !important;
+}
+.kv{
+  padding:10px 0 !important;
+  font-size:22px !important;
+}
+.kv-k{
+  font-size:18px !important;
+  letter-spacing:.04em !important;
+}
+.kv-v{
+  font-size:36px !important;
+  line-height:1.08 !important;
+  font-weight:900 !important;
+}
+.inner-lbl{
+  font-size:14px !important;
+  padding-bottom:8px !important;
+  margin-bottom:10px !important;
+}
+.stat-mini{
+  padding:14px 14px !important;
+  border-radius:12px !important;
+}
+.stat-mini-lbl{
+  font-size:13px !important;
+  margin-bottom:6px !important;
+}
+.stat-mini-val{
+  font-size:36px !important;
+  line-height:1.08 !important;
+  font-weight:900 !important;
+}
+.wp-row{
+  padding:10px 12px !important;
+  border-radius:10px !important;
+}
+.wp-tf{
+  font-size:14px !important;
+  width:38px !important;
+}
+.wp-row > span:nth-child(2){
+  font-size:16px !important;
+}
+.wp-stat{
+  font-size:30px !important;
+  font-weight:900 !important;
+}
+.pt-price{
+  font-size:13px !important;
+  font-weight:800 !important;
+}
+.pt-lbl{
+  font-size:11px !important;
+  color:rgba(255,255,255,.72) !important;
+}
+.rep-fld-lbl{
+  font-size:13px !important;
+}
+.rep-fld-val{
+  font-size:32px !important;
+  font-weight:900 !important;
+}
+.btn{
+  font-size:16px !important;
+  padding:10px 16px !important;
+}
+.footer{
+  font-size:16px !important;
+  padding:14px 20px !important;
+}
+.ft-val{
+  font-size:18px !important;
+  color:#fff !important;
+}
+.codebox{
+  background:rgba(255,255,255,.055) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:14px !important;
+  padding:14px 14px !important;
+}
+.kline{
+  font-size:14px !important;
+  letter-spacing:.12em !important;
+  color:rgba(255,255,255,.70) !important;
+  text-transform:uppercase !important;
+  margin-bottom:8px !important;
+}
+.vbig{
+  font-size:46px !important;
+  line-height:1.02 !important;
+  font-weight:900 !important;
+}
+.vmed{
+  font-size:38px !important;
+  line-height:1.08 !important;
+  font-weight:900 !important;
+}
+.stack-rows, .stack-rows div{
+  font-size:22px !important;
+  line-height:1.5 !important;
+}
+.mono{
+  font-size:34px !important;
+  font-weight:900 !important;
+}
+.soft{
+  font-size:17px !important;
+  line-height:1.45 !important;
+  color:rgba(255,255,255,.76) !important;
+}
+.badge,.live-badge{
+  font-size:16px !important;
+  padding:8px 14px !important;
+  border-radius:999px !important;
+  font-weight:900 !important;
+  letter-spacing:.08em !important;
+}
+.extra-grid-3{
+  gap:12px !important;
+}
+.bar-fill,.prob-fill,.vbar-fill{
+  filter:saturate(1.25) brightness(1.18) !important;
+}
+.av-tone-green{
+  color:var(--green) !important;
+  text-shadow:0 0 18px rgba(57,255,116,.16) !important;
+}
+.av-tone-red{
+  color:var(--red) !important;
+  text-shadow:0 0 18px rgba(255,59,48,.16) !important;
+}
+.av-tone-yellow{
+  color:var(--orange) !important;
+  text-shadow:0 0 18px rgba(255,214,10,.16) !important;
+}
+.av-tone-white{
+  color:#fff !important;
+}
+@media (max-width: 1600px){
+  .score-big{font-size:82px !important}
+  .ind-val,.vmed{font-size:34px !important}
+  .kv-v,.stat-mini-val,.mono{font-size:30px !important}
+  .stack-rows,.stack-rows div,.ind-sub{font-size:18px !important}
+}
+@media (max-width: 1100px){
+  .sidebar{width:66px !important}
+  .sb-btn{width:48px !important;height:48px !important;font-size:16px !important}
+  .topbar-title{font-size:18px !important}
+  .score-big{font-size:64px !important}
+  .tact-text{font-size:28px !important}
+  .ind-val,.vmed,.kv-v,.stat-mini-val,.mono{font-size:24px !important}
+  .stack-rows,.stack-rows div,.ind-sub,.soft{font-size:16px !important}
+  .badge,.live-badge{font-size:13px !important}
+}
+`;
+    doc.head.appendChild(style);
+  }
+
+  function enhance(){
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc || !doc.head || !doc.body) return;
+    injectStyle(doc);
+    applySemanticTones(doc);
+  }
+
+  iframe.addEventListener('load', () => {
+    enhance();
+  });
+
+  setInterval(enhance, 700);
+})();
+</script>
+
 </body>
 </html>
