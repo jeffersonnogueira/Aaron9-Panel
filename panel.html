@@ -6633,6 +6633,39 @@
     </div>
   </div>
 </div>
+<div class="prem-breakout-wrap" id="micro-prem-card">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">MICRO PREMONITION</div>
+    <span id="mpr-badge" class="win-badge win-wait">WAIT</span>
+  </div>
+
+  <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:12px 14px; margin-top:10px;">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div id="mm-micro-line" style="font-size:24px; font-weight:950; line-height:1.25; color:#ffcc66;">MICRO LIVE — NOW: —</div>
+      <div style="font-size:18px; line-height:1.25; opacity:.88;">
+        Trust <strong id="mpr-trust">—</strong>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px; margin-top:12px;">
+      <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
+        <div style="font-size:18px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">CONTINUATION</div>
+        <div class="entryprem-v" id="mm-cont-line">CONTINUAÇÃO (A2): —</div>
+      </div>
+
+      <div style="border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(255,255,255,.02); padding:12px 14px;">
+        <div style="font-size:18px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.72; margin-bottom:6px;">RISK MAP</div>
+        <div class="entryprem-v" id="mm-respiro-line">RESPIRO (max / p75): —</div>
+        <div class="entryprem-v" id="mm-reversao-line" style="margin-top:8px;">REVERSÃO (gatilho): —</div>
+      </div>
+    </div>
+
+    <div class="entryprem-read" style="margin-top:12px;">
+      <div class="entryprem-read-title">TACTICAL READ</div>
+      <div class="entryprem-read-body" id="mpr-read">—</div>
+    </div>
+  </div>
+</div>
                         <div class="prem-breakout-wrap" id="pivot-prem-card">
     <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap;">
       <div class="prem-breakout-title">PIVOT PREMONITION</div>
@@ -7650,16 +7683,7 @@
 
   </div>
 </div>
-<!-- ===== /MICRO vs MACRO (DUAL) ===== -->
-          <!-- ===== MICRO MAP (NOW) — ABOVE INDICATORS ===== -->
-<div class="micro-map-card" id="micro-map-card" style="margin-top:10px;">
-  <div class="micro-map-title">MICRO MAP (NOW)</div>
-  <div class="micro-map-line" id="mm-micro-line">MICRO LIVE — NOW: —</div>
-  <div class="micro-map-line" id="mm-cont-line">CONTINUAÇÃO (A2): —</div>
-  <div class="micro-map-line" id="mm-respiro-line">RESPIRO (max / p75): —</div>
-  <div class="micro-map-line" id="mm-reversao-line">REVERSÃO (gatilho): —</div>
-  <div class="micro-map-foot">Base: Micro Live + Continuação (A2) + Respiro (p75 ATR) + Gatilho (SL 1x1 auto)</div>
-</div>
+
 <div class="premonition-panel">
         <!-- KPI grande (estilo mockup) -->
 <div class="prem-kpi-right">
@@ -21802,17 +21826,15 @@ renderOptions("");
     const card = document.getElementById("slflex-card");
     if (dock && card && card.parentElement !== dock) dock.appendChild(card);
   }
-    // MICRO/MACRO dock: coloca os 3 blocos reais do MICRO na coluna MICRO (sem alterar nada do micro)
+      // MICRO/MACRO dock: micro agora fica sem o card antigo do Micro Map
   function dockMicroMacro(){
     const microCol = document.getElementById("mm-col-micro");
     if (!microCol) return;
 
-    const microMap = document.getElementById("micro-map-card");
     const premPanel = document.querySelector('.premonition-panel:not(#macro-premonition-panel):not(#macro-min-premonition-panel)');
     const entryEngine = document.getElementById("ee-engine-card");
 
-    // ordem final (igual seu mockup): Micro Map -> Prem Panel -> Entry Engine
-    if (microMap) microCol.appendChild(microMap);
+    // ordem final da coluna MICRO: Prem Panel -> Entry Engine
     if (premPanel) microCol.appendChild(premPanel);
     if (entryEngine) microCol.appendChild(entryEngine);
   }
@@ -22518,6 +22540,53 @@ if (respiroPrice != null && microOk && dirMap && curMap != null) {
   if (mm3) {
     mm3.textContent = reversaoLine;
     mm3.style.color = "var(--danger)";
+        const mprBadge = el("mpr-badge");
+    const mprTrust = el("mpr-trust");
+    const mprRead  = el("mpr-read");
+
+    const microTrusted = (microProb != null && Number(microProb) >= 72);
+    const microStateText = microTrusted ? "TRUSTED" : (microProb != null ? "CAUTION" : "WAIT");
+    const microStateClass = microTrusted ? "win-now" : (microProb != null ? "win-warn" : "win-wait");
+
+    if (mprBadge) {
+      mprBadge.textContent = microStateText;
+      mprBadge.className = `win-badge ${microStateClass}`;
+    }
+
+    if (mprTrust) {
+      if (microProb != null) {
+        mprTrust.textContent = `${fmtPct2d(microProb)} ${microTrusted ? "· trust zone" : "· light conviction"}`;
+        mprTrust.style.color = microTrusted ? "var(--success)" : "#facc15";
+      } else {
+        mprTrust.textContent = "—";
+        mprTrust.style.color = "";
+      }
+    }
+
+    if (mprRead) {
+      let read = "Micro path unavailable right now.";
+
+      if (dirMap && microTarget != null) {
+        read =
+          `Immediate ${dirMap === "BUY" ? "upside" : "downside"} bias points first to ${fmt2(microTarget)} ${arrowMicro}` +
+          `${microEta != null ? ` in ${fmtEta(microEta)}` : ""}. ` +
+          (microTrusted
+            ? `This micro path is in the trust zone, so the first target can be respected while price stays out of invalidation.`
+            : `This micro path is below the trust zone, so treat it as guidance only until stronger confirmation appears.`);
+
+        if (contPrice != null) {
+          read += ` If the first touch holds, extension can reach ${fmt2(contPrice)} ${arrowMicro}.`;
+        }
+        if (respiroPrice != null) {
+          read += ` Normal breathing can stretch to ${fmt2(respiroPrice)} ${arrowOpp}.`;
+        }
+        if (revTrigger != null) {
+          read += ` A touch at ${fmt2(revTrigger)} ${arrowOpp} invalidates the micro path.`;
+        }
+      }
+
+      mprRead.textContent = read;
+    }
       // ===== MACRO MAP (NOW) =====
   const mpMacro =
     payloadSL?.macro_path_live ||
@@ -24142,18 +24211,15 @@ const tpTxt = (() => {
   else updateEEBrain();
 })();
 (function(){
-  function placeEntryEnginesInOwnColumns(){
+    function placeEntryEnginesInOwnColumns(){
     // ===== MICRO =====
     const microCol   = document.getElementById("mm-col-micro");
     const microEE    = document.getElementById("ee-engine-card");
-    const microMap   = document.getElementById("micro-map-card");
-    const microPanel = microMap ? microMap.nextElementSibling : null;
+    const microPanel = document.querySelector('.premonition-panel:not(#macro-premonition-panel):not(#macro-min-premonition-panel)');
 
-    if (microCol && microEE && microMap && microPanel) {
-      // força tirar da posição antiga
-      microCol.appendChild(microEE);
-      microCol.appendChild(microMap);
+    if (microCol && microEE && microPanel) {
       microCol.appendChild(microPanel);
+      microCol.appendChild(microEE);
     }
 
     // ===== MACRO MAX =====
