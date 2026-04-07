@@ -3852,6 +3852,63 @@
     inset 0 1px 0 rgba(255,255,255,.03),
     0 10px 24px rgba(2,6,23,.22) !important;
 }
+/* ===== COPILOT / CLAUDE DIGEST ===== */
+#copilot-block .prem-breakout-title{
+  font-size: 28px !important;
+  opacity: .90 !important;
+}
+
+#copilot-block .copilot-shell{
+  border: 1px solid rgba(95,116,145,.18) !important;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(35,44,61,.88) 0%, rgba(18,24,35,.96) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 10px 24px rgba(2,6,23,.22) !important;
+  padding: 14px 16px;
+  margin-top: 10px;
+}
+
+#copilot-block .copilot-text{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 22px;
+  line-height: 1.48;
+  font-weight: 800;
+  color: #e5e7eb;
+}
+
+#copilot-badge.copilot-long{
+  border-color: rgba(34,197,94,.35);
+  background: rgba(34,197,94,.12);
+  color: #86efac;
+}
+
+#copilot-badge.copilot-short{
+  border-color: rgba(248,113,113,.35);
+  background: rgba(248,113,113,.12);
+  color: #fca5a5;
+}
+
+#copilot-badge.copilot-wait{
+  border-color: rgba(250,204,21,.35);
+  background: rgba(250,204,21,.12);
+  color: #fde68a;
+}
+
+#copilot-badge.copilot-ignore{
+  border-color: rgba(148,163,184,.28);
+  background: rgba(148,163,184,.10);
+  color: #e2e8f0;
+}
+
+@media (max-width: 980px){
+  #copilot-block .copilot-text{
+    font-size: 18px;
+    line-height: 1.44;
+  }
+}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -6566,6 +6623,22 @@
               </div>
             </div>
 
+          </div>
+        </div>
+                <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
+        <div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div class="prem-breakout-title">COPILOT</div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <div style="font-size:11px; opacity:.65; letter-spacing:.08em; text-transform:uppercase;">
+                Updated: <span id="copilot-updated">—</span>
+              </div>
+              <span id="copilot-badge" class="win-badge copilot-ignore">READING</span>
+            </div>
+          </div>
+
+          <div class="copilot-shell">
+            <div class="copilot-text" id="copilot-text">—</div>
           </div>
         </div>
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
@@ -15688,7 +15761,90 @@ function updateAaronCommentaryBlock(data){
     }
   }catch(_){}
 }
+function updateCoPilotBlock(data){
+  try{
+    data = Array.isArray(data) ? (data[0] ?? {}) : (data ?? {});
 
+    const panel  = data?.panel  || {};
+    const ui     = data?.ui     || {};
+    const digest = data?.digest || {};
+
+    const pickFirstText = (...vals) => {
+      for (const v of vals){
+        if (typeof v !== "string") continue;
+        const s = v.trim();
+        if (s) return s;
+      }
+      return "";
+    };
+
+    const claudeText = pickFirstText(
+      panel.claude_text,
+      data.claude_text,
+      ui.claude_text,
+      digest.claude_text
+    );
+
+    const blockEl   = document.getElementById("copilot-block");
+    const textEl    = document.getElementById("copilot-text");
+    const badgeEl   = document.getElementById("copilot-badge");
+    const updatedEl = document.getElementById("copilot-updated");
+
+    if (!blockEl || !textEl || !badgeEl) return;
+
+    if (!claudeText) {
+      blockEl.style.display = "none";
+      if (textEl) textEl.textContent = "—";
+      if (updatedEl) updatedEl.textContent = "—";
+      badgeEl.className = "win-badge copilot-ignore";
+      badgeEl.textContent = "READING";
+      return;
+    }
+
+    blockEl.style.display = "";
+    textEl.textContent = claudeText;
+
+    const updated =
+      panel.updated_at ||
+      ui.updated_at ||
+      digest.updated_at ||
+      data.updated_at ||
+      panel?.hud?.timestamp_utc ||
+      "—";
+
+    if (updatedEl) updatedEl.textContent = String(updated);
+
+    const upper = claudeText.toUpperCase();
+
+    let verdict = "READING";
+    let badgeClass = "copilot-ignore";
+
+    const verdictMatch =
+      claudeText.match(/⚖️\s*Veredicto:\s*([\s\S]*?)(?:\n\s*\n|$)/i) ||
+      claudeText.match(/Veredicto:\s*([\s\S]*?)(?:\n\s*\n|$)/i) ||
+      claudeText.match(/Verdict:\s*([\s\S]*?)(?:\n\s*\n|$)/i);
+
+    const verdictLine = verdictMatch?.[1]?.trim() || upper;
+
+    if (/\bSHORT\b/.test(verdictLine)) {
+      verdict = "SHORT";
+      badgeClass = "copilot-short";
+    } else if (/\bLONG\b/.test(verdictLine)) {
+      verdict = "LONG";
+      badgeClass = "copilot-long";
+    } else if (/\bAGUARDAR\b|\bWAIT\b/.test(verdictLine)) {
+      verdict = "WAIT";
+      badgeClass = "copilot-wait";
+    } else if (/\bIGNORAR\b|\bIGNORE\b/.test(verdictLine)) {
+      verdict = "IGNORE";
+      badgeClass = "copilot-ignore";
+    }
+
+    badgeEl.className = `win-badge ${badgeClass}`;
+    badgeEl.textContent = verdict;
+
+  }catch(_){}
+}
 async function requestMatcher(symbol) {
   symbol = String(symbol || "").trim().toUpperCase();
   if (!symbol) return;
@@ -15751,7 +15907,9 @@ if (typeof updateRespiroReversaoPanel === "function") {
 if (typeof updateAaronCommentaryBlock === "function") {
   updateAaronCommentaryBlock(data);
 }
-
+if (typeof updateCoPilotBlock === "function") {
+  updateCoPilotBlock(data);
+}
   // ✅ injeta dentro do Trade Card
   applyResponderIntoTradeCard(data);
 
@@ -19451,6 +19609,7 @@ safeRun("applyResponderIntoTradeCard", applyResponderIntoTradeCard, payload);
 safeRun("updatePremonitionPanel", updatePremonitionPanel, payload);
 safeRun("updateRespiroReversaoPanel", updateRespiroReversaoPanel, payload);
 safeRun("updateAaronCommentaryBlock", updateAaronCommentaryBlock, payload);
+safeRun("updateCoPilotBlock", updateCoPilotBlock, payload);
 safeRun("updateFirstHourPremonitionPanel", updateFirstHourPremonitionPanel, payload);
 safeRun("updateIndicatorPremonitionPanel", updateIndicatorPremonitionPanel, payload);
 safeRun("a10UpdateWindowsCardFromPayload", a10UpdateWindowsCardFromPayload, payload);
