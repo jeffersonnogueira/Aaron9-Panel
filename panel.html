@@ -3852,7 +3852,7 @@
     inset 0 1px 0 rgba(255,255,255,.03),
     0 10px 24px rgba(2,6,23,.22) !important;
 }
-/* ===== COPILOT / CLAUDE DIGEST ===== */
+/* ===== COPILOT / CLAUDE DIGEST — BLOCKS ===== */
 #copilot-block .prem-breakout-title{
   font-size: 28px !important;
   opacity: .90 !important;
@@ -3869,11 +3869,84 @@
   margin-top: 10px;
 }
 
-#copilot-block .copilot-text{
+#copilot-block .copilot-hero{
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.02) 100%);
+  margin-bottom: 12px;
+}
+
+#copilot-block .copilot-hero-title{
+  font-size: 24px;
+  line-height: 1.18;
+  font-weight: 950;
+  color: #f8fafc;
+  white-space: pre-wrap;
+}
+
+#copilot-block .copilot-hero-subtitle{
+  margin-top: 8px;
+  font-size: 18px;
+  line-height: 1.32;
+  font-weight: 850;
+  color: #cbd5e1;
+  white-space: pre-wrap;
+}
+
+#copilot-block .copilot-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#copilot-block .copilot-section-card{
+  min-width: 0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(148,163,184,.16);
+  background: linear-gradient(180deg, rgba(31,40,56,.92) 0%, rgba(17,24,35,.96) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+#copilot-block .copilot-section-card.is-critical{
+  border-color: rgba(248,113,113,.32);
+  background: linear-gradient(180deg, rgba(66,32,38,.58) 0%, rgba(23,19,29,.96) 100%);
+}
+
+#copilot-block .copilot-section-card.is-bull{
+  border-color: rgba(74,222,128,.30);
+}
+
+#copilot-block .copilot-section-card.is-bear{
+  border-color: rgba(248,113,113,.30);
+}
+
+#copilot-block .copilot-section-header{
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #ffcc66;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+}
+
+#copilot-block .copilot-section-body{
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;
-  font-size: 22px;
+  font-size: 18px;
+  line-height: 1.52;
+  font-weight: 800;
+  color: #e5e7eb;
+}
+
+#copilot-block .copilot-raw{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 20px;
   line-height: 1.48;
   font-weight: 800;
   color: #e5e7eb;
@@ -3903,10 +3976,29 @@
   color: #e2e8f0;
 }
 
+@media (max-width: 1500px){
+  #copilot-block .copilot-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 980px){
-  #copilot-block .copilot-text{
-    font-size: 18px;
-    line-height: 1.44;
+  #copilot-block .copilot-hero-title{
+    font-size: 20px;
+  }
+
+  #copilot-block .copilot-hero-subtitle{
+    font-size: 16px;
+  }
+
+  #copilot-block .copilot-section-body,
+  #copilot-block .copilot-raw{
+    font-size: 16px;
+    line-height: 1.46;
+  }
+
+  #copilot-block .copilot-grid{
+    grid-template-columns: 1fr;
   }
 }
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
@@ -6626,21 +6718,27 @@
           </div>
         </div>
                 <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
-        <div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
-          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-            <div class="prem-breakout-title">COPILOT</div>
-            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-              <div style="font-size:11px; opacity:.65; letter-spacing:.08em; text-transform:uppercase;">
-                Updated: <span id="copilot-updated">—</span>
-              </div>
-              <span id="copilot-badge" class="win-badge copilot-ignore">READING</span>
-            </div>
-          </div>
+<div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">COPILOT</div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <div style="font-size:11px; opacity:.65; letter-spacing:.08em; text-transform:uppercase;">
+        Updated: <span id="copilot-updated">—</span>
+      </div>
+      <span id="copilot-badge" class="win-badge copilot-ignore">READING</span>
+    </div>
+  </div>
 
-          <div class="copilot-shell">
-            <div class="copilot-text" id="copilot-text">—</div>
-          </div>
-        </div>
+  <div class="copilot-shell">
+    <div class="copilot-hero">
+      <div class="copilot-hero-title" id="copilot-hero-title">—</div>
+      <div class="copilot-hero-subtitle" id="copilot-hero-subtitle" style="display:none;"></div>
+    </div>
+
+    <div class="copilot-grid" id="copilot-sections"></div>
+    <div class="copilot-raw" id="copilot-text" style="display:none;">—</div>
+  </div>
+</div>
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
                     <div id="zz-left-stack">
@@ -15778,6 +15876,51 @@ function updateCoPilotBlock(data){
       return "";
     };
 
+    const escapeHtml = (str = "") =>
+      String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    const cleanLine = (line = "") =>
+      String(line).replace(/\u00A0/g, " ").replace(/\s+/g, " ").trim();
+
+    const isTimelineLine = (line = "") =>
+      /^\d{1,2}:\d{2}\s?(AM|PM)\b/i.test(cleanLine(line));
+
+    const isHeroSubtitle = (line = "") =>
+      /^[🚨🔇⚠️📣🔥]/u.test(cleanLine(line));
+
+    const isSectionHeader = (line = "") => {
+      const t = cleanLine(line);
+      if (!t) return false;
+      if (isTimelineLine(t)) return false;
+      if (/^[-•]/.test(t)) return false;
+      if (/^(Candle|Volume|Close|High|Low|Range|Stop|Target)\b/i.test(t)) return false;
+
+      return (
+        /^(📊|🕯️|📐|🔑|⚖️|✅|🎯|⚠️|🔄|🧠|🔍|⏰|📈|📉)\s/u.test(t) ||
+        /^(Análise dos 4 Candles|Estrutura (Atual|Confirmada|Nova)|Eventos Críticos Confirmados|Veredicto|Checklist|Parâmetros de Trade|Invalidação|Placar|Leitura Final|Mapa Temporal)/i.test(t)
+      );
+    };
+
+    const toneForTitle = (title = "") => {
+      const t = cleanLine(title).toUpperCase();
+
+      if (/ALERTA|EVENTO CR[IÍ]TICO|INVALIDA|RISCO|BREAKOUT/.test(t)) {
+        return "is-critical";
+      }
+      if (/SHORT|VENDA|BAIXA/.test(t)) {
+        return "is-bear";
+      }
+      if (/LONG|COMPRA|ALTA/.test(t)) {
+        return "is-bull";
+      }
+      return "";
+    };
+
     const claudeText = pickFirstText(
       panel.claude_text,
       data.claude_text,
@@ -15785,24 +15928,45 @@ function updateCoPilotBlock(data){
       digest.claude_text
     );
 
-    const blockEl   = document.getElementById("copilot-block");
-    const textEl    = document.getElementById("copilot-text");
-    const badgeEl   = document.getElementById("copilot-badge");
-    const updatedEl = document.getElementById("copilot-updated");
+    const blockEl       = document.getElementById("copilot-block");
+    const heroTitleEl   = document.getElementById("copilot-hero-title");
+    const heroSubEl     = document.getElementById("copilot-hero-subtitle");
+    const sectionsEl    = document.getElementById("copilot-sections");
+    const textEl        = document.getElementById("copilot-text");
+    const badgeEl       = document.getElementById("copilot-badge");
+    const updatedEl     = document.getElementById("copilot-updated");
 
-    if (!blockEl || !textEl || !badgeEl) return;
+    if (!blockEl || !heroTitleEl || !sectionsEl || !textEl || !badgeEl) return;
+
+    const resetCopilotView = () => {
+      heroTitleEl.textContent = "—";
+
+      if (heroSubEl){
+        heroSubEl.style.display = "none";
+        heroSubEl.textContent = "";
+      }
+
+      if (sectionsEl){
+        sectionsEl.innerHTML = "";
+        sectionsEl.style.display = "none";
+      }
+
+      textEl.style.display = "block";
+      textEl.textContent = "—";
+
+      if (updatedEl) updatedEl.textContent = "—";
+
+      badgeEl.className = "win-badge copilot-ignore";
+      badgeEl.textContent = "READING";
+    };
 
     if (!claudeText) {
       blockEl.style.display = "none";
-      if (textEl) textEl.textContent = "—";
-      if (updatedEl) updatedEl.textContent = "—";
-      badgeEl.className = "win-badge copilot-ignore";
-      badgeEl.textContent = "READING";
+      resetCopilotView();
       return;
     }
 
     blockEl.style.display = "";
-    textEl.textContent = claudeText;
 
     const updated =
       panel.updated_at ||
@@ -15814,22 +15978,118 @@ function updateCoPilotBlock(data){
 
     if (updatedEl) updatedEl.textContent = String(updated);
 
-    const upper = claudeText.toUpperCase();
+    const normalizedText = String(claudeText).replace(/\r/g, "").trim();
+    const lines = normalizedText.split("\n");
+
+    let firstNonEmpty = lines.findIndex(line => cleanLine(line));
+    if (firstNonEmpty < 0) firstNonEmpty = 0;
+
+    const heroTitle = lines[firstNonEmpty]?.trim() || "COPILOT DIGEST";
+    heroTitleEl.textContent = heroTitle;
+
+    let cursor = firstNonEmpty + 1;
+    while (cursor < lines.length && !cleanLine(lines[cursor])) cursor++;
+
+    let heroSubtitle = "";
+    if (cursor < lines.length && isHeroSubtitle(lines[cursor])) {
+      heroSubtitle = cleanLine(lines[cursor]);
+      cursor += 1;
+    }
+
+    if (heroSubEl){
+      if (heroSubtitle) {
+        heroSubEl.style.display = "block";
+        heroSubEl.textContent = heroSubtitle;
+      } else {
+        heroSubEl.style.display = "none";
+        heroSubEl.textContent = "";
+      }
+    }
+
+    const sections = [];
+    let current = null;
+
+    const flushCurrent = () => {
+      if (!current) return;
+      const body = current.lines.join("\n").trim();
+
+      if (current.title || body) {
+        sections.push({
+          title: current.title || "Resumo",
+          body
+        });
+      }
+
+      current = null;
+    };
+
+    for (let i = cursor; i < lines.length; i++) {
+      const rawLine = lines[i] ?? "";
+      const trimmed = cleanLine(rawLine);
+
+      if (!trimmed) {
+        if (current) current.lines.push("");
+        continue;
+      }
+
+      if (isSectionHeader(trimmed)) {
+        flushCurrent();
+        current = {
+          title: trimmed,
+          lines: []
+        };
+        continue;
+      }
+
+      if (!current) {
+        current = {
+          title: "Resumo",
+          lines: []
+        };
+      }
+
+      current.lines.push(rawLine.trimEnd());
+    }
+
+    flushCurrent();
+
+    if (sections.length > 0) {
+      sectionsEl.innerHTML = sections.map(section => {
+        const toneClass = toneForTitle(section.title);
+        return `
+          <div class="copilot-section-card ${toneClass}">
+            <div class="copilot-section-header">${escapeHtml(section.title)}</div>
+            <div class="copilot-section-body">${escapeHtml(section.body || "—")}</div>
+          </div>
+        `;
+      }).join("");
+
+      sectionsEl.style.display = "grid";
+      textEl.style.display = "none";
+      textEl.textContent = normalizedText;
+    } else {
+      sectionsEl.innerHTML = "";
+      sectionsEl.style.display = "none";
+      textEl.style.display = "block";
+      textEl.textContent = normalizedText;
+    }
+
+    const upper = normalizedText.toUpperCase();
 
     let verdict = "READING";
     let badgeClass = "copilot-ignore";
 
     const verdictMatch =
-      claudeText.match(/⚖️\s*Veredicto:\s*([\s\S]*?)(?:\n\s*\n|$)/i) ||
-      claudeText.match(/Veredicto:\s*([\s\S]*?)(?:\n\s*\n|$)/i) ||
-      claudeText.match(/Verdict:\s*([\s\S]*?)(?:\n\s*\n|$)/i);
+      normalizedText.match(/⚖️\s*Veredicto:\s*([\s\S]*?)(?:\n\s*\n|$)/i) ||
+      normalizedText.match(/Veredicto:\s*([\s\S]*?)(?:\n\s*\n|$)/i) ||
+      normalizedText.match(/Verdict:\s*([\s\S]*?)(?:\n\s*\n|$)/i);
 
-    const verdictLine = verdictMatch?.[1]?.trim() || upper;
+    const verdictLine = String(verdictMatch?.[1] || upper).trim().toUpperCase();
 
-    if (/\bSHORT\b/.test(verdictLine)) {
+    if (/\bSHORT\b|\bVENDA\b|\bBAIXA\b/.test(verdictLine)) {
       verdict = "SHORT";
       badgeClass = "copilot-short";
-    } else if (/\bLONG\b/.test(verdictLine)) {
+    } else if (/\bLONG\b|\bCOMPRA\b|\bALTA\b/.test(verdictLine)) {
       verdict = "LONG";
       badgeClass = "copilot-long";
     } else if (/\bAGUARDAR\b|\bWAIT\b/.test(verdictLine)) {
