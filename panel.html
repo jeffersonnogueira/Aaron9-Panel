@@ -3852,63 +3852,7 @@
     inset 0 1px 0 rgba(255,255,255,.03),
     0 10px 24px rgba(2,6,23,.22) !important;
 }
-/* ===== COPILOT / CLAUDE DIGEST ===== */
-#copilot-block .prem-breakout-title{
-  font-size: 28px !important;
-  opacity: .90 !important;
-}
 
-#copilot-block .copilot-shell{
-  border: 1px solid rgba(95,116,145,.18) !important;
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(35,44,61,.88) 0%, rgba(18,24,35,.96) 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.03),
-    0 10px 24px rgba(2,6,23,.22) !important;
-  padding: 14px 16px;
-  margin-top: 10px;
-}
-
-#copilot-block .copilot-text{
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  font-size: 22px;
-  line-height: 1.48;
-  font-weight: 800;
-  color: #e5e7eb;
-}
-
-#copilot-badge.copilot-long{
-  border-color: rgba(34,197,94,.35);
-  background: rgba(34,197,94,.12);
-  color: #86efac;
-}
-
-#copilot-badge.copilot-short{
-  border-color: rgba(248,113,113,.35);
-  background: rgba(248,113,113,.12);
-  color: #fca5a5;
-}
-
-#copilot-badge.copilot-wait{
-  border-color: rgba(250,204,21,.35);
-  background: rgba(250,204,21,.12);
-  color: #fde68a;
-}
-
-#copilot-badge.copilot-ignore{
-  border-color: rgba(148,163,184,.28);
-  background: rgba(148,163,184,.10);
-  color: #e2e8f0;
-}
-
-@media (max-width: 980px){
-  #copilot-block .copilot-text{
-    font-size: 18px;
-    line-height: 1.44;
-  }
-}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -6626,21 +6570,21 @@
           </div>
         </div>
                 <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
-        <div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
-          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-            <div class="prem-breakout-title">COPILOT</div>
-            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-              <div style="font-size:11px; opacity:.65; letter-spacing:.08em; text-transform:uppercase;">
-                Updated: <span id="copilot-updated">—</span>
-              </div>
-              <span id="copilot-badge" class="win-badge copilot-ignore">READING</span>
-            </div>
-          </div>
+<div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">COPILOT</div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <div style="font-size:11px; opacity:.65; letter-spacing:.08em; text-transform:uppercase;">
+        Updated: <span id="copilot-updated">—</span>
+      </div>
+      <span id="copilot-badge" class="win-badge copilot-ignore">READING</span>
+    </div>
+  </div>
 
-          <div class="copilot-shell">
-            <div class="copilot-text" id="copilot-text">—</div>
-          </div>
-        </div>
+  <div class="copilot-shell">
+    <div class="copilot-grid" id="copilot-grid"></div>
+  </div>
+</div>
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
                     <div id="zz-left-stack">
@@ -15786,15 +15730,157 @@ function updateCoPilotBlock(data){
     );
 
     const blockEl   = document.getElementById("copilot-block");
-    const textEl    = document.getElementById("copilot-text");
+    const gridEl    = document.getElementById("copilot-grid");
     const badgeEl   = document.getElementById("copilot-badge");
     const updatedEl = document.getElementById("copilot-updated");
 
-    if (!blockEl || !textEl || !badgeEl) return;
+    if (!blockEl || !gridEl || !badgeEl) return;
+
+    const esc = (s) =>
+      String(s ?? "").replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[m]));
+
+    const cleanText = (txt) =>
+      String(txt || "")
+        .replace(/\r/g, "")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+
+    const normalizeTitle = (s) =>
+      String(s || "")
+        .replace(/^[^\p{L}\p{N}]+/gu, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    function splitSections(raw){
+      const text = cleanText(raw);
+      if (!text) return [];
+
+      const byBlank = text
+        .split(/\n\s*\n+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      if (byBlank.length > 1) return byBlank;
+
+      const lines = text.split("\n");
+      const out = [];
+      let cur = [];
+
+      const isHeadingLine = (line) => {
+        const s = String(line || "").trim();
+        if (!s) return false;
+
+        if (/^[🧠📊🕯️📐🔍⚖️🎯🛡️🔄⏰🚨📈🏆🔴🟢🟡⚠️❓📋💰⭐🧊🚀🔇📉].+/.test(s)) return true;
+        if (/^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9][A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s\/\-\—]{8,}$/.test(s)) return true;
+        return false;
+      };
+
+      for (const line of lines){
+        const s = String(line || "");
+        if (!s.trim()){
+          if (cur.length){
+            out.push(cur.join("\n").trim());
+            cur = [];
+          }
+          continue;
+        }
+
+        if (isHeadingLine(s) && cur.length){
+          out.push(cur.join("\n").trim());
+          cur = [s];
+          continue;
+        }
+
+        cur.push(s);
+      }
+
+      if (cur.length) out.push(cur.join("\n").trim());
+
+      return out.filter(Boolean);
+    }
+
+    function titleFromSection(section, idx){
+      const lines = String(section || "")
+        .split("\n")
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const first = lines[0] || `SECTION ${idx + 1}`;
+      let t = normalizeTitle(first);
+
+      if (/^PREMONITION DIGEST/i.test(t)) return "PREMONITION DIGEST";
+      if (/^EVENTO CR[IÍ]TICO/i.test(t)) return "EVENTO CRÍTICO";
+      if (/^VEREDICTO/i.test(t) || /^VERDICT/i.test(t)) return "VEREDICTO";
+      if (/^LEITURA FINAL/i.test(t)) return "LEITURA FINAL";
+      if (/^TIMELINE/i.test(t)) return "TIMELINE";
+      if (/^AN[ÁA]LISE/i.test(t)) return "ANÁLISE";
+      if (/^ESTRUTURA/i.test(t)) return "ESTRUTURA";
+      if (/^PAR[ÂA]METROS/i.test(t)) return "PARÂMETROS";
+      if (/^REGRAS/i.test(t)) return "REGRAS";
+      if (/^CHECKLIST/i.test(t)) return "CHECKLIST";
+      if (/^STATUS/i.test(t)) return "STATUS";
+      if (/^CONTEXTO/i.test(t)) return "CONTEXTO";
+      if (/^PLANO/i.test(t)) return "PLANO";
+
+      const colon = t.match(/^([^:]{3,60}):/);
+      if (colon) t = colon[1].trim();
+
+      if (t.length > 34) t = t.slice(0, 34).trim();
+
+      return t.toUpperCase() || `SECTION ${idx + 1}`;
+    }
+
+    function bodyFromSection(section){
+      const lines = String(section || "")
+        .split("\n")
+        .map(s => s.replace(/\s+$/g, ""));
+
+      if (!lines.length) return "—";
+
+      const first = lines[0]?.trim() || "";
+      const rest  = lines.slice(1).join("\n").trim();
+
+      const firstLooksLikeHeading =
+        first.length <= 90 &&
+        (
+          /^[🧠📊🕯️📐🔍⚖️🎯🛡️🔄⏰🚨📈🏆🔴🟢🟡⚠️❓📋💰⭐🧊🚀🔇📉].+/.test(first) ||
+          /^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9][A-ZÁÀÂÃÉÊÍÓÔÕÚÇ0-9\s\/\-\—]{6,}$/.test(first) ||
+          /^([^:]{3,60}):/.test(normalizeTitle(first))
+        );
+
+      if (firstLooksLikeHeading && rest) return rest;
+
+      return lines.join("\n").trim() || "—";
+    }
+
+    function renderCards(raw){
+      const sections = splitSections(raw);
+      const finalSections = sections.length ? sections : [cleanText(raw)];
+
+      return finalSections.map((section, idx) => {
+        const title = titleFromSection(section, idx);
+        const body  = bodyFromSection(section);
+
+        return `
+          <div class="copilot-card">
+            <div class="copilot-card-head">
+              <div class="copilot-card-title">${esc(title)}</div>
+            </div>
+            <div class="copilot-card-body">${esc(body).replace(/\n/g, "<br>")}</div>
+          </div>
+        `;
+      }).join("");
+    }
 
     if (!claudeText) {
       blockEl.style.display = "none";
-      if (textEl) textEl.textContent = "—";
+      gridEl.innerHTML = "";
       if (updatedEl) updatedEl.textContent = "—";
       badgeEl.className = "win-badge copilot-ignore";
       badgeEl.textContent = "READING";
@@ -15802,7 +15888,7 @@ function updateCoPilotBlock(data){
     }
 
     blockEl.style.display = "";
-    textEl.textContent = claudeText;
+    gridEl.innerHTML = renderCards(claudeText);
 
     const updated =
       panel.updated_at ||
