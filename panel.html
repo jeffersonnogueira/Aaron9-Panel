@@ -3852,7 +3852,7 @@
     inset 0 1px 0 rgba(255,255,255,.03),
     0 10px 24px rgba(2,6,23,.22) !important;
 }
-/* ===== COPILOT / CLAUDE DIGEST — BLOCKS ===== */
+/* ===== COPILOT / CLAUDE DIGEST — DECISION-FOCUSED ===== */
 #copilot-block .prem-breakout-title{
   font-size: 40px !important;
   opacity: .90 !important;
@@ -3896,7 +3896,7 @@
 
 #copilot-block .copilot-grid{
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -3907,6 +3907,37 @@
   border: 1px solid rgba(148,163,184,.16);
   background: linear-gradient(180deg, rgba(31,40,56,.92) 0%, rgba(17,24,35,.96) 100%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+#copilot-block .copilot-section-card.is-core{
+  border-color: rgba(255,204,102,.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 0 0 1px rgba(255,204,102,.04);
+}
+
+#copilot-block .copilot-section-card.is-verdict{
+  border-color: rgba(255,204,102,.34);
+  background: linear-gradient(180deg, rgba(58,48,28,.72) 0%, rgba(23,21,17,.96) 100%);
+}
+
+#copilot-block .copilot-section-card.is-trade{
+  border-color: rgba(96,165,250,.34);
+  background: linear-gradient(180deg, rgba(31,47,70,.78) 0%, rgba(17,24,35,.96) 100%);
+}
+
+#copilot-block .copilot-section-card.is-invalidation{
+  border-color: rgba(248,113,113,.34);
+  background: linear-gradient(180deg, rgba(66,32,38,.58) 0%, rgba(23,19,29,.96) 100%);
+}
+
+#copilot-block .copilot-section-card.is-structure{
+  border-color: rgba(74,222,128,.24);
+}
+
+#copilot-block .copilot-section-card.is-compact .copilot-section-body{
+  font-size: 22px;
+  line-height: 1.42;
 }
 
 #copilot-block .copilot-section-card.is-critical{
@@ -3999,6 +4030,11 @@
   #copilot-block .copilot-raw{
     font-size: 22px;
     line-height: 1.46;
+  }
+
+  #copilot-block .copilot-section-card.is-compact .copilot-section-body{
+    font-size: 19px;
+    line-height: 1.38;
   }
 
   #copilot-block .copilot-grid{
@@ -15906,8 +15942,25 @@ function updateCoPilotBlock(data){
 
       return (
         /^(📊|🕯️|📐|🔑|⚖️|✅|🎯|⚠️|🔄|🧠|🔍|⏰|📈|📉)\s/u.test(t) ||
-        /^(Análise dos 4 Candles|Estrutura (Atual|Confirmada|Nova)|Eventos Críticos Confirmados|Veredicto|Checklist|Parâmetros de Trade|Invalidação|Placar|Leitura Final|Mapa Temporal)/i.test(t)
+        /^(Análise dos 4 Candles|Estrutura (Atual|Confirmada|Nova)|Eventos Críticos Confirmados|Veredicto|Checklist|Parâmetros de Trade|Invalidação|Placar|Leitura Final|Mapa Temporal|Resumo|Timeline Completa)/i.test(t)
       );
+    };
+
+    const normalizeTitle = (title = "") =>
+      cleanLine(String(title).replace(/^[^A-Za-zÀ-ÿ0-9]+/, ""));
+
+    const sectionType = (title = "") => {
+      const t = normalizeTitle(title).toUpperCase();
+
+      if (/^VEREDICTO\b|^VERDICT\b/.test(t)) return "verdict";
+      if (/^PARÂMETROS DE TRADE\b|^PARAMETROS DE TRADE\b|^TRADE PARAMETERS\b|^PLANO DE TRADE\b/.test(t)) return "trade";
+      if (/^INVALIDAÇÃO\b|^INVALIDACAO\b|^INVALIDATION\b/.test(t)) return "invalidation";
+      if (/^ESTRUTURA CONFIRMADA\b|^ESTRUTURA ATUAL\b|^CONFIRMED STRUCTURE\b|^CURRENT STRUCTURE\b/.test(t)) return "structure";
+      if (/^CHECKLIST\b/.test(t)) return "checklist";
+      if (/^ANÁLISE DOS 4 CANDLES\b|^ANALISE DOS 4 CANDLES\b|^4 CANDLES ANALYSIS\b/.test(t)) return "candles";
+      if (/^TIMELINE COMPLETA\b|^TIMELINE\b/.test(t)) return "timeline";
+      if (/^RESUMO\b|^SUMMARY\b/.test(t)) return "summary";
+      return "other";
     };
 
     const toneForTitle = (title = "") => {
@@ -15923,6 +15976,44 @@ function updateCoPilotBlock(data){
         return "is-bull";
       }
       return "";
+    };
+
+    const classForSection = (type, title = "") => {
+      const cls = [];
+      const tone = toneForTitle(title);
+      if (tone) cls.push(tone);
+
+      if (type === "verdict") cls.push("is-core", "is-verdict");
+      if (type === "trade") cls.push("is-core", "is-trade");
+      if (type === "invalidation") cls.push("is-core", "is-invalidation");
+      if (type === "structure") cls.push("is-core", "is-structure");
+      if (type === "checklist") cls.push("is-compact");
+
+      return cls.join(" ");
+    };
+
+    const compactChecklistBody = (body = "") => {
+      const lines = String(body)
+        .split("\n")
+        .map(cleanLine)
+        .filter(Boolean)
+        .filter(line => !/^[-—–]+$/.test(line));
+
+      if (!lines.length) return "—";
+
+      const validCount = lines.filter(line => /[✅✔☑]/u.test(line)).length;
+      const pendingCount = lines.filter(line => /[⏳⌛]/u.test(line) || /\bPENDENTE\b|\bPENDING\b/i.test(line)).length;
+
+      const topLines = lines
+        .slice(0, 4)
+        .map(line => line.replace(/^[✅✔☑⏳⌛•\-\s]+/u, "").trim())
+        .filter(Boolean);
+
+      const out = [];
+      out.push(`Validado: ${validCount} | Pendente: ${pendingCount}`);
+      topLines.forEach(line => out.push(`• ${line}`));
+
+      return out.join("\n");
     };
 
     const claudeText = pickFirstText(
@@ -16057,13 +16148,39 @@ function updateCoPilotBlock(data){
 
     flushCurrent();
 
-    if (sections.length > 0) {
-      sectionsEl.innerHTML = sections.map(section => {
-        const toneClass = toneForTitle(section.title);
+    const mappedSections = sections.map((section, index) => ({
+      ...section,
+      index,
+      type: sectionType(section.title)
+    }));
+
+    const wantedOrder = ["verdict", "trade", "invalidation", "structure", "checklist"];
+
+    let visibleSections = wantedOrder
+      .map(type => mappedSections.find(section => section.type === type))
+      .filter(Boolean);
+
+    if (!visibleSections.length) {
+      visibleSections = mappedSections.filter(section =>
+        !["summary", "timeline", "candles"].includes(section.type)
+      );
+    }
+
+    if (!visibleSections.length) {
+      visibleSections = mappedSections;
+    }
+
+    if (visibleSections.length > 0) {
+      sectionsEl.innerHTML = visibleSections.map(section => {
+        const body =
+          section.type === "checklist"
+            ? compactChecklistBody(section.body || "")
+            : (section.body || "—");
+
         return `
-          <div class="copilot-section-card ${toneClass}">
+          <div class="copilot-section-card ${classForSection(section.type, section.title)}">
             <div class="copilot-section-header">${escapeHtml(section.title)}</div>
-            <div class="copilot-section-body">${escapeHtml(section.body || "—")}</div>
+            <div class="copilot-section-body">${escapeHtml(body)}</div>
           </div>
         `;
       }).join("");
