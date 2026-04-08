@@ -3935,6 +3935,21 @@
   border-color: rgba(74,222,128,.24);
 }
 
+#copilot-block .copilot-section-card.is-events{
+  border-color: rgba(248,113,113,.34);
+  background: linear-gradient(180deg, rgba(73,34,40,.72) 0%, rgba(25,19,26,.96) 100%);
+}
+
+#copilot-block .copilot-section-card.is-finalread{
+  border-color: rgba(250,204,21,.32);
+  background: linear-gradient(180deg, rgba(66,56,24,.72) 0%, rgba(24,22,17,.96) 100%);
+}
+
+#copilot-block .copilot-section-card.is-timemap{
+  border-color: rgba(96,165,250,.28);
+  background: linear-gradient(180deg, rgba(27,42,64,.72) 0%, rgba(17,22,34,.96) 100%);
+}
+
 #copilot-block .copilot-section-card.is-compact .copilot-section-body{
   font-size: 22px;
   line-height: 1.42;
@@ -15940,25 +15955,27 @@ function updateCoPilotBlock(data){
       if (/^[-•]/.test(t)) return false;
       if (/^(Candle|Volume|Close|High|Low|Range|Stop|Target)\b/i.test(t)) return false;
 
-      return (
+            return (
         /^(📊|🕯️|📐|🔑|⚖️|✅|🎯|⚠️|🔄|🧠|🔍|⏰|📈|📉)\s/u.test(t) ||
-        /^(Análise dos 4 Candles|Estrutura (Atual|Confirmada|Nova)|Eventos Críticos Confirmados|Veredicto|Checklist|Parâmetros de Trade|Invalidação|Placar|Leitura Final|Mapa Temporal|Resumo|Timeline Completa)/i.test(t)
+        /^(Análise dos 4 Candles|Estrutura (Atual|Confirmada|Nova)|Eventos Críticos( Confirmados)?|Veredicto|Checklist|Parâmetros de Trade|Invalidação|Placar|Leitura Final|Mapa Temporal|Resumo|Timeline Completa|Timeline)/i.test(t)
       );
     };
 
     const normalizeTitle = (title = "") =>
       cleanLine(String(title).replace(/^[^A-Za-zÀ-ÿ0-9]+/, ""));
 
-    const sectionType = (title = "") => {
+        const sectionType = (title = "") => {
       const t = normalizeTitle(title).toUpperCase();
 
       if (/^VEREDICTO\b|^VERDICT\b/.test(t)) return "verdict";
       if (/^PARÂMETROS DE TRADE\b|^PARAMETROS DE TRADE\b|^TRADE PARAMETERS\b|^PLANO DE TRADE\b/.test(t)) return "trade";
       if (/^INVALIDAÇÃO\b|^INVALIDACAO\b|^INVALIDATION\b/.test(t)) return "invalidation";
       if (/^ESTRUTURA CONFIRMADA\b|^ESTRUTURA ATUAL\b|^CONFIRMED STRUCTURE\b|^CURRENT STRUCTURE\b/.test(t)) return "structure";
+      if (/^EVENTOS CRÍTICOS\b|^EVENTOS CRITICOS\b|^CRITICAL EVENTS\b/.test(t)) return "events";
+      if (/^LEITURA FINAL\b|^FINAL READ\b|^FINAL READING\b/.test(t)) return "finalread";
+      if (/^MAPA TEMPORAL\b|^TIMELINE COMPLETA\b|^TIMELINE\b|^TEMPORAL MAP\b/.test(t)) return "timemap";
       if (/^CHECKLIST\b/.test(t)) return "checklist";
       if (/^ANÁLISE DOS 4 CANDLES\b|^ANALISE DOS 4 CANDLES\b|^4 CANDLES ANALYSIS\b/.test(t)) return "candles";
-      if (/^TIMELINE COMPLETA\b|^TIMELINE\b/.test(t)) return "timeline";
       if (/^RESUMO\b|^SUMMARY\b/.test(t)) return "summary";
       return "other";
     };
@@ -15978,7 +15995,7 @@ function updateCoPilotBlock(data){
       return "";
     };
 
-    const classForSection = (type, title = "") => {
+        const classForSection = (type, title = "") => {
       const cls = [];
       const tone = toneForTitle(title);
       if (tone) cls.push(tone);
@@ -15987,6 +16004,9 @@ function updateCoPilotBlock(data){
       if (type === "trade") cls.push("is-core", "is-trade");
       if (type === "invalidation") cls.push("is-core", "is-invalidation");
       if (type === "structure") cls.push("is-core", "is-structure");
+      if (type === "events") cls.push("is-core", "is-events");
+      if (type === "finalread") cls.push("is-core", "is-finalread");
+      if (type === "timemap") cls.push("is-core", "is-timemap");
       if (type === "checklist") cls.push("is-compact");
 
       return cls.join(" ");
@@ -16154,7 +16174,7 @@ function updateCoPilotBlock(data){
       type: sectionType(section.title)
     }));
 
-    const wantedOrder = ["verdict", "trade", "invalidation", "structure", "checklist"];
+        const wantedOrder = ["verdict", "trade", "invalidation", "events", "finalread", "timemap", "structure", "checklist"];
 
     let visibleSections = wantedOrder
       .map(type => mappedSections.find(section => section.type === type))
