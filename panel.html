@@ -3987,7 +3987,28 @@
   font-weight: 800;
   color: #e5e7eb;
 }
+#copilot-block .copilot-hot-label{
+  font-size: 42px;
+  line-height: 1.02;
+  font-weight: 950;
+  color: #f8fafc;
+  letter-spacing: .01em;
+}
 
+#copilot-block .copilot-hot-price{
+  font-size: 42px;
+  line-height: 1.02;
+  font-weight: 950;
+  color: #ffcc66;
+  letter-spacing: .01em;
+}
+
+@media (max-width: 980px){
+  #copilot-block .copilot-hot-label,
+  #copilot-block .copilot-hot-price{
+    font-size: 30px;
+  }
+}
 #copilot-block .copilot-raw{
   white-space: pre-wrap;
   word-break: break-word;
@@ -16044,7 +16065,30 @@ function updateCoPilotBlock(data){
 
       return out.join("\n");
     };
+    const formatCopilotBody = (body = "") => {
+      let html = escapeHtml(String(body || ""));
 
+      // Destaca labels principais sem aumentar a frase inteira
+      html = html.replace(
+        /(^|\n)(\s*[-•]?\s*)(Entrada ideal(?:\s*\(reteste\))?|Entrada|Stop|Target\s*1|Target\s*2|Respiro|Preço|Preco)(\s*:)/gim,
+        (_, br, prefix, label, colon) =>
+          `${br}${prefix}<span class="copilot-hot-label">${label}</span>${colon}`
+      );
+
+      // Destaca RESPIRO mesmo quando aparecer no meio da frase
+      html = html.replace(
+        /\b(RESPIRO)\b/gi,
+        `<span class="copilot-hot-label">$1</span>`
+      );
+
+      // Destaca preços e ranges em dólar
+      html = html.replace(
+        /\$\s*\d+(?:\.\d+)?(?:\s*[–-]\s*\$?\s*\d+(?:\.\d+)?)?/g,
+        (m) => `<span class="copilot-hot-price">${m.replace(/\s+/g, " ")}</span>`
+      );
+
+      return html.replace(/\n/g, "<br>");
+    };
     const claudeText = pickFirstText(
       panel.claude_text,
       data.claude_text,
@@ -16209,7 +16253,7 @@ function updateCoPilotBlock(data){
         return `
           <div class="copilot-section-card ${classForSection(section.type, section.title)}">
             <div class="copilot-section-header">${escapeHtml(section.title)}</div>
-            <div class="copilot-section-body">${escapeHtml(body)}</div>
+                        <div class="copilot-section-body">${formatCopilotBody(body)}</div>
           </div>
         `;
       }).join("");
