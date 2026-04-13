@@ -4051,7 +4051,161 @@
   background: rgba(148,163,184,.10);
   color: #e2e8f0;
 }
+/* ===== TRIPLE CONVERGENCE ===== */
+#triple-conv-block .prem-breakout-title{
+  font-size: 38px !important;
+  font-weight: 950 !important;
+  color: #ffcc66 !important;
+  opacity: .92 !important;
+}
 
+#triple-conv-block .triple-conv-shell{
+  border: 1px solid rgba(95,116,145,.18) !important;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(35,44,61,.88) 0%, rgba(18,24,35,.96) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 10px 24px rgba(2,6,23,.22) !important;
+  padding: 18px 20px;
+  margin-top: 12px;
+}
+
+#triple-conv-block .triple-conv-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+#triple-conv-block .triple-conv-row{
+  min-width: 0;
+  border-radius: 16px;
+  padding: 16px 18px;
+  border: 1px solid rgba(148,163,184,.16);
+  background: linear-gradient(180deg, rgba(31,40,56,.92) 0%, rgba(17,24,35,.96) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+#triple-conv-block .triple-conv-row.is-wide{
+  grid-column: 1 / -1;
+}
+
+#triple-conv-block .triple-conv-k{
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #ffcc66;
+  margin-bottom: 12px;
+  white-space: nowrap;
+}
+
+#triple-conv-block .triple-conv-v{
+  font-size: 38px;
+  line-height: 1.14;
+  font-weight: 950;
+  color: #ffcc66;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+#triple-conv-block .triple-conv-note{
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 850;
+  color: #e5e7eb;
+}
+
+#triple-conv-block .triple-conv-quality{
+  display: inline-flex;
+  align-items: center;
+  margin-left: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: .06em;
+  border: 1px solid rgba(148,163,184,.24);
+  background: rgba(148,163,184,.08);
+  color: #e5e7eb;
+  vertical-align: middle;
+}
+
+#triple-conv-block .triple-conv-quality.tc-perfect{
+  border-color: rgba(74,222,128,.35);
+  background: rgba(74,222,128,.12);
+  color: #86efac;
+}
+
+#triple-conv-block .triple-conv-quality.tc-good{
+  border-color: rgba(250,204,21,.35);
+  background: rgba(250,204,21,.12);
+  color: #fde68a;
+}
+
+#triple-conv-block .triple-conv-quality.tc-ok{
+  border-color: rgba(96,165,250,.35);
+  background: rgba(96,165,250,.12);
+  color: #bfdbfe;
+}
+
+#triple-conv-badge{
+  font-size: 38px !important;
+  padding: 12px 22px !important;
+  line-height: 1 !important;
+  letter-spacing: .10em !important;
+  font-weight: 950 !important;
+  border-radius: 999px !important;
+}
+
+#triple-conv-badge.tc-long{
+  border-color: rgba(34,197,94,.35);
+  background: rgba(34,197,94,.12);
+  color: #86efac;
+}
+
+#triple-conv-badge.tc-short{
+  border-color: rgba(248,113,113,.35);
+  background: rgba(248,113,113,.12);
+  color: #fca5a5;
+}
+
+#triple-conv-badge.tc-off{
+  border-color: rgba(148,163,184,.28);
+  background: rgba(148,163,184,.10);
+  color: #e2e8f0;
+}
+
+@media (max-width: 980px){
+  #triple-conv-block .triple-conv-grid{
+    grid-template-columns: 1fr;
+  }
+
+  #triple-conv-block .triple-conv-k{
+    font-size: 18px;
+  }
+
+  #triple-conv-block .triple-conv-v{
+    font-size: 28px;
+  }
+
+  #triple-conv-block .triple-conv-note{
+    font-size: 20px;
+    margin-left: 8px;
+  }
+
+  #triple-conv-block .triple-conv-quality{
+    font-size: 16px;
+    margin-left: 8px;
+  }
+
+  #triple-conv-badge{
+    font-size: 28px !important;
+  }
+}
 @media (max-width: 1500px){
   #copilot-block .copilot-grid{
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6803,6 +6957,53 @@
           </div>
         </div>
                 <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
+                 <!-- ===== TRIPLE CONVERGENCE — ABOVE COPILOT ===== -->
+<div class="prem-breakout-wrap" id="triple-conv-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title" id="triple-conv-title">🎯 TRIPLE CONVERGENCE</div>
+    <span id="triple-conv-badge" class="win-badge tc-off">NO SETUP</span>
+  </div>
+
+  <div class="triple-conv-shell">
+    <div class="triple-conv-grid">
+      <div class="triple-conv-row">
+        <div class="triple-conv-k">EMA Target</div>
+        <div class="triple-conv-v" id="triple-conv-ema">—</div>
+      </div>
+
+      <div class="triple-conv-row">
+        <div class="triple-conv-k">VOL Target</div>
+        <div class="triple-conv-v" id="triple-conv-vol">—</div>
+      </div>
+
+      <div class="triple-conv-row">
+        <div class="triple-conv-k">Claude T1</div>
+        <div class="triple-conv-v" id="triple-conv-claude">—</div>
+      </div>
+
+      <div class="triple-conv-row">
+        <div class="triple-conv-k">EMA | VOL</div>
+        <div class="triple-conv-v" id="triple-conv-pcts">—</div>
+      </div>
+
+      <div class="triple-conv-row is-wide">
+        <div class="triple-conv-k">Consensus</div>
+        <div class="triple-conv-v">
+          <span id="triple-conv-consensus">—</span>
+          <span class="triple-conv-note" id="triple-conv-consensus-note">← ENTRADA/SAÍDA</span>
+        </div>
+      </div>
+
+      <div class="triple-conv-row is-wide">
+        <div class="triple-conv-k">Spread</div>
+        <div class="triple-conv-v">
+          <span id="triple-conv-spread">—</span>
+          <span class="triple-conv-quality" id="triple-conv-quality">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
     <div class="prem-breakout-title">COPILOT</div>
@@ -16103,7 +16304,16 @@ function updateCoPilotBlock(data){
     const textEl        = document.getElementById("copilot-text");
     const badgeEl       = document.getElementById("copilot-badge");
     const updatedEl     = document.getElementById("copilot-updated");
-
+    const tripleBlockEl    = document.getElementById("triple-conv-block");
+    const tripleTitleEl    = document.getElementById("triple-conv-title");
+    const tripleBadgeEl    = document.getElementById("triple-conv-badge");
+    const tripleEmaEl      = document.getElementById("triple-conv-ema");
+    const tripleVolEl      = document.getElementById("triple-conv-vol");
+    const tripleClaudeEl   = document.getElementById("triple-conv-claude");
+    const triplePctsEl     = document.getElementById("triple-conv-pcts");
+    const tripleConsEl     = document.getElementById("triple-conv-consensus");
+    const tripleSpreadEl   = document.getElementById("triple-conv-spread");
+    const tripleQualityEl  = document.getElementById("triple-conv-quality");
     if (!blockEl || !heroTitleEl || !sectionsEl || !textEl || !badgeEl) return;
 
     const resetCopilotView = () => {
@@ -16127,10 +16337,33 @@ function updateCoPilotBlock(data){
       badgeEl.className = "win-badge copilot-ignore";
       badgeEl.textContent = "READING";
     };
+    const hideTripleConvergence = () => {
+      if (!tripleBlockEl) return;
 
-    if (!claudeText) {
+      tripleBlockEl.style.display = "none";
+
+      if (tripleTitleEl)   tripleTitleEl.textContent = "🎯 TRIPLE CONVERGENCE";
+      if (tripleBadgeEl) {
+        tripleBadgeEl.className = "win-badge tc-off";
+        tripleBadgeEl.textContent = "NO SETUP";
+      }
+
+      if (tripleEmaEl)     tripleEmaEl.textContent = "—";
+      if (tripleVolEl)     tripleVolEl.textContent = "—";
+      if (tripleClaudeEl)  tripleClaudeEl.textContent = "—";
+      if (triplePctsEl)    triplePctsEl.textContent = "—";
+      if (tripleConsEl)    tripleConsEl.textContent = "—";
+      if (tripleSpreadEl)  tripleSpreadEl.textContent = "—";
+
+      if (tripleQualityEl) {
+        tripleQualityEl.textContent = "—";
+        tripleQualityEl.className = "triple-conv-quality";
+      }
+    };
+        if (!claudeText) {
       blockEl.style.display = "none";
       resetCopilotView();
+      hideTripleConvergence();
       return;
     }
 
@@ -16147,6 +16380,175 @@ function updateCoPilotBlock(data){
     if (updatedEl) updatedEl.textContent = String(updated);
 
     const normalizedText = String(claudeText).replace(/\r/g, "").trim();
+        // ===== TRIPLE CONVERGENCE =====
+    try {
+      const tcNum = (v) => {
+        if (v === null || v === undefined || v === "") return null;
+        const s = String(v).replace(",", ".").replace(/[^\d.\-]/g, "");
+        const n = Number(s);
+        return Number.isFinite(n) ? n : null;
+      };
+
+      const tcPick = (...vals) => {
+        for (const v of vals) {
+          if (v !== null && v !== undefined && v !== "") return v;
+        }
+        return null;
+      };
+
+      const tcSide = (v) => {
+        const t = String(v || "").toLowerCase();
+        if (/(long|buy|up)/.test(t)) return "long";
+        if (/(short|sell|down)/.test(t)) return "short";
+        return null;
+      };
+
+      const tcFmtPrice = (v) =>
+        (v == null ? "—" : `$${Number(v).toFixed(2)}`);
+
+      const tcFmtPct = (v) =>
+        (v == null ? "—" : `${Math.round(Number(v))}%`);
+
+      const tcClaudeMatch =
+        normalizedText.match(/Target\s*1[\s:]+\$?\s*(\d{1,4}(?:[.,]\d{1,4})?)/i);
+
+      const claudeT1 = tcClaudeMatch ? tcNum(tcClaudeMatch[1]) : null;
+
+      const tcEex =
+        panel?.ema_volume_exhaustion_premonition_v1 ||
+        ui?.ema_volume_exhaustion_premonition_v1 ||
+        digest?.ema_volume_exhaustion_premonition_v1 ||
+        data?.ema_volume_exhaustion_premonition_v1 ||
+        root?.ema_volume_exhaustion_premonition_v1 ||
+        root?.exec_1x1?.ema_volume_exhaustion_premonition_v1 ||
+        null;
+
+      const tcVp =
+        panel?.volume_premonition_v1 ||
+        ui?.volume_premonition_v1 ||
+        digest?.volume_premonition_v1 ||
+        data?.volume_premonition_v1 ||
+        root?.volume_premonition_v1 ||
+        root?.exec_1x1?.volume_premonition_v1 ||
+        root?.live?.volume_premonition_v1 ||
+        null;
+
+      const emaTarget = tcNum(tcPick(
+        tcEex?.next_impulse_target_price_p50,
+        tcEex?.continuation_target_price_p50,
+        tcEex?.highlight?.next_impulse_target_price_p50,
+        tcEex?.highlight?.continue_target_price_p50
+      ));
+
+      const volTarget = tcNum(tcPick(
+        tcVp?.next_impulse_target_price_p50,
+        tcVp?.continuation_target_price_p50,
+        tcVp?.highlight?.next_impulse_target_price_p50,
+        tcVp?.highlight?.continue_target_price_p50,
+        tcVp?.by_horizon?.["5"]?.next_impulse_target_price_p50,
+        tcVp?.by_horizon?.["5"]?.continuation_target_price_p50
+      ));
+
+      const emaPct = tcNum(tcPick(
+        tcEex?.continuation_premonition_pct,
+        tcEex?.continuation_pct,
+        tcEex?.highlight?.continuation_premonition_pct
+      ));
+
+      const volPct = tcNum(tcPick(
+        panel?.volume_premonition_continuation_pct,
+        ui?.volume_premonition_continuation_pct,
+        digest?.volume_premonition_continuation_pct,
+        data?.volume_premonition_continuation_pct,
+        root?.volume_premonition_continuation_pct,
+        tcVp?.continuation_premonition_pct,
+        tcVp?.continuation_pct,
+        tcVp?.highlight?.continuation_premonition_pct,
+        tcVp?.highlight?.live_continuation_score_pct,
+        tcVp?.by_horizon?.["5"]?.continuation_premonition_pct,
+        tcVp?.by_horizon?.["5"]?.live_continuation_score_pct
+      ));
+
+      const emaSide = tcSide(tcPick(
+        tcEex?.selected_side,
+        tcEex?.direction_now,
+        tcEex?.expected_move_direction
+      ));
+
+      const volSide = tcSide(tcPick(
+        tcVp?.selected_side,
+        tcVp?.direction_now,
+        panel?.volume_premonition_direction_now,
+        ui?.volume_premonition_direction_now,
+        digest?.volume_premonition_direction_now,
+        data?.volume_premonition_direction_now,
+        root?.volume_premonition_direction_now
+      ));
+
+      const strongEnough =
+        emaPct != null && volPct != null &&
+        emaPct >= 75 && volPct >= 75;
+
+      const sameDirection =
+        !!emaSide && !!volSide && emaSide === volSide;
+
+      if (
+        !tripleBlockEl ||
+        emaTarget == null ||
+        volTarget == null ||
+        claudeT1 == null ||
+        !strongEnough ||
+        !sameDirection
+      ) {
+        hideTripleConvergence();
+      } else {
+        const targets = [emaTarget, volTarget, claudeT1];
+        const spread = Math.max(...targets) - Math.min(...targets);
+
+        if (spread > 1.00) {
+          hideTripleConvergence();
+        } else {
+          const consensus = (emaTarget + volTarget + claudeT1) / 3;
+          const dirTxt = emaSide === "long" ? "LONG" : "SHORT";
+
+          let qualityTxt = "";
+          let qualityCls = "tc-good";
+
+          if (spread <= 0.20) {
+            qualityTxt = "🔥 PERFEITO";
+            qualityCls = "tc-perfect";
+          } else if (spread <= 0.50) {
+            qualityTxt = "✅ BOM";
+            qualityCls = "tc-good";
+          } else {
+            qualityTxt = "🟡 ACEITÁVEL";
+            qualityCls = "tc-ok";
+          }
+
+          tripleBlockEl.style.display = "";
+          if (tripleTitleEl) tripleTitleEl.textContent = `🎯 TRIPLE CONVERGENCE — ${dirTxt}`;
+
+          if (tripleBadgeEl) {
+            tripleBadgeEl.className = `win-badge ${dirTxt === "LONG" ? "tc-long" : "tc-short"}`;
+            tripleBadgeEl.textContent = dirTxt;
+          }
+
+          if (tripleEmaEl)    tripleEmaEl.textContent = tcFmtPrice(emaTarget);
+          if (tripleVolEl)    tripleVolEl.textContent = tcFmtPrice(volTarget);
+          if (tripleClaudeEl) tripleClaudeEl.textContent = tcFmtPrice(claudeT1);
+          if (triplePctsEl)   triplePctsEl.textContent = `${tcFmtPct(emaPct)} | ${tcFmtPct(volPct)}`;
+          if (tripleConsEl)   tripleConsEl.textContent = tcFmtPrice(consensus);
+          if (tripleSpreadEl) tripleSpreadEl.textContent = tcFmtPrice(spread);
+
+          if (tripleQualityEl) {
+            tripleQualityEl.textContent = qualityTxt;
+            tripleQualityEl.className = `triple-conv-quality ${qualityCls}`;
+          }
+        }
+      }
+    } catch (_) {
+      hideTripleConvergence();
+    }
     const lines = normalizedText.split("\n");
 
     let firstNonEmpty = lines.findIndex(line => cleanLine(line));
