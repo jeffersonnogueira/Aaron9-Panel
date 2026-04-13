@@ -23357,13 +23357,36 @@ if (microTake == null) {
       tcEmaBlock?.continuation_pct
     );
 
-    const tcVolPct = tcPickNum(
-      tcRoot?.vol_pct,
-      panel?.volume_premonition_continuation_pct,
-      digest?.volume_premonition_continuation_pct,
-      tcVolBlock?.continuation_premonition_pct,
-      tcVolBlock?.continuation_pct
-    );
+    const tcVolByH = tcVolBlock?.by_horizon || {};
+
+const tcGetVolH = (...keys) => {
+  for (const k of keys) {
+    const v = tcVolByH?.[String(k)];
+    if (v) return v;
+  }
+  return null;
+};
+
+const tcVolH1 = tcGetVolH("1", "1m");
+const tcVolH5 = tcGetVolH("5", "5m");
+
+const tcVolBaseNow =
+  tcVolBlock?.highlight ||
+  tcVolH5 ||
+  tcVolH1 ||
+  null;
+
+const tcVolPct = tcPickNum(
+  tcRoot?.vol_pct,
+  tcRoot?.vol_now_pct,
+  tcVolBaseNow?.live_continuation_score_pct,
+  panel?.volume_premonition_now_continuation_pct,
+  digest?.volume_premonition_now_continuation_pct,
+  panel?.volume_premonition_continuation_pct,
+  digest?.volume_premonition_continuation_pct,
+  tcVolBlock?.continuation_premonition_pct,
+  tcVolBlock?.continuation_pct
+);
 
     const tcEmaSide = tcNormSide(
       tcRoot?.ema_side ||
