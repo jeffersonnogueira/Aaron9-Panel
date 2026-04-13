@@ -16136,28 +16136,28 @@ function updateAaronCommentaryBlock(data){
       comment
     ].filter(Boolean).join(" | ") || "—";
     const hideTripleConvergence = () => {
-      if (!tripleBlockEl) return;
+  if (!tripleBlockEl) return;
 
-      tripleBlockEl.style.display = "none";
+  tripleBlockEl.style.display = "";
 
-      if (tripleTitleEl) tripleTitleEl.textContent = "🎯 TRIPLE CONVERGENCE";
-      if (tripleBadgeEl) {
-        tripleBadgeEl.className = "win-badge tc-off";
-        tripleBadgeEl.textContent = "NO SETUP";
-      }
+  if (tripleTitleEl)   tripleTitleEl.textContent = "🎯 TRIPLE CONVERGENCE";
+  if (tripleBadgeEl) {
+    tripleBadgeEl.className = "win-badge tc-off";
+    tripleBadgeEl.textContent = "NO SETUP";
+  }
 
-      if (tripleEmaEl) tripleEmaEl.textContent = "—";
-      if (tripleVolEl) tripleVolEl.textContent = "—";
-      if (tripleClaudeEl) tripleClaudeEl.textContent = "—";
-      if (triplePctsEl) triplePctsEl.textContent = "—";
-      if (tripleConsEl) tripleConsEl.textContent = "—";
-      if (tripleSpreadEl) tripleSpreadEl.textContent = "—";
+  if (tripleEmaEl)     tripleEmaEl.textContent = "—";
+  if (tripleVolEl)     tripleVolEl.textContent = "—";
+  if (tripleClaudeEl)  tripleClaudeEl.textContent = "—";
+  if (triplePctsEl)    triplePctsEl.textContent = "—";
+  if (tripleConsEl)    tripleConsEl.textContent = "—";
+  if (tripleSpreadEl)  tripleSpreadEl.textContent = "—";
 
-      if (tripleQualityEl) {
-        tripleQualityEl.textContent = "—";
-        tripleQualityEl.className = "triple-conv-quality";
-      }
-    };
+  if (tripleQualityEl) {
+    tripleQualityEl.textContent = "—";
+    tripleQualityEl.className = "triple-conv-quality";
+  }
+};
     const bodyEl = document.getElementById("aaron-commentary-body");
     if (bodyEl) bodyEl.textContent = finalText;
 
