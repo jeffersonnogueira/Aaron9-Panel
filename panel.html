@@ -6803,6 +6803,60 @@
     <div class="copilot-raw" id="copilot-text" style="display:none;">—</div>
   </div>
 </div>
+<!-- ===== TRIPLE CONVERGENCE — ABOVE COPILOT ===== -->
+<div class="prem-breakout-wrap" id="triple-conv-card" style="margin-top:10px; grid-column: 1 / -1;">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">TRIPLE CONVERGENCE</div>
+    <span id="tc-badge" class="win-badge win-wait">WAIT</span>
+  </div>
+
+  <div class="execm-side-card" style="margin-top:12px; width:100%; max-width:none;">
+    <div class="execm-side-title" id="tc-title">🎯 TRIPLE CONVERGENCE — WAIT</div>
+
+    <div class="execm-side-body">
+      <div class="execm-line">
+        <span class="ek">EMA Target:</span>
+        <span id="tc-ema-target" class="ev">—</span>
+      </div>
+
+      <div class="execm-line">
+        <span class="ek">VOL Target:</span>
+        <span id="tc-vol-target" class="ev">—</span>
+      </div>
+
+      <div class="execm-line">
+        <span class="ek">Claude T1:</span>
+        <span id="tc-claude-t1" class="ev">—</span>
+      </div>
+
+      <div class="execm-line">
+        <span class="ek">Consensus:</span>
+        <span id="tc-consensus" class="ev">—</span>
+        <span class="pipe">|</span>
+        <span class="ek">Spread:</span>
+        <span id="tc-spread" class="ev">—</span>
+      </div>
+
+      <div class="execm-line">
+        <span class="ek">EMA:</span>
+        <span id="tc-ema-pct" class="ev">—</span>
+        <span class="pipe">|</span>
+        <span class="ek">VOL:</span>
+        <span id="tc-vol-pct" class="ev">—</span>
+      </div>
+
+      <div class="execm-line">
+        <span class="ek">Quality:</span>
+        <span id="tc-quality" class="ev">—</span>
+      </div>
+
+      <div class="execm-line muted" id="tc-status">
+        Aguardando alinhamento entre EMA, VOL e Claude.
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== /TRIPLE CONVERGENCE ===== -->
                 <!-- ===== ZIGZAG ROUTE ENGINE (NEW) — BELOW INDICATORS ===== -->
                          <div id="zz-volume-row">
                     <div id="zz-left-stack">
@@ -22548,7 +22602,219 @@ if (microTake == null) {
     if (el("mpl-b-price"))  el("mpl-b-price").textContent  = (bPrice != null) ? fmt2(bPrice) : "—";
     if (el("mpl-b-eta"))    el("mpl-b-eta").textContent    = (bEta != null) ? `~${bEta}m` : "—";
     // ===== /MICRO PATH (LIVE) =====
+    // ===== TRIPLE CONVERGENCE (sempre visível) =====
+    const tcNum = (v) => {
+      if (v === null || v === undefined || v === "") return null;
+      if (typeof v === "number" && Number.isFinite(v)) return v;
 
+      const s = String(v)
+        .trim()
+        .replace(/\$/g, "")
+        .replace(/\s+/g, "")
+        .replace(",", ".");
+
+      const n = Number(s);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const tcPickText = (...vals) => {
+      for (const v of vals) {
+        if (typeof v !== "string") continue;
+        const s = v.trim();
+        if (s) return s;
+      }
+      return "";
+    };
+
+    const tcPickNum = (...vals) => {
+      for (const v of vals) {
+        const n = tcNum(v);
+        if (n != null) return n;
+      }
+      return null;
+    };
+
+    const tcNormSide = (v) => {
+      const s = String(v || "").trim().toLowerCase();
+      if (!s) return "";
+      if (s.includes("buy") || s.includes("long") || s === "up") return "long";
+      if (s.includes("sell") || s.includes("short") || s === "down") return "short";
+      return s;
+    };
+
+    const tcRoot =
+      panel?.triple_convergence ||
+      digest?.triple_convergence ||
+      payload?.triple_convergence ||
+      {};
+
+    const tcEmaBlock =
+      exec1x1?.ema_volume_exhaustion_premonition_v1 ||
+      panel?.ema_volume_exhaustion_premonition_v1 ||
+      digest?.ema_volume_exhaustion_premonition_v1 ||
+      {};
+
+    const tcVolBlock =
+      exec1x1?.volume_premonition_v1 ||
+      panel?.volume_premonition_v1 ||
+      digest?.volume_premonition_v1 ||
+      {};
+
+    const tcClaudeText = tcPickText(
+      panel?.claude_text,
+      digest?.claude_text,
+      payload?.claude_text,
+      panel?.copilot_text,
+      digest?.copilot_text
+    );
+
+    const tcMatch = tcClaudeText.match(/Target\s*1[\:\s]+\$?\s*(\d{1,6}(?:[.,]\d{1,4})?)/i);
+
+    const tcEmaTarget = tcPickNum(
+      tcRoot?.ema_target,
+      tcEmaBlock?.next_impulse_target_price_p50,
+      tcEmaBlock?.continuation_target_price_p50
+    );
+
+    const tcVolTarget = tcPickNum(
+      tcRoot?.vol_target,
+      tcVolBlock?.next_impulse_target_price_p50,
+      tcVolBlock?.continuation_target_price_p50,
+      panel?.volume_premonition_target_price_p50,
+      digest?.volume_premonition_target_price_p50
+    );
+
+    const tcClaudeT1 = tcPickNum(
+      tcRoot?.claude_t1,
+      tcMatch ? String(tcMatch[1]).replace(",", ".") : null
+    );
+
+    const tcEmaPct = tcPickNum(
+      tcRoot?.ema_pct,
+      tcEmaBlock?.continuation_premonition_pct,
+      tcEmaBlock?.continuation_pct
+    );
+
+    const tcVolPct = tcPickNum(
+      tcRoot?.vol_pct,
+      panel?.volume_premonition_continuation_pct,
+      digest?.volume_premonition_continuation_pct,
+      tcVolBlock?.continuation_premonition_pct,
+      tcVolBlock?.continuation_pct
+    );
+
+    const tcEmaSide = tcNormSide(
+      tcRoot?.ema_side ||
+      tcEmaBlock?.selected_side ||
+      tcEmaBlock?.direction_now
+    );
+
+    const tcVolSide = tcNormSide(
+      tcRoot?.vol_side ||
+      panel?.volume_premonition_direction_now ||
+      digest?.volume_premonition_direction_now ||
+      tcVolBlock?.selected_side ||
+      tcVolBlock?.direction_now
+    );
+
+    let tcDirection = "";
+    let tcConsensus = tcPickNum(tcRoot?.consensus);
+    let tcSpread = tcPickNum(tcRoot?.spread);
+    let tcActive = (typeof tcRoot?.active === "boolean") ? tcRoot.active : null;
+
+    const tcHasAllTargets = [tcEmaTarget, tcVolTarget, tcClaudeT1].every(v => v != null);
+
+    if (tcHasAllTargets && (tcConsensus == null || tcSpread == null || tcActive == null)) {
+      const tcTargets = [tcEmaTarget, tcVolTarget, tcClaudeT1];
+      tcSpread = Math.max(...tcTargets) - Math.min(...tcTargets);
+      tcConsensus = (tcEmaTarget + tcVolTarget + tcClaudeT1) / 3;
+
+      const tcPctGate = tcEmaPct != null && tcVolPct != null && tcEmaPct >= 75 && tcVolPct >= 75;
+      const tcSideGate = !!tcEmaSide && !!tcVolSide && tcEmaSide === tcVolSide;
+
+      tcDirection =
+        tcEmaSide === "long" ? "LONG" :
+        tcEmaSide === "short" ? "SHORT" : "";
+
+      tcActive = tcPctGate && tcSideGate && tcSpread <= 0.50;
+    } else {
+      tcDirection = String(tcRoot?.direction || "").toUpperCase();
+      if (!tcDirection) {
+        tcDirection =
+          tcEmaSide === "long" ? "LONG" :
+          tcEmaSide === "short" ? "SHORT" : "";
+      }
+      if (tcActive == null) tcActive = false;
+    }
+
+    const tcQualityLabel = (() => {
+      if (tcSpread == null) return "—";
+      if (tcSpread <= 0.20) return "🔥 PERFECT";
+      if (tcSpread <= 0.50) return "✅ GOOD";
+      if (tcSpread <= 1.00) return "🟡 ACCEPTABLE";
+      return "❌ NO COUNT";
+    })();
+
+    const tcStatus = (() => {
+      if (!tcHasAllTargets) {
+        return "Aguardando EMA Target, VOL Target e Claude T1.";
+      }
+      if (tcEmaPct == null || tcVolPct == null) {
+        return "Aguardando percentuais de continuação do EMA e do volume.";
+      }
+      if (tcEmaPct < 75 || tcVolPct < 75) {
+        return `Gate: EMA ${fmtPct(tcEmaPct)} | VOL ${fmtPct(tcVolPct)} — precisa 75%+ nos dois.`;
+      }
+      if (!tcEmaSide || !tcVolSide) {
+        return "Aguardando direção do EMA e do volume.";
+      }
+      if (tcEmaSide !== tcVolSide) {
+        return `Gate: lados diferentes (${tcEmaSide.toUpperCase()} vs ${tcVolSide.toUpperCase()}).`;
+      }
+      if (tcSpread != null && tcSpread > 0.50) {
+        return `Gate: spread ${fmt2(tcSpread)} — acima do limite de $0.50.`;
+      }
+      if (tcActive) {
+        return "Convergência ativa — consensus pode servir como âncora operacional.";
+      }
+      return "Aguardando alinhamento final.";
+    })();
+
+    const tcTitle = `🎯 TRIPLE CONVERGENCE — ${tcActive ? (tcDirection || "ACTIVE") : "WAIT"}`;
+
+    if (el("tc-title"))      el("tc-title").textContent      = tcTitle;
+    if (el("tc-ema-target")) el("tc-ema-target").textContent = tcEmaTarget != null ? `$${fmt2(tcEmaTarget)}` : "—";
+    if (el("tc-vol-target")) el("tc-vol-target").textContent = tcVolTarget != null ? `$${fmt2(tcVolTarget)}` : "—";
+    if (el("tc-claude-t1"))  el("tc-claude-t1").textContent  = tcClaudeT1 != null ? `$${fmt2(tcClaudeT1)}` : "—";
+    if (el("tc-consensus"))  el("tc-consensus").textContent  = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
+    if (el("tc-spread"))     el("tc-spread").textContent     = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
+    if (el("tc-ema-pct"))    el("tc-ema-pct").textContent    = fmtPct(tcEmaPct);
+    if (el("tc-vol-pct"))    el("tc-vol-pct").textContent    = fmtPct(tcVolPct);
+    if (el("tc-quality"))    el("tc-quality").textContent    = tcQualityLabel;
+    if (el("tc-status"))     el("tc-status").textContent     = tcStatus;
+
+    const tcBadgeEl = el("tc-badge");
+    if (tcBadgeEl) {
+      tcBadgeEl.className = `win-badge ${tcActive ? "win-now" : "win-wait"}`;
+      tcBadgeEl.textContent = tcActive ? (tcDirection || "ACTIVE") : "WAIT";
+      tcBadgeEl.style.background = "";
+      tcBadgeEl.style.borderColor = "";
+      tcBadgeEl.style.color = "";
+
+      if (tcActive && tcDirection === "SHORT") {
+        tcBadgeEl.style.background = "rgba(248,113,113,.15)";
+        tcBadgeEl.style.borderColor = "rgba(248,113,113,.30)";
+        tcBadgeEl.style.color = "rgba(248,113,113,.95)";
+      }
+    }
+
+    const tcTitleEl = el("tc-title");
+    if (tcTitleEl) {
+      tcTitleEl.style.color = tcActive
+        ? (tcDirection === "LONG" ? "var(--success)" : "var(--danger)")
+        : "var(--text-soft)";
+    }
+    // ===== /TRIPLE CONVERGENCE =====
 
     // ===== EXEC (MICRO) MINI • PLAN 1x1 (somente UI) =====
     const dir = (current != null && microTake != null && Number.isFinite(current) && Number.isFinite(microTake))
