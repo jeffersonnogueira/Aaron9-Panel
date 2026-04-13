@@ -5941,17 +5941,75 @@
   margin-bottom: 14px !important;
 }
 
-#triple-conv-card .execm-side-body{
-  font-size: 38px !important;
-  line-height: 1.22 !important;
-  gap: 14px !important;
+#triple-conv-card .tc-shell{
+  width: 100%;
+  max-width: none;
 }
 
-#triple-conv-card .execm-side-body .muted{
-  font-size: 30px !important;
-  line-height: 1.22 !important;
-  opacity: .72 !important;
+#triple-conv-card .tc-top-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 14px;
+  align-items: stretch;
 }
+
+#triple-conv-card .tc-box{
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#triple-conv-card .tc-box-title{
+  font-size: 20px;
+  line-height: 1.05;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .72;
+  font-weight: 950;
+}
+
+#triple-conv-card .tc-kv{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 30px;
+  line-height: 1.18;
+}
+
+#triple-conv-card .tc-kv .ek{
+  font-weight: 900;
+  opacity: .92;
+}
+
+#triple-conv-card .tc-kv .ev{
+  color: #ffcc66;
+  font-weight: 950;
+  text-align: right;
+}
+
+#triple-conv-card .tc-box-quality{
+  justify-content: center;
+}
+
+#triple-conv-card .tc-quality-main{
+  font-size: 54px;
+  line-height: 1.02;
+  font-weight: 950;
+  color: #ffcc66;
+}
+
+#triple-conv-card .tc-quality-sub{
+  font-size: 24px;
+  line-height: 1.28;
+  opacity: .78;
+}
+
 #triple-conv-card .tc-ref-table{
   margin-top: 18px;
   padding-top: 16px;
@@ -6000,9 +6058,21 @@
 }
 
 @media (max-width: 1200px){
+  #triple-conv-card .tc-top-grid{
+    grid-template-columns: 1fr;
+  }
+
   #triple-conv-card .tc-ref-row{
     grid-template-columns: 1fr;
     gap: 6px;
+  }
+
+  #triple-conv-card .tc-quality-main{
+    font-size: 42px;
+  }
+
+  #triple-conv-card .tc-quality-sub{
+    font-size: 20px;
   }
 }
 /* deixa o painel direito mais “TV-like” */
@@ -6949,75 +7019,88 @@
     <span id="tc-badge" class="win-badge win-wait">WAIT</span>
   </div>
 
-  <div class="execm-side-card" style="margin-top:12px; width:100%; max-width:none;">
+  <div class="execm-side-card tc-shell" style="margin-top:12px; width:100%; max-width:none;">
     <div class="execm-side-title" id="tc-title">🎯 TRIPLE CONVERGENCE — WAIT</div>
 
-    <div class="execm-side-body">
-      <div class="execm-line">
-        <span class="ek">EMA Target:</span>
-        <span id="tc-ema-target" class="ev">—</span>
-      </div>
+    <div class="tc-top-grid">
+      <div class="tc-box">
+        <div class="tc-box-title">TARGETS</div>
 
-      <div class="execm-line">
-        <span class="ek">VOL Target:</span>
-        <span id="tc-vol-target" class="ev">—</span>
-      </div>
-
-      <div class="execm-line">
-        <span class="ek">Claude T1:</span>
-        <span id="tc-claude-t1" class="ev">—</span>
-      </div>
-
-      <div class="execm-line">
-        <span class="ek">Consensus:</span>
-        <span id="tc-consensus" class="ev">—</span>
-        <span class="pipe">|</span>
-        <span class="ek">Spread:</span>
-        <span id="tc-spread" class="ev">—</span>
-      </div>
-
-      <div class="execm-line">
-        <span class="ek">EMA:</span>
-        <span id="tc-ema-pct" class="ev">—</span>
-        <span class="pipe">|</span>
-        <span class="ek">VOL:</span>
-        <span id="tc-vol-pct" class="ev">—</span>
-      </div>
-
-      <div class="execm-line">
-        <span class="ek">Quality:</span>
-        <span id="tc-quality" class="ev">—</span>
-      </div>
-
-      <div class="execm-line muted" id="tc-status">
-        Aguardando alinhamento entre EMA, VOL e Claude.
-      </div>
-            <div class="tc-ref-table">
-        <div class="tc-ref-title">SPREAD REFERENCE</div>
-
-        <div class="tc-ref-row">
-          <span class="tc-ref-spread">$0.00–$0.20</span>
-          <span class="tc-ref-quality">🔥 Perfeito</span>
-          <span class="tc-ref-note">quase concordância total</span>
+        <div class="tc-kv">
+          <span class="ek">EMA Target:</span>
+          <span id="tc-ema-target" class="ev">—</span>
         </div>
 
-        <div class="tc-ref-row">
-          <span class="tc-ref-spread">$0.20–$0.50</span>
-          <span class="tc-ref-quality">✅ Bom</span>
-          <span class="tc-ref-note">zona pequena, confiável</span>
+        <div class="tc-kv">
+          <span class="ek">VOL Target:</span>
+          <span id="tc-vol-target" class="ev">—</span>
         </div>
 
-        <div class="tc-ref-row">
-          <span class="tc-ref-spread">$0.50–$1.00</span>
-          <span class="tc-ref-quality">🟡 Aceitável</span>
-          <span class="tc-ref-note">precisa cuidado</span>
+        <div class="tc-kv">
+          <span class="ek">Claude T1:</span>
+          <span id="tc-claude-t1" class="ev">—</span>
+        </div>
+      </div>
+
+      <div class="tc-box">
+        <div class="tc-box-title">CONVERGENCE</div>
+
+        <div class="tc-kv">
+          <span class="ek">Consensus:</span>
+          <span id="tc-consensus" class="ev">—</span>
         </div>
 
-        <div class="tc-ref-row">
-          <span class="tc-ref-spread">$1.00+</span>
-          <span class="tc-ref-quality">❌ Não conta</span>
-          <span class="tc-ref-note">muito disperso</span>
+        <div class="tc-kv">
+          <span class="ek">Spread:</span>
+          <span id="tc-spread" class="ev">—</span>
         </div>
+
+        <div class="tc-kv">
+          <span class="ek">EMA:</span>
+          <span id="tc-ema-pct" class="ev">—</span>
+        </div>
+
+        <div class="tc-kv">
+          <span class="ek">VOL:</span>
+          <span id="tc-vol-pct" class="ev">—</span>
+        </div>
+      </div>
+
+      <div class="tc-box tc-box-quality">
+        <div class="tc-box-title">QUALITY</div>
+
+        <div class="tc-quality-main" id="tc-quality">—</div>
+        <div class="tc-quality-sub" id="tc-status">
+          Aguardando alinhamento entre EMA, VOL e Claude.
+        </div>
+      </div>
+    </div>
+
+    <div class="tc-ref-table">
+      <div class="tc-ref-title">SPREAD REFERENCE</div>
+
+      <div class="tc-ref-row">
+        <span class="tc-ref-spread">$0.00–$0.20</span>
+        <span class="tc-ref-quality">🔥 Perfeito</span>
+        <span class="tc-ref-note">quase concordância total</span>
+      </div>
+
+      <div class="tc-ref-row">
+        <span class="tc-ref-spread">$0.20–$0.50</span>
+        <span class="tc-ref-quality">✅ Bom</span>
+        <span class="tc-ref-note">zona pequena, confiável</span>
+      </div>
+
+      <div class="tc-ref-row">
+        <span class="tc-ref-spread">$0.50–$1.00</span>
+        <span class="tc-ref-quality">🟡 Aceitável</span>
+        <span class="tc-ref-note">precisa cuidado</span>
+      </div>
+
+      <div class="tc-ref-row">
+        <span class="tc-ref-spread">$1.00+</span>
+        <span class="tc-ref-quality">❌ Não conta</span>
+        <span class="tc-ref-note">muito disperso</span>
       </div>
     </div>
   </div>
