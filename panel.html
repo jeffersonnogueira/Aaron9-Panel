@@ -3922,8 +3922,25 @@
 }
 
 #copilot-block .copilot-section-card.is-trade{
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: none;
+  justify-self: stretch;
+  align-self: start;
   border-color: rgba(96,165,250,.34);
   background: linear-gradient(180deg, rgba(31,47,70,.78) 0%, rgba(17,24,35,.96) 100%);
+}
+
+#copilot-block .copilot-section-card.is-trade .copilot-section-body{
+  column-count: 2;
+  column-gap: 28px;
+  column-fill: balance;
+}
+
+@media (max-width: 980px){
+  #copilot-block .copilot-section-card.is-trade .copilot-section-body{
+    column-count: 1;
+  }
 }
 
 #copilot-block .copilot-section-card.is-invalidation{
