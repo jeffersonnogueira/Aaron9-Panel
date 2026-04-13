@@ -7166,7 +7166,76 @@
     </div>
   </div>
 </div>            
-                      
+ <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
+            <span id="zzr-badge" class="win-badge win-wait">—</span>
+          </div>
+
+                    <div style="display:grid; width:100%; grid-template-columns:minmax(360px, 1fr) minmax(215px, 245px) minmax(215px, 245px); justify-content:stretch; margin-left:0; gap:8px; margin-top:10px;">
+            <!-- MODE / STATUS -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">MODE</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-mode" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">STATUS</span> <span id="zzr-status" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">CURRENT</span> <span id="zzr-current" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">NEXT PIVOT</span> <span id="zzr-next" style="font-weight:950; color:#ffcc66;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 1 -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 1</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step1" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step1state" style="font-weight:950;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 2</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step2" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step2state" style="font-weight:950;">—</span></div>
+              </div>
+            </div>
+
+            <!-- STEP 3 / ARRIVE -->
+            <div style="display:none; border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
+              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 3 / ARRIVE</div>
+
+              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
+                <span id="zzr-step3" style="color:#ffcc66;">—</span>
+              </div>
+
+              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
+                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step3state" style="font-weight:950;">—</span></div>
+                <div style="margin-top:3px;"><span style="opacity:.7;">ARRIVE ZONE</span> <span id="zzr-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px; margin-left:auto; width:max-content; font-size:10px; line-height:1.2; display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
+    <div><span style="opacity:.7;">FINAL ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
+    <div><span style="opacity:.7;">FINAL PIVOT</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
+  <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
+  <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
+</div>
+        </div>                     
                                               
   
                     
@@ -7375,76 +7444,7 @@
     </div>
   </div>
 </div>                 
-  <div class="prem-breakout-wrap" id="zz-route-card" style="margin-top:0; min-width:0;">
-          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-            <div class="prem-breakout-title">ZIGZAG ROUTE ENGINE</div>
-            <span id="zzr-badge" class="win-badge win-wait">—</span>
-          </div>
-
-                    <div style="display:grid; width:100%; grid-template-columns:minmax(360px, 1fr) minmax(215px, 245px) minmax(215px, 245px); justify-content:stretch; margin-left:0; gap:8px; margin-top:10px;">
-            <!-- MODE / STATUS -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">MODE</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-mode" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">STATUS</span> <span id="zzr-status" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">CURRENT</span> <span id="zzr-current" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">NEXT PIVOT</span> <span id="zzr-next" style="font-weight:950; color:#ffcc66;">—</span></div>
-              </div>
-            </div>
-
-            <!-- STEP 1 -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 1</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-step1" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step1state" style="font-weight:950;">—</span></div>
-              </div>
-            </div>
-
-            <!-- STEP 2 -->
-            <div style="border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 2</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-step2" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step2state" style="font-weight:950;">—</span></div>
-              </div>
-            </div>
-
-            <!-- STEP 3 / ARRIVE -->
-            <div style="display:none; border:1px solid rgba(255,255,255,.10); border-radius:16px; background:rgba(255,255,255,.02); padding:10px 12px;">
-              <div style="font-size:12px; font-weight:950; letter-spacing:.14em; text-transform:uppercase; opacity:.75;">STEP 3 / ARRIVE</div>
-
-              <div style="margin-top:8px; font-size:14px; font-weight:900; line-height:1.25;">
-                <span id="zzr-step3" style="color:#ffcc66;">—</span>
-              </div>
-
-              <div style="margin-top:10px; font-size:12px; line-height:1.35;">
-                <div><span style="opacity:.7;">CHECK</span> <span id="zzr-step3state" style="font-weight:950;">—</span></div>
-                <div style="margin-top:3px;"><span style="opacity:.7;">ARRIVE ZONE</span> <span id="zzr-zone" style="font-weight:950; color:#ffcc66;">—</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top:10px; margin-left:auto; width:max-content; font-size:10px; line-height:1.2; display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right;">
-    <div><span style="opacity:.7;">FINAL ETA</span> <span id="zzr-eta" style="font-weight:950;">—</span></div>
-    <div><span style="opacity:.7;">FINAL PIVOT</span> <span id="zzr-layer2" style="font-weight:950;">—</span></div>
-  <div><span style="opacity:.7;">CONTEXT</span> <span id="zzr-context" style="font-weight:950;">—</span></div>
-  <div id="zzr-cancel" style="font-size:9px; opacity:.72; white-space:normal; max-width:420px;">—</div>
-</div>
-        </div>
+  
         
                   <div class="prem-breakout-wrap" id="replay-mode-card" style="margin-top:0; min-width:0;">
             <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
