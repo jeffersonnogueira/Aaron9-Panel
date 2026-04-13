@@ -6139,6 +6139,165 @@
     font-size: 20px;
   }
 }
+/* ===== TC ACTION BAR — ABOVE COPILOT ===== */
+#tc-action-bar{
+  margin-top: 10px !important;
+}
+
+#tc-action-bar .tc-action-shell{
+  width: 100%;
+  border: 1px solid rgba(95,116,145,.22);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(96,124,160,.10), transparent 34%),
+    radial-gradient(circle at 100% 0%, rgba(62,82,112,.08), transparent 28%),
+    linear-gradient(180deg, rgba(35,44,61,.92) 0%, rgba(18,24,35,.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 18px 40px rgba(2,6,23,.28);
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1.55fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+#tc-action-bar .tc-action-left{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+#tc-action-bar .tc-action-k{
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .68;
+  font-weight: 900;
+}
+
+#tc-action-bar .tc-action-main{
+  font-size: 36px;
+  line-height: 1.04;
+  font-weight: 950;
+  letter-spacing: .04em;
+  color: #ffcc66;
+  text-transform: uppercase;
+}
+
+#tc-action-bar .tc-action-sub{
+  font-size: 24px;
+  line-height: 1.24;
+  opacity: .82;
+  color: var(--text-main);
+}
+
+#tc-action-bar .tc-action-right{
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+#tc-action-bar .tc-action-box{
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+#tc-action-bar .tc-action-box-k{
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .70;
+  font-weight: 900;
+}
+
+#tc-action-bar .tc-action-box-v{
+  font-size: 36px;
+  line-height: 1.06;
+  font-weight: 950;
+  color: #ffcc66;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tc-action-bar.is-long .tc-action-main,
+#tc-action-bar.is-long .tc-action-box-v.is-dir{
+  color: var(--success);
+}
+
+#tc-action-bar.is-short .tc-action-main,
+#tc-action-bar.is-short .tc-action-box-v.is-dir{
+  color: var(--danger);
+}
+
+#tc-action-bar.is-perfect .tc-action-main{
+  color: #4ade80;
+}
+
+#tc-action-bar.is-good .tc-action-main{
+  color: #ffcc66;
+}
+
+#tc-action-bar.is-acceptable .tc-action-main{
+  color: #fde68a;
+}
+
+#tc-action-bar.is-no-trade .tc-action-main{
+  color: #f97373;
+}
+
+#tc-action-bar.is-wait .tc-action-main{
+  color: #cbd5e1;
+}
+
+@media (max-width: 1600px){
+  #tc-action-bar .tc-action-shell{
+    grid-template-columns: 1fr;
+  }
+
+  #tc-action-bar .tc-action-right{
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  #tc-action-bar .tc-action-main,
+  #tc-action-bar .tc-action-box-v{
+    font-size: 30px;
+  }
+
+  #tc-action-bar .tc-action-sub{
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 1100px){
+  #tc-action-bar .tc-action-right{
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #tc-action-bar .tc-action-main,
+  #tc-action-bar .tc-action-box-v{
+    font-size: 24px;
+  }
+
+  #tc-action-bar .tc-action-sub{
+    font-size: 18px;
+  }
+}
+/* ===== /TC ACTION BAR ===== */
 /* deixa o painel direito mais “TV-like” */
 .premonition-panel .label{
   font-size: 10px;
@@ -7054,6 +7213,46 @@
 
           </div>
         </div>
+        <!-- ===== TC ACTION BAR — ABOVE COPILOT ===== -->
+<div class="prem-breakout-wrap" id="tc-action-bar" style="margin-top:10px; grid-column: 1 / -1;">
+  <div class="tc-action-shell">
+    <div class="tc-action-left">
+      <div class="tc-action-k">AARON CONVERGENCE EXECUTION</div>
+      <div class="tc-action-main" id="tc-action-main">AGUARDANDO</div>
+      <div class="tc-action-sub" id="tc-action-sub">
+        Aguardando leitura completa de EMA, Volume, Claude e Triple Convergence.
+      </div>
+    </div>
+
+    <div class="tc-action-right">
+      <div class="tc-action-box">
+        <div class="tc-action-box-k">DIRECTION</div>
+        <div class="tc-action-box-v" id="tc-action-dir">—</div>
+      </div>
+
+      <div class="tc-action-box">
+        <div class="tc-action-box-k">EMA / VOL</div>
+        <div class="tc-action-box-v" id="tc-action-gate">—</div>
+      </div>
+
+      <div class="tc-action-box">
+        <div class="tc-action-box-k">CLAUDE</div>
+        <div class="tc-action-box-v" id="tc-action-claude">—</div>
+      </div>
+
+      <div class="tc-action-box">
+        <div class="tc-action-box-k">SPREAD</div>
+        <div class="tc-action-box-v" id="tc-action-spread">—</div>
+      </div>
+
+      <div class="tc-action-box">
+        <div class="tc-action-box-k">CONSENSUS</div>
+        <div class="tc-action-box-v" id="tc-action-consensus">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== /TC ACTION BAR ===== -->
                 <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
 <div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
@@ -23277,6 +23476,95 @@ if (microTake == null) {
         ? (tcDirection === "LONG" ? "var(--success)" : "var(--danger)")
         : "var(--text-soft)";
     }
+        // ===== TC ACTION BAR (above copilot) =====
+    const tcClaudeSide = tcNormSide(
+      tcRoot?.claude_side ||
+      panel?.copilot_verdict ||
+      digest?.copilot_verdict ||
+      panel?.claude_verdict ||
+      digest?.claude_verdict ||
+      (
+        /\bverdict\b[^\n\r]*\blong\b/i.test(tcClaudeText) ? "long" :
+        /\bverdict\b[^\n\r]*\bshort\b/i.test(tcClaudeText) ? "short" :
+        (/\blong\b/i.test(tcClaudeText) && !/\bshort\b/i.test(tcClaudeText)) ? "long" :
+        (/\bshort\b/i.test(tcClaudeText) && !/\blong\b/i.test(tcClaudeText)) ? "short" :
+        ""
+      )
+    );
+
+    const tcPctGateBar  = tcEmaPct != null && tcVolPct != null && tcEmaPct >= 75 && tcVolPct >= 75;
+    const tcSideGateBar = !!tcEmaSide && !!tcVolSide && tcEmaSide === tcVolSide;
+    const tcClaudeGate  = !!tcClaudeSide && !!tcDirection && tcClaudeSide.toUpperCase() === tcDirection;
+
+    let tcActionMain = "AGUARDANDO";
+    let tcActionSub  = "Aguardando leitura completa de EMA, Volume, Claude e Triple Convergence.";
+    let tcActionMode = "is-wait";
+
+    if (!tcHasAllTargets) {
+      tcActionMain = "AGUARDANDO";
+      tcActionSub  = "Faltam EMA Target, VOL Target ou Claude T1.";
+      tcActionMode = "is-wait";
+    } else if (!tcPctGateBar) {
+      tcActionMain = "NÃO FAÇA TRADE";
+      tcActionSub  = `EMA ${fmtPct(tcEmaPct)} · VOL ${fmtPct(tcVolPct)} — ambos precisam estar acima de 75%.`;
+      tcActionMode = "is-no-trade";
+    } else if (!tcSideGateBar) {
+      tcActionMain = "NÃO FAÇA TRADE";
+      tcActionSub  = `EMA e Volume estão em conflito (${(tcEmaSide || "—").toUpperCase()} vs ${(tcVolSide || "—").toUpperCase()}).`;
+      tcActionMode = "is-no-trade";
+    } else if (!tcClaudeSide) {
+      tcActionMain = "AGUARDANDO";
+      tcActionSub  = "Não foi possível confirmar a direção do Claude ainda.";
+      tcActionMode = "is-wait";
+    } else if (!tcClaudeGate) {
+      tcActionMain = "NÃO FAÇA TRADE";
+      tcActionSub  = `Claude está em ${(tcClaudeSide || "—").toUpperCase()} e EMA/VOL em ${tcDirection || "—"}.`;
+      tcActionMode = "is-no-trade";
+    } else if (tcSpread == null) {
+      tcActionMain = "AGUARDANDO";
+      tcActionSub  = "Aguardando spread final da convergência.";
+      tcActionMode = "is-wait";
+    } else if (tcSpread <= 0.20) {
+      tcActionMain = "ENTRADA PERFEITA";
+      tcActionSub  = "Alinhamento total entre EMA, Volume e Claude. Convergência extremamente fechada.";
+      tcActionMode = "is-perfect";
+    } else if (tcSpread <= 0.50) {
+      tcActionMain = "ENTRE AGORA";
+      tcActionSub  = "Convergência forte e confiável. EMA, Volume e Claude seguem a mesma direção.";
+      tcActionMode = "is-good";
+    } else if (tcSpread <= 1.00) {
+      tcActionMain = "ENTRADA RAZOÁVEL";
+      tcActionSub  = "A direção está alinhada, mas a convergência está mais larga. Exige mais cautela.";
+      tcActionMode = "is-acceptable";
+    } else {
+      tcActionMain = "NÃO FAÇA TRADE";
+      tcActionSub  = "Os alvos estão muito dispersos. Não há convergência suficiente para executar.";
+      tcActionMode = "is-no-trade";
+    }
+
+    const tcActionBar = el("tc-action-bar");
+    if (tcActionBar) {
+      tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait");
+      tcActionBar.classList.add(tcActionMode);
+
+      if (tcDirection === "LONG") tcActionBar.classList.add("is-long");
+      if (tcDirection === "SHORT") tcActionBar.classList.add("is-short");
+    }
+
+    if (el("tc-action-main"))      el("tc-action-main").textContent      = tcActionMain;
+    if (el("tc-action-sub"))       el("tc-action-sub").textContent       = tcActionSub;
+    if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDirection || "—";
+    if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcPctGateBar ? "75%+" : "BLOCKED";
+    if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "—";
+    if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
+    if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
+
+    const tcActionDirEl = el("tc-action-dir");
+    if (tcActionDirEl) {
+      tcActionDirEl.classList.remove("is-dir");
+      tcActionDirEl.classList.add("is-dir");
+    }
+    // ===== /TC ACTION BAR =====
     // ===== /TRIPLE CONVERGENCE =====
 
     // ===== EXEC (MICRO) MINI • PLAN 1x1 (somente UI) =====
