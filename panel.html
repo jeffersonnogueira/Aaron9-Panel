@@ -3931,15 +3931,75 @@
   background: linear-gradient(180deg, rgba(31,47,70,.78) 0%, rgba(17,24,35,.96) 100%);
 }
 
-#copilot-block .copilot-section-card.is-trade .copilot-section-body{
-  column-count: 2;
-  column-gap: 28px;
-  column-fill: balance;
+#copilot-block .copilot-trade-split{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+#copilot-block .copilot-trade-box{
+  min-width: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: linear-gradient(180deg, rgba(24,34,50,.94) 0%, rgba(13,20,31,.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+#copilot-block .copilot-trade-box.long{
+  border-color: rgba(74,222,128,.34);
+  background: linear-gradient(180deg, rgba(27,52,38,.72) 0%, rgba(15,24,21,.96) 100%);
+}
+
+#copilot-block .copilot-trade-box.short{
+  border-color: rgba(248,113,113,.34);
+  background: linear-gradient(180deg, rgba(66,32,38,.72) 0%, rgba(23,19,29,.96) 100%);
+}
+
+#copilot-block .copilot-trade-box.is-inactive{
+  opacity: .58;
+  filter: saturate(.72);
+}
+
+#copilot-block .copilot-trade-box-title{
+  font-size: 22px;
+  line-height: 1.1;
+  font-weight: 950;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+#copilot-block .copilot-trade-box-subtitle{
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 850;
+  color: #cbd5e1;
+  margin-bottom: 12px;
+}
+
+#copilot-block .copilot-trade-box-body{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 18px;
+  line-height: 1.55;
+  font-weight: 800;
+  color: #e5e7eb;
 }
 
 @media (max-width: 980px){
-  #copilot-block .copilot-section-card.is-trade .copilot-section-body{
-    column-count: 1;
+  #copilot-block .copilot-trade-split{
+    grid-template-columns: 1fr;
+  }
+
+  #copilot-block .copilot-trade-box-title{
+    font-size: 20px;
+  }
+
+  #copilot-block .copilot-trade-box-body{
+    font-size: 17px;
   }
 }
 
@@ -16378,7 +16438,117 @@ function updateCoPilotBlock(data){
 
       return out.join("\n");
     };
+    const parseTradeScenarios = (body = "") => {
+      const lines = String(body).replace(/\r/g, "").split("\n");
 
+      const out = {
+        long:  { title: "CENÁRIO LONG",  subtitle: "", lines: [], inactive: false },
+        short: { title: "CENÁRIO SHORT", subtitle: "", lines: [], inactive: false }
+      };
+
+      let currentSide = null;
+
+      const isLongHeader = (line = "") =>
+        /^(?:[-•]\s*)?(?:CEN[ÁA]RIO\s+)?LONG\b/i.test(cleanLine(line));
+
+      const isShortHeader = (line = "") =>
+        /^(?:[-•]\s*)?(?:CEN[ÁA]RIO\s+)?SHORT\b/i.test(cleanLine(line));
+
+      const stripScenarioHeader = (line = "", side = "") => {
+        if (side === "long") {
+          return cleanLine(line)
+            .replace(/^(?:[-•]\s*)?(?:CEN[ÁA]RIO\s+)?LONG\b\s*(?:[—–-]\s*)?/i, "")
+            .trim();
+        }
+
+        return cleanLine(line)
+          .replace(/^(?:[-•]\s*)?(?:CEN[ÁA]RIO\s+)?SHORT\b\s*(?:[—–-]\s*)?/i, "")
+          .trim();
+      };
+
+      for (const rawLine of lines) {
+        const trimmed = cleanLine(rawLine);
+
+        if (!trimmed) {
+          if (currentSide) out[currentSide].lines.push("");
+          continue;
+        }
+
+        if (isLongHeader(trimmed)) {
+          currentSide = "long";
+          const subtitle = stripScenarioHeader(trimmed, "long");
+          if (subtitle) out.long.subtitle = subtitle;
+          continue;
+        }
+
+        if (isShortHeader(trimmed)) {
+          currentSide = "short";
+          const subtitle = stripScenarioHeader(trimmed, "short");
+          if (subtitle) out.short.subtitle = subtitle;
+          continue;
+        }
+
+        if (currentSide) {
+          out[currentSide].lines.push(rawLine.trimEnd());
+        }
+      }
+
+      const hasLong =
+        !!out.long.subtitle ||
+        out.long.lines.some(line => cleanLine(line));
+
+      const hasShort =
+        !!out.short.subtitle ||
+        out.short.lines.some(line => cleanLine(line));
+
+      if (!hasLong && !hasShort) return null;
+
+      if (!hasLong) {
+        out.long.inactive = true;
+        out.long.lines = ["Sem cenário long ativo agora."];
+      }
+
+      if (!hasShort) {
+        out.short.inactive = true;
+        out.short.lines = ["Sem cenário short ativo agora."];
+      }
+
+      return out;
+    };
+
+    const renderTradeScenarioBox = (scenario, side) => {
+      const title =
+        side === "long" ? "CENÁRIO LONG" : "CENÁRIO SHORT";
+
+      const subtitleHtml = scenario.subtitle
+        ? `<div class="copilot-trade-box-subtitle">${escapeHtml(scenario.subtitle)}</div>`
+        : "";
+
+      const bodyText = (scenario.lines || []).join("\n").trim() || "—";
+
+      return `
+        <div class="copilot-trade-box ${side} ${scenario.inactive ? "is-inactive" : ""}">
+          <div class="copilot-trade-box-title">${title}</div>
+          ${subtitleHtml}
+          <div class="copilot-trade-box-body">${escapeHtml(bodyText)}</div>
+        </div>
+      `;
+    };
+
+    const buildTradeSectionHtml = (body = "") => {
+      const parsed = parseTradeScenarios(body);
+
+      if (!parsed) {
+        return `<div class="copilot-section-body">${escapeHtml(body || "—")}</div>`;
+      }
+
+      return `
+        <div class="copilot-trade-split">
+          ${renderTradeScenarioBox(parsed.long, "long")}
+          ${renderTradeScenarioBox(parsed.short, "short")}
+        </div>
+      `;
+    };
     const claudeText = pickFirstText(
       panel.claude_text,
       data.claude_text,
@@ -16534,29 +16704,38 @@ function updateCoPilotBlock(data){
     }
 
     if (visibleSections.length > 0) {
-      sectionsEl.innerHTML = visibleSections.map(section => {
-        const body =
-          section.type === "checklist"
-            ? compactChecklistBody(section.body || "")
-            : (section.body || "—");
+  sectionsEl.innerHTML = visibleSections.map(section => {
+    const body =
+      section.type === "checklist"
+        ? compactChecklistBody(section.body || "")
+        : (section.body || "—");
 
-        return `
-          <div class="copilot-section-card ${classForSection(section.type, section.title)}">
-            <div class="copilot-section-header">${escapeHtml(section.title)}</div>
-            <div class="copilot-section-body">${escapeHtml(body)}</div>
-          </div>
-        `;
-      }).join("");
-
-      sectionsEl.style.display = "grid";
-      textEl.style.display = "none";
-      textEl.textContent = normalizedText;
-    } else {
-      sectionsEl.innerHTML = "";
-      sectionsEl.style.display = "none";
-      textEl.style.display = "block";
-      textEl.textContent = normalizedText;
+    if (section.type === "trade") {
+      return `
+        <div class="copilot-section-card ${classForSection(section.type, section.title)}">
+          <div class="copilot-section-header">${escapeHtml(section.title)}</div>
+          ${buildTradeSectionHtml(section.body || "")}
+        </div>
+      `;
     }
+
+    return `
+      <div class="copilot-section-card ${classForSection(section.type, section.title)}">
+        <div class="copilot-section-header">${escapeHtml(section.title)}</div>
+        <div class="copilot-section-body">${escapeHtml(body)}</div>
+      </div>
+    `;
+  }).join("");
+
+  sectionsEl.style.display = "grid";
+  textEl.style.display = "none";
+  textEl.textContent = normalizedText;
+} else {
+  sectionsEl.innerHTML = "";
+  sectionsEl.style.display = "none";
+  textEl.style.display = "block";
+  textEl.textContent = normalizedText;
+}
 
     const upper = normalizedText.toUpperCase();
 
