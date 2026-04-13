@@ -6958,7 +6958,7 @@
         </div>
                 <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
                  <!-- ===== TRIPLE CONVERGENCE — ABOVE COPILOT ===== -->
-<div class="prem-breakout-wrap" id="triple-conv-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+<div class="prem-breakout-wrap" id="triple-conv-block" style="display:block; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
     <div class="prem-breakout-title" id="triple-conv-title">🎯 TRIPLE CONVERGENCE</div>
     <span id="triple-conv-badge" class="win-badge tc-off">NO SETUP</span>
@@ -16104,7 +16104,16 @@ function updateAaronCommentaryBlock(data){
       panel.day_direction, panel.day_dir, panel.dir,
       sf.direction
     ) || "").toUpperCase();
-
+    const tripleBlockEl    = document.getElementById("triple-conv-block");
+    const tripleTitleEl    = document.getElementById("triple-conv-title");
+    const tripleBadgeEl    = document.getElementById("triple-conv-badge");
+    const tripleEmaEl      = document.getElementById("triple-conv-ema");
+    const tripleVolEl      = document.getElementById("triple-conv-vol");
+    const tripleClaudeEl   = document.getElementById("triple-conv-claude");
+    const triplePctsEl     = document.getElementById("triple-conv-pcts");
+    const tripleConsEl     = document.getElementById("triple-conv-consensus");
+    const tripleSpreadEl   = document.getElementById("triple-conv-spread");
+    const tripleQualityEl  = document.getElementById("triple-conv-quality");
     const dayDir = (dayDirRaw === "UP") ? "UP" : (dayDirRaw === "DOWN") ? "DOWN" : "NEUTRO";
 
     // padrão dominante (ex: 2x Top, 3º toque, etc.)
@@ -16126,7 +16135,29 @@ function updateAaronCommentaryBlock(data){
       (pattern && pattern !== "—") ? `Padrão: ${pattern}` : "",
       comment
     ].filter(Boolean).join(" | ") || "—";
+    const hideTripleConvergence = () => {
+      if (!tripleBlockEl) return;
 
+      tripleBlockEl.style.display = "none";
+
+      if (tripleTitleEl) tripleTitleEl.textContent = "🎯 TRIPLE CONVERGENCE";
+      if (tripleBadgeEl) {
+        tripleBadgeEl.className = "win-badge tc-off";
+        tripleBadgeEl.textContent = "NO SETUP";
+      }
+
+      if (tripleEmaEl) tripleEmaEl.textContent = "—";
+      if (tripleVolEl) tripleVolEl.textContent = "—";
+      if (tripleClaudeEl) tripleClaudeEl.textContent = "—";
+      if (triplePctsEl) triplePctsEl.textContent = "—";
+      if (tripleConsEl) tripleConsEl.textContent = "—";
+      if (tripleSpreadEl) tripleSpreadEl.textContent = "—";
+
+      if (tripleQualityEl) {
+        tripleQualityEl.textContent = "—";
+        tripleQualityEl.className = "triple-conv-quality";
+      }
+    };
     const bodyEl = document.getElementById("aaron-commentary-body");
     if (bodyEl) bodyEl.textContent = finalText;
 
