@@ -5899,6 +5899,59 @@
   line-height: 1.22 !important;
   opacity: .72 !important;
 }
+#triple-conv-card .tc-ref-table{
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,.10);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#triple-conv-card .tc-ref-title{
+  font-size: 26px !important;
+  line-height: 1.10 !important;
+  font-weight: 950 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  opacity: .88;
+}
+
+#triple-conv-card .tc-ref-row{
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.8fr;
+  gap: 18px;
+  align-items: baseline;
+}
+
+#triple-conv-card .tc-ref-spread{
+  font-size: 30px !important;
+  line-height: 1.15 !important;
+  font-weight: 950 !important;
+  color: #ffcc66;
+}
+
+#triple-conv-card .tc-ref-quality{
+  font-size: 30px !important;
+  line-height: 1.15 !important;
+  font-weight: 900 !important;
+  color: var(--text-main);
+}
+
+#triple-conv-card .tc-ref-note{
+  font-size: 24px !important;
+  line-height: 1.22 !important;
+  opacity: .82;
+  color: var(--text-soft);
+}
+
+@media (max-width: 1200px){
+  #triple-conv-card .tc-ref-row{
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
 /* deixa o painel direito mais “TV-like” */
 .premonition-panel .label{
   font-size: 10px;
@@ -6885,6 +6938,33 @@
 
       <div class="execm-line muted" id="tc-status">
         Aguardando alinhamento entre EMA, VOL e Claude.
+      </div>
+            <div class="tc-ref-table">
+        <div class="tc-ref-title">SPREAD REFERENCE</div>
+
+        <div class="tc-ref-row">
+          <span class="tc-ref-spread">$0.00–$0.20</span>
+          <span class="tc-ref-quality">🔥 Perfeito</span>
+          <span class="tc-ref-note">quase concordância total</span>
+        </div>
+
+        <div class="tc-ref-row">
+          <span class="tc-ref-spread">$0.20–$0.50</span>
+          <span class="tc-ref-quality">✅ Bom</span>
+          <span class="tc-ref-note">zona pequena, confiável</span>
+        </div>
+
+        <div class="tc-ref-row">
+          <span class="tc-ref-spread">$0.50–$1.00</span>
+          <span class="tc-ref-quality">🟡 Aceitável</span>
+          <span class="tc-ref-note">precisa cuidado</span>
+        </div>
+
+        <div class="tc-ref-row">
+          <span class="tc-ref-spread">$1.00+</span>
+          <span class="tc-ref-quality">❌ Não conta</span>
+          <span class="tc-ref-note">muito disperso</span>
+        </div>
       </div>
     </div>
   </div>
