@@ -10201,7 +10201,42 @@ function getPanelUrl() {
 }
 
 const REFRESH_MS = 60000; // 1 minuto
+let panelPollTimeout = null;
+let panelPollInterval = null;
 
+function stopAlignedPanelPolling() {
+  if (panelPollTimeout) {
+    clearTimeout(panelPollTimeout);
+    panelPollTimeout = null;
+  }
+  if (panelPollInterval) {
+    clearInterval(panelPollInterval);
+    panelPollInterval = null;
+  }
+}
+
+function startAlignedPanelPolling() {
+  stopAlignedPanelPolling();
+
+  // 1 carga imediata
+  loadPanel(false);
+
+  // próximo ciclo alinhado em hh:mm:02
+  const now = new Date();
+  const sec = now.getSeconds();
+  const ms = now.getMilliseconds();
+
+  let delay = ((60 - sec) * 1000) - ms + 2000;
+  if (delay < 0) delay = 2000;
+
+  panelPollTimeout = setTimeout(() => {
+    loadPanel(false);
+
+    panelPollInterval = setInterval(() => {
+      loadPanel(false);
+    }, REFRESH_MS);
+  }, delay);
+}
 // ======= AARON10 (FASE 1) — Dropdown -> n8n WEBHOOK (symbol) =======
 // COLE ESTE BLOCO LOGO ABAIXO DO: const REFRESH_MS = 60000;
 
@@ -21913,12 +21948,12 @@ if (!PANEL_URL) {
   }
 
   // evita leak de conexões WS ao fechar/recarregar a aba
-  window.addEventListener('beforeunload', () => {
-    try { a10LiveClose(); } catch(e) {}
-  });
+ window.addEventListener('beforeunload', () => {
+  try { stopAlignedPanelPolling(); } catch(e) {}
+  try { a10LiveClose(); } catch(e) {}
+});
 
-  loadPanel(false);
-  setInterval(() => loadPanel(false), REFRESH_MS);
+  startAlignedPanelPolling();
 }
 
 
