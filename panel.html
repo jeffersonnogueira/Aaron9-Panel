@@ -10201,6 +10201,9 @@ function getPanelUrl() {
 }
 
 const REFRESH_MS = 60000; // 1 minuto
+let panelLoadInFlight = false;
+let panelLoadPending = false;
+let panelLoadPendingSpinner = false;
 let panelPollTimeout = null;
 let panelPollInterval = null;
 
@@ -20392,7 +20395,16 @@ function updatePatternReference(panel, patterns) {
 // ====== LOAD PANEL (agora usando data.panel + data.raw) ======
 async function loadPanel(showSpinner) {
   const panelUrlBase = getPanelUrl();
-if (!panelUrlBase) return;
+  if (!panelUrlBase) return;
+
+  if (panelLoadInFlight) {
+    panelLoadPending = true;
+    panelLoadPendingSpinner = panelLoadPendingSpinner || !!showSpinner;
+    return;
+  }
+
+  panelLoadInFlight = true;
+
   try {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
@@ -21120,8 +21132,21 @@ applyInstitutionalDecision(panel, executionPlan, riskLevel);
       els.errorBanner.innerHTML =
         '<strong>Erro ao carregar painel.</strong> Verifique o webhook "aaron10_panel_json" no n8n e tente novamente.';
     }
-  } finally {
+    } finally {
+    panelLoadInFlight = false;
+
     if (els.btnRefresh) els.btnRefresh.disabled = false;
+
+    if (panelLoadPending) {
+      const rerunWithSpinner = panelLoadPendingSpinner;
+
+      panelLoadPending = false;
+      panelLoadPendingSpinner = false;
+
+      setTimeout(() => {
+        loadPanel(rerunWithSpinner);
+      }, 0);
+    }
   }
 }
 
