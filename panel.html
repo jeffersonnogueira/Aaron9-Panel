@@ -7265,7 +7265,10 @@
       id="micro-premo-main"
       style="font-size:46px; font-weight:950; line-height:1.12; letter-spacing:.01em; color:#f8fafc; white-space:normal; overflow-wrap:anywhere;"
     >—</div>
-
+<div
+  id="micro-premo-decision"
+  style="margin-top:12px; font-size:28px; font-weight:900; line-height:1.22; color:#ffcc66; opacity:.96; white-space:normal; overflow-wrap:anywhere;"
+>—</div>
     <div style="margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:12px;">
       <div style="padding:14px 16px; border-radius:16px; border:1px solid rgba(148,163,184,.18); background:rgba(2,6,23,.22);">
         <div style="font-size:16px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; opacity:.72;">Now</div>
@@ -11969,14 +11972,41 @@ const microEta =
       premBadgeEl.classList.remove("win-now", "win-warn", "win-wait");
       premBadgeEl.classList.add(premBadgeCls);
     }
+    const premDecisionText = (() => {
+      if (microProb == null || !Number.isFinite(Number(microProb))) return "—";
 
+      const p = Number(microProb);
+      const side =
+        premDirLabel === "LONG" ? "LONG" :
+        premDirLabel === "SHORT" ? "SHORT" :
+        "SETUP";
+
+      if (p >= 90) return `${side} — ENTRA IMEDIATAMENTE · 92% histórico`;
+      if (p >= 80) return `${side} — ENTRA COM CONFIRMAÇÃO · 74% histórico`;
+      if (p >= 70) return `${side} — ENTRA COM CONFIRMAÇÃO · 66% histórico`;
+      if (p >= 60) return `${side} — IGNORA · 45% histórico`;
+      return `${side} — IGNORA · 26% histórico`;
+    })();
+
+    const premDecisionColor = (() => {
+      if (microProb == null || !Number.isFinite(Number(microProb))) return "#e5e7eb";
+      const p = Number(microProb);
+      if (p >= 90) return "#4ade80";
+      if (p >= 70) return "#ffcc66";
+      return "#f87171";
+    })();
     setHTML(
       "micro-premo-main",
       (currentPx != null || microTarget != null || microEta != null)
         ? `NOW <span class="mt-target">${esc(currentPxTxt)}</span> @ <span class="mt-muted">${esc(timeStr)}</span> &nbsp;→&nbsp; IN <span class="mt-muted">${esc(fmtMin(microEta))}</span> TARGET <span class="mt-target">${esc(fmt2(microTarget))}</span> @ <span class="mt-muted">${esc(etaClock)}</span> <span class="${microArrowCls}">${microArrow}</span>`
         : "—"
     );
-
+    setHTML(
+      "micro-premo-decision",
+      premDecisionText !== "—"
+        ? `<span style="color:${premDecisionColor};">${esc(premDecisionText)}</span>`
+        : "—"
+    );
     setHTML(
       "micro-premo-now",
       currentPx != null ? `<span class="mt-target">${esc(currentPxTxt)}</span>` : "—"
