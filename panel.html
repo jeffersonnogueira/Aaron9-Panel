@@ -7253,6 +7253,53 @@
   </div>
 </div>
 <!-- ===== /TC ACTION BAR ===== -->
+ <!-- ===== MICRO PREMONITION — ABOVE COPILOT ===== -->
+<div class="prem-breakout-wrap" id="micro-premo-card" style="margin-top:10px; grid-column: 1 / -1;">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div class="prem-breakout-title">MICRO PREMONITION</div>
+    <span id="micro-premo-badge" class="win-badge win-wait">WAIT</span>
+  </div>
+
+  <div class="execm-side-card" style="margin-top:12px; width:100%; max-width:none;">
+    <div
+      id="micro-premo-main"
+      style="font-size:28px; font-weight:950; line-height:1.18; letter-spacing:.02em; color:#e5e7eb;"
+    >—</div>
+
+    <div style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:12px;">
+      <div style="padding:12px 14px; border-radius:14px; border:1px solid rgba(148,163,184,.18); background:rgba(2,6,23,.22);">
+        <div style="font-size:12px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; opacity:.72;">Now</div>
+        <div id="micro-premo-now" style="margin-top:6px; font-size:28px; font-weight:950; color:#e5e7eb;">—</div>
+      </div>
+
+      <div style="padding:12px 14px; border-radius:14px; border:1px solid rgba(148,163,184,.18); background:rgba(2,6,23,.22);">
+        <div style="font-size:12px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; opacity:.72;">Current Time</div>
+        <div id="micro-premo-current-time" style="margin-top:6px; font-size:28px; font-weight:950; color:#ffcc66;">—</div>
+      </div>
+
+      <div style="padding:12px 14px; border-radius:14px; border:1px solid rgba(148,163,184,.18); background:rgba(2,6,23,.22);">
+        <div style="font-size:12px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; opacity:.72;">ETA</div>
+        <div id="micro-premo-eta" style="margin-top:6px; font-size:28px; font-weight:950; color:#e5e7eb;">—</div>
+      </div>
+
+      <div style="padding:12px 14px; border-radius:14px; border:1px solid rgba(148,163,184,.18); background:rgba(2,6,23,.22);">
+        <div style="font-size:12px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; opacity:.72;">Hit Time</div>
+        <div id="micro-premo-hit" style="margin-top:6px; font-size:28px; font-weight:950; color:#ffcc66;">—</div>
+      </div>
+
+      <div style="padding:12px 14px; border-radius:14px; border:1px solid rgba(148,163,184,.18); background:rgba(2,6,23,.22);">
+        <div style="font-size:12px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; opacity:.72;">Target</div>
+        <div id="micro-premo-target" style="margin-top:6px; font-size:28px; font-weight:950; color:#4ade80;">—</div>
+      </div>
+
+      <div style="padding:12px 14px; border-radius:14px; border:1px solid rgba(148,163,184,.18); background:rgba(2,6,23,.22);">
+        <div style="font-size:12px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; opacity:.72;">Prob</div>
+        <div id="micro-premo-prob" style="margin-top:6px; font-size:28px; font-weight:950; color:#e5e7eb;">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== /MICRO PREMONITION — ABOVE COPILOT ===== -->
                 <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
 <div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
@@ -11832,7 +11879,81 @@ function a10UpdateMicroTimeline(payload, opts = {}){
     })();
 
     setHTML("mt-current", `<span class="mt-target">${esc(currentPxTxt)}</span> • <span class="mt-muted">${esc(timeStr)}</span>`);
+    // ===== MICRO PREMONITION CARD — ABOVE COPILOT =====
+    const etaClock = (() => {
+      if (microEta == null) return "—";
+      try{
+        return new Date(Date.now() + (Number(microEta) * 60000)).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+          timeZone: "America/Denver"
+        });
+      }catch(_e){
+        return "—";
+      }
+    })();
 
+    const premDirLabel =
+      (microArrow === "↑") ? "LONG" :
+      (microArrow === "↓") ? "SHORT" :
+      "WAIT";
+
+    const premBadgeTxt =
+      (microProb != null && microProb >= 70) ? premDirLabel :
+      (microProb != null && microProb >= 50) ? "NOISE" :
+      "WAIT";
+
+    const premBadgeCls =
+      (microProb != null && microProb >= 70) ? "win-now" :
+      (microProb != null && microProb >= 50) ? "win-warn" :
+      "win-wait";
+
+    const premBadgeEl = document.getElementById("micro-premo-badge");
+    if (premBadgeEl){
+      premBadgeEl.textContent = premBadgeTxt;
+      premBadgeEl.classList.remove("win-now", "win-warn", "win-wait");
+      premBadgeEl.classList.add(premBadgeCls);
+    }
+
+    setHTML(
+      "micro-premo-main",
+      (currentPx != null || microTarget != null || microEta != null)
+        ? `NOW <span class="mt-target">${esc(currentPxTxt)}</span> @ <span class="mt-muted">${esc(timeStr)}</span> &nbsp;→&nbsp; IN <span class="mt-muted">${esc(fmtMin(microEta))}</span> TARGET <span class="mt-target">${esc(fmt2(microTarget))}</span> @ <span class="mt-muted">${esc(etaClock)}</span> <span class="${microArrowCls}">${microArrow}</span>`
+        : "—"
+    );
+
+    setHTML(
+      "micro-premo-now",
+      currentPx != null ? `<span class="mt-target">${esc(currentPxTxt)}</span>` : "—"
+    );
+
+    setHTML(
+      "micro-premo-current-time",
+      timeStr ? `<span class="mt-muted">${esc(timeStr)}</span>` : "—"
+    );
+
+    setHTML(
+      "micro-premo-eta",
+      microEta != null ? `<span class="mt-muted">${esc(fmtMin(microEta))}</span>` : "—"
+    );
+
+    setHTML(
+      "micro-premo-hit",
+      etaClock !== "—" ? `<span class="mt-muted">${esc(etaClock)}</span>` : "—"
+    );
+
+    setHTML(
+      "micro-premo-target",
+      microTarget != null
+        ? `<span class="mt-target">${esc(fmt2(microTarget))}</span> <span class="${microArrowCls}">${microArrow}</span>`
+        : "—"
+    );
+
+    setHTML(
+      "micro-premo-prob",
+      microProb != null ? `<span class="mt-muted">${esc(fmtPct(microProb))}</span>` : "—"
+    );
     // ===== PAST (retest / SR proxy) =====
     const sf = digest.shape_focus || {};
     const sr = digest.sr_proxy || {};
