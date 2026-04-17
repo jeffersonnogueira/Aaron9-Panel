@@ -11983,19 +11983,19 @@ const microEta =
     );
 
     setHTML(
-      "micro-premo-current-time",
-      timeStr ? `<span class="mt-muted">${esc(timeStr)}</span>` : "—"
-    );
+  "micro-premo-current-time",
+  timeStr ? `<span style="opacity:.78;">${esc(timeStr)}</span>` : "—"
+);
 
-    setHTML(
-      "micro-premo-eta",
-      microEta != null ? `<span class="mt-muted">${esc(fmtMin(microEta))}</span>` : "—"
-    );
+setHTML(
+  "micro-premo-eta",
+  microEta != null ? `<span style="opacity:.78;">${esc(fmtMin(microEta))}</span>` : "—"
+);
 
-    setHTML(
-      "micro-premo-hit",
-      etaClock !== "—" ? `<span class="mt-muted">${esc(etaClock)}</span>` : "—"
-    );
+setHTML(
+  "micro-premo-hit",
+  etaClock !== "—" ? `<span style="opacity:.78;">${esc(etaClock)}</span>` : "—"
+);
 
     setHTML(
       "micro-premo-target",
@@ -12005,9 +12005,9 @@ const microEta =
     );
 
     setHTML(
-      "micro-premo-prob",
-      microProb != null ? `<span class="mt-muted">${esc(fmtPct(microProb))}</span>` : "—"
-    );
+  "micro-premo-prob",
+  microProb != null ? `<span style="opacity:.78;">${esc(fmtPct(microProb))}</span>` : "—"
+);
     // ===== PAST (retest / SR proxy) =====
     const sf = digest.shape_focus || {};
     const sr = digest.sr_proxy || {};
