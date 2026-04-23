@@ -23806,8 +23806,8 @@ const tcVolPct = tcPickNum(
   panel?.claude_verdict ||
   digest?.claude_verdict ||
   (
-    /(?:^|[\n\r])\s*(?:dire(?:ç|c)[aã]o|direction)\s*:\s*long\b/im.test(tcClaudeText) ? "long" :
-    /(?:^|[\n\r])\s*(?:dire(?:ç|c)[aã]o|direction)\s*:\s*short\b/im.test(tcClaudeText) ? "short" :
+    /(?:^|[\n\r])\s*[-•]?\s*(?:dire(?:ç|c)[aã]o|direction)\s*:\s*long\b/im.test(tcClaudeText) ? "long" :
+    /(?:^|[\n\r])\s*[-•]?\s*(?:dire(?:ç|c)[aã]o|direction)\s*:\s*short\b/im.test(tcClaudeText) ? "short" :
     /\bverdict\b[^\n\r]*\blong\b/i.test(tcClaudeText) ? "long" :
     /\bverdict\b[^\n\r]*\bshort\b/i.test(tcClaudeText) ? "short" :
     (/\blong\b/i.test(tcClaudeText) && !/\bshort\b/i.test(tcClaudeText)) ? "long" :
@@ -23926,15 +23926,7 @@ if (!tcHasAllTargets) {
   tcActionSub  = `Zona válida, mas EMA e Volume estão em conflito (${(tcEmaSide || "—").toUpperCase()} vs ${(tcVolSide || "—").toUpperCase()}).`;
   tcActionMode = "is-wait";
 
-} else if (tcValidZone && !tcClaudeSide) {
-  tcActionMain = "AGUARDANDO";
-  tcActionSub  = "Zona válida presente, mas ainda falta confirmar o lado do Claude.";
-  tcActionMode = "is-wait";
 
-} else if (tcValidZone && !tcClaudeGate) {
-  tcActionMain = "AGUARDE";
-  tcActionSub  = `Zona válida presente, mas Claude está em ${(tcClaudeSide || "—").toUpperCase()} e EMA/VOL em ${tcDirection || "—"}.`;
-  tcActionMode = "is-wait";
 
 } else if (!tcEntryFilterOk) {
   tcActionMain = "AGUARDE";
@@ -23962,12 +23954,12 @@ if (!tcHasAllTargets) {
 
 } else if (tcSpread <= 0.20) {
   tcActionMain = "ENTRADA PERFEITA";
-  tcActionSub  = "Zona válida + direção alinhada + Claude alinhado + convergência extremamente fechada.";
+  tcActionSub  = "Zona válida + direção canônica do matcher + convergência extremamente fechada.";
   tcActionMode = "is-perfect";
 
 } else if (tcSpread <= 0.50) {
   tcActionMain = "ENTRE AGORA";
-  tcActionSub  = "Zona válida ativa com alinhamento forte entre EMA, Volume e Claude.";
+  tcActionSub  = "Zona válida ativa com direção canônica do matcher e suporte favorável dos auxiliares.";
   tcActionMode = "is-good";
 
 } else if (tcSpread <= 1.00) {
@@ -24021,7 +24013,7 @@ if (el("tc-action-sub"))       el("tc-action-sub").textContent       = tcActionS
 if (el("tc-action-note"))      el("tc-action-note").textContent      = tcActionNote;
 if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDirection || "—";
 if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcZoneLabel;
-if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "—";
+if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "AUX";
 if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
 if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
 
