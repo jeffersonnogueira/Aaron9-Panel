@@ -23800,19 +23800,21 @@ const tcVolPct = tcPickNum(
     }
         // ===== TC ACTION BAR (above copilot) =====
     const tcClaudeSide = tcNormSide(
-      tcRoot?.claude_side ||
-      panel?.copilot_verdict ||
-      digest?.copilot_verdict ||
-      panel?.claude_verdict ||
-      digest?.claude_verdict ||
-      (
-        /\bverdict\b[^\n\r]*\blong\b/i.test(tcClaudeText) ? "long" :
-        /\bverdict\b[^\n\r]*\bshort\b/i.test(tcClaudeText) ? "short" :
-        (/\blong\b/i.test(tcClaudeText) && !/\bshort\b/i.test(tcClaudeText)) ? "long" :
-        (/\bshort\b/i.test(tcClaudeText) && !/\blong\b/i.test(tcClaudeText)) ? "short" :
-        ""
-      )
-    );
+  tcRoot?.claude_side ||
+  panel?.copilot_verdict ||
+  digest?.copilot_verdict ||
+  panel?.claude_verdict ||
+  digest?.claude_verdict ||
+  (
+    /(?:^|[\n\r])\s*(?:dire(?:ç|c)[aã]o|direction)\s*:\s*long\b/im.test(tcClaudeText) ? "long" :
+    /(?:^|[\n\r])\s*(?:dire(?:ç|c)[aã]o|direction)\s*:\s*short\b/im.test(tcClaudeText) ? "short" :
+    /\bverdict\b[^\n\r]*\blong\b/i.test(tcClaudeText) ? "long" :
+    /\bverdict\b[^\n\r]*\bshort\b/i.test(tcClaudeText) ? "short" :
+    (/\blong\b/i.test(tcClaudeText) && !/\bshort\b/i.test(tcClaudeText)) ? "long" :
+    (/\bshort\b/i.test(tcClaudeText) && !/\blong\b/i.test(tcClaudeText)) ? "short" :
+    ""
+  )
+);
 const tcRsi = (() => {
   const vals = [
     panel?.indicator_premonition?.rsi?.rsi,
