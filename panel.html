@@ -7231,7 +7231,7 @@
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">EMA / VOL</div>
+        <div class="tc-action-box-k">ZONE</div>
         <div class="tc-action-box-v" id="tc-action-gate">—</div>
       </div>
 
@@ -17148,7 +17148,32 @@ function updateCoPilotBlock(data){
     if (!visibleSections.length) {
       visibleSections = mappedSections;
     }
+const goldSpotRulesSection = {
+  title: "🎯 GOLD SPOT RULES",
+  body: [
+    "✅ ENTRA SE",
+    "- EMA entre 60–75%",
+    "- Volume abaixo de 75%",
+    "- RSI entre 30–75",
+    "- Fora de 7:29–7:45 (OPEN DRIVE)",
+    "",
+    "❌ NÃO ENTRA SE",
+    "- EMA abaixo de 60% ou acima de 75%",
+    "- Volume >= 75%",
+    "- RSI abaixo de 30 ou acima de 75",
+    "- Horário entre 7:29–7:45",
+    "",
+    "🛑 SAÍDA DE DEFESA",
+    "- Se andar $0.08 contra antes de T1, sair imediatamente",
+    "",
+    "📊 BASE",
+    "- Gold Spot: EMA 60–75 + VOL 60–75 = 93% WR",
+    "- Zona antiga EMA>=75 + VOL>=75 = 76.9% WR"
+  ].join("\\n"),
+  type: "finalread"
+};
 
+visibleSections = [goldSpotRulesSection, ...visibleSections];
     if (visibleSections.length > 0) {
   sectionsEl.innerHTML = visibleSections.map(section => {
     const body =
@@ -23779,74 +23804,139 @@ const tcVolPct = tcPickNum(
         ""
       )
     );
+const tcRsi = (() => {
+  const vals = [
+    panel?.indicator_premonition?.rsi?.rsi,
+    payload?.indicator_premonition?.rsi?.rsi,
+    digest?.indicator_premonition?.rsi?.rsi,
+    panel?.rsi,
+    panel?.rsi14,
+    digest?.rsi,
+    digest?.rsi14
+  ];
+  for (const v of vals) {
+    const n = Number(v);
+    if (Number.isFinite(n)) return n;
+  }
+  return null;
+})();
 
-    const tcPctGateBar  = tcEmaPct != null && tcVolPct != null && tcEmaPct >= 75 && tcVolPct >= 75;
-    const tcSideGateBar = !!tcEmaSide && !!tcVolSide && tcEmaSide === tcVolSide;
-    const tcClaudeGate  = !!tcClaudeSide && !!tcDirection && tcClaudeSide.toUpperCase() === tcDirection;
+const tcClockMt = String(
+  payload?.hud?.clock_mt ||
+  panel?.hud?.clock_mt ||
+  fmtTimeMT(new Date())
+).trim();
 
-    let tcActionMain = "AGUARDANDO";
-    let tcActionSub  = "Aguardando leitura completa de EMA, Volume, Claude e Triple Convergence.";
-    let tcActionMode = "is-wait";
+const tcInOpenDrive =
+  /^7:(29|3\d|4\d|45)\s*(AM)?$/i.test(tcClockMt) ||
+  /^07:(29|3\d|4\d|45)$/.test(tcClockMt);
 
-    if (!tcHasAllTargets) {
-      tcActionMain = "AGUARDANDO";
-      tcActionSub  = "Faltam EMA Target, VOL Target ou Claude T1.";
-      tcActionMode = "is-wait";
-    } else if (!tcPctGateBar) {
-      tcActionMain = "NÃO FAÇA TRADE";
-      tcActionSub  = `EMA ${fmtPct(tcEmaPct)} · VOL ${fmtPct(tcVolPct)} — ambos precisam estar acima de 75%.`;
-      tcActionMode = "is-no-trade";
-    } else if (!tcSideGateBar) {
-      tcActionMain = "NÃO FAÇA TRADE";
-      tcActionSub  = `EMA e Volume estão em conflito (${(tcEmaSide || "—").toUpperCase()} vs ${(tcVolSide || "—").toUpperCase()}).`;
-      tcActionMode = "is-no-trade";
-    } else if (!tcClaudeSide) {
-      tcActionMain = "AGUARDANDO";
-      tcActionSub  = "Não foi possível confirmar a direção do Claude ainda.";
-      tcActionMode = "is-wait";
-    } else if (!tcClaudeGate) {
-      tcActionMain = "NÃO FAÇA TRADE";
-      tcActionSub  = `Claude está em ${(tcClaudeSide || "—").toUpperCase()} e EMA/VOL em ${tcDirection || "—"}.`;
-      tcActionMode = "is-no-trade";
-    } else if (tcSpread == null) {
-      tcActionMain = "AGUARDANDO";
-      tcActionSub  = "Aguardando spread final da convergência.";
-      tcActionMode = "is-wait";
-    } else if (tcSpread <= 0.20) {
-      tcActionMain = "ENTRADA PERFEITA";
-      tcActionSub  = "Alinhamento total entre EMA, Volume e Claude. Convergência extremamente fechada.";
-      tcActionMode = "is-perfect";
-    } else if (tcSpread <= 0.50) {
-      tcActionMain = "ENTRE AGORA";
-      tcActionSub  = "Convergência forte e confiável. EMA, Volume e Claude seguem a mesma direção.";
-      tcActionMode = "is-good";
-    } else if (tcSpread <= 1.00) {
-      tcActionMain = "ENTRADA RAZOÁVEL";
-      tcActionSub  = "A direção está alinhada, mas a convergência está mais larga. Exige mais cautela.";
-      tcActionMode = "is-acceptable";
-    } else {
-      tcActionMain = "NÃO FAÇA TRADE";
-      tcActionSub  = "Os alvos estão muito dispersos. Não há convergência suficiente para executar.";
-      tcActionMode = "is-no-trade";
-    }
+const tcRsiOk = (tcRsi == null) ? true : (tcRsi >= 30 && tcRsi <= 75);
+const tcSideGateBar = !!tcEmaSide && !!tcVolSide && tcEmaSide === tcVolSide;
+const tcClaudeGate  = !!tcClaudeSide && !!tcDirection && tcClaudeSide.toUpperCase() === tcDirection;
 
-    const tcActionBar = el("tc-action-bar");
-    if (tcActionBar) {
-      tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait");
-      tcActionBar.classList.add(tcActionMode);
+const tcGoldSpot =
+  tcEmaPct != null && tcVolPct != null &&
+  tcEmaPct >= 50 && tcEmaPct <= 75 &&
+  tcVolPct >= 50 && tcVolPct < 75;
 
-      if (tcDirection === "LONG") tcActionBar.classList.add("is-long");
-      if (tcDirection === "SHORT") tcActionBar.classList.add("is-short");
-    }
+const tcBelowGold =
+  tcEmaPct != null && tcVolPct != null &&
+  tcEmaPct >= 50 && tcEmaPct < 60 &&
+  tcVolPct >= 60 && tcVolPct < 75;
 
-    if (el("tc-action-main"))      el("tc-action-main").textContent      = tcActionMain;
-    if (el("tc-action-sub"))       el("tc-action-sub").textContent       = tcActionSub;
-    if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDirection || "—";
-    if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcPctGateBar ? "75%+" : "BLOCKED";
-    if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "—";
-    if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
-    if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
+const tcHotEma = tcEmaPct != null && tcEmaPct > 75;
+const tcHotVol = tcVolPct != null && tcVolPct >= 75;
 
+const tcEntryFilterOk =
+  tcEmaPct != null && tcVolPct != null &&
+  tcEmaPct >= 60 && tcEmaPct <= 75 &&
+  tcVolPct < 75 &&
+  tcRsiOk &&
+  !tcInOpenDrive;
+
+let tcZoneLabel = "WAIT";
+if (tcInOpenDrive) tcZoneLabel = "OPEN DRIVE";
+else if (!tcRsiOk) tcZoneLabel = "RSI EXT";
+else if (tcGoldSpot) tcZoneLabel = "GOLD SPOT";
+else if (tcBelowGold) tcZoneLabel = "BELOW GS";
+else if (tcHotEma) tcZoneLabel = "EMA HOT";
+else if (tcHotVol) tcZoneLabel = "VOL HOT";
+
+let tcActionMain = "AGUARDANDO";
+let tcActionSub  = "Aguardando leitura completa de EMA, Volume, RSI, Claude e Triple Convergence.";
+let tcActionMode = "is-wait";
+
+if (!tcHasAllTargets) {
+  tcActionMain = "AGUARDANDO";
+  tcActionSub  = "Faltam EMA Target, VOL Target ou Claude T1.";
+  tcActionMode = "is-wait";
+} else if (tcInOpenDrive) {
+  tcActionMain = "NÃO ENTRAR AGORA";
+  tcActionSub  = "OPEN DRIVE 7:29–7:45 MT — janela com concentração desproporcional dos stops.";
+  tcActionMode = "is-no-trade";
+} else if (!tcRsiOk) {
+  tcActionMain = "NÃO ENTRAR AGORA";
+  tcActionSub  = `RSI fora da faixa saudável (${tcRsi == null ? "—" : tcRsi.toFixed(1)}). Regra: operar entre 30 e 75.`;
+  tcActionMode = "is-no-trade";
+} else if (tcGoldSpot && !tcSideGateBar) {
+  tcActionMain = "AGUARDE";
+  tcActionSub  = `Gold Spot presente, mas EMA e Volume estão em conflito (${(tcEmaSide || "—").toUpperCase()} vs ${(tcVolSide || "—").toUpperCase()}).`;
+  tcActionMode = "is-wait";
+} else if (tcGoldSpot && !tcClaudeSide) {
+  tcActionMain = "AGUARDANDO";
+  tcActionSub  = "Gold Spot presente, mas ainda falta confirmar o lado do Claude.";
+  tcActionMode = "is-wait";
+} else if (tcGoldSpot && !tcClaudeGate) {
+  tcActionMain = "AGUARDE";
+  tcActionSub  = `Gold Spot presente, mas Claude está em ${(tcClaudeSide || "—").toUpperCase()} e EMA/VOL em ${tcDirection || "—"}.`;
+  tcActionMode = "is-wait";
+} else if (!tcEntryFilterOk) {
+  tcActionMain = "AGUARDE";
+  tcActionSub  = `Fora do Gold Spot. EMA ${fmtPct(tcEmaPct)} · VOL ${fmtPct(tcVolPct)} · RSI ${tcRsi == null ? "—" : tcRsi.toFixed(1)}.`;
+  tcActionMode = "is-wait";
+} else if (tcSpread == null) {
+  tcActionMain = "AGUARDANDO";
+  tcActionSub  = "Gold Spot válido. Falta só o spread final da convergência.";
+  tcActionMode = "is-wait";
+} else if (tcSpread <= 0.20) {
+  tcActionMain = "ENTRADA PERFEITA";
+  tcActionSub  = "Gold Spot + direção alinhada + Claude alinhado + convergência extremamente fechada.";
+  tcActionMode = "is-perfect";
+} else if (tcSpread <= 0.50) {
+  tcActionMain = "ENTRE AGORA";
+  tcActionSub  = "Gold Spot ativo com alinhamento forte entre EMA, Volume e Claude.";
+  tcActionMode = "is-good";
+} else if (tcSpread <= 1.00) {
+  tcActionMain = "ENTRADA RAZOÁVEL";
+  tcActionSub  = "Gold Spot ativo, mas o spread ainda está mais largo. Exige cautela.";
+  tcActionMode = "is-acceptable";
+} else {
+  tcActionMain = "NÃO FAÇA TRADE";
+  tcActionSub  = "Mesmo com filtro bom, os alvos estão muito dispersos. Não há convergência suficiente.";
+  tcActionMode = "is-no-trade";
+}
+
+const tcActionBar = el("tc-action-bar");
+if (tcActionBar) {
+  tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait");
+  tcActionBar.classList.add(tcActionMode);
+
+  if (tcDirection === "LONG") tcActionBar.classList.add("is-long");
+  if (tcDirection === "SHORT") tcActionBar.classList.add("is-short");
+}
+
+if (el("tc-action-main"))      el("tc-action-main").textContent      = tcActionMain;
+if (el("tc-action-sub"))       el("tc-action-sub").textContent       = tcActionSub;
+if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDirection || "—";
+if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcZoneLabel;
+if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "—";
+if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
+if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
+
+
+
+    
     const tcActionDirEl = el("tc-action-dir");
     if (tcActionDirEl) {
       tcActionDirEl.classList.remove("is-dir");
