@@ -6194,7 +6194,15 @@
   opacity: .82;
   color: var(--text-main);
 }
-
+#tc-action-bar .tc-action-note{
+  font-size: 24px;
+  line-height: 1.24;
+  color: #ffffff;
+  opacity: 1;
+  margin-top: 2px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 #tc-action-bar .tc-action-right{
   min-width: 0;
   display: grid;
@@ -7222,6 +7230,7 @@
       <div class="tc-action-sub" id="tc-action-sub">
         Aguardando leitura completa de EMA, Volume, Claude e Triple Convergence.
       </div>
+      <div class="tc-action-note" id="tc-action-note">—</div>
     </div>
 
     <div class="tc-action-right">
@@ -23916,7 +23925,24 @@ if (!tcHasAllTargets) {
   tcActionSub  = "Mesmo com filtro bom, os alvos estão muito dispersos. Não há convergência suficiente.";
   tcActionMode = "is-no-trade";
 }
-
+const tcActionNote = (() => {
+  switch (tcZoneLabel) {
+    case "GOLD SPOT":
+      return "Gold Spot = zona boa. Entrada real: EMA 60–75 · VOL < 75 · RSI 30–75 · fora do Open Drive.";
+    case "BELOW GS":
+      return "Below GS = quase bom, mas EMA ainda abaixo da faixa ideal.";
+    case "EMA HOT":
+      return "EMA Hot = EMA acima de 75, movimento já esticado.";
+    case "VOL HOT":
+      return "Vol Hot = volume acima de 75, quente demais.";
+    case "OPEN DRIVE":
+      return "Open Drive = 7:29–7:45 MT, janela com maior concentração de stops.";
+    case "RSI EXT":
+      return "RSI EXT = RSI fora da faixa saudável de 30–75.";
+    default:
+      return "Wait = aguardando classificação limpa da zona.";
+  }
+})();
 const tcActionBar = el("tc-action-bar");
 if (tcActionBar) {
   tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait");
@@ -23928,6 +23954,7 @@ if (tcActionBar) {
 
 if (el("tc-action-main"))      el("tc-action-main").textContent      = tcActionMain;
 if (el("tc-action-sub"))       el("tc-action-sub").textContent       = tcActionSub;
+if (el("tc-action-note"))      el("tc-action-note").textContent      = tcActionNote;
 if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDirection || "—";
 if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcZoneLabel;
 if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "—";
