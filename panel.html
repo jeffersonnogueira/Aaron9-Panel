@@ -3931,6 +3931,28 @@
   background: linear-gradient(180deg, rgba(31,47,70,.78) 0%, rgba(17,24,35,.96) 100%);
 }
 
+#copilot-block .copilot-section-card.is-trade > .copilot-section-header{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 26px;
+  color: #f8fafc;
+  letter-spacing: .18em;
+  margin-bottom: 18px;
+}
+
+#copilot-block .copilot-section-card.is-trade > .copilot-section-header::before{
+  content: "⚙";
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: #ffcc66;
+  background: rgba(255,204,102,.10);
+  box-shadow: 0 0 18px rgba(255,204,102,.14);
+}
+
 #copilot-block .copilot-trade-split{
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3989,8 +4011,372 @@
   color: #e5e7eb;
 }
 
+#copilot-block .copilot-trade-param-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+#copilot-block .copilot-trade-param-group{
+  min-width: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: linear-gradient(180deg, rgba(24,34,50,.94) 0%, rgba(13,20,31,.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+#copilot-block .copilot-trade-param-group.is-context{
+  border-color: rgba(96,165,250,.30);
+}
+
+#copilot-block .copilot-trade-param-group.is-continuation{
+  border-color: rgba(250,204,21,.26);
+}
+
+#copilot-block .copilot-trade-param-group.is-execution{
+  border-color: rgba(74,222,128,.26);
+}
+
+#copilot-block .copilot-trade-param-group.is-risk{
+  border-color: rgba(248,113,113,.24);
+}
+
+#copilot-block .copilot-trade-param-title{
+  font-size: 22px;
+  line-height: 1.1;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #ffcc66;
+  margin-bottom: 12px;
+}
+
+#copilot-block .copilot-trade-param-items{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+#copilot-block .copilot-trade-param-item{
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.13);
+  background: rgba(2,6,23,.20);
+}
+
+#copilot-block .copilot-trade-param-label{
+  font-size: 18px;
+  line-height: 1.15;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.72);
+  margin-bottom: 7px;
+}
+
+#copilot-block .copilot-trade-param-value{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 26px;
+  line-height: 1.34;
+  font-weight: 850;
+  color: #f8fafc;
+}
+
+#copilot-block .copilot-trade-param-value.is-long{
+  color: #86efac;
+}
+
+#copilot-block .copilot-trade-param-value.is-short{
+  color: #fca5a5;
+}
+
+#copilot-block .copilot-trade-param-value.is-wait{
+  color: #fde68a;
+}
+
+#copilot-block .copilot-trade-param-group.is-extra{
+  grid-column: 1 / -1;
+  border-color: rgba(148,163,184,.22);
+}
+
+#copilot-block .copilot-trade-dashboard{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+#copilot-block .copilot-trade-hero{
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 18px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,204,102,.52);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(255,204,102,.18), transparent 34%),
+    linear-gradient(180deg, rgba(39,31,12,.76) 0%, rgba(8,15,24,.96) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 0 1px rgba(255,204,102,.10),
+    0 0 26px rgba(255,180,32,.18);
+}
+
+#copilot-block .copilot-trade-hero-icon,
+#copilot-block .copilot-trade-panel-icon{
+  display: inline-grid;
+  place-items: center;
+  border-radius: 14px;
+  font-weight: 950;
+}
+
+#copilot-block .copilot-trade-hero-icon{
+  width: 110px;
+  height: 110px;
+  align-self: start;
+  font-size: 58px;
+  color: #ffcc66;
+  border: 1px solid rgba(255,204,102,.56);
+  background: radial-gradient(circle at 50% 42%, rgba(255,204,102,.34), rgba(255,204,102,.06) 58%, rgba(2,6,23,.10) 100%);
+  box-shadow:
+    inset 0 0 28px rgba(255,204,102,.16),
+    0 0 24px rgba(255,204,102,.20);
+}
+
+#copilot-block .copilot-trade-hero-title{
+  font-size: 40px;
+  line-height: 1.08;
+  font-weight: 950;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: #ffcc66;
+  margin: 6px 0 12px;
+  text-shadow: 0 0 18px rgba(255,204,102,.20);
+}
+
+#copilot-block .copilot-trade-wide-read{
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,204,102,.26);
+  background: rgba(2,6,23,.26);
+}
+
+#copilot-block .copilot-trade-wide-label,
+#copilot-block .copilot-trade-metric-label,
+#copilot-block .copilot-trade-row-label{
+  font-size: 17px;
+  line-height: 1.15;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.70);
+}
+
+#copilot-block .copilot-trade-wide-value{
+  margin-top: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 28px;
+  line-height: 1.28;
+  font-weight: 900;
+  color: #f8fafc;
+}
+
+#copilot-block .copilot-trade-metrics{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+#copilot-block .copilot-trade-metric{
+  min-width: 0;
+  padding: 14px 16px 16px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid rgba(255,204,102,.34);
+  background: linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(2,6,23,.28) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+#copilot-block .copilot-trade-metric-label{
+  color: #ffcc66;
+  margin-bottom: 8px;
+}
+
+#copilot-block .copilot-trade-metric-value{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 42px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: #f8fafc;
+}
+
+#copilot-block .copilot-trade-lower-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+#copilot-block .copilot-trade-lower-grid.is-single{
+  grid-template-columns: 1fr;
+}
+
+#copilot-block .copilot-trade-stack{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+#copilot-block .copilot-trade-panel{
+  min-width: 0;
+  min-height: 100%;
+  padding: 14px 18px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,.22);
+  background:
+    radial-gradient(circle at 96% 4%, rgba(255,255,255,.06), transparent 32%),
+    linear-gradient(180deg, rgba(14,24,38,.92) 0%, rgba(7,13,22,.96) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 22px rgba(2,6,23,.20);
+}
+
+#copilot-block .copilot-trade-panel.is-context{
+  border-color: rgba(74,222,128,.42);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 20px rgba(34,197,94,.12);
+}
+
+#copilot-block .copilot-trade-panel.is-continuation{
+  border-color: rgba(192,132,252,.46);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 20px rgba(168,85,247,.13);
+}
+
+#copilot-block .copilot-trade-panel.is-risk{
+  border-color: rgba(251,146,60,.48);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 20px rgba(249,115,22,.13);
+}
+
+#copilot-block .copilot-trade-panel.is-extra{
+  border-color: rgba(148,163,184,.30);
+}
+
+#copilot-block .copilot-trade-panel-head{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+#copilot-block .copilot-trade-panel-icon{
+  width: 44px;
+  height: 44px;
+  font-size: 26px;
+  flex: 0 0 auto;
+}
+
+#copilot-block .copilot-trade-panel.is-context .copilot-trade-panel-icon{
+  color: #4ade80;
+  border: 1px solid rgba(74,222,128,.36);
+  background: rgba(34,197,94,.12);
+}
+
+#copilot-block .copilot-trade-panel.is-continuation .copilot-trade-panel-icon{
+  color: #c084fc;
+  border: 1px solid rgba(192,132,252,.40);
+  background: rgba(168,85,247,.13);
+}
+
+#copilot-block .copilot-trade-panel.is-risk .copilot-trade-panel-icon{
+  color: #fb923c;
+  border: 1px solid rgba(251,146,60,.40);
+  background: rgba(249,115,22,.13);
+}
+
+#copilot-block .copilot-trade-panel.is-extra .copilot-trade-panel-icon{
+  color: #cbd5e1;
+  border: 1px solid rgba(148,163,184,.28);
+  background: rgba(148,163,184,.10);
+}
+
+#copilot-block .copilot-trade-panel-title{
+  font-size: 26px;
+  line-height: 1.12;
+  font-weight: 950;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+
+#copilot-block .copilot-trade-panel.is-context .copilot-trade-panel-title{
+  color: #4ade80;
+}
+
+#copilot-block .copilot-trade-panel.is-continuation .copilot-trade-panel-title{
+  color: #c084fc;
+}
+
+#copilot-block .copilot-trade-panel.is-risk .copilot-trade-panel-title{
+  color: #fb923c;
+}
+
+#copilot-block .copilot-trade-panel.is-extra .copilot-trade-panel-title{
+  color: #cbd5e1;
+}
+
+#copilot-block .copilot-trade-table{
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.14);
+  background: rgba(2,6,23,.18);
+}
+
+#copilot-block .copilot-trade-row{
+  display: grid;
+  grid-template-columns: minmax(150px, .58fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(148,163,184,.13);
+}
+
+#copilot-block .copilot-trade-row:last-child{
+  border-bottom: 0;
+}
+
+#copilot-block .copilot-trade-row-value{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 22px;
+  line-height: 1.34;
+  font-weight: 850;
+  color: #f8fafc;
+}
+
+#copilot-block .copilot-trade-row-value.is-long{
+  color: #4ade80;
+}
+
+#copilot-block .copilot-trade-row-value.is-short{
+  color: #f87171;
+}
+
+#copilot-block .copilot-trade-row-value.is-wait{
+  color: #fde68a;
+}
+
 @media (max-width: 980px){
   #copilot-block .copilot-trade-split{
+    grid-template-columns: 1fr;
+  }
+
+  #copilot-block .copilot-trade-param-grid{
     grid-template-columns: 1fr;
   }
 
@@ -4004,6 +4390,64 @@
 
   #copilot-block .copilot-trade-box-body{
     font-size: 28px;
+  }
+
+  #copilot-block .copilot-trade-param-title{
+    font-size: 18px;
+  }
+
+  #copilot-block .copilot-trade-param-label{
+    font-size: 16px;
+  }
+
+  #copilot-block .copilot-trade-param-value{
+    font-size: 22px;
+  }
+
+  #copilot-block .copilot-section-card.is-trade > .copilot-section-header{
+    font-size: 20px;
+    letter-spacing: .12em;
+  }
+
+  #copilot-block .copilot-trade-hero{
+    grid-template-columns: 1fr;
+  }
+
+  #copilot-block .copilot-trade-hero-icon{
+    display: none;
+  }
+
+  #copilot-block .copilot-trade-hero-title{
+    font-size: 30px;
+  }
+
+  #copilot-block .copilot-trade-wide-value{
+    font-size: 22px;
+  }
+
+  #copilot-block .copilot-trade-metrics{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #copilot-block .copilot-trade-metric-value{
+    font-size: 30px;
+  }
+
+  #copilot-block .copilot-trade-lower-grid{
+    grid-template-columns: 1fr;
+  }
+
+  #copilot-block .copilot-trade-panel-title{
+    font-size: 20px;
+  }
+
+  #copilot-block .copilot-trade-row{
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  #copilot-block .copilot-trade-row-value{
+    font-size: 20px;
   }
 }
 
@@ -16990,19 +17434,322 @@ function updateCoPilotBlock(data){
       `;
     };
 
+    const tradeParamFields = [
+      { key: "direction", label: "Direção", aliases: ["Direcao", "Direction"] },
+      { key: "patternContext", label: "Padrão/contexto", aliases: ["Padrao/contexto", "Padrao contexto", "Padrão contexto", "Pattern/context", "Contexto"] },
+      { key: "continuation", label: "Continuação", aliases: ["Continuacao", "Continuation"] },
+      { key: "continueUntil", label: "Se sim, continua até", aliases: ["Se sim continua ate", "Se sim continua até", "Continua ate", "Continua até"] },
+      { key: "noReason", label: "Se não, motivo", aliases: ["Se nao motivo", "Se não motivo", "Motivo", "No reason"] },
+      { key: "reversalAt", label: "Reversão em", aliases: ["Reversao em", "Reversal em", "Reversal at"] },
+      { key: "breathUntil", label: "Respiro até", aliases: ["Respiro ate", "Breath until"] },
+      { key: "alreadyEntered", label: "Já entrou?", aliases: ["Ja entrou", "Já entrou", "Already entered"] },
+      { key: "notEnteredEntry", label: "Se não entrou, entrada em", aliases: ["Se nao entrou entrada em", "Se não entrou entrada em", "Entrada se nao entrou", "Entrada se não entrou"] },
+      { key: "entry", label: "Entrada", aliases: ["Entry"] },
+      { key: "stop", label: "Stop", aliases: ["Stop loss"] },
+      { key: "target1", label: "Target 1", aliases: ["T1", "Target1"] },
+      { key: "target2", label: "Target 2", aliases: ["T2", "Target2"] },
+      { key: "riskPerShare", label: "Risco estimado por ação", aliases: ["Risco estimado por acao", "Risk per share", "Estimated risk per share"] },
+      { key: "rrApprox", label: "RR aproximado", aliases: ["R:R aproximado", "RR", "Risk reward", "Risk/reward"] },
+      { key: "positionManagement", label: "Manejo da posição", aliases: ["Manejo da posicao", "Manejo", "Position management"] }
+    ];
+
+    const tradeParamGroups = [
+      { title: "Contexto", className: "is-context", keys: ["direction", "patternContext", "continuation", "alreadyEntered"] },
+      { title: "Continuação / Reversão", className: "is-continuation", keys: ["continueUntil", "noReason", "reversalAt", "breathUntil"] },
+      { title: "Execução", className: "is-execution", keys: ["notEnteredEntry", "entry", "stop", "target1", "target2"] },
+      { title: "Risco / Manejo", className: "is-risk", keys: ["riskPerShare", "rrApprox", "positionManagement"] }
+    ];
+
+    const normalizeTradeParamLabel = (label = "") =>
+      cleanLine(label)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[?]+/g, "")
+        .replace(/[\/_-]+/g, " ")
+        .replace(/[.,;]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const tradeParamByLabel = new Map();
+    tradeParamFields.forEach(field => {
+      [field.label, ...(field.aliases || [])].forEach(alias => {
+        tradeParamByLabel.set(normalizeTradeParamLabel(alias), field);
+      });
+    });
+
+    const parseTradeParameters = (body = "") => {
+      const lines = String(body).replace(/\r/g, "").split("\n");
+      const found = new Map();
+      const extras = [];
+      let currentKey = null;
+
+      for (const rawLine of lines) {
+        const line = String(rawLine ?? "").trimEnd();
+        const trimmed = cleanLine(line);
+
+        if (!trimmed) {
+          if (currentKey && found.has(currentKey)) {
+            found.get(currentKey).valueLines.push("");
+          } else if (extras.length) {
+            extras.push("");
+          }
+          continue;
+        }
+
+        const pairMatch = line.match(/^\s*(?:[-•]\s*)?([^:]{1,100})\s*:\s*(.*)$/);
+
+        if (pairMatch) {
+          const field = tradeParamByLabel.get(normalizeTradeParamLabel(pairMatch[1]));
+          const isIndentedOrBullet = /^\s+/.test(String(rawLine ?? "")) || /^\s*[-•]\s+/.test(line);
+
+          if (field) {
+            if (!found.has(field.key)) {
+              found.set(field.key, { ...field, valueLines: [] });
+            } else if (found.get(field.key).valueLines.some(valueLine => cleanLine(valueLine))) {
+              found.get(field.key).valueLines.push("");
+              found.get(field.key).valueLines.push(`${cleanLine(pairMatch[1])}: ${pairMatch[2].trimEnd()}`);
+              currentKey = field.key;
+              continue;
+            }
+
+            found.get(field.key).valueLines.push(pairMatch[2].trimEnd());
+            currentKey = field.key;
+            continue;
+          }
+
+          if (currentKey && found.has(currentKey) && isIndentedOrBullet) {
+            found.get(currentKey).valueLines.push(line);
+            continue;
+          }
+
+          extras.push(line);
+          currentKey = null;
+          continue;
+        }
+
+        if (currentKey && found.has(currentKey)) {
+          found.get(currentKey).valueLines.push(line);
+        } else {
+          extras.push(line);
+        }
+      }
+
+      if (!found.size) return null;
+
+      const itemsByKey = new Map();
+      tradeParamFields.forEach(field => {
+        const item = found.get(field.key);
+        if (!item) return;
+
+        itemsByKey.set(field.key, {
+          ...field,
+          value: (item.valueLines || []).join("\n").trim() || "—"
+        });
+      });
+
+      const groups = tradeParamGroups
+        .map(group => ({
+          ...group,
+          items: group.keys.map(key => itemsByKey.get(key)).filter(Boolean)
+        }))
+        .filter(group => group.items.length);
+
+      return {
+        itemsByKey,
+        groups,
+        extraText: extras.join("\n").trim()
+      };
+    };
+
+    const tradeParamValueTone = (item, value = "") => {
+      const text = cleanLine(value).toUpperCase();
+
+      if (item.key === "direction") {
+        if (/\bLONG\b|\bCOMPRA\b|\bALTA\b/.test(text)) return "is-long";
+        if (/\bSHORT\b|\bVENDA\b|\bBAIXA\b/.test(text)) return "is-short";
+        if (/\bWAIT\b|\bAGUARDAR\b|\bNEUTRO\b/.test(text)) return "is-wait";
+      }
+
+      if (["continuation", "alreadyEntered"].includes(item.key)) {
+        if (/^(SIM|YES)\b/.test(text)) return "is-long";
+        if (/^(N[ÃA]O|NO)\b/.test(text)) return "is-short";
+        if (/\bWAIT\b|\bAGUARDAR\b|\bPENDENTE\b/.test(text)) return "is-wait";
+      }
+
+      return "";
+    };
+
+    const renderTradeParamItem = (item) => {
+      const tone = tradeParamValueTone(item, item.value);
+
+      return `
+        <div class="copilot-trade-param-item">
+          <div class="copilot-trade-param-label">${escapeHtml(item.label)}</div>
+          <div class="copilot-trade-param-value ${tone}">${escapeHtml(item.value)}</div>
+        </div>
+      `;
+    };
+
+    const renderTradeParamGroup = (group) => `
+      <div class="copilot-trade-param-group ${group.className}">
+        <div class="copilot-trade-param-title">${escapeHtml(group.title)}</div>
+        <div class="copilot-trade-param-items">
+          ${group.items.map(renderTradeParamItem).join("")}
+        </div>
+      </div>
+    `;
+
+    const getTradeParamItem = (parsed, key) =>
+      parsed?.itemsByKey instanceof Map ? parsed.itemsByKey.get(key) : null;
+
+    const renderTradeRow = (item) => {
+      if (!item) return "";
+      const tone = tradeParamValueTone(item, item.value);
+
+      return `
+        <div class="copilot-trade-row">
+          <div class="copilot-trade-row-label">${escapeHtml(item.label)}</div>
+          <div class="copilot-trade-row-value ${tone}">${escapeHtml(item.value)}</div>
+        </div>
+      `;
+    };
+
+    const renderTradeMetric = (item) => {
+      if (!item) return "";
+
+      return `
+        <div class="copilot-trade-metric">
+          <div class="copilot-trade-metric-label">${escapeHtml(item.label)}</div>
+          <div class="copilot-trade-metric-value">${escapeHtml(item.value)}</div>
+        </div>
+      `;
+    };
+
+    const renderTradePanel = (parsed, config) => {
+      const items = (config.keys || [])
+        .map(key => getTradeParamItem(parsed, key))
+        .filter(Boolean);
+
+      if (!items.length) return "";
+
+      return `
+        <div class="copilot-trade-panel ${config.className}">
+          <div class="copilot-trade-panel-head">
+            <div class="copilot-trade-panel-icon">${escapeHtml(config.icon)}</div>
+            <div class="copilot-trade-panel-title">${escapeHtml(config.title)}</div>
+          </div>
+          <div class="copilot-trade-table">
+            ${items.map(renderTradeRow).join("")}
+          </div>
+        </div>
+      `;
+    };
+
+    const renderTradeExecutionPanel = (parsed) => {
+      const waitingEntry = getTradeParamItem(parsed, "notEnteredEntry");
+      const metrics = ["entry", "stop", "target1", "target2"]
+        .map(key => getTradeParamItem(parsed, key))
+        .filter(Boolean);
+
+      if (!waitingEntry && !metrics.length) return "";
+
+      const waitingEntryHtml = waitingEntry
+        ? `
+          <div class="copilot-trade-wide-read">
+            <div class="copilot-trade-wide-label">${escapeHtml(waitingEntry.label)}</div>
+            <div class="copilot-trade-wide-value">${escapeHtml(waitingEntry.value)}</div>
+          </div>
+        `
+        : "";
+
+      const metricsHtml = metrics.length
+        ? `<div class="copilot-trade-metrics">${metrics.map(renderTradeMetric).join("")}</div>`
+        : "";
+
+      return `
+        <div class="copilot-trade-hero">
+          <div class="copilot-trade-hero-icon">⚡</div>
+          <div class="copilot-trade-hero-content">
+            <div class="copilot-trade-hero-title">Execução</div>
+            ${waitingEntryHtml}
+            ${metricsHtml}
+          </div>
+        </div>
+      `;
+    };
+
+    const buildTradeParamBlocksHtml = (body = "") => {
+      const parsed = parseTradeParameters(body);
+      if (!parsed) return "";
+
+      const executionHtml = renderTradeExecutionPanel(parsed);
+      const contextHtml = renderTradePanel(parsed, {
+        title: "Contexto",
+        icon: "▤",
+        className: "is-context",
+        keys: ["direction", "patternContext", "continuation", "alreadyEntered"]
+      });
+      const continuationHtml = renderTradePanel(parsed, {
+        title: "Continuação / Reversão",
+        icon: "↔",
+        className: "is-continuation",
+        keys: ["continueUntil", "noReason", "reversalAt", "breathUntil"]
+      });
+      const riskHtml = renderTradePanel(parsed, {
+        title: "Risco / Manejo",
+        icon: "◇",
+        className: "is-risk",
+        keys: ["riskPerShare", "rrApprox", "positionManagement"]
+      });
+
+      const leftStackHtml = [contextHtml, riskHtml].filter(Boolean).join("");
+      const lowerChildren = [
+        leftStackHtml ? `<div class="copilot-trade-stack">${leftStackHtml}</div>` : "",
+        continuationHtml
+      ].filter(Boolean);
+
+      const lowerGridHtml = lowerChildren.length
+        ? `<div class="copilot-trade-lower-grid ${lowerChildren.length === 1 ? "is-single" : ""}">${lowerChildren.join("")}</div>`
+        : "";
+
+      const extraHtml = parsed.extraText
+        ? `
+          <div class="copilot-trade-panel is-extra">
+            <div class="copilot-trade-panel-head">
+              <div class="copilot-trade-panel-icon">＋</div>
+              <div class="copilot-trade-panel-title">Outros detalhes</div>
+            </div>
+            <div class="copilot-trade-box-body">${escapeHtml(parsed.extraText)}</div>
+          </div>
+        `
+        : "";
+
+      return `
+        <div class="copilot-trade-dashboard">
+          ${executionHtml}
+          ${lowerGridHtml}
+          ${extraHtml}
+        </div>
+      `;
+    };
+
     const buildTradeSectionHtml = (body = "") => {
       const parsed = parseTradeScenarios(body);
 
-      if (!parsed) {
-        return `<div class="copilot-section-body">${escapeHtml(body || "—")}</div>`;
+      if (parsed) {
+        return `
+          <div class="copilot-trade-split">
+            ${renderTradeScenarioBox(parsed.long, "long")}
+            ${renderTradeScenarioBox(parsed.short, "short")}
+          </div>
+        `;
       }
 
-      return `
-        <div class="copilot-trade-split">
-          ${renderTradeScenarioBox(parsed.long, "long")}
-          ${renderTradeScenarioBox(parsed.short, "short")}
-        </div>
-      `;
+      const paramBlocksHtml = buildTradeParamBlocksHtml(body);
+      if (paramBlocksHtml) return paramBlocksHtml;
+
+      return `<div class="copilot-section-body">${escapeHtml(body || "—")}</div>`;
     };
     const claudeText = pickFirstText(
       panel.claude_text,
