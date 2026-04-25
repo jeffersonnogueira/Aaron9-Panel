@@ -3989,8 +3989,104 @@
   color: #e5e7eb;
 }
 
+#copilot-block .copilot-trade-param-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+#copilot-block .copilot-trade-param-group{
+  min-width: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: linear-gradient(180deg, rgba(24,34,50,.94) 0%, rgba(13,20,31,.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+#copilot-block .copilot-trade-param-group.is-context{
+  border-color: rgba(96,165,250,.30);
+}
+
+#copilot-block .copilot-trade-param-group.is-continuation{
+  border-color: rgba(250,204,21,.26);
+}
+
+#copilot-block .copilot-trade-param-group.is-execution{
+  border-color: rgba(74,222,128,.26);
+}
+
+#copilot-block .copilot-trade-param-group.is-risk{
+  border-color: rgba(248,113,113,.24);
+}
+
+#copilot-block .copilot-trade-param-title{
+  font-size: 22px;
+  line-height: 1.1;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #ffcc66;
+  margin-bottom: 12px;
+}
+
+#copilot-block .copilot-trade-param-items{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+#copilot-block .copilot-trade-param-item{
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.13);
+  background: rgba(2,6,23,.20);
+}
+
+#copilot-block .copilot-trade-param-label{
+  font-size: 18px;
+  line-height: 1.15;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.72);
+  margin-bottom: 7px;
+}
+
+#copilot-block .copilot-trade-param-value{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 26px;
+  line-height: 1.34;
+  font-weight: 850;
+  color: #f8fafc;
+}
+
+#copilot-block .copilot-trade-param-value.is-long{
+  color: #86efac;
+}
+
+#copilot-block .copilot-trade-param-value.is-short{
+  color: #fca5a5;
+}
+
+#copilot-block .copilot-trade-param-value.is-wait{
+  color: #fde68a;
+}
+
+#copilot-block .copilot-trade-param-group.is-extra{
+  grid-column: 1 / -1;
+  border-color: rgba(148,163,184,.22);
+}
+
 @media (max-width: 980px){
   #copilot-block .copilot-trade-split{
+    grid-template-columns: 1fr;
+  }
+
+  #copilot-block .copilot-trade-param-grid{
     grid-template-columns: 1fr;
   }
 
@@ -4004,6 +4100,18 @@
 
   #copilot-block .copilot-trade-box-body{
     font-size: 28px;
+  }
+
+  #copilot-block .copilot-trade-param-title{
+    font-size: 18px;
+  }
+
+  #copilot-block .copilot-trade-param-label{
+    font-size: 16px;
+  }
+
+  #copilot-block .copilot-trade-param-value{
+    font-size: 22px;
   }
 }
 
@@ -16990,19 +17098,208 @@ function updateCoPilotBlock(data){
       `;
     };
 
+    const tradeParamFields = [
+      { key: "direction", label: "Direção", aliases: ["Direcao", "Direction"] },
+      { key: "patternContext", label: "Padrão/contexto", aliases: ["Padrao/contexto", "Padrao contexto", "Padrão contexto", "Pattern/context", "Contexto"] },
+      { key: "continuation", label: "Continuação", aliases: ["Continuacao", "Continuation"] },
+      { key: "continueUntil", label: "Se sim, continua até", aliases: ["Se sim continua ate", "Se sim continua até", "Continua ate", "Continua até"] },
+      { key: "noReason", label: "Se não, motivo", aliases: ["Se nao motivo", "Se não motivo", "Motivo", "No reason"] },
+      { key: "reversalAt", label: "Reversão em", aliases: ["Reversao em", "Reversal em", "Reversal at"] },
+      { key: "breathUntil", label: "Respiro até", aliases: ["Respiro ate", "Breath until"] },
+      { key: "alreadyEntered", label: "Já entrou?", aliases: ["Ja entrou", "Já entrou", "Already entered"] },
+      { key: "notEnteredEntry", label: "Se não entrou, entrada em", aliases: ["Se nao entrou entrada em", "Se não entrou entrada em", "Entrada se nao entrou", "Entrada se não entrou"] },
+      { key: "entry", label: "Entrada", aliases: ["Entry"] },
+      { key: "stop", label: "Stop", aliases: ["Stop loss"] },
+      { key: "target1", label: "Target 1", aliases: ["T1", "Target1"] },
+      { key: "target2", label: "Target 2", aliases: ["T2", "Target2"] },
+      { key: "riskPerShare", label: "Risco estimado por ação", aliases: ["Risco estimado por acao", "Risk per share", "Estimated risk per share"] },
+      { key: "rrApprox", label: "RR aproximado", aliases: ["R:R aproximado", "RR", "Risk reward", "Risk/reward"] },
+      { key: "positionManagement", label: "Manejo da posição", aliases: ["Manejo da posicao", "Manejo", "Position management"] }
+    ];
+
+    const tradeParamGroups = [
+      { title: "Contexto", className: "is-context", keys: ["direction", "patternContext", "continuation", "alreadyEntered"] },
+      { title: "Continuação / Reversão", className: "is-continuation", keys: ["continueUntil", "noReason", "reversalAt", "breathUntil"] },
+      { title: "Execução", className: "is-execution", keys: ["notEnteredEntry", "entry", "stop", "target1", "target2"] },
+      { title: "Risco / Manejo", className: "is-risk", keys: ["riskPerShare", "rrApprox", "positionManagement"] }
+    ];
+
+    const normalizeTradeParamLabel = (label = "") =>
+      cleanLine(label)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[?]+/g, "")
+        .replace(/[\/_-]+/g, " ")
+        .replace(/[.,;]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const tradeParamByLabel = new Map();
+    tradeParamFields.forEach(field => {
+      [field.label, ...(field.aliases || [])].forEach(alias => {
+        tradeParamByLabel.set(normalizeTradeParamLabel(alias), field);
+      });
+    });
+
+    const parseTradeParameters = (body = "") => {
+      const lines = String(body).replace(/\r/g, "").split("\n");
+      const found = new Map();
+      const extras = [];
+      let currentKey = null;
+
+      for (const rawLine of lines) {
+        const line = String(rawLine ?? "").trimEnd();
+        const trimmed = cleanLine(line);
+
+        if (!trimmed) {
+          if (currentKey && found.has(currentKey)) {
+            found.get(currentKey).valueLines.push("");
+          } else if (extras.length) {
+            extras.push("");
+          }
+          continue;
+        }
+
+        const pairMatch = line.match(/^\s*(?:[-•]\s*)?([^:]{1,100})\s*:\s*(.*)$/);
+
+        if (pairMatch) {
+          const field = tradeParamByLabel.get(normalizeTradeParamLabel(pairMatch[1]));
+          const isIndentedOrBullet = /^\s+/.test(String(rawLine ?? "")) || /^\s*[-•]\s+/.test(line);
+
+          if (field) {
+            if (!found.has(field.key)) {
+              found.set(field.key, { ...field, valueLines: [] });
+            } else if (found.get(field.key).valueLines.some(valueLine => cleanLine(valueLine))) {
+              found.get(field.key).valueLines.push("");
+              found.get(field.key).valueLines.push(`${cleanLine(pairMatch[1])}: ${pairMatch[2].trimEnd()}`);
+              currentKey = field.key;
+              continue;
+            }
+
+            found.get(field.key).valueLines.push(pairMatch[2].trimEnd());
+            currentKey = field.key;
+            continue;
+          }
+
+          if (currentKey && found.has(currentKey) && isIndentedOrBullet) {
+            found.get(currentKey).valueLines.push(line);
+            continue;
+          }
+
+          extras.push(line);
+          currentKey = null;
+          continue;
+        }
+
+        if (currentKey && found.has(currentKey)) {
+          found.get(currentKey).valueLines.push(line);
+        } else {
+          extras.push(line);
+        }
+      }
+
+      if (!found.size) return null;
+
+      const itemsByKey = new Map();
+      tradeParamFields.forEach(field => {
+        const item = found.get(field.key);
+        if (!item) return;
+
+        itemsByKey.set(field.key, {
+          ...field,
+          value: (item.valueLines || []).join("\n").trim() || "—"
+        });
+      });
+
+      const groups = tradeParamGroups
+        .map(group => ({
+          ...group,
+          items: group.keys.map(key => itemsByKey.get(key)).filter(Boolean)
+        }))
+        .filter(group => group.items.length);
+
+      return {
+        groups,
+        extraText: extras.join("\n").trim()
+      };
+    };
+
+    const tradeParamValueTone = (item, value = "") => {
+      const text = cleanLine(value).toUpperCase();
+
+      if (item.key === "direction") {
+        if (/\bLONG\b|\bCOMPRA\b|\bALTA\b/.test(text)) return "is-long";
+        if (/\bSHORT\b|\bVENDA\b|\bBAIXA\b/.test(text)) return "is-short";
+        if (/\bWAIT\b|\bAGUARDAR\b|\bNEUTRO\b/.test(text)) return "is-wait";
+      }
+
+      if (["continuation", "alreadyEntered"].includes(item.key)) {
+        if (/^(SIM|YES)\b/.test(text)) return "is-long";
+        if (/^(N[ÃA]O|NO)\b/.test(text)) return "is-short";
+        if (/\bWAIT\b|\bAGUARDAR\b|\bPENDENTE\b/.test(text)) return "is-wait";
+      }
+
+      return "";
+    };
+
+    const renderTradeParamItem = (item) => {
+      const tone = tradeParamValueTone(item, item.value);
+
+      return `
+        <div class="copilot-trade-param-item">
+          <div class="copilot-trade-param-label">${escapeHtml(item.label)}</div>
+          <div class="copilot-trade-param-value ${tone}">${escapeHtml(item.value)}</div>
+        </div>
+      `;
+    };
+
+    const renderTradeParamGroup = (group) => `
+      <div class="copilot-trade-param-group ${group.className}">
+        <div class="copilot-trade-param-title">${escapeHtml(group.title)}</div>
+        <div class="copilot-trade-param-items">
+          ${group.items.map(renderTradeParamItem).join("")}
+        </div>
+      </div>
+    `;
+
+    const buildTradeParamBlocksHtml = (body = "") => {
+      const parsed = parseTradeParameters(body);
+      if (!parsed) return "";
+
+      const extraHtml = parsed.extraText
+        ? `
+          <div class="copilot-trade-param-group is-extra">
+            <div class="copilot-trade-param-title">Outros detalhes</div>
+            <div class="copilot-trade-box-body">${escapeHtml(parsed.extraText)}</div>
+          </div>
+        `
+        : "";
+
+      return `
+        <div class="copilot-trade-param-grid">
+          ${parsed.groups.map(renderTradeParamGroup).join("")}
+          ${extraHtml}
+        </div>
+      `;
+    };
+
     const buildTradeSectionHtml = (body = "") => {
       const parsed = parseTradeScenarios(body);
 
-      if (!parsed) {
-        return `<div class="copilot-section-body">${escapeHtml(body || "—")}</div>`;
+      if (parsed) {
+        return `
+          <div class="copilot-trade-split">
+            ${renderTradeScenarioBox(parsed.long, "long")}
+            ${renderTradeScenarioBox(parsed.short, "short")}
+          </div>
+        `;
       }
 
-      return `
-        <div class="copilot-trade-split">
-          ${renderTradeScenarioBox(parsed.long, "long")}
-          ${renderTradeScenarioBox(parsed.short, "short")}
-        </div>
-      `;
+      const paramBlocksHtml = buildTradeParamBlocksHtml(body);
+      if (paramBlocksHtml) return paramBlocksHtml;
+
+      return `<div class="copilot-section-body">${escapeHtml(body || "—")}</div>`;
     };
     const claudeText = pickFirstText(
       panel.claude_text,
