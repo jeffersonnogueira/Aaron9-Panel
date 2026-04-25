@@ -3927,30 +3927,42 @@
   max-width: none;
   justify-self: stretch;
   align-self: start;
+  padding: 18px 20px;
   border-color: rgba(96,165,250,.34);
-  background: linear-gradient(180deg, rgba(31,47,70,.78) 0%, rgba(17,24,35,.96) 100%);
+  background:
+    radial-gradient(circle at 84% -10%, rgba(37,99,235,.24), transparent 36%),
+    linear-gradient(180deg, rgba(18,32,51,.92) 0%, rgba(7,14,24,.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 0 1px rgba(59,130,246,.08),
+    0 18px 36px rgba(2,6,23,.28);
 }
 
 #copilot-block .copilot-section-card.is-trade > .copilot-section-header{
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: 26px;
+  gap: 16px;
+  font-size: 32px;
   color: #f8fafc;
-  letter-spacing: .18em;
-  margin-bottom: 18px;
+  letter-spacing: .20em;
+  margin-bottom: 22px;
+  text-shadow: 0 0 20px rgba(148,163,184,.14);
 }
 
 #copilot-block .copilot-section-card.is-trade > .copilot-section-header::before{
   content: "⚙";
   display: inline-grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 34px;
   color: #ffcc66;
-  background: rgba(255,204,102,.10);
-  box-shadow: 0 0 18px rgba(255,204,102,.14);
+  border: 1px solid rgba(255,204,102,.26);
+  background: rgba(255,204,102,.11);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 24px rgba(255,204,102,.18);
 }
 
 #copilot-block .copilot-trade-split{
@@ -4106,23 +4118,25 @@
 #copilot-block .copilot-trade-dashboard{
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 20px;
 }
 
 #copilot-block .copilot-trade-hero{
   display: grid;
-  grid-template-columns: 132px minmax(0, 1fr);
-  gap: 18px;
-  padding: 18px 20px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,204,102,.52);
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 22px;
+  padding: 26px 28px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,204,102,.72);
   background:
-    radial-gradient(circle at 88% 10%, rgba(255,204,102,.18), transparent 34%),
-    linear-gradient(180deg, rgba(39,31,12,.76) 0%, rgba(8,15,24,.96) 100%);
+    radial-gradient(circle at 92% 8%, rgba(255,186,41,.26), transparent 34%),
+    radial-gradient(circle at 5% 0%, rgba(255,204,102,.14), transparent 26%),
+    linear-gradient(180deg, rgba(44,33,10,.82) 0%, rgba(7,14,24,.98) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.05),
-    0 0 0 1px rgba(255,204,102,.10),
-    0 0 26px rgba(255,180,32,.18);
+    inset 0 1px 0 rgba(255,255,255,.10),
+    inset 0 0 30px rgba(255,204,102,.08),
+    0 0 0 1px rgba(255,204,102,.16),
+    0 0 36px rgba(255,180,32,.30);
 }
 
 #copilot-block .copilot-trade-hero-icon,
@@ -4134,35 +4148,39 @@
 }
 
 #copilot-block .copilot-trade-hero-icon{
-  width: 110px;
-  height: 110px;
+  width: 132px;
+  height: 132px;
   align-self: start;
-  font-size: 58px;
+  font-size: 74px;
   color: #ffcc66;
-  border: 1px solid rgba(255,204,102,.56);
-  background: radial-gradient(circle at 50% 42%, rgba(255,204,102,.34), rgba(255,204,102,.06) 58%, rgba(2,6,23,.10) 100%);
+  border: 1px solid rgba(255,204,102,.78);
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255,204,102,.48), rgba(255,204,102,.10) 58%, rgba(2,6,23,.12) 100%);
   box-shadow:
-    inset 0 0 28px rgba(255,204,102,.16),
-    0 0 24px rgba(255,204,102,.20);
+    inset 0 0 34px rgba(255,204,102,.20),
+    0 0 32px rgba(255,204,102,.28);
 }
 
 #copilot-block .copilot-trade-hero-title{
-  font-size: 46px;
+  font-size: 56px;
   line-height: 1.08;
   font-weight: 950;
-  letter-spacing: .10em;
+  letter-spacing: .11em;
   text-transform: uppercase;
   color: #ffcc66;
-  margin: 6px 0 12px;
-  text-shadow: 0 0 18px rgba(255,204,102,.20);
+  margin: 0 0 16px;
+  text-shadow: 0 0 22px rgba(255,204,102,.26);
 }
 
 #copilot-block .copilot-trade-wide-read{
   min-width: 0;
-  padding: 18px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,204,102,.26);
-  background: rgba(2,6,23,.26);
+  padding: 20px 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,204,102,.42);
+  background: rgba(2,6,23,.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 22px rgba(255,204,102,.09);
 }
 
 #copilot-block .copilot-trade-wide-label,
@@ -4181,7 +4199,7 @@
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;
-  font-size: 34px;
+  font-size: 36px;
   line-height: 1.28;
   font-weight: 900;
   color: #f8fafc;
@@ -4190,18 +4208,20 @@
 #copilot-block .copilot-trade-metrics{
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 16px;
+  gap: 22px;
+  margin-top: 22px;
 }
 
 #copilot-block .copilot-trade-metric{
   min-width: 0;
-  padding: 14px 16px 16px;
-  border-radius: 12px;
+  padding: 18px 18px 20px;
+  border-radius: 14px;
   text-align: center;
-  border: 1px solid rgba(255,204,102,.34);
-  background: linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(2,6,23,.28) 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+  border: 1px solid rgba(255,204,102,.54);
+  background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(2,6,23,.34) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 18px rgba(255,204,102,.10);
 }
 
 #copilot-block .copilot-trade-metric-label{
@@ -4213,7 +4233,7 @@
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;
-  font-size: 50px;
+  font-size: 58px;
   line-height: 1.05;
   font-weight: 950;
   color: #f8fafc;
@@ -4222,7 +4242,7 @@
 #copilot-block .copilot-trade-lower-grid{
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 16px;
+  gap: 20px;
   align-items: stretch;
 }
 
@@ -4233,53 +4253,62 @@
 #copilot-block .copilot-trade-stack{
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 16px;
 }
 
 #copilot-block .copilot-trade-panel{
   min-width: 0;
   min-height: 100%;
-  padding: 14px 18px 16px;
-  border-radius: 14px;
+  padding: 18px 22px 20px;
+  border-radius: 18px;
   border: 1px solid rgba(148,163,184,.22);
   background:
-    radial-gradient(circle at 96% 4%, rgba(255,255,255,.06), transparent 32%),
-    linear-gradient(180deg, rgba(14,24,38,.92) 0%, rgba(7,13,22,.96) 100%);
+    radial-gradient(circle at 96% 2%, rgba(255,255,255,.08), transparent 32%),
+    linear-gradient(180deg, rgba(12,23,38,.94) 0%, rgba(5,12,22,.98) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.04),
     0 0 22px rgba(2,6,23,.20);
 }
 
 #copilot-block .copilot-trade-panel.is-context{
-  border-color: rgba(74,222,128,.42);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 20px rgba(34,197,94,.12);
+  border-color: rgba(74,222,128,.58);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(34,197,94,.14), transparent 36%),
+    linear-gradient(180deg, rgba(10,34,28,.80) 0%, rgba(5,12,22,.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 28px rgba(34,197,94,.18);
 }
 
 #copilot-block .copilot-trade-panel.is-continuation{
-  border-color: rgba(192,132,252,.46);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 20px rgba(168,85,247,.13);
+  border-color: rgba(192,132,252,.62);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(168,85,247,.18), transparent 36%),
+    linear-gradient(180deg, rgba(28,18,49,.78) 0%, rgba(5,12,22,.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 28px rgba(168,85,247,.20);
 }
 
 #copilot-block .copilot-trade-panel.is-risk{
-  border-color: rgba(251,146,60,.48);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 20px rgba(249,115,22,.13);
+  border-color: rgba(251,146,60,.66);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(249,115,22,.18), transparent 36%),
+    linear-gradient(180deg, rgba(45,24,14,.78) 0%, rgba(5,12,22,.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 28px rgba(249,115,22,.20);
 }
 
 #copilot-block .copilot-trade-panel.is-extra{
-  border-color: rgba(148,163,184,.30);
+  border-color: rgba(148,163,184,.36);
 }
 
 #copilot-block .copilot-trade-panel-head{
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 16px;
+  margin-bottom: 14px;
 }
 
 #copilot-block .copilot-trade-panel-icon{
-  width: 44px;
-  height: 44px;
-  font-size: 26px;
+  width: 58px;
+  height: 58px;
+  font-size: 36px;
   flex: 0 0 auto;
 }
 
@@ -4308,7 +4337,7 @@
 }
 
 #copilot-block .copilot-trade-panel-title{
-  font-size: 26px;
+  font-size: 34px;
   line-height: 1.12;
   font-weight: 950;
   letter-spacing: .10em;
@@ -4332,16 +4361,17 @@
 }
 
 #copilot-block .copilot-trade-table{
-  border-radius: 12px;
-  border: 1px solid rgba(148,163,184,.14);
-  background: rgba(2,6,23,.18);
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: rgba(2,6,23,.26);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
 }
 
 #copilot-block .copilot-trade-row{
   display: grid;
-  grid-template-columns: minmax(240px, .60fr) minmax(0, 1fr);
-  gap: 18px;
-  padding: 14px 16px;
+  grid-template-columns: minmax(280px, .58fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 18px 20px;
   border-bottom: 1px solid rgba(148,163,184,.13);
 }
 
@@ -4457,8 +4487,51 @@
   max-width: none;
   justify-self: stretch;
   align-self: start;
-  border-color: rgba(248,113,113,.34);
-  background: linear-gradient(180deg, rgba(66,32,38,.58) 0%, rgba(23,19,29,.96) 100%);
+  padding: 18px 22px;
+  border-radius: 18px;
+  border-color: rgba(248,113,113,.70);
+  background:
+    radial-gradient(circle at 92% 10%, rgba(239,68,68,.22), transparent 34%),
+    linear-gradient(180deg, rgba(71,20,32,.78) 0%, rgba(24,14,24,.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 0 1px rgba(248,113,113,.12),
+    0 0 30px rgba(239,68,68,.22);
+}
+
+#copilot-block .copilot-section-card.is-invalidation .copilot-section-header{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 32px;
+  line-height: 1.12;
+  letter-spacing: .14em;
+  color: #f87171;
+  margin-bottom: 12px;
+  text-shadow: 0 0 20px rgba(248,113,113,.18);
+}
+
+#copilot-block .copilot-section-card.is-invalidation .copilot-section-header::before{
+  content: "⚠";
+  display: inline-grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  font-size: 38px;
+  color: #f87171;
+  border: 1px solid rgba(248,113,113,.48);
+  background: rgba(239,68,68,.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 24px rgba(248,113,113,.18);
+}
+
+#copilot-block .copilot-section-card.is-invalidation .copilot-section-body{
+  font-size: 28px;
+  line-height: 1.42;
+  font-weight: 850;
+  color: #f8fafc;
 }
 
 #copilot-block .copilot-section-card.is-structure{
@@ -17936,11 +18009,15 @@ visibleSections = [goldSpotRulesSection, ...visibleSections];
       section.type === "checklist"
         ? compactChecklistBody(section.body || "")
         : (section.body || "—");
+    const headerTitle =
+      ["trade", "invalidation"].includes(section.type)
+        ? (normalizeTitle(section.title) || section.title)
+        : section.title;
 
     if (section.type === "trade") {
       return `
         <div class="copilot-section-card ${classForSection(section.type, section.title)}">
-          <div class="copilot-section-header">${escapeHtml(section.title)}</div>
+          <div class="copilot-section-header">${escapeHtml(headerTitle)}</div>
           ${buildTradeSectionHtml(section.body || "")}
         </div>
       `;
@@ -17948,7 +18025,7 @@ visibleSections = [goldSpotRulesSection, ...visibleSections];
 
     return `
       <div class="copilot-section-card ${classForSection(section.type, section.title)}">
-        <div class="copilot-section-header">${escapeHtml(section.title)}</div>
+        <div class="copilot-section-header">${escapeHtml(headerTitle)}</div>
         <div class="copilot-section-body">${escapeHtml(body)}</div>
       </div>
     `;
