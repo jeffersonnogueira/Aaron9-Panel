@@ -7282,6 +7282,435 @@
     gap: 16px !important;
   }
 }
+/* ===================== AARON TERMINAL FINAL SHELL ===================== */
+body.aaron-terminal-shell{
+  background:
+    radial-gradient(1400px 720px at 10% -12%, rgba(61,165,255,.16), transparent 58%),
+    radial-gradient(980px 520px at 92% 0%, rgba(255,176,32,.12), transparent 58%),
+    radial-gradient(760px 440px at 56% 18%, rgba(208,104,255,.08), transparent 62%),
+    linear-gradient(180deg, #02060d 0%, #030914 45%, #02050b 100%) !important;
+}
+
+body.aaron-terminal-shell::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    linear-gradient(115deg, transparent 0%, transparent 58%, rgba(61,165,255,.10) 58.2%, transparent 72%),
+    radial-gradient(circle at 87% 5%, rgba(61,165,255,.16), transparent 18%);
+  opacity:.72;
+}
+
+body.aaron-terminal-shell .page{
+  position:relative;
+  z-index:1;
+  padding-top:74px !important;
+  padding-left:92px !important;
+}
+
+.aaron-side-tabs{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:70px;
+  z-index:10020;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  padding:12px 8px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(61,165,255,.18), transparent 36%),
+    linear-gradient(180deg, rgba(3,10,20,.98), rgba(2,6,13,.98));
+  border-right:1px solid rgba(61,165,255,.24);
+  box-shadow:
+    0 0 32px rgba(61,165,255,.12),
+    inset -1px 0 0 rgba(255,255,255,.05);
+}
+
+.aaron-side-logo{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  color:#ffcc66;
+  font-size:22px;
+  font-weight:950;
+  letter-spacing:.02em;
+  border:1px solid rgba(255,204,102,.46);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255,204,102,.30), rgba(255,204,102,.08) 58%, rgba(2,6,23,.32));
+  box-shadow:
+    0 0 18px rgba(255,204,102,.34),
+    inset 0 0 18px rgba(255,204,102,.13);
+  margin-bottom:8px;
+}
+
+.aaron-side-tabs-inner{
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:7px;
+}
+
+.aaron-side-tab{
+  width:54px;
+  height:54px;
+  border:1px solid rgba(148,163,184,.18);
+  border-radius:13px;
+  color:rgba(226,232,240,.72);
+  background:
+    linear-gradient(180deg, rgba(15,23,42,.70), rgba(2,6,23,.72));
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  cursor:pointer;
+  font:900 10px/1 system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:transform .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.aaron-side-tab strong{
+  font-size:18px;
+  line-height:1;
+  letter-spacing:0;
+}
+
+.aaron-side-tab span{
+  font-size:8px;
+  opacity:.72;
+}
+
+.aaron-side-tab:hover,
+.aaron-side-tab.is-active{
+  transform:translateX(3px);
+  color:#f8fafc;
+  border-color:rgba(61,165,255,.62);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(61,165,255,.24), transparent 62%),
+    linear-gradient(180deg, rgba(14,35,62,.88), rgba(2,8,18,.88));
+  box-shadow:
+    0 0 18px rgba(61,165,255,.26),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.aaron-side-tab[data-tone="gold"]:hover,
+.aaron-side-tab[data-tone="gold"].is-active{
+  border-color:rgba(255,204,102,.74);
+  box-shadow:0 0 20px rgba(255,204,102,.30), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.aaron-side-tab[data-tone="green"]:hover,
+.aaron-side-tab[data-tone="green"].is-active{
+  border-color:rgba(57,255,120,.62);
+  box-shadow:0 0 20px rgba(57,255,120,.24), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.aaron-side-tab[data-tone="purple"]:hover,
+.aaron-side-tab[data-tone="purple"].is-active{
+  border-color:rgba(208,104,255,.70);
+  box-shadow:0 0 20px rgba(208,104,255,.26), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.aaron-side-tab[data-tone="red"]:hover,
+.aaron-side-tab[data-tone="red"].is-active{
+  border-color:rgba(255,83,73,.66);
+  box-shadow:0 0 20px rgba(255,83,73,.24), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.aaron-live-tape{
+  position:fixed;
+  top:0;
+  left:70px;
+  right:0;
+  height:58px;
+  z-index:10010;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:0 16px 0 18px;
+  border-bottom:1px solid rgba(61,165,255,.26);
+  background:
+    radial-gradient(circle at 13% 0%, rgba(61,165,255,.18), transparent 36%),
+    radial-gradient(circle at 82% 0%, rgba(255,204,102,.13), transparent 42%),
+    linear-gradient(90deg, rgba(2,8,18,.98), rgba(3,12,24,.96) 46%, rgba(3,8,16,.98));
+  box-shadow:
+    0 14px 34px rgba(2,6,23,.48),
+    inset 0 -1px 0 rgba(255,255,255,.04);
+}
+
+.aaron-live-brand{
+  flex:0 0 auto;
+  display:flex;
+  align-items:baseline;
+  gap:9px;
+  color:#f8fafc;
+  font-size:13px;
+  font-weight:950;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  text-shadow:0 0 18px rgba(61,165,255,.22);
+  white-space:nowrap;
+}
+
+.aaron-live-brand span{
+  color:#3da5ff;
+  font-size:11px;
+  letter-spacing:.13em;
+  text-shadow:0 0 14px rgba(61,165,255,.48);
+}
+
+.aaron-live-dot{
+  width:8px;
+  height:8px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#39ff78;
+  box-shadow:0 0 10px #39ff78, 0 0 22px rgba(57,255,120,.42);
+  animation:aaronLivePulse 1.55s ease-in-out infinite;
+}
+
+@keyframes aaronLivePulse{
+  0%,100%{opacity:1; transform:scale(1);}
+  50%{opacity:.42; transform:scale(.72);}
+}
+
+.aaron-live-viewport{
+  min-width:0;
+  flex:1 1 auto;
+  overflow:hidden;
+  mask-image:linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.aaron-live-track{
+  display:flex;
+  align-items:center;
+  width:max-content;
+  min-width:100%;
+  white-space:nowrap;
+  animation:aaronTickerMove 34s linear infinite;
+}
+
+.aaron-live-track:hover{
+  animation-play-state:paused;
+}
+
+@keyframes aaronTickerMove{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+
+.aaron-live-item{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 17px;
+  border-right:1px solid rgba(148,163,184,.16);
+  font-family:"DM Mono","SF Mono",Consolas,monospace;
+  font-size:13px;
+  line-height:1;
+}
+
+.aaron-live-symbol{
+  color:rgba(226,232,240,.70);
+  font-weight:800;
+  letter-spacing:.08em;
+}
+
+.aaron-live-price{
+  color:#fff;
+  font-weight:950;
+  text-shadow:0 0 12px rgba(255,255,255,.14);
+}
+
+.aaron-live-change{
+  font-weight:950;
+}
+
+.aaron-live-change.up{
+  color:#39ff78;
+  text-shadow:0 0 12px rgba(57,255,120,.54);
+}
+
+.aaron-live-change.down{
+  color:#ff5349;
+  text-shadow:0 0 12px rgba(255,83,73,.54);
+}
+
+.aaron-live-status{
+  flex:0 0 auto;
+  min-width:128px;
+  text-align:right;
+  color:rgba(226,232,240,.58);
+  font:800 10px/1.2 "DM Mono","SF Mono",Consolas,monospace;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.aaron-live-refresh{
+  flex:0 0 auto;
+  height:31px;
+  border:1px solid rgba(61,165,255,.30);
+  border-radius:999px;
+  padding:0 12px;
+  background:rgba(61,165,255,.10);
+  color:#dbeafe;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 0 18px rgba(61,165,255,.10);
+}
+
+.aaron-live-refresh:hover{
+  border-color:rgba(61,165,255,.62);
+  box-shadow:0 0 20px rgba(61,165,255,.26);
+}
+
+body.aaron-terminal-shell .top-bar,
+body.aaron-terminal-shell .prem-breakout-wrap,
+body.aaron-terminal-shell .premonition-banner,
+body.aaron-terminal-shell .premonition-panel,
+body.aaron-terminal-shell .execm-side-card,
+body.aaron-terminal-shell .entryprem-shell,
+body.aaron-terminal-shell .bwp-shell,
+body.aaron-terminal-shell .replay-shell{
+  border-color:rgba(61,165,255,.24) !important;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(61,165,255,.13), transparent 34%),
+    linear-gradient(180deg, rgba(7,16,31,.90), rgba(2,6,14,.96)) !important;
+  box-shadow:
+    0 18px 44px rgba(2,6,23,.42),
+    0 0 0 1px rgba(61,165,255,.05),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+body.aaron-terminal-shell .prem-breakout-wrap{
+  border-color:rgba(255,204,102,.18) !important;
+  box-shadow:
+    0 18px 44px rgba(2,6,23,.42),
+    0 0 26px rgba(61,165,255,.10),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+body.aaron-terminal-shell .prem-breakout-title,
+body.aaron-terminal-shell .brand-title,
+body.aaron-terminal-shell #copilot-block .prem-breakout-title{
+  color:#f8fafc !important;
+  text-shadow:
+    0 0 16px rgba(61,165,255,.34),
+    0 0 30px rgba(61,165,255,.16) !important;
+}
+
+body.aaron-terminal-shell #copilot-block,
+body.aaron-terminal-shell #triple-conv-card,
+body.aaron-terminal-shell #indicator-prem-card{
+  border-color:rgba(255,204,102,.34) !important;
+  box-shadow:
+    0 18px 46px rgba(2,6,23,.48),
+    0 0 34px rgba(255,204,102,.16),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+body.aaron-terminal-shell #copilot-block .copilot-shell{
+  background:
+    radial-gradient(circle at 88% -5%, rgba(255,204,102,.16), transparent 32%),
+    radial-gradient(circle at 12% 0%, rgba(61,165,255,.15), transparent 34%),
+    linear-gradient(180deg, rgba(3,12,24,.96), rgba(2,6,14,.98)) !important;
+  border-color:rgba(61,165,255,.30) !important;
+  box-shadow:
+    0 0 34px rgba(61,165,255,.13),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+body.aaron-terminal-shell #copilot-block .copilot-section-card.is-trade,
+body.aaron-terminal-shell #copilot-block .copilot-trade-hero{
+  border-color:rgba(255,204,102,.78) !important;
+  box-shadow:
+    0 0 36px rgba(255,204,102,.26),
+    inset 0 0 32px rgba(255,204,102,.08),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+body.aaron-terminal-shell #copilot-block .copilot-trade-panel.is-context{
+  border-color:rgba(57,255,120,.62) !important;
+  box-shadow:0 0 30px rgba(57,255,120,.18), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+body.aaron-terminal-shell #copilot-block .copilot-trade-panel.is-continuation{
+  border-color:rgba(208,104,255,.66) !important;
+  box-shadow:0 0 30px rgba(208,104,255,.20), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+body.aaron-terminal-shell #copilot-block .copilot-trade-panel.is-risk{
+  border-color:rgba(255,126,38,.68) !important;
+  box-shadow:0 0 30px rgba(255,126,38,.18), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+body.aaron-terminal-shell #copilot-block .copilot-section-card.is-invalidation{
+  border-color:rgba(255,83,73,.78) !important;
+  box-shadow:0 0 34px rgba(255,83,73,.22), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+@media (max-width: 900px){
+  body.aaron-terminal-shell .page{
+    padding-left:14px !important;
+    padding-top:70px !important;
+    padding-bottom:90px !important;
+  }
+
+  .aaron-side-tabs{
+    top:auto;
+    right:0;
+    width:auto;
+    height:72px;
+    flex-direction:row;
+    border-right:0;
+    border-top:1px solid rgba(61,165,255,.24);
+    padding:8px 10px;
+    overflow-x:auto;
+  }
+
+  .aaron-side-logo{
+    display:none;
+  }
+
+  .aaron-side-tabs-inner{
+    display:flex;
+    gap:8px;
+  }
+
+  .aaron-side-tab{
+    width:58px;
+    height:52px;
+    flex:0 0 auto;
+  }
+
+  .aaron-live-tape{
+    left:0;
+    height:56px;
+    padding:0 10px;
+    gap:8px;
+  }
+
+  .aaron-live-brand span,
+  .aaron-live-refresh{
+    display:none;
+  }
+
+  .aaron-live-status{
+    min-width:82px;
+    font-size:8px;
+  }
+}
   </style>
 </head>
 
@@ -27051,6 +27480,344 @@ const tpTxt = (() => {
 })();
 </script>
 
+
+
+<script>
+/* ===================== AARON TERMINAL FINAL SHELL ===================== */
+(function aaronTerminalFinalShell(){
+  if (window.__AARON_TERMINAL_FINAL_SHELL__) return;
+  window.__AARON_TERMINAL_FINAL_SHELL__ = true;
+
+  const NAV_ITEMS = [
+    { id:"prem", label:"Prem", icon:"P", tone:"gold", title:"Premonition", targets:["premonition-section"] },
+    { id:"ind", label:"Indic", icon:"I", tone:"green", title:"Indicators", targets:["indicator-prem-card", "first-hour-prem-card"] },
+    { id:"tri", label:"Triple", icon:"T", tone:"gold", title:"Triple Convergence", targets:["triple-conv-card"] },
+    { id:"cop", label:"Copilot", icon:"C", tone:"purple", title:"Copilot", targets:["copilot-block"] },
+    { id:"vol", label:"Volume", icon:"V", tone:"green", title:"Volume Premonition", targets:["zz-volume-row", "vol-engine-card"] },
+    { id:"ent", label:"Entry", icon:"E", tone:"gold", title:"Entry Engine", targets:["entry-prem-card", "ee-engine-card"] },
+    { id:"gps", label:"GPS", icon:"G", tone:"purple", title:"GPS ZigZag", targets:["zz-route-card", "pivot-prem-card"] },
+    { id:"rep", label:"Replay", icon:"R", tone:"red", title:"Replay Mode", targets:["replay-mode-card"] }
+  ];
+
+  const MARKET_SYMBOLS = ["SPY", "QQQ", "NVDA", "TSLA", "AAPL", "META", "AMD"];
+
+  function ready(fn){
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn, { once:true });
+    else fn();
+  }
+
+  function el(id){
+    return document.getElementById(id);
+  }
+
+  function isVisible(node){
+    if (!node) return false;
+    const style = window.getComputedStyle(node);
+    return style.display !== "none" && style.visibility !== "hidden" && node.getClientRects().length > 0;
+  }
+
+  function firstTarget(item){
+    for (const id of item.targets){
+      const node = el(id);
+      if (node) return node;
+    }
+    return null;
+  }
+
+  function firstVisibleTarget(item){
+    for (const id of item.targets){
+      const node = el(id);
+      if (isVisible(node)) return node;
+    }
+    return firstTarget(item);
+  }
+
+  function scrollToSection(item){
+    const node = firstVisibleTarget(item);
+    if (!node) return;
+    const top = Math.max(0, window.scrollY + node.getBoundingClientRect().top - 78);
+    window.scrollTo({ top, behavior:"smooth" });
+    setActiveTab(item.id);
+  }
+
+  function setActiveTab(id){
+    document.querySelectorAll(".aaron-side-tab").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.navId === id);
+    });
+  }
+
+  function updateActiveFromScroll(){
+    let best = null;
+    let bestDistance = Infinity;
+    for (const item of NAV_ITEMS){
+      const node = firstVisibleTarget(item);
+      if (!node || !isVisible(node)) continue;
+      const distance = Math.abs(node.getBoundingClientRect().top - 92);
+      if (distance < bestDistance){
+        bestDistance = distance;
+        best = item.id;
+      }
+    }
+    if (best) setActiveTab(best);
+  }
+
+  function buildSideTabs(){
+    if (el("aaron-side-tabs")) return;
+
+    const nav = document.createElement("nav");
+    nav.id = "aaron-side-tabs";
+    nav.className = "aaron-side-tabs";
+    nav.setAttribute("aria-label", "Navegacao do painel");
+
+    const logo = document.createElement("div");
+    logo.className = "aaron-side-logo";
+    logo.textContent = "A9";
+    nav.appendChild(logo);
+
+    const inner = document.createElement("div");
+    inner.className = "aaron-side-tabs-inner";
+
+    NAV_ITEMS.forEach((item) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "aaron-side-tab";
+      btn.dataset.navId = item.id;
+      btn.dataset.tone = item.tone;
+      btn.title = item.title;
+      btn.innerHTML = `<strong>${item.icon}</strong><span>${item.label}</span>`;
+      btn.addEventListener("click", () => scrollToSection(item));
+      inner.appendChild(btn);
+    });
+
+    nav.appendChild(inner);
+    document.body.prepend(nav);
+
+    window.addEventListener("scroll", updateActiveFromScroll, { passive:true });
+    window.addEventListener("resize", updateActiveFromScroll, { passive:true });
+    setTimeout(updateActiveFromScroll, 350);
+    setTimeout(updateActiveFromScroll, 1200);
+  }
+
+  function buildLiveTape(){
+    if (el("aaron-live-tape")) return;
+
+    const tape = document.createElement("div");
+    tape.id = "aaron-live-tape";
+    tape.className = "aaron-live-tape";
+    tape.innerHTML = `
+      <div class="aaron-live-brand"><span class="aaron-live-dot"></span>AARON <span>LIVE MARKET</span></div>
+      <div class="aaron-live-viewport">
+        <div class="aaron-live-track" id="aaron-live-track">
+          ${MARKET_SYMBOLS.concat(MARKET_SYMBOLS).map((s) => `
+            <div class="aaron-live-item">
+              <span class="aaron-live-symbol">${s}</span>
+              <span class="aaron-live-price">loading</span>
+              <span class="aaron-live-change">--</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+      <button class="aaron-live-refresh" id="aaron-live-refresh" type="button">Refresh</button>
+      <div class="aaron-live-status" id="aaron-live-status">connecting</div>
+    `;
+    document.body.prepend(tape);
+  }
+
+  function fmtPrice(value){
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "--";
+    return "$" + n.toFixed(n >= 100 ? 2 : 2);
+  }
+
+  function fmtPct(value){
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "--";
+    return (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
+  }
+
+  function splitCsvLine(line){
+    const out = [];
+    let cur = "";
+    let quoted = false;
+    for (let i = 0; i < line.length; i += 1){
+      const ch = line[i];
+      if (ch === '"'){
+        quoted = !quoted;
+      } else if (ch === "," && !quoted){
+        out.push(cur);
+        cur = "";
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out.map((v) => v.trim().replace(/^"|"$/g, ""));
+  }
+
+  function parseStooqText(text, symbol){
+    const raw = String(text || "");
+    const start = raw.indexOf("Symbol,Date,Time");
+    const csv = start >= 0 ? raw.slice(start) : raw;
+    const lines = csv.split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+    const headerIndex = lines.findIndex((line) => /^Symbol,Date,Time/i.test(line));
+    const dataLine = lines[headerIndex + 1] || "";
+    const parts = splitCsvLine(dataLine);
+    if (parts.length < 8 || /N\/D/i.test(dataLine)) throw new Error("empty stooq quote");
+
+    const open = Number(parts[3]);
+    const close = Number(parts[6]);
+    const changePct = Number.isFinite(open) && open !== 0 ? ((close - open) / open) * 100 : null;
+
+    return {
+      symbol,
+      price: close,
+      changePct,
+      source: "stooq",
+      stamp: `${parts[1] || ""} ${parts[2] || ""}`.trim()
+    };
+  }
+
+  function parseYahooChart(json, symbol){
+    const result = json?.chart?.result?.[0];
+    const meta = result?.meta || {};
+    const price = Number(meta.regularMarketPrice ?? meta.previousClose);
+    const prev = Number(meta.chartPreviousClose ?? meta.previousClose);
+    const changePct = Number.isFinite(price) && Number.isFinite(prev) && prev !== 0
+      ? ((price - prev) / prev) * 100
+      : null;
+    if (!Number.isFinite(price)) throw new Error("empty yahoo quote");
+
+    const stamp = meta.regularMarketTime
+      ? new Date(Number(meta.regularMarketTime) * 1000).toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" })
+      : "";
+
+    return { symbol, price, changePct, source:"yahoo", stamp };
+  }
+
+  async function fetchText(url){
+    const res = await fetch(url, { cache:"no-store", referrerPolicy:"no-referrer" });
+    if (!res.ok) throw new Error("http " + res.status);
+    return res.text();
+  }
+
+  async function fetchJson(url){
+    const res = await fetch(url, { cache:"no-store", referrerPolicy:"no-referrer" });
+    if (!res.ok) throw new Error("http " + res.status);
+    return res.json();
+  }
+
+  async function fetchQuote(symbol){
+    const sym = encodeURIComponent(symbol);
+    const stooqSym = encodeURIComponent(symbol.toLowerCase() + ".us");
+
+    const attempts = [
+      async () => parseYahooChart(await fetchJson(`https://query2.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d&_=${Date.now()}`), symbol),
+      async () => parseStooqText(await fetchText(`https://stooq.com/q/l/?s=${stooqSym}&f=sd2t2ohlcv&h&e=csv&_=${Date.now()}`), symbol),
+      async () => parseStooqText(await fetchText(`https://r.jina.ai/http://stooq.com/q/l/?s=${stooqSym}&f=sd2t2ohlcv&h&e=csv&_=${Date.now()}`), symbol)
+    ];
+
+    let lastError = null;
+    for (const attempt of attempts){
+      try {
+        return await attempt();
+      } catch (err){
+        lastError = err;
+      }
+    }
+    throw lastError || new Error("quote failed");
+  }
+
+  async function fetchServerQuotes(){
+    const res = await fetch(`/api/live-quotes?symbols=${MARKET_SYMBOLS.join(",")}&_=${Date.now()}`, {
+      cache:"no-store",
+      referrerPolicy:"no-referrer"
+    });
+    if (!res.ok) throw new Error("api " + res.status);
+
+    const json = await res.json();
+    const quotes = Array.isArray(json?.quotes) ? json.quotes : [];
+    const bySymbol = new Map(quotes.map((q) => [String(q.symbol || "").toUpperCase(), q]));
+
+    return MARKET_SYMBOLS
+      .map((symbol) => bySymbol.get(symbol))
+      .filter(Boolean)
+      .map((q) => ({
+        symbol: String(q.symbol || "").toUpperCase(),
+        price: Number(q.price),
+        changePct: q.changePct == null ? null : Number(q.changePct),
+        source: q.source || "server",
+        stamp: q.stamp || json.updatedAt || ""
+      }))
+      .filter((q) => Number.isFinite(q.price));
+  }
+
+  function renderQuotes(quotes){
+    const track = el("aaron-live-track");
+    const status = el("aaron-live-status");
+    if (!track || !status) return;
+
+    const valid = quotes.filter(Boolean);
+    if (!valid.length){
+      status.textContent = "feed blocked";
+      track.innerHTML = MARKET_SYMBOLS.concat(MARKET_SYMBOLS).map((s) => `
+        <div class="aaron-live-item">
+          <span class="aaron-live-symbol">${s}</span>
+          <span class="aaron-live-price">--</span>
+          <span class="aaron-live-change">--</span>
+        </div>
+      `).join("");
+      return;
+    }
+
+    const doubled = valid.concat(valid);
+    track.innerHTML = doubled.map((q) => {
+      const tone = Number(q.changePct) >= 0 ? "up" : "down";
+      return `
+        <div class="aaron-live-item" title="${q.source || "internet"} ${q.stamp || ""}">
+          <span class="aaron-live-symbol">${q.symbol}</span>
+          <span class="aaron-live-price">${fmtPrice(q.price)}</span>
+          <span class="aaron-live-change ${tone}">${fmtPct(q.changePct)}</span>
+        </div>
+      `;
+    }).join("");
+
+    const now = new Date().toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" });
+    const src = valid[0]?.source ? valid[0].source.toUpperCase() : "INTERNET";
+    status.textContent = `${src} ${now}`;
+  }
+
+  async function refreshQuotes(){
+    const status = el("aaron-live-status");
+    if (status) status.textContent = "updating";
+
+    try {
+      const serverQuotes = await fetchServerQuotes();
+      if (serverQuotes.length){
+        renderQuotes(serverQuotes);
+        return;
+      }
+    } catch (_err){
+      // Fallback para HTML aberto fora do Vercel/API.
+    }
+
+    const results = await Promise.allSettled(MARKET_SYMBOLS.map((symbol) => fetchQuote(symbol)));
+    const quotes = results.map((r) => r.status === "fulfilled" ? r.value : null);
+    renderQuotes(quotes);
+  }
+
+  function install(){
+    document.body.classList.add("aaron-terminal-shell");
+    buildLiveTape();
+    buildSideTabs();
+
+    el("aaron-live-refresh")?.addEventListener("click", refreshQuotes);
+    refreshQuotes();
+    setInterval(refreshQuotes, 60 * 1000);
+  }
+
+  ready(install);
+})();
+</script>
 
 
 </body>
