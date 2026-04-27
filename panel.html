@@ -3921,6 +3921,168 @@
   background: linear-gradient(180deg, rgba(58,48,28,.72) 0%, rgba(23,21,17,.96) 100%);
 }
 
+#copilot-block .copilot-section-card.is-aaron10{
+  grid-column: 1 / -1;
+  border-color: rgba(34,211,238,.46);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(34,211,238,.18), transparent 34%),
+    linear-gradient(180deg, rgba(19,44,58,.88) 0%, rgba(7,16,26,.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 0 1px rgba(34,211,238,.08),
+    0 18px 38px rgba(2,6,23,.34);
+}
+
+#copilot-block .copilot-a10-card{
+  display: grid;
+  gap: 16px;
+}
+
+#copilot-block .copilot-a10-top{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  gap: 16px;
+  align-items: stretch;
+}
+
+#copilot-block .copilot-a10-decision{
+  min-width: 0;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(2,6,23,.24);
+}
+
+#copilot-block .copilot-a10-label,
+#copilot-block .copilot-a10-metric span,
+#copilot-block .copilot-a10-list-title{
+  display: block;
+  font-size: 18px;
+  line-height: 1.15;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.72);
+}
+
+#copilot-block .copilot-a10-decision strong{
+  display: block;
+  margin-top: 8px;
+  font-size: 54px;
+  line-height: 1.02;
+  font-weight: 950;
+  letter-spacing: .04em;
+  color: #e0f2fe;
+}
+
+#copilot-block .copilot-a10-decision p{
+  margin: 10px 0 0;
+  font-size: 28px;
+  line-height: 1.28;
+  font-weight: 850;
+  color: #cbd5e1;
+}
+
+#copilot-block .copilot-a10-score{
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  border-radius: 14px;
+  border: 1px solid rgba(34,211,238,.34);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(34,211,238,.22), transparent 58%),
+    rgba(2,6,23,.28);
+}
+
+#copilot-block .copilot-a10-score strong{
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 950;
+  color: #67e8f9;
+}
+
+#copilot-block .copilot-a10-score span{
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.72);
+}
+
+#copilot-block .copilot-a10-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#copilot-block .copilot-a10-metric{
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: rgba(2,6,23,.22);
+}
+
+#copilot-block .copilot-a10-metric strong{
+  display: block;
+  margin-top: 8px;
+  font-size: 30px;
+  line-height: 1.12;
+  font-weight: 950;
+  color: #f8fafc;
+  word-break: break-word;
+}
+
+#copilot-block .copilot-a10-metric small{
+  display: block;
+  margin-top: 7px;
+  font-size: 20px;
+  line-height: 1.22;
+  font-weight: 780;
+  color: #cbd5e1;
+}
+
+#copilot-block .copilot-a10-lists{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#copilot-block .copilot-a10-list{
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.16);
+  background: rgba(2,6,23,.20);
+}
+
+#copilot-block .copilot-a10-list ul{
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+#copilot-block .copilot-a10-list li{
+  margin: 7px 0;
+  font-size: 22px;
+  line-height: 1.32;
+  font-weight: 800;
+  color: #e5e7eb;
+}
+
+#copilot-block .copilot-a10-card.is-enter .copilot-a10-decision strong{
+  color: #86efac;
+}
+
+#copilot-block .copilot-a10-card.is-half .copilot-a10-decision strong{
+  color: #fde68a;
+}
+
+#copilot-block .copilot-a10-card.is-block .copilot-a10-decision strong,
+#copilot-block .copilot-a10-card.is-exit .copilot-a10-decision strong{
+  color: #fca5a5;
+}
+
 #copilot-block .copilot-section-card.is-trade{
   grid-column: 1 / -1;
   width: 100%;
@@ -4620,6 +4782,13 @@
   color: #e2e8f0;
 }
 
+#copilot-badge.copilot-block,
+#copilot-badge.copilot-exit{
+  border-color: rgba(248,113,113,.42);
+  background: rgba(248,113,113,.14);
+  color: #fecaca;
+}
+
 @media (max-width: 1500px){
   #copilot-block .copilot-grid{
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4627,6 +4796,37 @@
 }
 
 @media (max-width: 980px){
+  #copilot-block .copilot-a10-top,
+  #copilot-block .copilot-a10-grid,
+  #copilot-block .copilot-a10-lists{
+    grid-template-columns: 1fr;
+  }
+
+  #copilot-block .copilot-a10-decision strong{
+    font-size: 36px;
+  }
+
+  #copilot-block .copilot-a10-decision p{
+    font-size: 22px;
+  }
+
+  #copilot-block .copilot-a10-score{
+    min-height: 108px;
+  }
+
+  #copilot-block .copilot-a10-score strong{
+    font-size: 42px;
+  }
+
+  #copilot-block .copilot-a10-metric strong{
+    font-size: 25px;
+  }
+
+  #copilot-block .copilot-a10-metric small,
+  #copilot-block .copilot-a10-list li{
+    font-size: 20px;
+  }
+
   #copilot-block .copilot-hero-title{
     font-size: 30px;
   }
@@ -18398,6 +18598,859 @@ function updateCoPilotBlock(data){
 
       return `<div class="copilot-section-body">${escapeHtml(body || "—")}</div>`;
     };
+
+    const deepFind = (obj, key, maxDepth = 7) => {
+      try{
+        const seen = new Set();
+        const q = [{ v: obj, d: 0 }];
+
+        while (q.length){
+          const { v, d } = q.shift();
+          if (!v || typeof v !== "object") continue;
+          if (seen.has(v)) continue;
+          seen.add(v);
+
+          if (Object.prototype.hasOwnProperty.call(v, key)) return v[key];
+          if (d >= maxDepth) continue;
+
+          for (const k of Object.keys(v)){
+            const child = v[k];
+            if (child && typeof child === "object") q.push({ v: child, d: d + 1 });
+          }
+        }
+      }catch(_e){}
+
+      return null;
+    };
+
+    const pickFirstValue = (...vals) => {
+      for (const v of vals){
+        if (v === null || v === undefined) continue;
+        if (typeof v === "string" && !v.trim()) continue;
+        return v;
+      }
+      return null;
+    };
+
+    const toNum = (v) => {
+      if (v === null || v === undefined || v === "") return null;
+      if (typeof v === "number") return Number.isFinite(v) ? v : null;
+
+      const s = String(v)
+        .trim()
+        .replace(/\$/g, "")
+        .replace(/%/g, "")
+        .replace(/\s+/g, "")
+        .replace(",", ".");
+
+      const n = Number(s);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    const fmtPctA10 = (v) => {
+      const n = toNum(v);
+      return n === null ? "—" : `${n.toFixed(n % 1 ? 1 : 0)}%`;
+    };
+
+    const fmtMoneyA10 = (v) => {
+      const n = toNum(v);
+      return n === null ? "—" : `$${n.toFixed(2)}`;
+    };
+
+    const normSideA10 = (v) => {
+      const s = String(v || "").trim().toUpperCase();
+      if (!s) return "";
+      if (["LONG","BUY","UP","BULL","BULLISH","CALL","COMPRA","ALTA"].some(x => s.includes(x))) return "long";
+      if (["SHORT","SELL","DOWN","BEAR","BEARISH","PUT","VENDA","BAIXA"].some(x => s.includes(x))) return "short";
+      return "";
+    };
+
+    const sideLabelA10 = (side) =>
+      side === "long" ? "LONG" : side === "short" ? "SHORT" : "WAIT";
+
+    const boolA10 = (v) => {
+      if (v === null || v === undefined || v === "") return null;
+      if (typeof v === "boolean") return v;
+      if (typeof v === "number") return v !== 0;
+
+      const s = String(v).trim().toUpperCase();
+      if (["YES","SIM","TRUE","1","Y","S"].includes(s)) return true;
+      if (["NO","NAO","NÃO","FALSE","0","N"].includes(s)) return false;
+      return null;
+    };
+
+    const isYesA10 = (v) => boolA10(v) === true;
+    const isNoA10 = (v) => boolA10(v) === false;
+
+    const parseClockMinuteA10 = (clock) => {
+      const s = String(clock || "").trim();
+      const m = s.match(/(\d{1,2})\s*:\s*(\d{2})\s*(AM|PM)?/i);
+      if (!m) return null;
+
+      let hh = Number(m[1]);
+      const mm = Number(m[2]);
+      const ap = String(m[3] || "").toUpperCase();
+
+      if (ap === "PM" && hh < 12) hh += 12;
+      if (ap === "AM" && hh === 12) hh = 0;
+      if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
+
+      return (hh * 60) + mm;
+    };
+
+    const minuteToClockA10 = (minute) => {
+      if (!Number.isFinite(minute)) return "";
+      const total = ((Math.round(minute) % 1440) + 1440) % 1440;
+      const hh = Math.floor(total / 60);
+      const mm = total % 60;
+      return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+    };
+
+    const mtClockFromDateA10 = (rawDate) => {
+      if (!rawDate) return "";
+      const d = new Date(rawDate);
+      if (Number.isNaN(d.getTime())) return "";
+
+      try{
+        const parts = new Intl.DateTimeFormat("en-US", {
+          timeZone: "America/Denver",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        }).formatToParts(d);
+
+        let hh = parts.find(p => p.type === "hour")?.value || "";
+        const mm = parts.find(p => p.type === "minute")?.value || "";
+        if (hh === "24") hh = "00";
+        return (hh && mm) ? `${hh}:${mm}` : "";
+      }catch(_e){
+        return "";
+      }
+    };
+
+    const classifyA10Window = (minute) => {
+      const t0729 = (7 * 60) + 29;
+      const t0745 = (7 * 60) + 45;
+      const t0900 = (9 * 60);
+      const t1000 = (10 * 60);
+      const t1100 = (11 * 60);
+      const t1200 = (12 * 60);
+      const t1330 = (13 * 60) + 30;
+
+      if (minute === null || minute === undefined) {
+        return { name: "HORARIO N/D", detail: "Sem clock MT confiavel no payload.", blocked: false, openDrive: false };
+      }
+      if (minute < t0729) {
+        return { name: "PRE-MARKET", detail: "Antes de 07:29 MT: bloqueado.", blocked: true, openDrive: false };
+      }
+      if (minute <= t0745) {
+        return { name: "OPEN DRIVE", detail: "07:29-07:45 MT: risco alto.", blocked: false, openDrive: true };
+      }
+      if (minute <= t0900) {
+        return { name: "JANELA OURO", detail: "07:46-09:00 MT: leitura historica mais forte.", blocked: false, openDrive: false };
+      }
+      if (minute <= t1000) {
+        return { name: "JANELA BOA", detail: "09:01-10:00 MT: entrada normal.", blocked: false, openDrive: false };
+      }
+      if (minute <= t1100) {
+        return { name: "JANELA MODERADA", detail: "10:01-11:00 MT: preferir SHORT.", blocked: false, openDrive: false };
+      }
+      if (minute <= t1200) {
+        return { name: "JANELA FRACA", detail: "11:01-12:00 MT: so com filtros verdes.", blocked: false, openDrive: false };
+      }
+      if (minute <= t1330) {
+        return { name: "TARDE", detail: "12:01-13:30 MT: normal, leve preferencia LONG.", blocked: false, openDrive: false };
+      }
+
+      return { name: "FORA DO RTH", detail: "Depois de 13:30 MT: bloqueado.", blocked: true, openDrive: false };
+    };
+
+    const impulseLabelA10 = (kind = "") => {
+      const raw = String(kind || "").trim();
+      if (!raw) return "—";
+      return raw.replace(/_/g, " ").toUpperCase();
+    };
+
+    const renderAaron10List = (title, items, emptyText) => {
+      const safeItems = (items || []).filter(Boolean).slice(0, 8);
+      const list = safeItems.length ? safeItems : [emptyText || "—"];
+
+      return `
+        <div class="copilot-a10-list">
+          <div class="copilot-a10-list-title">${escapeHtml(title)}</div>
+          <ul>
+            ${list.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+    };
+
+    const renderAaron10SectionHtml = (readout) => {
+      if (!readout) return "";
+
+      return `
+        <div class="copilot-section-card is-core is-aaron10">
+          <div class="copilot-section-header">${escapeHtml(readout.title)}</div>
+          <div class="copilot-a10-card ${escapeHtml(readout.toneClass)}">
+            <div class="copilot-a10-top">
+              <div class="copilot-a10-decision">
+                <span class="copilot-a10-label">Decisao</span>
+                <strong>${escapeHtml(readout.decision)}</strong>
+                <p>${escapeHtml(readout.subtitle)}</p>
+              </div>
+              <div class="copilot-a10-score">
+                <div>
+                  <strong>${escapeHtml(readout.scoreLabel)}</strong>
+                  <span>Score A10</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="copilot-a10-grid">
+              ${readout.metrics.map(metric => `
+                <div class="copilot-a10-metric">
+                  <span>${escapeHtml(metric.label)}</span>
+                  <strong>${escapeHtml(metric.value)}</strong>
+                  <small>${escapeHtml(metric.detail)}</small>
+                </div>
+              `).join("")}
+            </div>
+
+            <div class="copilot-a10-lists">
+              ${renderAaron10List("Bloqueios / Alertas", readout.alerts, "Sem bloqueio duro agora.")}
+              ${renderAaron10List("Pontos verdes", readout.greens, "Ainda faltam confirmacoes.")}
+              ${renderAaron10List("Proxima acao", readout.management, "Aguardar novo candle.")}
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    const buildAaron10Readout = () => {
+      const root = data || {};
+      const exec1x1 = pickFirstValue(panel?.exec_1x1, digest?.exec_1x1, ui?.exec_1x1, root?.exec_1x1, {});
+      const hud = pickFirstValue(panel?.hud, digest?.hud, ui?.hud, root?.hud, deepFind(root, "hud"), {});
+      const now = pickFirstValue(panel?.now, digest?.now, ui?.now, root?.now, deepFind(root, "now"), {});
+
+      const emaBlock = pickFirstValue(
+        exec1x1?.ema_volume_exhaustion_premonition_v1,
+        panel?.ema_volume_exhaustion_premonition_v1,
+        digest?.ema_volume_exhaustion_premonition_v1,
+        ui?.ema_volume_exhaustion_premonition_v1,
+        root?.ema_volume_exhaustion_premonition_v1,
+        panel?.ema_exhaustion_premonition_v1,
+        digest?.ema_exhaustion_premonition_v1,
+        ui?.ema_exhaustion_premonition_v1,
+        root?.ema_exhaustion_premonition_v1,
+        panel?.ema_exhaustion_premonition,
+        digest?.ema_exhaustion_premonition,
+        root?.ema_exhaustion_premonition,
+        deepFind(root, "ema_volume_exhaustion_premonition_v1"),
+        deepFind(root, "ema_exhaustion_premonition_v1"),
+        deepFind(root, "ema_exhaustion_premonition"),
+        {}
+      ) || {};
+
+      const emaCve = pickFirstValue(
+        emaBlock?.continuation_vs_exhaustion,
+        emaBlock?.cve,
+        emaBlock?.probabilities,
+        {}
+      ) || {};
+
+      const emaSummary = pickFirstValue(emaBlock?.summary, {}) || {};
+
+      const volBlock = pickFirstValue(
+        exec1x1?.volume_premonition_v1,
+        panel?.volume_premonition_v1,
+        digest?.volume_premonition_v1,
+        ui?.volume_premonition_v1,
+        root?.volume_premonition_v1,
+        deepFind(root, "volume_premonition_v1"),
+        {}
+      ) || {};
+
+      const emaPct = toNum(pickFirstValue(
+        panel?.ema_exhaustion_continuation_pct,
+        digest?.ema_exhaustion_continuation_pct,
+        ui?.ema_exhaustion_continuation_pct,
+        root?.ema_exhaustion_continuation_pct,
+        deepFind(root, "ema_exhaustion_continuation_pct"),
+        emaBlock?.ema_exhaustion_continuation_pct,
+        emaBlock?.continuation_premonition_pct,
+        emaBlock?.continuation_pct,
+        emaCve?.continue_now_pct,
+        emaCve?.continuation_now_pct,
+        emaCve?.continue_next_leg_pct,
+        emaCve?.continuation_next_leg_pct
+      ));
+
+      const emaAvoid = boolA10(pickFirstValue(
+        panel?.ema_exhaustion_should_avoid_entry,
+        digest?.ema_exhaustion_should_avoid_entry,
+        ui?.ema_exhaustion_should_avoid_entry,
+        root?.ema_exhaustion_should_avoid_entry,
+        deepFind(root, "ema_exhaustion_should_avoid_entry"),
+        emaBlock?.ema_exhaustion_should_avoid_entry,
+        emaBlock?.should_avoid_entry,
+        emaBlock?.avoid_entry,
+        emaBlock?.entry?.should_avoid
+      ));
+
+      const emaDir = normSideA10(pickFirstValue(
+        panel?.ema_exhaustion_direction_now,
+        digest?.ema_exhaustion_direction_now,
+        ui?.ema_exhaustion_direction_now,
+        root?.ema_exhaustion_direction_now,
+        deepFind(root, "ema_exhaustion_direction_now"),
+        emaBlock?.ema_exhaustion_direction_now,
+        emaBlock?.direction_now,
+        emaBlock?.selected_side,
+        emaSummary?.bias,
+        emaSummary?.side
+      ));
+
+      const nextKind = String(pickFirstValue(
+        panel?.ema_exhaustion_next_impulse_kind,
+        digest?.ema_exhaustion_next_impulse_kind,
+        ui?.ema_exhaustion_next_impulse_kind,
+        root?.ema_exhaustion_next_impulse_kind,
+        deepFind(root, "ema_exhaustion_next_impulse_kind"),
+        emaBlock?.ema_exhaustion_next_impulse_kind,
+        emaBlock?.next_impulse_kind,
+        emaBlock?.next_kind,
+        emaBlock?.next_impulse?.kind,
+        emaSummary?.next_impulse_kind
+      ) || "").trim().toLowerCase();
+
+      const volPct = toNum(pickFirstValue(
+        panel?.volume_premonition_continuation_pct,
+        digest?.volume_premonition_continuation_pct,
+        ui?.volume_premonition_continuation_pct,
+        root?.volume_premonition_continuation_pct,
+        deepFind(root, "volume_premonition_continuation_pct"),
+        panel?.volume_premonition_now_continuation_pct,
+        digest?.volume_premonition_now_continuation_pct,
+        volBlock?.continuation_premonition_pct,
+        volBlock?.continuation_pct,
+        volBlock?.highlight?.live_continuation_score_pct,
+        volBlock?.by_horizon?.["1"]?.live_continuation_score_pct,
+        volBlock?.by_horizon?.["1m"]?.live_continuation_score_pct,
+        volBlock?.by_horizon?.["5"]?.live_continuation_score_pct,
+        volBlock?.by_horizon?.["5m"]?.live_continuation_score_pct
+      ));
+
+      const volSide = normSideA10(pickFirstValue(
+        panel?.volume_premonition_selected_side,
+        digest?.volume_premonition_selected_side,
+        ui?.volume_premonition_selected_side,
+        root?.volume_premonition_selected_side,
+        panel?.volume_premonition_direction_now,
+        digest?.volume_premonition_direction_now,
+        ui?.volume_premonition_direction_now,
+        root?.volume_premonition_direction_now,
+        deepFind(root, "volume_premonition_selected_side"),
+        deepFind(root, "volume_premonition_direction_now"),
+        volBlock?.selected_side,
+        volBlock?.direction_now
+      ));
+
+      const contRaw = pickFirstValue(
+        ui?.continuacao_ui,
+        panel?.continuacao_ui,
+        digest?.continuacao_ui,
+        root?.continuacao_ui,
+        deepFind(root, "continuacao_ui"),
+        ui?.continuation_ui,
+        panel?.continuation_ui,
+        digest?.continuation_ui,
+        root?.continuation_ui,
+        panel?.continuation,
+        digest?.continuation,
+        root?.continuation
+      );
+
+      const consolidationRaw = pickFirstValue(
+        ui?.top_consolidacao_ui,
+        panel?.top_consolidacao_ui,
+        digest?.top_consolidacao_ui,
+        root?.top_consolidacao_ui,
+        deepFind(root, "top_consolidacao_ui"),
+        ui?.top_consolidation_ui,
+        panel?.top_consolidation_ui,
+        digest?.top_consolidation_ui,
+        root?.top_consolidation_ui
+      );
+
+      const reversalRaw = pickFirstValue(
+        ui?.top_reversao_ui,
+        panel?.top_reversao_ui,
+        digest?.top_reversao_ui,
+        root?.top_reversao_ui,
+        deepFind(root, "top_reversao_ui"),
+        ui?.top_reversal_ui,
+        panel?.top_reversal_ui,
+        digest?.top_reversal_ui,
+        root?.top_reversal_ui
+      );
+
+      const rsi = toNum(pickFirstValue(
+        panel?.live_rsi14,
+        digest?.live_rsi14,
+        ui?.live_rsi14,
+        root?.live_rsi14,
+        deepFind(root, "live_rsi14"),
+        panel?.rsi14,
+        digest?.rsi14,
+        root?.rsi14,
+        panel?.rsi,
+        digest?.rsi,
+        root?.rsi
+      ));
+
+      const explicitSide = normSideA10(pickFirstValue(
+        panel?.side,
+        digest?.side,
+        ui?.side,
+        root?.side,
+        panel?.trade_side,
+        digest?.trade_side,
+        root?.trade_side,
+        panel?.action,
+        digest?.action,
+        ui?.action,
+        root?.action,
+        panel?.direction,
+        digest?.direction,
+        root?.direction
+      ));
+
+      let side = explicitSide;
+      let sideSource = explicitSide ? "sinal" : "";
+
+      if (!side && emaDir && volSide && emaDir === volSide) {
+        side = emaDir;
+        sideSource = "inferido EMA+VOL";
+      } else if (!side && emaDir) {
+        side = emaDir;
+        sideSource = "inferido EMA";
+      } else if (!side && volSide) {
+        side = volSide;
+        sideSource = "inferido VOL";
+      }
+
+      const updatedCandidate = pickFirstValue(
+        panel?.updated_at,
+        digest?.updated_at,
+        ui?.updated_at,
+        root?.updated_at,
+        hud?.timestamp_utc,
+        hud?.updated_at,
+        root?.timestamp_utc
+      );
+
+      const rawMtClock = pickFirstValue(
+        hud?.clock_mt,
+        panel?.clock_mt,
+        digest?.clock_mt,
+        ui?.clock_mt,
+        root?.clock_mt,
+        deepFind(root, "clock_mt")
+      );
+
+      const rawEtClock = pickFirstValue(
+        hud?.clock_et,
+        panel?.clock_et,
+        digest?.clock_et,
+        ui?.clock_et,
+        root?.clock_et,
+        deepFind(root, "clock_et")
+      );
+
+      let clockMt = rawMtClock ? String(rawMtClock).trim() : "";
+      let clockMinute = parseClockMinuteA10(clockMt);
+
+      if (clockMinute === null && rawEtClock) {
+        const etMinute = parseClockMinuteA10(rawEtClock);
+        if (etMinute !== null) {
+          clockMinute = (((etMinute - 120) % 1440) + 1440) % 1440;
+          clockMt = minuteToClockA10(clockMinute);
+        }
+      }
+
+      if (clockMinute === null && updatedCandidate) {
+        clockMt = mtClockFromDateA10(updatedCandidate);
+        clockMinute = parseClockMinuteA10(clockMt);
+      }
+
+      const windowInfo = classifyA10Window(clockMinute);
+      const contYes = isYesA10(contRaw);
+      const contNo = isNoA10(contRaw);
+      const isConsolidating = isYesA10(consolidationRaw);
+      const hasNoConsolidation = isNoA10(consolidationRaw);
+      const isReversal = isYesA10(reversalRaw);
+      const hasNoReversal = isNoA10(reversalRaw);
+
+      const hasSignals = [
+        emaPct,
+        emaAvoid,
+        emaDir,
+        nextKind,
+        volPct,
+        volSide,
+        contRaw,
+        consolidationRaw,
+        reversalRaw,
+        rsi,
+        explicitSide
+      ].some(v => v !== null && v !== undefined && v !== "");
+
+      if (!hasSignals) return null;
+
+      let score = 0;
+      const blockers = [];
+      const cautions = [];
+      const greens = [];
+      const management = [];
+      const addScore = (points, text) => {
+        score += points;
+        greens.push(`${text} (+${points})`);
+      };
+
+      if (!side) {
+        cautions.push("Sem side LONG/SHORT definido: leitura fica em observacao.");
+      }
+
+      if (windowInfo.blocked) {
+        blockers.push(`${windowInfo.name}: ${windowInfo.detail}`);
+      } else if (windowInfo.openDrive) {
+        const openDriveAllowed =
+          emaPct !== null && emaPct >= 60 && emaPct < 75 &&
+          contYes &&
+          volPct !== null && volPct < 70;
+
+        if (!openDriveAllowed) {
+          blockers.push("OPEN DRIVE exige EMA 60-75%, Continuacao=SIM e Volume <70%.");
+        } else {
+          cautions.push("OPEN DRIVE liberado, mas com risco alto e tamanho reduzido.");
+        }
+
+        if (side === "short") cautions.push("SHORT no OPEN DRIVE: reduzir tamanho adicionalmente.");
+      } else if (windowInfo.name !== "HORARIO N/D") {
+        greens.push(`${windowInfo.name}: ${windowInfo.detail}`);
+      }
+
+      if (clockMinute !== null && clockMinute >= (8 * 60) && clockMinute <= (9 * 60)) {
+        addScore(1, "Horario 08:00-09:00 MT");
+      }
+
+      if (emaPct !== null) {
+        if (emaPct >= 80) {
+          blockers.push(`EMA ${fmtPctA10(emaPct)} >=80%: overextended.`);
+        } else if (emaPct >= 75) {
+          cautions.push(`EMA ${fmtPctA10(emaPct)} em cautela 75-80%: reduzir 50%.`);
+        } else if (emaPct >= 60) {
+          addScore(3, `EMA ${fmtPctA10(emaPct)} no Gold Spot 60-75%`);
+        } else {
+          greens.push(`EMA ${fmtPctA10(emaPct)} abaixo de 60%: motor ainda tem espaco.`);
+        }
+      }
+
+      if (emaAvoid === true) blockers.push("EMA Avoid=True: o matcher mandou nao entrar.");
+      if (emaAvoid === false) greens.push("EMA Avoid=False.");
+
+      if (side && emaDir) {
+        if (side !== emaDir) {
+          blockers.push(`EMA direction contra: sinal ${sideLabelA10(side)}, EMA ${sideLabelA10(emaDir)}.`);
+        } else {
+          addScore(2, `EMA direction alinhado ${sideLabelA10(side)}`);
+        }
+      }
+
+      if (nextKind) {
+        if (nextKind.includes("exhaustion")) {
+          blockers.push(`EMA next=${impulseLabelA10(nextKind)}: motor exauriu.`);
+        } else if (
+          (side === "long" && nextKind.includes("continue_up")) ||
+          (side === "short" && nextKind.includes("continue_down"))
+        ) {
+          addScore(2, `EMA next ${impulseLabelA10(nextKind)} alinhado`);
+        } else if (nextKind.includes("turn_up") || nextKind.includes("turn_down")) {
+          cautions.push(`EMA next=${impulseLabelA10(nextKind)}: inicio de reversao.`);
+        } else {
+          cautions.push(`EMA next=${impulseLabelA10(nextKind)} sem confirmacao direta.`);
+        }
+      }
+
+      if (volPct !== null) {
+        if (volPct < 60) {
+          addScore(1, `Volume ${fmtPctA10(volPct)} abaixo de 60%`);
+        } else if (volPct < 75) {
+          greens.push(`Volume ${fmtPctA10(volPct)} abaixo de 75%.`);
+        } else if (volPct < 80) {
+          cautions.push(`Volume ${fmtPctA10(volPct)} em cautela 75-80%.`);
+        } else {
+          cautions.push(`Volume ${fmtPctA10(volPct)} >=80%: operar so reduzido ou bloquear.`);
+        }
+      }
+
+      if (side && volSide) {
+        if (side === volSide) {
+          addScore(1, `Volume alinhado ${sideLabelA10(side)}`);
+        } else {
+          score -= 1;
+          cautions.push(`Volume contra: sinal ${sideLabelA10(side)}, volume ${sideLabelA10(volSide)} (-1).`);
+        }
+      }
+
+      if (contYes) {
+        addScore(2, "Continuacao=SIM");
+      } else if (contNo) {
+        score -= 1;
+        cautions.push("Continuacao=NAO: T2 perde qualidade (-1).");
+        if (side === "short") cautions.push("SHORT com Continuacao=NAO: reduzir 50%.");
+      }
+
+      if (isConsolidating) blockers.push("Top Consolidacao=YES: mercado lateral.");
+      if (hasNoConsolidation) greens.push("Top Consolidacao=NO.");
+
+      if (isReversal) blockers.push("Top Reversao=YES: nao brigar com reversao.");
+      if (hasNoReversal) greens.push("Top Reversao=NO.");
+
+      if (rsi !== null) {
+        const rsiText = `RSI ${rsi.toFixed(1)}`;
+        if (side === "long") {
+          if (rsi < 30 || rsi > 75) blockers.push(`${rsiText}: extremo para LONG.`);
+          else if (rsi >= 50 && rsi <= 65) addScore(1, `${rsiText} na zona ideal LONG`);
+          else if (rsi >= 40 && rsi <= 70) addScore(1, `${rsiText} na zona saudavel`);
+          else cautions.push(`${rsiText}: fora da zona ideal LONG.`);
+        } else if (side === "short") {
+          if (rsi < 30 || rsi > 70) blockers.push(`${rsiText}: extremo para SHORT.`);
+          else if (rsi >= 35 && rsi <= 55) addScore(1, `${rsiText} na zona ideal SHORT`);
+          else if (rsi >= 40 && rsi <= 70) addScore(1, `${rsiText} na zona saudavel`);
+          else cautions.push(`${rsiText}: fora da zona ideal SHORT.`);
+        } else {
+          if (rsi < 30 || rsi > 75) blockers.push(`${rsiText}: extremo.`);
+          else if (rsi >= 40 && rsi <= 70) addScore(1, `${rsiText} na zona saudavel`);
+        }
+      }
+
+      let phase = "TRANSICAO";
+      let phaseDetail = "Aguardando alinhamento limpo.";
+
+      if (isConsolidating) {
+        phase = "CONSOLIDACAO";
+        phaseDetail = "Nao entra, aguardar breakout.";
+      } else if (isReversal || nextKind.includes("turn_up") || nextKind.includes("turn_down")) {
+        phase = "REVERSAO";
+        phaseDetail = "Segue novo sinal, nao briga.";
+      } else if (hasNoConsolidation && contYes && hasNoReversal && (
+        nextKind.includes("continue_up") || nextKind.includes("continue_down")
+      )) {
+        phase = "TREND";
+        phaseDetail = "Trend puro: segura T2 se entrar.";
+      } else if (emaPct !== null && emaPct >= 50 && emaPct <= 70 && (contNo || (side && volSide && side !== volSide))) {
+        phase = "CHOP";
+        phaseDetail = "Zigzag: entra menor e sai em T1.";
+      }
+
+      const entryPrice = toNum(pickFirstValue(
+        panel?.entry_price,
+        digest?.entry_price,
+        ui?.entry_price,
+        root?.entry_price,
+        panel?.entry,
+        digest?.entry,
+        root?.entry,
+        panel?.price_now,
+        digest?.price_now,
+        root?.price_now,
+        panel?.last_price,
+        digest?.last_price,
+        root?.last_price,
+        now?.current,
+        now?.price
+      ));
+
+      const stopPrice = toNum(pickFirstValue(
+        panel?.stop,
+        digest?.stop,
+        ui?.stop,
+        root?.stop,
+        panel?.stop_price,
+        digest?.stop_price,
+        root?.stop_price
+      ));
+
+      const candleHigh = toNum(pickFirstValue(
+        root?.candle?.high,
+        panel?.high,
+        digest?.high,
+        root?.high,
+        now?.high
+      ));
+
+      const candleLow = toNum(pickFirstValue(
+        root?.candle?.low,
+        panel?.low,
+        digest?.low,
+        root?.low,
+        now?.low
+      ));
+
+      const activeTrade = boolA10(pickFirstValue(
+        panel?.trade_active,
+        digest?.trade_active,
+        root?.trade_active,
+        panel?.in_position,
+        digest?.in_position,
+        root?.in_position,
+        panel?.already_entered,
+        digest?.already_entered,
+        root?.already_entered
+      )) === true;
+
+      let forceExit = false;
+      let movementAgainst = null;
+      let breathThreshold = null;
+
+      if (activeTrade && side && entryPrice !== null) {
+        if (side === "long" && candleLow !== null) movementAgainst = entryPrice - candleLow;
+        if (side === "short" && candleHigh !== null) movementAgainst = candleHigh - entryPrice;
+
+        const stopDistance = stopPrice !== null ? Math.abs(entryPrice - stopPrice) : null;
+        breathThreshold = Math.max(0.08, stopDistance !== null ? stopDistance * 0.50 : 0.08);
+
+        if (movementAgainst !== null && movementAgainst >= breathThreshold) {
+          forceExit = true;
+          blockers.unshift(`RESPIRO ${fmtMoneyA10(movementAgainst)} >= ${fmtMoneyA10(breathThreshold)}: sair sem esperar stop.`);
+        } else if (movementAgainst !== null) {
+          management.push(`Respiro OK: contra ${fmtMoneyA10(movementAgainst)} / gatilho ${fmtMoneyA10(breathThreshold)}.`);
+        }
+      } else {
+        management.push("Sem trade ativo detectado: se entrar, defesa fica em $0.08 ou 50% do stop.");
+      }
+
+      management.push("Candle +1: sair se consolidacao, exhaustion, EMA contra ou volume contra aparecer.");
+      management.push("T1: so segura T2 com Continuacao=SIM, sem consolidacao e sem EMA exhaustion.");
+
+      let mult = 1;
+      if (windowInfo.openDrive) mult *= 0.50;
+      if (windowInfo.openDrive && side === "short") mult *= 0.50;
+      if (emaPct !== null && emaPct >= 75 && emaPct < 80) mult *= 0.50;
+      if (volPct !== null && volPct >= 80) mult *= 0.50;
+      else if (volPct !== null && volPct >= 75) mult *= 0.75;
+      if (contNo && side === "short") mult *= 0.50;
+
+      let decision = "AGUARDAR";
+      let subtitle = "Score abaixo da zona de entrada; esperar proximo candle.";
+      let toneClass = "is-wait";
+      let badgeText = "WAIT";
+      let badgeClass = "copilot-wait";
+
+      if (forceExit) {
+        decision = "SAIR AGORA";
+        subtitle = "Regra 1 ativada: respiro contra o trade.";
+        toneClass = "is-exit";
+        badgeText = "EXIT";
+        badgeClass = "copilot-exit";
+        mult = 0;
+      } else if (blockers.length) {
+        decision = "NAO ENTRA";
+        subtitle = "Existe bloqueio -999 ativo pela Regra Mestre A10.";
+        toneClass = "is-block";
+        badgeText = "BLOCK";
+        badgeClass = "copilot-block";
+        mult = 0;
+      } else if (score >= 7) {
+        if (mult < 1) {
+          decision = "ENTRA REDUZIDO";
+          subtitle = `Score forte, mas risco corta tamanho para ${Math.round(mult * 100)}%.`;
+          toneClass = "is-half";
+        } else {
+          decision = "ENTRA 100%";
+          subtitle = "Score >=7: tamanho cheio e plano natural ate T2.";
+          toneClass = "is-enter";
+        }
+        badgeText = sideLabelA10(side);
+        badgeClass = side === "short" ? "copilot-short" : side === "long" ? "copilot-long" : "copilot-wait";
+      } else if (score >= 4) {
+        mult = Math.min(mult, 0.50);
+        decision = "ENTRA 50%";
+        subtitle = "Score 4-6: operar menor e realizar em T1.";
+        toneClass = "is-half";
+        badgeText = sideLabelA10(side);
+        badgeClass = side === "short" ? "copilot-short" : side === "long" ? "copilot-long" : "copilot-wait";
+      } else {
+        mult = 0;
+      }
+
+      const capital = 100000 * mult;
+      const shares = entryPrice !== null && capital > 0 ? Math.floor(capital / entryPrice) : null;
+      const sizeDetail = capital > 0
+        ? `${Math.round(mult * 100)}% | $${Math.round(capital).toLocaleString("en-US")}${shares !== null ? ` | ${shares} sh` : ""}`
+        : "0% | bloqueado";
+
+      const alerts = [...blockers, ...cautions];
+
+      return {
+        title: "🔬 AARON 10 — O QUE ESTA ACONTECENDO",
+        heroTitle: "AARON 10 — LEITURA DO MERCADO",
+        decision,
+        subtitle,
+        scoreLabel: forceExit ? "EXIT" : blockers.length ? "BLOCK" : String(score),
+        toneClass,
+        badgeText,
+        badgeClass,
+        alerts,
+        greens,
+        management,
+        metrics: [
+          {
+            label: "Side",
+            value: sideLabelA10(side),
+            detail: sideSource || "aguardando direcao"
+          },
+          {
+            label: "Fase",
+            value: phase,
+            detail: phaseDetail
+          },
+          {
+            label: "Horario",
+            value: clockMinute === null ? windowInfo.name : `${clockMt || minuteToClockA10(clockMinute)} MT`,
+            detail: windowInfo.name
+          },
+          {
+            label: "Sizing",
+            value: sizeDetail,
+            detail: `Base $100,000 | ${windowInfo.detail}`
+          },
+          {
+            label: "EMA",
+            value: fmtPctA10(emaPct),
+            detail: `Dir ${sideLabelA10(emaDir)} | Next ${impulseLabelA10(nextKind)}`
+          },
+          {
+            label: "Volume",
+            value: fmtPctA10(volPct),
+            detail: `Dir ${sideLabelA10(volSide)}`
+          },
+          {
+            label: "Continuacao",
+            value: contYes ? "SIM" : contNo ? "NAO" : "—",
+            detail: `Consolidacao ${isConsolidating ? "YES" : hasNoConsolidation ? "NO" : "—"}`
+          },
+          {
+            label: "RSI",
+            value: rsi === null ? "—" : rsi.toFixed(1),
+            detail: `Reversao ${isReversal ? "YES" : hasNoReversal ? "NO" : "—"}`
+          }
+        ]
+      };
+    };
+
+    const aaron10Readout = buildAaron10Readout();
     const claudeText = pickFirstText(
       panel.claude_text,
       data.claude_text,
@@ -18437,7 +19490,7 @@ function updateCoPilotBlock(data){
       badgeEl.textContent = "READING";
     };
 
-    if (!claudeText) {
+    if (!claudeText && !aaron10Readout) {
       blockEl.style.display = "none";
       resetCopilotView();
       return;
@@ -18455,13 +19508,15 @@ function updateCoPilotBlock(data){
 
     if (updatedEl) updatedEl.textContent = String(updated);
 
-    const normalizedText = String(claudeText).replace(/\r/g, "").trim();
+    const normalizedText = claudeText ? String(claudeText).replace(/\r/g, "").trim() : "";
     const lines = normalizedText.split("\n");
 
     let firstNonEmpty = lines.findIndex(line => cleanLine(line));
     if (firstNonEmpty < 0) firstNonEmpty = 0;
 
-    const heroTitle = lines[firstNonEmpty]?.trim() || "COPILOT DIGEST";
+    const heroTitle = claudeText
+      ? (lines[firstNonEmpty]?.trim() || "COPILOT DIGEST")
+      : (aaron10Readout?.heroTitle || "AARON 10 — LEITURA DO MERCADO");
     heroTitleEl.textContent = heroTitle;
 
     let cursor = firstNonEmpty + 1;
@@ -18552,33 +19607,52 @@ function updateCoPilotBlock(data){
       visibleSections = mappedSections;
     }
 const goldSpotRulesSection = {
-  title: "🎯 GOLD SPOT RULES",
+  title: "🎯 REGRA MESTRE AARON 10",
   body: [
-    "✅ ENTRA SE",
-    "- EMA entre 60–75%",
-    "- Volume abaixo de 75%",
-    "- RSI entre 30–75",
-    "- Fora de 7:29–7:45 (OPEN DRIVE)",
+    "✅ ENTRA FORTE SE",
+    "- Score >=7",
+    "- EMA 60-75% (Gold Spot)",
+    "- Continuacao=SIM",
+    "- EMA direction e EMA next alinhados",
+    "- Volume alinhado e abaixo de 75%",
+    "- RSI saudavel",
     "",
-    "❌ NÃO ENTRA SE",
-    "- EMA abaixo de 60% ou acima de 75%",
-    "- Volume >= 75%",
-    "- RSI abaixo de 30 ou acima de 75",
-    "- Horário entre 7:29–7:45",
+    "⚠️ ENTRA MENOR SE",
+    "- Score 4-6",
+    "- EMA 75-80%",
+    "- Volume 75-80%",
+    "- OPEN DRIVE aprovado",
+    "- Continuacao=NAO em SHORT",
     "",
-    "🛑 SAÍDA DE DEFESA",
-    "- Se andar $0.08 contra antes de T1, sair imediatamente",
+    "❌ BLOQUEIA SE",
+    "- EMA >=80%",
+    "- EMA next=exhaustion",
+    "- EMA Avoid=True",
+    "- Top Consolidacao=YES",
+    "- Top Reversao=YES",
+    "- RSI extremo",
+    "- Fora do RTH",
+    "- OPEN DRIVE sem EMA 60-75%, Cont=SIM e Vol<70%",
     "",
-    "📊 BASE",
-    "- Gold Spot: EMA 60–75 + VOL 60–75 = 93% WR",
-    "- Zona antiga EMA>=75 + VOL>=75 = 76.9% WR"
-  ].join("\\n"),
+    "🛑 SAIDA DE DEFESA",
+    "- Respiro contra >= $0.08 ou 50% do stop: sair imediatamente",
+    "- Candle +1 contra: sair se consolidacao, exhaustion, EMA contra ou volume contra",
+    "- T1: so segura T2 se os filtros continuarem limpos"
+  ].join("\n"),
   type: "finalread"
 };
 
-visibleSections = [goldSpotRulesSection, ...visibleSections];
+visibleSections = [
+  ...(aaron10Readout ? [{ type: "aaron10", readout: aaron10Readout }] : []),
+  goldSpotRulesSection,
+  ...visibleSections
+];
     if (visibleSections.length > 0) {
   sectionsEl.innerHTML = visibleSections.map(section => {
+    if (section.type === "aaron10") {
+      return renderAaron10SectionHtml(section.readout);
+    }
+
     const body =
       section.type === "checklist"
         ? compactChecklistBody(section.body || "")
@@ -18635,6 +19709,14 @@ visibleSections = [goldSpotRulesSection, ...visibleSections];
     } else if (/\bIGNORAR\b|\bIGNORE\b/.test(verdictLine)) {
       verdict = "IGNORE";
       badgeClass = "copilot-ignore";
+    }
+
+    if (aaron10Readout?.badgeText && ["BLOCK", "EXIT"].includes(aaron10Readout.badgeText)) {
+      verdict = aaron10Readout.badgeText;
+      badgeClass = aaron10Readout.badgeClass || badgeClass;
+    } else if (!claudeText && aaron10Readout?.badgeText) {
+      verdict = aaron10Readout.badgeText;
+      badgeClass = aaron10Readout.badgeClass || badgeClass;
     }
 
     badgeEl.className = `win-badge ${badgeClass}`;
