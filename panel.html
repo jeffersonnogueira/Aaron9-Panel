@@ -4696,6 +4696,53 @@
   background: linear-gradient(180deg, rgba(66,56,24,.72) 0%, rgba(24,22,17,.96) 100%);
 }
 
+#copilot-block .copilot-section-card.is-aaron10-rules{
+  grid-column: 1 / -1;
+  padding: 14px 16px;
+  border-color: rgba(250,204,21,.30);
+  background:
+    radial-gradient(circle at 96% 0%, rgba(250,204,21,.14), transparent 28%),
+    linear-gradient(180deg, rgba(49,42,22,.78) 0%, rgba(17,19,24,.98) 100%);
+}
+
+#copilot-block .copilot-section-card.is-aaron10-rules .copilot-section-header{
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+#copilot-block .copilot-a10-rules-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#copilot-block .copilot-a10-rule-column{
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(250,204,21,.18);
+  background: rgba(2,6,23,.22);
+}
+
+#copilot-block .copilot-a10-rule-title{
+  font-size: 20px;
+  line-height: 1.15;
+  font-weight: 950;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #fde68a;
+  overflow-wrap: anywhere;
+}
+
+#copilot-block .copilot-a10-rule-line{
+  margin-top: 7px;
+  font-size: 19px;
+  line-height: 1.22;
+  font-weight: 800;
+  color: #e5e7eb;
+  overflow-wrap: anywhere;
+}
+
 #copilot-block .copilot-section-card.is-timemap{
   border-color: rgba(96,165,250,.28);
   background: linear-gradient(180deg, rgba(27,42,64,.72) 0%, rgba(17,22,34,.96) 100%);
@@ -4798,7 +4845,8 @@
 @media (max-width: 980px){
   #copilot-block .copilot-a10-top,
   #copilot-block .copilot-a10-grid,
-  #copilot-block .copilot-a10-lists{
+  #copilot-block .copilot-a10-lists,
+  #copilot-block .copilot-a10-rules-grid{
     grid-template-columns: 1fr;
   }
 
@@ -18155,6 +18203,7 @@ function updateCoPilotBlock(data){
       if (type === "structure") cls.push("is-core", "is-structure");
       if (type === "events") cls.push("is-core", "is-events");
       if (type === "finalread") cls.push("is-core", "is-finalread");
+      if (type === "rules") cls.push("is-core", "is-aaron10-rules");
       if (type === "timemap") cls.push("is-core", "is-timemap");
       if (type === "checklist") cls.push("is-compact");
 
@@ -18821,6 +18870,29 @@ function updateCoPilotBlock(data){
               ${renderAaron10List("Pontos verdes", readout.greens, "Ainda faltam confirmacoes.")}
               ${renderAaron10List("Proxima acao", readout.management, "Aguardar novo candle.")}
             </div>
+          </div>
+        </div>
+      `;
+    };
+
+    const renderAaron10RulesHtml = (section) => {
+      const groups = String(section?.body || "")
+        .split(/\n\s*\n/)
+        .map(block => block.split("\n").map(line => line.trim()).filter(Boolean))
+        .filter(lines => lines.length);
+
+      const columns = groups.length ? groups : [[section?.body || "—"]];
+
+      return `
+        <div class="copilot-section-card ${classForSection("rules", section?.title || "")}">
+          <div class="copilot-section-header">${escapeHtml(section?.title || "🎯 REGRA MESTRE AARON 10")}</div>
+          <div class="copilot-a10-rules-grid">
+            ${columns.map(lines => `
+              <div class="copilot-a10-rule-column">
+                <div class="copilot-a10-rule-title">${escapeHtml(lines[0] || "—")}</div>
+                ${lines.slice(1).map(line => `<div class="copilot-a10-rule-line">${escapeHtml(line)}</div>`).join("")}
+              </div>
+            `).join("")}
           </div>
         </div>
       `;
@@ -19639,18 +19711,30 @@ const goldSpotRulesSection = {
     "- Candle +1 contra: sair se consolidacao, exhaustion, EMA contra ou volume contra",
     "- T1: so segura T2 se os filtros continuarem limpos"
   ].join("\n"),
-  type: "finalread"
+  type: "rules"
 };
 
+const insertAfterInvalidation = (list, item) => {
+  const out = [...list];
+  const invalidationIndex = out.findIndex(section => section?.type === "invalidation");
+  const insertAt = invalidationIndex >= 0 ? invalidationIndex + 1 : Math.min(out.length, 2);
+  out.splice(insertAt, 0, item);
+  return out;
+};
+
+visibleSections = insertAfterInvalidation(visibleSections, goldSpotRulesSection);
 visibleSections = [
   ...(aaron10Readout ? [{ type: "aaron10", readout: aaron10Readout }] : []),
-  goldSpotRulesSection,
   ...visibleSections
 ];
     if (visibleSections.length > 0) {
   sectionsEl.innerHTML = visibleSections.map(section => {
     if (section.type === "aaron10") {
       return renderAaron10SectionHtml(section.readout);
+    }
+
+    if (section.type === "rules") {
+      return renderAaron10RulesHtml(section);
     }
 
     const body =
