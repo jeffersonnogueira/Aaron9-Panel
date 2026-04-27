@@ -4083,6 +4083,38 @@
   color: #fca5a5;
 }
 
+#copilot-block .copilot-a10-hl{
+  font-style: normal;
+  font-weight: 950;
+  border-radius: 6px;
+  padding: 0 .08em;
+}
+
+#copilot-block .copilot-a10-hl.is-long{
+  color: #86efac;
+  text-shadow: 0 0 14px rgba(34,197,94,.30);
+}
+
+#copilot-block .copilot-a10-hl.is-short{
+  color: #fca5a5;
+  text-shadow: 0 0 14px rgba(248,113,113,.30);
+}
+
+#copilot-block .copilot-a10-hl.is-wait{
+  color: #fde68a;
+  text-shadow: 0 0 14px rgba(250,204,21,.24);
+}
+
+#copilot-block .copilot-a10-hl.is-danger{
+  color: #fb7185;
+  text-shadow: 0 0 16px rgba(244,63,94,.34);
+}
+
+#copilot-block .copilot-a10-hl.is-info{
+  color: #67e8f9;
+  text-shadow: 0 0 14px rgba(34,211,238,.26);
+}
+
 #copilot-block .copilot-section-card.is-trade{
   grid-column: 1 / -1;
   width: 100%;
@@ -18820,6 +18852,34 @@ function updateCoPilotBlock(data){
       return raw.replace(/_/g, " ").toUpperCase();
     };
 
+    const a10HighlightClass = (token = "") => {
+      const t = String(token || "").toUpperCase();
+
+      if (/NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUE|BLOCK|EXIT|EXHAUSTION|AVOID|TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|RSI EXTREMO|RESPIRO|FORA DO RTH/.test(t)) {
+        return "is-danger";
+      }
+
+      if (/SHORT|VENDA|BAIXA/.test(t)) return "is-short";
+      if (/LONG|COMPRA|ALTA|SIM|YES|TREND|ENTRA 100%|ENTRA FORTE|JANELA OURO|GOLD SPOT|PONTOS VERDES/.test(t)) {
+        return "is-long";
+      }
+
+      if (/WAIT|AGUARDAR|AGUARDANDO|NAO|NÃO|NO|CHOP|OPEN DRIVE|JANELA MODERADA|JANELA FRACA|ENTRA 50%|ENTRA MENOR|T1|T2/.test(t)) {
+        return "is-wait";
+      }
+
+      return "is-info";
+    };
+
+    const colorizeA10Text = (value = "") => {
+      const html = escapeHtml(value);
+      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|ENTRA REDUZIDO|ENTRA 100%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
+
+      return html.replace(tokenRegex, (_full, prefix, match) =>
+        `${prefix}<em class="copilot-a10-hl ${a10HighlightClass(match)}">${match}</em>`
+      );
+    };
+
     const renderAaron10List = (title, items, emptyText) => {
       const safeItems = (items || []).filter(Boolean).slice(0, 8);
       const list = safeItems.length ? safeItems : [emptyText || "—"];
@@ -18828,7 +18888,7 @@ function updateCoPilotBlock(data){
         <div class="copilot-a10-list">
           <div class="copilot-a10-list-title">${escapeHtml(title)}</div>
           <ul>
-            ${list.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+            ${list.map(item => `<li>${colorizeA10Text(item)}</li>`).join("")}
           </ul>
         </div>
       `;
@@ -18844,12 +18904,12 @@ function updateCoPilotBlock(data){
             <div class="copilot-a10-top">
               <div class="copilot-a10-decision">
                 <span class="copilot-a10-label">Decisao</span>
-                <strong>${escapeHtml(readout.decision)}</strong>
-                <p>${escapeHtml(readout.subtitle)}</p>
+                <strong>${colorizeA10Text(readout.decision)}</strong>
+                <p>${colorizeA10Text(readout.subtitle)}</p>
               </div>
               <div class="copilot-a10-score">
                 <div>
-                  <strong>${escapeHtml(readout.scoreLabel)}</strong>
+                  <strong>${colorizeA10Text(readout.scoreLabel)}</strong>
                   <span>Score A10</span>
                 </div>
               </div>
@@ -18859,8 +18919,8 @@ function updateCoPilotBlock(data){
               ${readout.metrics.map(metric => `
                 <div class="copilot-a10-metric">
                   <span>${escapeHtml(metric.label)}</span>
-                  <strong>${escapeHtml(metric.value)}</strong>
-                  <small>${escapeHtml(metric.detail)}</small>
+                  <strong>${colorizeA10Text(metric.value)}</strong>
+                  <small>${colorizeA10Text(metric.detail)}</small>
                 </div>
               `).join("")}
             </div>
@@ -18889,8 +18949,8 @@ function updateCoPilotBlock(data){
           <div class="copilot-a10-rules-grid">
             ${columns.map(lines => `
               <div class="copilot-a10-rule-column">
-                <div class="copilot-a10-rule-title">${escapeHtml(lines[0] || "—")}</div>
-                ${lines.slice(1).map(line => `<div class="copilot-a10-rule-line">${escapeHtml(line)}</div>`).join("")}
+                <div class="copilot-a10-rule-title">${colorizeA10Text(lines[0] || "—")}</div>
+                ${lines.slice(1).map(line => `<div class="copilot-a10-rule-line">${colorizeA10Text(line)}</div>`).join("")}
               </div>
             `).join("")}
           </div>
