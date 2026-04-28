@@ -4010,6 +4010,149 @@
   color: rgba(203,213,225,.72);
 }
 
+#copilot-block .copilot-a10-trend{
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(230px, .72fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(34,197,94,.24);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(34,197,94,.18), transparent 34%),
+    radial-gradient(circle at 0% 10%, rgba(34,211,238,.14), transparent 30%),
+    linear-gradient(180deg, rgba(7,35,31,.88) 0%, rgba(5,12,22,.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 0 1px rgba(34,197,94,.06),
+    0 18px 32px rgba(2,6,23,.26);
+}
+
+#copilot-block .copilot-a10-trend.is-cold{
+  border-color: rgba(148,163,184,.22);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(148,163,184,.10), transparent 34%),
+    linear-gradient(180deg, rgba(20,28,40,.86) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-trend.is-building{
+  border-color: rgba(250,204,21,.34);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(250,204,21,.18), transparent 34%),
+    linear-gradient(180deg, rgba(50,41,12,.84) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-trend.is-strong{
+  border-color: rgba(34,197,94,.52);
+}
+
+#copilot-block .copilot-a10-trend.is-max{
+  border-color: rgba(34,211,238,.72);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(34,211,238,.24), transparent 34%),
+    radial-gradient(circle at 0% 6%, rgba(34,197,94,.22), transparent 32%),
+    linear-gradient(180deg, rgba(5,44,43,.90) 0%, rgba(5,12,22,.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 0 1px rgba(34,211,238,.10),
+    0 0 36px rgba(34,211,238,.20);
+}
+
+#copilot-block .copilot-a10-trend-head{
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+
+#copilot-block .copilot-a10-trend-k{
+  font-size: 18px;
+  line-height: 1.12;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.72);
+}
+
+#copilot-block .copilot-a10-trend-v{
+  font-size: 44px;
+  line-height: 1.02;
+  font-weight: 950;
+  color: #86efac;
+  overflow-wrap: anywhere;
+}
+
+#copilot-block .copilot-a10-trend.is-cold .copilot-a10-trend-v{
+  color: #cbd5e1;
+}
+
+#copilot-block .copilot-a10-trend.is-building .copilot-a10-trend-v{
+  color: #fde68a;
+}
+
+#copilot-block .copilot-a10-trend.is-max .copilot-a10-trend-v{
+  color: #67e8f9;
+  text-shadow: 0 0 20px rgba(34,211,238,.32);
+}
+
+#copilot-block .copilot-a10-trend-sub{
+  font-size: 22px;
+  line-height: 1.26;
+  font-weight: 820;
+  color: #dbeafe;
+  overflow-wrap: anywhere;
+}
+
+#copilot-block .copilot-a10-trend-track{
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+#copilot-block .copilot-a10-trend-step{
+  min-width: 0;
+  min-height: 86px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 10px 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: rgba(2,6,23,.24);
+}
+
+#copilot-block .copilot-a10-trend-step.is-on{
+  border-color: rgba(34,197,94,.48);
+  background: rgba(22,101,52,.20);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+#copilot-block .copilot-a10-trend-step.is-max{
+  border-color: rgba(34,211,238,.62);
+  background: rgba(8,145,178,.18);
+  box-shadow: 0 0 22px rgba(34,211,238,.16);
+}
+
+#copilot-block .copilot-a10-trend-step strong{
+  display: block;
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 950;
+  color: #f8fafc;
+}
+
+#copilot-block .copilot-a10-trend-step span{
+  display: block;
+  font-size: 15px;
+  line-height: 1.12;
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.78);
+}
+
 #copilot-block .copilot-a10-grid{
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -4876,6 +5019,7 @@
 
 @media (max-width: 980px){
   #copilot-block .copilot-a10-top,
+  #copilot-block .copilot-a10-trend,
   #copilot-block .copilot-a10-grid,
   #copilot-block .copilot-a10-lists,
   #copilot-block .copilot-a10-rules-grid{
@@ -4896,6 +5040,14 @@
 
   #copilot-block .copilot-a10-score strong{
     font-size: 42px;
+  }
+
+  #copilot-block .copilot-a10-trend-v{
+    font-size: 34px;
+  }
+
+  #copilot-block .copilot-a10-trend-track{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   #copilot-block .copilot-a10-metric strong{
@@ -18860,11 +19012,11 @@ function updateCoPilotBlock(data){
       }
 
       if (/SHORT|VENDA|BAIXA/.test(t)) return "is-short";
-      if (/LONG|COMPRA|ALTA|SIM|YES|TREND|ENTRA 100%|ENTRA FORTE|JANELA OURO|GOLD SPOT|PONTOS VERDES/.test(t)) {
+      if (/LONG|COMPRA|ALTA|SIM|YES|TREND|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|ENTRA 100%|ENTRA FORTE|JANELA OURO|GOLD SPOT|PONTOS VERDES|MAXIMA CONFIANCA/.test(t)) {
         return "is-long";
       }
 
-      if (/WAIT|AGUARDAR|AGUARDANDO|NAO|NÃO|NO|CHOP|OPEN DRIVE|JANELA MODERADA|JANELA FRACA|ENTRA 50%|ENTRA MENOR|T1|T2/.test(t)) {
+      if (/WAIT|AGUARDAR|AGUARDANDO|NAO|NÃO|NO|CHOP|OPEN DRIVE|JANELA MODERADA|JANELA FRACA|TENDENCIA 1|ENTRA 75%|ENTRA 50%|ENTRA MENOR|T1|T2/.test(t)) {
         return "is-wait";
       }
 
@@ -18873,7 +19025,7 @@ function updateCoPilotBlock(data){
 
     const colorizeA10Text = (value = "") => {
       const html = escapeHtml(value);
-      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|ENTRA REDUZIDO|ENTRA 100%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
+      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|MAXIMA CONFIANCA|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|TENDENCIA 1|TENDENCIA NEUTRA|ENTRA REDUZIDO|ENTRA 100%|ENTRA 75%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
 
       return html.replace(tokenRegex, (_full, prefix, match) =>
         `${prefix}<em class="copilot-a10-hl ${a10HighlightClass(match)}">${match}</em>`
@@ -18890,6 +19042,36 @@ function updateCoPilotBlock(data){
           <ul>
             ${list.map(item => `<li>${colorizeA10Text(item)}</li>`).join("")}
           </ul>
+        </div>
+      `;
+    };
+
+    const renderAaron10TrendHtml = (trend) => {
+      if (!trend) return "";
+
+      const steps = [
+        { at: 0, label: "0", text: "NÃO ENTRA" },
+        { at: 1, label: "1", text: "75% | WR 90%" },
+        { at: 2, label: "2", text: "100% | T2" },
+        { at: 3, label: "3+", text: "WR 94%+" },
+        { at: 5, label: "5+", text: "MAX | 100%" }
+      ];
+
+      return `
+        <div class="copilot-a10-trend ${escapeHtml(trend.className || "is-cold")}">
+          <div class="copilot-a10-trend-head">
+            <div class="copilot-a10-trend-k">Estado de Tendência</div>
+            <div class="copilot-a10-trend-v">${colorizeA10Text(trend.title || "TENDENCIA NEUTRA")}</div>
+            <div class="copilot-a10-trend-sub">${colorizeA10Text(trend.subtitle || "Aguardando Cont=SIM + T1 expandindo.")}</div>
+          </div>
+          <div class="copilot-a10-trend-track">
+            ${steps.map(step => `
+              <div class="copilot-a10-trend-step ${trend.streak >= step.at && step.at > 0 ? "is-on" : ""} ${trend.streak >= 5 && step.at === 5 ? "is-max" : ""}">
+                <strong>${escapeHtml(step.label)}</strong>
+                <span>${colorizeA10Text(step.text)}</span>
+              </div>
+            `).join("")}
+          </div>
         </div>
       `;
     };
@@ -18914,6 +19096,8 @@ function updateCoPilotBlock(data){
                 </div>
               </div>
             </div>
+
+            ${renderAaron10TrendHtml(readout.trend)}
 
             <div class="copilot-a10-grid">
               ${readout.metrics.map(metric => `
@@ -19223,6 +19407,141 @@ function updateCoPilotBlock(data){
       const isReversal = isYesA10(reversalRaw);
       const hasNoReversal = isNoA10(reversalRaw);
 
+      const targetText = pickFirstValue(
+        panel?.claude_text,
+        root?.claude_text,
+        ui?.claude_text,
+        digest?.claude_text,
+        panel?.copilot_text,
+        digest?.copilot_text,
+        ""
+      );
+
+      const textT1Match = String(targetText || "").match(/(?:Target\s*1|T1|Alvo\s*1)\s*[:=]?\s*\$?\s*(-?\d{1,6}(?:[.,]\d{1,4})?)/i);
+      const tcRootA10 = pickFirstValue(panel?.triple_convergence, digest?.triple_convergence, root?.triple_convergence, {});
+
+      const currentT1 = toNum(pickFirstValue(
+        panel?.target1,
+        digest?.target1,
+        ui?.target1,
+        root?.target1,
+        panel?.target_1,
+        digest?.target_1,
+        ui?.target_1,
+        root?.target_1,
+        panel?.t1,
+        digest?.t1,
+        ui?.t1,
+        root?.t1,
+        panel?.trade?.target1,
+        digest?.trade?.target1,
+        root?.trade?.target1,
+        panel?.trade?.target_1,
+        digest?.trade?.target_1,
+        root?.trade?.target_1,
+        tcRootA10?.claude_t1,
+        textT1Match ? String(textT1Match[1]).replace(",", ".") : null,
+        emaBlock?.next_impulse_target_price_p50,
+        emaBlock?.continuation_target_price_p50,
+        volBlock?.next_impulse_target_price_p50,
+        volBlock?.continuation_target_price_p50,
+        panel?.volume_premonition_target_price_p50,
+        digest?.volume_premonition_target_price_p50,
+        root?.volume_premonition_target_price_p50
+      ));
+
+      const buildTrendState = () => {
+        const globalScope = (typeof window !== "undefined") ? window : globalThis;
+        const prev = globalScope.__AARON10_TREND_STATE__ || {};
+        const prevStreak = Number.isFinite(Number(prev.streak)) ? Number(prev.streak) : 0;
+        const prevTarget = toNum(prev.target);
+        const signalKey = String(pickFirstValue(
+          updatedCandidate,
+          `${clockMt || "no-clock"}|${side || "no-side"}|${currentT1 ?? "no-t1"}|${contRaw ?? "no-cont"}`
+        ));
+
+        let streak = 0;
+        let directionMove = null;
+        let expanding = false;
+        let reason = "Aguardando Cont=SIM + T1 expandindo.";
+        const sameSignal = prev.signalKey === signalKey;
+
+        if (sameSignal) {
+          streak = prevStreak;
+          directionMove = toNum(prev.directionMove);
+          expanding = !!prev.expanding;
+          reason = prev.reason || reason;
+        } else if (!contYes) {
+          streak = 0;
+          reason = "Cont=NAO ou ausente: tendencia resetada.";
+        } else if (!side) {
+          streak = 0;
+          reason = "Sem side LONG/SHORT: tendencia nao pode ser contada.";
+        } else if (currentT1 === null) {
+          streak = 0;
+          reason = "T1 ainda nao veio no payload.";
+        } else if (prevTarget === null || prev.side !== side) {
+          streak = 0;
+          reason = `Primeiro T1 capturado para ${sideLabelA10(side)}. Proximo candle confirma ou reseta.`;
+        } else {
+          const rawDelta = currentT1 - prevTarget;
+          directionMove = side === "long" ? rawDelta : -rawDelta;
+          expanding = directionMove > 0.004;
+
+          if (expanding) {
+            streak = prevStreak + 1;
+            reason = `T1 expandiu ${fmtMoneyA10(Math.abs(rawDelta))} a favor do ${sideLabelA10(side)}.`;
+          } else {
+            streak = 0;
+            reason = `T1 parou ou inverteu contra ${sideLabelA10(side)}.`;
+          }
+        }
+
+        try{
+          globalScope.__AARON10_TREND_STATE__ = {
+            signalKey,
+            side,
+            target: currentT1,
+            streak,
+            directionMove,
+            expanding,
+            reason,
+            updatedAt: updatedCandidate || clockMt || new Date().toISOString()
+          };
+        }catch(_e){}
+
+        let title = "TENDENCIA NEUTRA";
+        let subtitle = `${reason} | T1 ${fmtMoneyA10(currentT1)} | streak ${streak}.`;
+        let className = "is-cold";
+
+        if (streak === 1) {
+          title = "TENDENCIA 1";
+          subtitle = `ENTRA 75% tamanho | WR esperado 90% | ${reason}`;
+          className = "is-building";
+        } else if (streak >= 2 && streak < 5) {
+          title = "TENDENCIA CONFIRMADA";
+          subtitle = `ENTRA 100% tamanho | SEGURA T2 | WR esperado 93-94% | streak ${streak}.`;
+          className = "is-strong";
+        } else if (streak >= 5) {
+          title = "TENDENCIA ATIVA";
+          subtitle = `MAXIMA CONFIANCA | WR esperado 100% | T2 certo nos dados historicos | streak ${streak}.`;
+          className = "is-max";
+        }
+
+        return {
+          title,
+          subtitle,
+          className,
+          streak,
+          target: currentT1,
+          expanding,
+          reason,
+          hasTarget: currentT1 !== null
+        };
+      };
+
+      const trendState = buildTrendState();
+
       const hasSignals = [
         emaPct,
         emaAvoid,
@@ -19466,6 +19785,21 @@ function updateCoPilotBlock(data){
       management.push("Candle +1: sair se consolidacao, exhaustion, EMA contra ou volume contra aparecer.");
       management.push("T1: so segura T2 com Continuacao=SIM, sem consolidacao e sem EMA exhaustion.");
 
+      if (trendState?.hasTarget && side && trendState.streak === 0) {
+        blockers.push("Estado de tendencia=0: NAO ENTRA ate Cont=SIM + T1 expandindo confirmar momentum.");
+      } else if (!trendState?.hasTarget) {
+        cautions.push("Estado de tendencia aguardando T1 para medir expansao.");
+      } else if (trendState.streak === 1) {
+        greens.push("Estado de tendencia=1: ENTRA 75% tamanho, WR esperado 90%.");
+        management.push("Tendencia 1: realizar em T1 se T1 parar ou inverter no proximo candle.");
+      } else if (trendState.streak >= 2 && trendState.streak < 5) {
+        greens.push(`Estado de tendencia=${trendState.streak}: ENTRA 100% e segura T2, WR esperado 93-94%.`);
+        management.push("Tendencia confirmada: enquanto T1 expandir, segurar ate T2.");
+      } else if (trendState.streak >= 5) {
+        greens.push("Estado de tendencia>=5: MAXIMA CONFIANCA, WR esperado 100% nos dados historicos.");
+        management.push("Tendencia ativa 5+: tamanho cheio e T2 como plano principal, se nenhum bloqueio aparecer.");
+      }
+
       let mult = 1;
       if (windowInfo.openDrive) mult *= 0.50;
       if (windowInfo.openDrive && side === "short") mult *= 0.50;
@@ -19473,6 +19807,7 @@ function updateCoPilotBlock(data){
       if (volPct !== null && volPct >= 80) mult *= 0.50;
       else if (volPct !== null && volPct >= 75) mult *= 0.75;
       if (contNo && side === "short") mult *= 0.50;
+      if (trendState?.hasTarget && trendState.streak === 1) mult = Math.min(mult, 0.75);
 
       let decision = "AGUARDAR";
       let subtitle = "Score abaixo da zona de entrada; esperar proximo candle.";
@@ -19495,7 +19830,19 @@ function updateCoPilotBlock(data){
         badgeClass = "copilot-block";
         mult = 0;
       } else if (score >= 7) {
-        if (mult < 1) {
+        if (trendState?.hasTarget && trendState.streak >= 5 && mult >= 1) {
+          decision = "ENTRA 100%";
+          subtitle = "Tendencia ativa 5+: maxima confianca, T2 como plano principal.";
+          toneClass = "is-enter";
+        } else if (trendState?.hasTarget && trendState.streak >= 2 && mult >= 1) {
+          decision = "ENTRA 100%";
+          subtitle = "Tendencia confirmada: score forte, tamanho cheio e segura T2.";
+          toneClass = "is-enter";
+        } else if (trendState?.hasTarget && trendState.streak === 1 && mult >= 0.75) {
+          decision = "ENTRA 75%";
+          subtitle = "Tendencia 1: primeira confirmacao de T1 expandindo, WR esperado 90%.";
+          toneClass = "is-half";
+        } else if (mult < 1) {
           decision = "ENTRA REDUZIDO";
           subtitle = `Score forte, mas risco corta tamanho para ${Math.round(mult * 100)}%.`;
           toneClass = "is-half";
@@ -19507,10 +19854,21 @@ function updateCoPilotBlock(data){
         badgeText = sideLabelA10(side);
         badgeClass = side === "short" ? "copilot-short" : side === "long" ? "copilot-long" : "copilot-wait";
       } else if (score >= 4) {
-        mult = Math.min(mult, 0.50);
-        decision = "ENTRA 50%";
-        subtitle = "Score 4-6: operar menor e realizar em T1.";
-        toneClass = "is-half";
+        if (trendState?.hasTarget && trendState.streak >= 2 && mult >= 1) {
+          decision = "ENTRA 100%";
+          subtitle = "Tendencia confirmada compensa o score intermediario: segura T2.";
+          toneClass = "is-enter";
+        } else if (trendState?.hasTarget && trendState.streak === 1 && mult >= 0.75) {
+          mult = Math.min(mult, 0.75);
+          decision = "ENTRA 75%";
+          subtitle = "Score 4-6 + Tendencia 1: entrada 75%, T1 primeiro.";
+          toneClass = "is-half";
+        } else {
+          mult = Math.min(mult, 0.50);
+          decision = "ENTRA 50%";
+          subtitle = "Score 4-6: operar menor e realizar em T1.";
+          toneClass = "is-half";
+        }
         badgeText = sideLabelA10(side);
         badgeClass = side === "short" ? "copilot-short" : side === "long" ? "copilot-long" : "copilot-wait";
       } else {
@@ -19537,6 +19895,7 @@ function updateCoPilotBlock(data){
         alerts,
         greens,
         management,
+        trend: trendState,
         metrics: [
           {
             label: "Side",
@@ -19557,6 +19916,11 @@ function updateCoPilotBlock(data){
             label: "Sizing",
             value: sizeDetail,
             detail: `Base $100,000 | ${windowInfo.detail}`
+          },
+          {
+            label: "Tendência",
+            value: trendState?.streak >= 5 ? "5+ MAX" : String(trendState?.streak ?? 0),
+            detail: trendState?.hasTarget ? `T1 ${fmtMoneyA10(trendState.target)} | ${trendState.reason}` : "Aguardando T1"
           },
           {
             label: "EMA",
