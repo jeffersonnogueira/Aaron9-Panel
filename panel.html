@@ -19147,6 +19147,15 @@ function updateCoPilotBlock(data){
       const exec1x1 = pickFirstValue(panel?.exec_1x1, digest?.exec_1x1, ui?.exec_1x1, root?.exec_1x1, {});
       const hud = pickFirstValue(panel?.hud, digest?.hud, ui?.hud, root?.hud, deepFind(root, "hud"), {});
       const now = pickFirstValue(panel?.now, digest?.now, ui?.now, root?.now, deepFind(root, "now"), {});
+      const canonicalRead = pickFirstValue(
+        exec1x1?.canonical_read_v1,
+        panel?.canonical_read_v1,
+        digest?.canonical_read_v1,
+        ui?.canonical_read_v1,
+        root?.canonical_read_v1,
+        deepFind(root, "canonical_read_v1"),
+        {}
+      ) || {};
 
       const emaBlock = pickFirstValue(
         exec1x1?.ema_volume_exhaustion_premonition_v1,
@@ -19272,6 +19281,10 @@ function updateCoPilotBlock(data){
       ));
 
       const contRaw = pickFirstValue(
+        canonicalRead?.continuacao_ativa,
+        canonicalRead?.continuacao,
+        canonicalRead?.continuation,
+        canonicalRead?.continuation_active,
         ui?.continuacao_ui,
         panel?.continuacao_ui,
         digest?.continuacao_ui,
@@ -19325,6 +19338,10 @@ function updateCoPilotBlock(data){
       ));
 
       const explicitSide = normSideA10(pickFirstValue(
+        canonicalRead?.side,
+        canonicalRead?.direction,
+        canonicalRead?.action,
+        canonicalRead?.trade_side,
         panel?.side,
         digest?.side,
         ui?.side,
@@ -19418,9 +19435,13 @@ function updateCoPilotBlock(data){
       );
 
       const textT1Match = String(targetText || "").match(/(?:Target\s*1|T1|Alvo\s*1)\s*[:=]?\s*\$?\s*(-?\d{1,6}(?:[.,]\d{1,4})?)/i);
+      const textT2Match = String(targetText || "").match(/(?:Target\s*2|T2|Alvo\s*2)\s*[:=]?\s*\$?\s*(-?\d{1,6}(?:[.,]\d{1,4})?)/i);
       const tcRootA10 = pickFirstValue(panel?.triple_convergence, digest?.triple_convergence, root?.triple_convergence, {});
 
       const currentT1 = toNum(pickFirstValue(
+        canonicalRead?.target_1,
+        canonicalRead?.target1,
+        canonicalRead?.t1,
         panel?.target1,
         digest?.target1,
         ui?.target1,
@@ -19450,20 +19471,67 @@ function updateCoPilotBlock(data){
         root?.volume_premonition_target_price_p50
       ));
 
+      const currentT2 = toNum(pickFirstValue(
+        canonicalRead?.target_2,
+        canonicalRead?.target2,
+        canonicalRead?.t2,
+        panel?.target2,
+        digest?.target2,
+        ui?.target2,
+        root?.target2,
+        panel?.target_2,
+        digest?.target_2,
+        ui?.target_2,
+        root?.target_2,
+        panel?.t2,
+        digest?.t2,
+        ui?.t2,
+        root?.t2,
+        panel?.trade?.target2,
+        digest?.trade?.target2,
+        root?.trade?.target2,
+        panel?.trade?.target_2,
+        digest?.trade?.target_2,
+        root?.trade?.target_2,
+        tcRootA10?.claude_t2,
+        textT2Match ? String(textT2Match[1]).replace(",", ".") : null,
+        emaBlock?.next_impulse_target_price_p75,
+        emaBlock?.continuation_target_price_p75,
+        emaBlock?.continue_target_price_p75,
+        emaBlock?.highlight?.next_impulse_target_price_p75,
+        emaBlock?.highlight?.continuation_target_price_p75,
+        emaBlock?.highlight?.continue_target_price_p75,
+        volBlock?.next_impulse_target_price_p75,
+        volBlock?.continuation_target_price_p75,
+        volBlock?.target_continue_price_p75,
+        volBlock?.highlight?.next_impulse_target_price_p75,
+        volBlock?.highlight?.continuation_target_price_p75,
+        volBlock?.highlight?.target_continue_price_p75,
+        panel?.volume_premonition_target_price_p75,
+        digest?.volume_premonition_target_price_p75,
+        root?.volume_premonition_target_price_p75
+      ));
+
+      const trendTarget = currentT2 !== null ? currentT2 : currentT1;
+      const trendTargetLabel = currentT2 !== null ? "T2" : "T1";
+
       const buildTrendState = () => {
         const globalScope = (typeof window !== "undefined") ? window : globalThis;
         const prev = globalScope.__AARON10_TREND_STATE__ || {};
         const prevStreak = Number.isFinite(Number(prev.streak)) ? Number(prev.streak) : 0;
         const prevTarget = toNum(prev.target);
-        const signalKey = String(pickFirstValue(
-          updatedCandidate,
-          `${clockMt || "no-clock"}|${side || "no-side"}|${currentT1 ?? "no-t1"}|${contRaw ?? "no-cont"}`
-        ));
+        const signalKey = [
+          updatedCandidate || clockMt || "no-clock",
+          side || "no-side",
+          trendTargetLabel,
+          trendTarget ?? "no-target",
+          contRaw ?? "no-cont"
+        ].join("|");
 
         let streak = 0;
         let directionMove = null;
         let expanding = false;
-        let reason = "Aguardando Cont=SIM + T1 expandindo.";
+        let reason = `Aguardando Cont=SIM + ${trendTargetLabel} expandindo.`;
         const sameSignal = prev.signalKey === signalKey;
 
         if (sameSignal) {
@@ -19477,23 +19545,23 @@ function updateCoPilotBlock(data){
         } else if (!side) {
           streak = 0;
           reason = "Sem side LONG/SHORT: tendencia nao pode ser contada.";
-        } else if (currentT1 === null) {
+        } else if (trendTarget === null) {
           streak = 0;
-          reason = "T1 ainda nao veio no payload.";
-        } else if (prevTarget === null || prev.side !== side) {
+          reason = `${trendTargetLabel} ainda nao veio no payload.`;
+        } else if (prevTarget === null || prev.side !== side || prev.targetLabel !== trendTargetLabel) {
           streak = 0;
-          reason = `Primeiro T1 capturado para ${sideLabelA10(side)}. Proximo candle confirma ou reseta.`;
+          reason = `Primeiro ${trendTargetLabel} capturado para ${sideLabelA10(side)}. Proximo candle confirma ou reseta.`;
         } else {
-          const rawDelta = currentT1 - prevTarget;
+          const rawDelta = trendTarget - prevTarget;
           directionMove = side === "long" ? rawDelta : -rawDelta;
           expanding = directionMove > 0.004;
 
           if (expanding) {
             streak = prevStreak + 1;
-            reason = `T1 expandiu ${fmtMoneyA10(Math.abs(rawDelta))} a favor do ${sideLabelA10(side)}.`;
+            reason = `${trendTargetLabel} expandiu ${fmtMoneyA10(Math.abs(rawDelta))} a favor do ${sideLabelA10(side)}.`;
           } else {
             streak = 0;
-            reason = `T1 parou ou inverteu contra ${sideLabelA10(side)}.`;
+            reason = `${trendTargetLabel} parou ou inverteu contra ${sideLabelA10(side)}.`;
           }
         }
 
@@ -19501,7 +19569,8 @@ function updateCoPilotBlock(data){
           globalScope.__AARON10_TREND_STATE__ = {
             signalKey,
             side,
-            target: currentT1,
+            target: trendTarget,
+            targetLabel: trendTargetLabel,
             streak,
             directionMove,
             expanding,
@@ -19511,7 +19580,7 @@ function updateCoPilotBlock(data){
         }catch(_e){}
 
         let title = "TENDENCIA NEUTRA";
-        let subtitle = `${reason} | T1 ${fmtMoneyA10(currentT1)} | streak ${streak}.`;
+        let subtitle = `${reason} | ${trendTargetLabel} ${fmtMoneyA10(trendTarget)} | streak ${streak}.`;
         let className = "is-cold";
 
         if (streak === 1) {
@@ -19533,10 +19602,11 @@ function updateCoPilotBlock(data){
           subtitle,
           className,
           streak,
-          target: currentT1,
+          target: trendTarget,
+          targetLabel: trendTargetLabel,
           expanding,
           reason,
-          hasTarget: currentT1 !== null
+          hasTarget: trendTarget !== null
         };
       };
 
@@ -19786,15 +19856,15 @@ function updateCoPilotBlock(data){
       management.push("T1: so segura T2 com Continuacao=SIM, sem consolidacao e sem EMA exhaustion.");
 
       if (trendState?.hasTarget && side && trendState.streak === 0) {
-        blockers.push("Estado de tendencia=0: NAO ENTRA ate Cont=SIM + T1 expandindo confirmar momentum.");
+        blockers.push(`Estado de tendencia=0: NAO ENTRA ate Cont=SIM + ${trendState.targetLabel || "T2"} expandindo confirmar momentum.`);
       } else if (!trendState?.hasTarget) {
-        cautions.push("Estado de tendencia aguardando T1 para medir expansao.");
+        cautions.push("Estado de tendencia aguardando alvo para medir expansao.");
       } else if (trendState.streak === 1) {
         greens.push("Estado de tendencia=1: ENTRA 75% tamanho, WR esperado 90%.");
-        management.push("Tendencia 1: realizar em T1 se T1 parar ou inverter no proximo candle.");
+        management.push(`Tendencia 1: realizar se ${trendState.targetLabel || "T2"} parar ou inverter no proximo candle.`);
       } else if (trendState.streak >= 2 && trendState.streak < 5) {
         greens.push(`Estado de tendencia=${trendState.streak}: ENTRA 100% e segura T2, WR esperado 93-94%.`);
-        management.push("Tendencia confirmada: enquanto T1 expandir, segurar ate T2.");
+        management.push(`Tendencia confirmada: enquanto ${trendState.targetLabel || "T2"} expandir, plano principal segue T2.`);
       } else if (trendState.streak >= 5) {
         greens.push("Estado de tendencia>=5: MAXIMA CONFIANCA, WR esperado 100% nos dados historicos.");
         management.push("Tendencia ativa 5+: tamanho cheio e T2 como plano principal, se nenhum bloqueio aparecer.");
@@ -19920,7 +19990,7 @@ function updateCoPilotBlock(data){
           {
             label: "Tendência",
             value: trendState?.streak >= 5 ? "5+ MAX" : String(trendState?.streak ?? 0),
-            detail: trendState?.hasTarget ? `T1 ${fmtMoneyA10(trendState.target)} | ${trendState.reason}` : "Aguardando T1"
+            detail: trendState?.hasTarget ? `${trendState.targetLabel || "T2"} ${fmtMoneyA10(trendState.target)} | ${trendState.reason}` : "Aguardando alvo"
           },
           {
             label: "EMA",
@@ -23152,6 +23222,13 @@ function updatePatternReference(panel, patterns) {
 
   if (!img) img = 'F(1).jpg';
 
+  const useEn = currentLang === 'en';
+  safeText(els.refPatternLabel, useEn ? nameEn : namePt, '—');
+  safeText(els.refPatternSetup, useEn ? setupEn : setupPt, '—');
+  safeText(els.refPatternNotes, useEn ? notesEn : notesPt, '—');
+  setRefImageWithFallback(img);
+  return;
+
       // --------------------------------------------------------
     // 1) FIRST HOUR helper legado
     // prioriza bloco real; se não vier, monta fallback rico
@@ -23611,6 +23688,65 @@ function updatePatternReference(panel, patterns) {
     badge: setupOk ? "WAIT" : "NO TRADE",
     status_class: dirInfo.cls,
     trade_state: String(ai.trade_state || "").toUpperCase() || undefined,
+  };
+}
+
+function adaptPanelToTradeCard(panel, raw, sym) {
+  const p = panel || {};
+  const exec = p.exec_1x1 || {};
+  const canonical = exec.canonical_read_v1 || p.canonical_read_v1 || {};
+  const pick = (...vals) => vals.find(v => v !== null && v !== undefined && String(v).trim() !== "");
+  const num = (v) => {
+    if (v === null || v === undefined || v === "") return null;
+    const n = Number(String(v).replace(/\$/g, "").replace(",", "."));
+    return Number.isFinite(n) ? n : null;
+  };
+  const fm = (v) => {
+    const n = num(v);
+    return n === null ? "—" : `$${n.toFixed(2)}`;
+  };
+  const sideRaw = String(pick(canonical.side, canonical.direction, canonical.action, p.action, p.side, p.direction) || "").toUpperCase();
+  const isBuy = sideRaw.includes("BUY") || sideRaw.includes("LONG") || sideRaw.includes("UP") || sideRaw.includes("ALTA");
+  const isSell = sideRaw.includes("SELL") || sideRaw.includes("SHORT") || sideRaw.includes("DOWN") || sideRaw.includes("BAIXA");
+  const side = isBuy ? "buy" : isSell ? "sell" : "";
+  const directionPt = isBuy ? "COMPRA" : isSell ? "VENDA" : "OBSERVAR";
+  const directionEn = isBuy ? "BUY" : isSell ? "SELL" : "WATCH";
+  const contRaw = pick(canonical.continuacao_ativa, canonical.continuacao, canonical.continuation);
+  const contTxt = String(contRaw || "").trim().toLowerCase();
+  const contPt = ["sim", "yes", "true", "1"].includes(contTxt) ? "SIM" : ["nao", "não", "no", "false", "0"].includes(contTxt) ? "NAO" : "—";
+  const t1 = pick(canonical.target_1, canonical.target1, p.target_1, p.target1, p.volume_premonition_target_price_p50);
+  const t2 = pick(canonical.target_2, canonical.target2, p.target_2, p.target2, p.volume_premonition_target_price_p75);
+  const entry = pick(canonical.entry, canonical.entry_price, p.entry_price, p.entry, p.price_now);
+  const stop = pick(canonical.stop, canonical.stop_price, p.stop, p.stop_price);
+  const expired = String(pick(canonical.entry_status, canonical.status, p.entry_status, "") || "").toUpperCase().includes("EXPIRED");
+
+  return {
+    symbol: sym || p.symbol || p.ticker || "—",
+    timeframe: p.timeframe || p.tf || "1m",
+    status_text_pt: expired ? "Entrada perdida | Sem trade" : "Setup em observacao",
+    status_text_en: expired ? "Missed entry | No trade" : "Setup under watch",
+    pulse_line_pt: p.hud_line || p.micro_summary_pt || p.hud_summary_pt || "—",
+    pulse_line_en: p.hud_line || p.micro_summary_en || p.hud_summary_en || "—",
+    mode_pt: contPt === "SIM" ? "Continuação" : "Observacao",
+    mode_en: contPt === "SIM" ? "Continuation" : "Watch",
+    against_pt: "—",
+    against_en: "—",
+    direction_pt: directionPt,
+    direction_en: directionEn,
+    side,
+    direction: side,
+    entry_text: expired ? "MISSED — nao perseguir" : fm(entry),
+    stop: fm(stop),
+    tp1: fm(t1),
+    tp2: fm(t2),
+    size_text: "—",
+    risk_text: "—",
+    thermo_pt: contPt === "SIM" ? "Continuação ativa" : "Neutro",
+    thermo_en: contPt === "SIM" ? "Continuation active" : "Neutral",
+    comment_pt: `Continuacao: ${contPt}\nT1: ${fm(t1)}\nT2: ${fm(t2)}`,
+    comment_en: `Continuation: ${contPt}\nT1: ${fm(t1)}\nT2: ${fm(t2)}`,
+    badge: side ? directionEn : "WAIT",
+    trade_state: expired || !side ? "NO TRADE" : "WATCH"
   };
 }
 
