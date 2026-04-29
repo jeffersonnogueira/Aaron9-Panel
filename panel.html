@@ -19050,7 +19050,7 @@ function updateCoPilotBlock(data){
       if (!trend) return "";
 
       const steps = [
-        { at: 0, label: "0", text: "NÃO ENTRA" },
+        { at: 0, label: "0", text: "TATICO | WAIT" },
         { at: 1, label: "1", text: "75% | WR 90%" },
         { at: 2, label: "2", text: "100% | T2" },
         { at: 3, label: "3+", text: "WR 94%+" },
@@ -19062,7 +19062,7 @@ function updateCoPilotBlock(data){
           <div class="copilot-a10-trend-head">
             <div class="copilot-a10-trend-k">Estado de Tendência</div>
             <div class="copilot-a10-trend-v">${colorizeA10Text(trend.title || "TENDENCIA NEUTRA")}</div>
-            <div class="copilot-a10-trend-sub">${colorizeA10Text(trend.subtitle || "Aguardando Cont=SIM + T1 expandindo.")}</div>
+            <div class="copilot-a10-trend-sub">${colorizeA10Text(trend.subtitle || "Aguardando Cont=SIM + T2 expandindo.")}</div>
           </div>
           <div class="copilot-a10-trend-track">
             ${steps.map(step => `
@@ -19515,6 +19515,130 @@ function updateCoPilotBlock(data){
       const trendTarget = currentT2 !== null ? currentT2 : currentT1;
       const trendTargetLabel = currentT2 !== null ? "T2" : "T1";
 
+      const currentPriceA10 = toNum(pickFirstValue(
+        panel?.price_now,
+        digest?.price_now,
+        ui?.price_now,
+        root?.price_now,
+        panel?.last_price,
+        digest?.last_price,
+        root?.last_price,
+        now?.current,
+        now?.price,
+        canonicalRead?.entry,
+        canonicalRead?.entry_price
+      ));
+
+      const liveVwapA10 = toNum(pickFirstValue(
+        panel?.live_vwap,
+        digest?.live_vwap,
+        ui?.live_vwap,
+        root?.live_vwap,
+        now?.session_vwap,
+        panel?.vwap,
+        digest?.vwap,
+        ui?.vwap,
+        root?.vwap,
+        panel?.indicator_premonition?.vwap?.vwap,
+        panel?.indicator_premonition?.vwap?.price,
+        deepFind(root, "live_vwap"),
+        deepFind(root, "session_vwap")
+      ));
+
+      const atrA10 = toNum(pickFirstValue(
+        hud?.atr_14,
+        hud?.atr14,
+        panel?.atr_14,
+        digest?.atr_14,
+        root?.atr_14,
+        panel?.atr14,
+        digest?.atr14,
+        root?.atr14,
+        deepFind(root, "atr_14"),
+        deepFind(root, "atr14")
+      ));
+
+      const explicitVwapUpper = toNum(pickFirstValue(
+        panel?.vwap_upper,
+        panel?.vwap_upper_band,
+        panel?.vwap_band_upper,
+        panel?.indicator_premonition?.vwap?.upper,
+        panel?.indicator_premonition?.vwap?.upper_band,
+        deepFind(root, "vwap_upper"),
+        deepFind(root, "vwap_upper_band"),
+        deepFind(root, "vwap_band_upper")
+      ));
+
+      const explicitVwapLower = toNum(pickFirstValue(
+        panel?.vwap_lower,
+        panel?.vwap_lower_band,
+        panel?.vwap_band_lower,
+        panel?.indicator_premonition?.vwap?.lower,
+        panel?.indicator_premonition?.vwap?.lower_band,
+        deepFind(root, "vwap_lower"),
+        deepFind(root, "vwap_lower_band"),
+        deepFind(root, "vwap_band_lower")
+      ));
+
+      const buildVwapSetup = () => {
+        if (currentPriceA10 === null || liveVwapA10 === null) {
+          return { active: false, hasData: false, label: "VWAP N/D", detail: "Sem preco/VWAP no payload." };
+        }
+
+        const diff = currentPriceA10 - liveVwapA10;
+        const absDiff = Math.abs(diff);
+        const bandStep = atrA10 !== null ? Math.max(atrA10, 0.01) : Math.max(Math.abs(liveVwapA10) * 0.001, 0.05);
+        const threshold = Math.max(0.03, bandStep * 0.35);
+        const upper = explicitVwapUpper !== null ? explicitVwapUpper : liveVwapA10 + bandStep;
+        const lower = explicitVwapLower !== null ? explicitVwapLower : liveVwapA10 - bandStep;
+        const nearMain = absDiff <= threshold;
+        const nearUpper = Math.abs(currentPriceA10 - upper) <= threshold;
+        const nearLower = Math.abs(currentPriceA10 - lower) <= threshold;
+        const vwapSide = diff >= 0 ? "above" : "below";
+
+        let setupSide = "";
+        let label = "VWAP longe";
+        let detail = `Preco ${fmtMoneyA10(currentPriceA10)} | VWAP ${fmtMoneyA10(liveVwapA10)} | dist ${fmtMoneyA10(absDiff)}.`;
+        let strength = 0;
+        let active = false;
+
+        if (nearMain) {
+          active = true;
+          setupSide = side || (vwapSide === "above" ? "long" : "short");
+          label = "VWAP MAIN";
+          detail = `${sideLabelA10(setupSide)} na linha principal VWAP | dist ${fmtMoneyA10(absDiff)}.`;
+          strength = 3;
+        } else if (nearLower) {
+          active = true;
+          setupSide = side || "long";
+          label = "VWAP BORDA LOW";
+          detail = `${sideLabelA10(setupSide)} na borda inferior VWAP | preco ${fmtMoneyA10(currentPriceA10)} / borda ${fmtMoneyA10(lower)}.`;
+          strength = setupSide === "long" ? 3 : 2;
+        } else if (nearUpper) {
+          active = true;
+          setupSide = side || "short";
+          label = "VWAP BORDA HIGH";
+          detail = `${sideLabelA10(setupSide)} na borda superior VWAP | preco ${fmtMoneyA10(currentPriceA10)} / borda ${fmtMoneyA10(upper)}.`;
+          strength = setupSide === "short" ? 3 : 2;
+        }
+
+        return {
+          active,
+          hasData: true,
+          label,
+          detail,
+          side: setupSide,
+          strength,
+          vwapSide,
+          distance: absDiff,
+          threshold,
+          upper,
+          lower,
+          price: currentPriceA10,
+          vwap: liveVwapA10
+        };
+      };
+
       const buildTrendState = () => {
         const globalScope = (typeof window !== "undefined") ? window : globalThis;
         const prev = globalScope.__AARON10_TREND_STATE__ || {};
@@ -19611,6 +19735,7 @@ function updateCoPilotBlock(data){
       };
 
       const trendState = buildTrendState();
+      const vwapSetup = buildVwapSetup();
 
       const hasSignals = [
         emaPct,
@@ -19623,7 +19748,8 @@ function updateCoPilotBlock(data){
         consolidationRaw,
         reversalRaw,
         rsi,
-        explicitSide
+        explicitSide,
+        vwapSetup?.hasData
       ].some(v => v !== null && v !== undefined && v !== "");
 
       if (!hasSignals) return null;
@@ -19633,6 +19759,7 @@ function updateCoPilotBlock(data){
       const cautions = [];
       const greens = [];
       const management = [];
+      let volumeAgainst = false;
       const addScore = (points, text) => {
         score += points;
         greens.push(`${text} (+${points})`);
@@ -19665,6 +19792,17 @@ function updateCoPilotBlock(data){
         addScore(1, "Horario 08:00-09:00 MT");
       }
 
+      if (vwapSetup?.active) {
+        if (!side || !vwapSetup.side || vwapSetup.side === side) {
+          addScore(vwapSetup.strength || 2, vwapSetup.detail);
+          management.push(`Setup VWAP ativo: ${vwapSetup.label}. Confirmar rejeicao/reclaim no candle atual.`);
+        } else {
+          cautions.push(`VWAP ativo contra o sinal: ${vwapSetup.detail}`);
+        }
+      } else if (vwapSetup?.hasData) {
+        greens.push(`VWAP longe: preco ${fmtMoneyA10(vwapSetup.price)} / VWAP ${fmtMoneyA10(vwapSetup.vwap)}.`);
+      }
+
       if (emaPct !== null) {
         if (emaPct >= 80) {
           blockers.push(`EMA ${fmtPctA10(emaPct)} >=80%: overextended.`);
@@ -19690,7 +19828,7 @@ function updateCoPilotBlock(data){
 
       if (nextKind) {
         if (nextKind.includes("exhaustion")) {
-          blockers.push(`EMA next=${impulseLabelA10(nextKind)}: motor exauriu.`);
+          cautions.push(`EMA next=${impulseLabelA10(nextKind)}: motor exauriu; se entrar, tamanho reduzido.`);
         } else if (
           (side === "long" && nextKind.includes("continue_up")) ||
           (side === "short" && nextKind.includes("continue_down"))
@@ -19719,6 +19857,7 @@ function updateCoPilotBlock(data){
         if (side === volSide) {
           addScore(1, `Volume alinhado ${sideLabelA10(side)}`);
         } else {
+          volumeAgainst = true;
           score -= 1;
           cautions.push(`Volume contra: sinal ${sideLabelA10(side)}, volume ${sideLabelA10(volSide)} (-1).`);
         }
@@ -19770,6 +19909,9 @@ function updateCoPilotBlock(data){
       )) {
         phase = "TREND";
         phaseDetail = "Trend puro: segura T2 se entrar.";
+      } else if (vwapSetup?.active && (!side || !vwapSetup.side || vwapSetup.side === side)) {
+        phase = "VWAP";
+        phaseDetail = vwapSetup.detail;
       } else if (emaPct !== null && emaPct >= 50 && emaPct <= 70 && (contNo || (side && volSide && side !== volSide))) {
         phase = "CHOP";
         phaseDetail = "Zigzag: entra menor e sai em T1.";
@@ -19853,10 +19995,10 @@ function updateCoPilotBlock(data){
       }
 
       management.push("Candle +1: sair se consolidacao, exhaustion, EMA contra ou volume contra aparecer.");
-      management.push("T1: so segura T2 com Continuacao=SIM, sem consolidacao e sem EMA exhaustion.");
+      management.push("T2 e o plano principal; segurar so com Continuacao=SIM, sem consolidacao e sem EMA exhaustion.");
 
       if (trendState?.hasTarget && side && trendState.streak === 0) {
-        blockers.push(`Estado de tendencia=0: NAO ENTRA ate Cont=SIM + ${trendState.targetLabel || "T2"} expandindo confirmar momentum.`);
+        cautions.push(`Estado de tendencia=0: sem confirmacao de trend; usar tamanho menor se outro setup estiver ativo.`);
       } else if (!trendState?.hasTarget) {
         cautions.push("Estado de tendencia aguardando alvo para medir expansao.");
       } else if (trendState.streak === 1) {
@@ -19877,6 +20019,9 @@ function updateCoPilotBlock(data){
       if (volPct !== null && volPct >= 80) mult *= 0.50;
       else if (volPct !== null && volPct >= 75) mult *= 0.75;
       if (contNo && side === "short") mult *= 0.50;
+      if (nextKind.includes("exhaustion")) mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
+      if (volumeAgainst) mult = Math.min(mult, 0.50);
+      if (trendState?.hasTarget && trendState.streak === 0) mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
       if (trendState?.hasTarget && trendState.streak === 1) mult = Math.min(mult, 0.75);
 
       let decision = "AGUARDAR";
@@ -19910,7 +20055,11 @@ function updateCoPilotBlock(data){
           toneClass = "is-enter";
         } else if (trendState?.hasTarget && trendState.streak === 1 && mult >= 0.75) {
           decision = "ENTRA 75%";
-          subtitle = "Tendencia 1: primeira confirmacao de T1 expandindo, WR esperado 90%.";
+          subtitle = `Tendencia 1: primeira confirmacao de ${trendState.targetLabel || "T2"} expandindo, WR esperado 90%.`;
+          toneClass = "is-half";
+        } else if (mult <= 0.25) {
+          decision = "ENTRA 25%";
+          subtitle = `Score forte, mas sem trend confirmada ou com risco ativo: tamanho tatico ${Math.round(mult * 100)}%.`;
           toneClass = "is-half";
         } else if (mult < 1) {
           decision = "ENTRA REDUZIDO";
@@ -19931,12 +20080,14 @@ function updateCoPilotBlock(data){
         } else if (trendState?.hasTarget && trendState.streak === 1 && mult >= 0.75) {
           mult = Math.min(mult, 0.75);
           decision = "ENTRA 75%";
-          subtitle = "Score 4-6 + Tendencia 1: entrada 75%, T1 primeiro.";
+          subtitle = `Score 4-6 + Tendencia 1: entrada 75%, ${trendState.targetLabel || "T2"} primeiro.`;
           toneClass = "is-half";
         } else {
-          mult = Math.min(mult, 0.50);
-          decision = "ENTRA 50%";
-          subtitle = "Score 4-6: operar menor e realizar em T1.";
+          mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
+          decision = mult <= 0.25 ? "ENTRA 25%" : "ENTRA 50%";
+          subtitle = vwapSetup?.active
+            ? `Setup VWAP + score 4-6: operar menor (${Math.round(mult * 100)}%).`
+            : `Score 4-6 sem trend confirmada: entrada tática ${Math.round(mult * 100)}%.`;
           toneClass = "is-half";
         }
         badgeText = sideLabelA10(side);
@@ -20001,6 +20152,13 @@ function updateCoPilotBlock(data){
             label: "Volume",
             value: fmtPctA10(volPct),
             detail: `Dir ${sideLabelA10(volSide)}`
+          },
+          {
+            label: "VWAP",
+            value: vwapSetup?.active ? vwapSetup.label : (vwapSetup?.hasData ? (vwapSetup.vwapSide === "above" ? "ABOVE" : "BELOW") : "—"),
+            detail: vwapSetup?.hasData
+              ? `${fmtMoneyA10(vwapSetup.price)} vs ${fmtMoneyA10(vwapSetup.vwap)} | dist ${fmtMoneyA10(vwapSetup.distance)}`
+              : "Sem VWAP"
           },
           {
             label: "Continuacao",
@@ -20185,14 +20343,16 @@ const goldSpotRulesSection = {
     "",
     "⚠️ ENTRA MENOR SE",
     "- Score 4-6",
+    "- Setup VWAP main/borda ativo",
+    "- Tendencia=0 mas outros filtros verdes",
     "- EMA 75-80%",
     "- Volume 75-80%",
+    "- EMA next=exhaustion reduz tamanho",
     "- OPEN DRIVE aprovado",
     "- Continuacao=NAO em SHORT",
     "",
     "❌ BLOQUEIA SE",
     "- EMA >=80%",
-    "- EMA next=exhaustion",
     "- EMA Avoid=True",
     "- Top Consolidacao=YES",
     "- Top Reversao=YES",
@@ -20203,7 +20363,7 @@ const goldSpotRulesSection = {
     "🛑 SAIDA DE DEFESA",
     "- Respiro contra >= $0.08 ou 50% do stop: sair imediatamente",
     "- Candle +1 contra: sair se consolidacao, exhaustion, EMA contra ou volume contra",
-    "- T1: so segura T2 se os filtros continuarem limpos"
+    "- T2 e VWAP: so segura enquanto os filtros continuarem limpos"
   ].join("\n"),
   type: "rules"
 };
