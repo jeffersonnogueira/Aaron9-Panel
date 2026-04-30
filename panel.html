@@ -28286,111 +28286,507 @@ if (tcPositionAction) {
   tcZoneLabel = tcPositionAction.zone || "POS LIVE";
 }
 
-let tcActionMain = "AGUARDANDO";
-let tcActionSub  = "Aguardando leitura completa de EMA, Volume, RSI, Claude e Triple Convergence.";
-let tcActionMode = "is-wait";
+const tcOperatorDir = (() => {
+  const dir = String(tcPositionAction?.displayDirection || tcDirection || "").trim().toUpperCase();
+  if (dir === "LONG" || dir === "SHORT") return dir;
+  return dir || "—";
+})();
 
-if (tcPositionAction) {
-  tcActionMain = tcPositionAction.main;
-  tcActionSub = tcPositionAction.sub;
-  tcActionMode = tcPositionAction.mode;
+const tcTargetDeskLine = (() => {
+  const parts = [];
+  if (tcConsensus != null) parts.push(`consensus ${tcLateMoney(tcConsensus)}`);
+  if (tcEmaTarget != null) parts.push(`EMA ${tcLateMoney(tcEmaTarget)}`);
+  if (tcVolTarget != null) parts.push(`VOL ${tcLateMoney(tcVolTarget)}`);
+  if (tcClaudeT1 != null) parts.push(`T1 ${tcLateMoney(tcClaudeT1)}`);
+  if (tcSpread != null) parts.push(`spread ${tcLateMoney(tcSpread)}`);
+  return parts.length ? parts.join(" | ") : "sem alvo completo";
+})();
 
-} else if (tcLateActive && tcLateStatus === "MISSED_VALID_MARKET") {
-  tcActionMain = "ENTRA AGORA";
-  tcActionSub  = `V43: entrada ideal passou ${tcLateMoney(tcLateMissedBy)}, mas o setup segue vivo a mercado ${tcLateMoney(tcLateMarketPrice)}. Invalidação ${tcLateMoney(tcLateInvalidation)}.`;
-  tcActionMode = "is-good";
+const tcLivePrice = tcPickNum(
+  panel?.price_now,
+  digest?.price_now,
+  payload?.price_now,
+  panel?.last_price,
+  digest?.last_price,
+  payload?.last_price,
+  panel?.reference_price,
+  digest?.reference_price,
+  tcLateActive ? tcLateMarketPrice : null
+);
 
-} else if (tcLateActive && tcLateStatus === "MISSED_VALID_REDUCED") {
-  tcActionMain = "ENTRA MENOR";
-  tcActionSub  = `V43: entrada atrasada ainda valida, mas reduzida. Mercado ${tcLateMoney(tcLateMarketPrice)} · respiro ${tcLateMoney(tcLateRespiro)}.`;
-  tcActionMode = "is-acceptable";
+const tcEntryLow = tcPickNum(
+  tcCanonicalRead?.entrada_zona_low,
+  tcCanonicalRead?.entry_zone_low,
+  tcCanonicalRead?.entry_zone?.low,
+  tcCanonicalRead?.entrada_zona?.low,
+  panel?.entry_zone_low,
+  digest?.entry_zone_low,
+  payload?.entry_zone_low
+);
 
-} else if (tcLateActive && tcLateStatus === "WAIT_RESPIRO") {
-  tcActionMain = "ESPERA RESPIRO";
-  tcActionSub  = `V43: setup vivo, mas nao perseguir seco. Aguardar respiro em ${tcLateMoney(tcLateRespiro)}; invalidação ${tcLateMoney(tcLateInvalidation)}.`;
-  tcActionMode = "is-wait";
+const tcEntryHigh = tcPickNum(
+  tcCanonicalRead?.entrada_zona_high,
+  tcCanonicalRead?.entry_zone_high,
+  tcCanonicalRead?.entry_zone?.high,
+  tcCanonicalRead?.entrada_zona?.high,
+  panel?.entry_zone_high,
+  digest?.entry_zone_high,
+  payload?.entry_zone_high
+);
 
-} else if (tcLateActive && (tcLateStatus === "TOO_LATE" || tcLateStatus === "INVALIDATED")) {
-  tcActionMain = tcLateStatus === "TOO_LATE" ? "DEIXA PASSAR" : "NÃO ENTRAR AGORA";
-  tcActionSub  = `V43: ${tcLateStatus.replace(/_/g, " ")}. Original ${tcLateOriginalStatus || "—"}.`;
-  tcActionMode = "is-no-trade";
+const tcEntryMid =
+  tcEntryLow != null && tcEntryHigh != null
+    ? (tcEntryLow + tcEntryHigh) / 2
+    : tcPickNum(
+        tcCanonicalRead?.entry,
+        tcCanonicalRead?.entry_price,
+        tcCanonicalRead?.entrada,
+        tcCanonicalRead?.entrada_preco,
+        panel?.entry_price,
+        digest?.entry_price,
+        payload?.entry_price
+      );
 
-} else if (!tcHasAllTargets) {
-  tcActionMain = "AGUARDANDO";
-  tcActionSub  = "Faltam EMA Target, VOL Target ou Claude T1.";
-  tcActionMode = "is-wait";
+const tcStopPrice = tcPickNum(
+  tcLateActive ? tcLateInvalidation : null,
+  tcCanonicalRead?.stop,
+  tcCanonicalRead?.stop_loss,
+  tcCanonicalRead?.invalidation,
+  tcCanonicalRead?.reversao_em,
+  panel?.stop,
+  digest?.stop,
+  payload?.stop
+);
 
-} else if (tcInOpenDrive && !tcInEarlyMomentum) {
-  tcActionMain = "NÃO ENTRAR AGORA";
-  tcActionSub  = "OPEN DRIVE 7:29–7:45 MT — janela com concentração desproporcional dos stops.";
-  tcActionMode = "is-no-trade";
+const tcTarget1 = tcPickNum(
+  tcCanonicalRead?.target_1,
+  tcCanonicalRead?.t1,
+  panel?.target_1,
+  digest?.target_1,
+  payload?.target_1,
+  tcClaudeT1,
+  tcConsensus
+);
 
-} else if (tcEarlyMomentumNeedsA10) {
-  tcActionMain = "AGUARDE A10";
-  tcActionSub  = "EARLY MOMENTUM 07:30–08:30 MT — EMA 85–90 precisa T1/T2 expandindo no AARON 10.";
-  tcActionMode = "is-wait";
+const tcTarget2 = tcPickNum(
+  tcCanonicalRead?.target_2,
+  tcCanonicalRead?.t2,
+  panel?.target_2,
+  digest?.target_2,
+  payload?.target_2,
+  tcEmaTarget,
+  tcVolTarget,
+  tcTarget1
+);
 
-} else if (!tcRsiOk) {
-  tcActionMain = "NÃO ENTRAR AGORA";
-  tcActionSub  = `RSI fora da faixa saudável (${tcRsi == null ? "—" : tcRsi.toFixed(1)}). Regra: operar entre 30 e 75.`;
-  tcActionMode = "is-no-trade";
+const tcSideSign = tcOperatorDir === "LONG" ? 1 : tcOperatorDir === "SHORT" ? -1 : 0;
+const tcTriggerBand = (() => {
+  const px = tcLivePrice ?? tcEntryMid ?? tcConsensus ?? tcLateRespiro ?? tcLateMarketPrice;
+  const pctBand = px != null ? Math.abs(px) * 0.00045 : 0;
+  const spreadBand = tcSpread != null ? Math.max(tcSpread * 0.18, 0) : 0;
+  return Math.max(0.03, pctBand, spreadBand);
+})();
+const tcChaseLimit = Math.max(0.08, tcTriggerBand * 2.2, tcSpread != null ? tcSpread * 0.55 : 0);
 
-} else if ((tcValidZone || tcEarlyMomentumHotEmaOk) && !tcSideGateBar) {
-  tcActionMain = "AGUARDE";
-  tcActionSub  = `Zona válida, mas EMA e Volume estão em conflito (${(tcEmaSide || "—").toUpperCase()} vs ${(tcVolSide || "—").toUpperCase()}).`;
-  tcActionMode = "is-wait";
+const tcDirectionalMove = (from, to) => {
+  if (from == null || to == null || !tcSideSign) return null;
+  return (to - from) * tcSideSign;
+};
 
+const tcAbsDist = (a, b) => (a != null && b != null) ? Math.abs(a - b) : null;
 
+const tcIsAtOrThrough = (price, level) => {
+  if (price == null || level == null || !tcSideSign) return false;
+  return tcSideSign === 1
+    ? price <= level + tcTriggerBand
+    : price >= level - tcTriggerBand;
+};
 
-} else if (tcEarlyMomentumHotEmaOk) {
-  tcActionMain = "EARLY MOMENTUM OK";
-  tcActionSub  = "07:30–08:30 MT — EMA 80–85 não bloqueia; AARON 10 define tamanho e T1/T2.";
-  tcActionMode = "is-acceptable";
+const tcIsInvalidated = (() => {
+  if (tcLivePrice == null || tcStopPrice == null || !tcSideSign) return false;
+  return tcSideSign === 1
+    ? tcLivePrice <= tcStopPrice
+    : tcLivePrice >= tcStopPrice;
+})();
 
-} else if (!tcEntryFilterOk) {
-  tcActionMain = "AGUARDE";
+const tcPlanAnchor = tcPickNum(
+  tcLateActive ? tcLateRespiro : null,
+  tcEntryMid,
+  tcConsensus,
+  tcLateActive ? tcLateMarketPrice : null,
+  tcLivePrice
+);
+const tcChaseUsd =
+  tcLivePrice != null && tcPlanAnchor != null && tcSideSign
+    ? (tcLivePrice - tcPlanAnchor) * tcSideSign
+    : null;
+const tcIsChasing = tcChaseUsd != null && tcChaseUsd > tcChaseLimit;
+const tcIsBelowTrigger =
+  tcLivePrice != null && tcPlanAnchor != null && tcSideSign
+    ? (tcLivePrice - tcPlanAnchor) * tcSideSign < -tcTriggerBand
+    : false;
 
-  if (tcWorstZone) {
-    tcActionSub = `Pior de todas. EMA ${fmtPct(tcEmaPct)} · VOL ${fmtPct(tcVolPct)} · RSI ${tcRsi == null ? "—" : tcRsi.toFixed(1)}.`;
-  } else if (tcBadZone) {
-    tcActionSub = `Zona ruim. EMA>=75 e VOL>=75 destroem a qualidade. EMA ${fmtPct(tcEmaPct)} · VOL ${fmtPct(tcVolPct)}.`;
-  } else if (tcWorseEma) {
-    tcActionSub = `EMA piorando. EMA ${fmtPct(tcEmaPct)} já entrou na faixa 80–90.`;
-  } else if (tcHotEma) {
-    tcActionSub = `EMA quente. EMA ${fmtPct(tcEmaPct)} já entrou na faixa 75–80.`;
-  } else if (tcHotVol) {
-    tcActionSub = `Volume quente. VOL ${fmtPct(tcVolPct)} acima de 75 reduz a qualidade.`;
-  } else {
-    tcActionSub = `Zona ainda não classificada como válida. EMA ${fmtPct(tcEmaPct)} · VOL ${fmtPct(tcVolPct)} · RSI ${tcRsi == null ? "—" : tcRsi.toFixed(1)}.`;
+const tcRiskUsd =
+  tcLivePrice != null && tcStopPrice != null && tcSideSign
+    ? Math.max(0, (tcLivePrice - tcStopPrice) * tcSideSign)
+    : null;
+const tcReward1Usd =
+  tcLivePrice != null && tcTarget1 != null && tcSideSign
+    ? Math.max(0, (tcTarget1 - tcLivePrice) * tcSideSign)
+    : null;
+const tcReward2Usd =
+  tcLivePrice != null && tcTarget2 != null && tcSideSign
+    ? Math.max(0, (tcTarget2 - tcLivePrice) * tcSideSign)
+    : null;
+const tcRr1 = tcRiskUsd != null && tcRiskUsd > 0 && tcReward1Usd != null ? tcReward1Usd / tcRiskUsd : null;
+const tcRr2 = tcRiskUsd != null && tcRiskUsd > 0 && tcReward2Usd != null ? tcReward2Usd / tcRiskUsd : null;
+
+const tcOperatorTape = {
+  live: tcLivePrice,
+  anchor: tcPlanAnchor,
+  entry_low: tcEntryLow,
+  entry_high: tcEntryHigh,
+  stop: tcStopPrice,
+  target_1: tcTarget1,
+  target_2: tcTarget2,
+  trigger_band: tcTriggerBand,
+  chase_limit: tcChaseLimit,
+  chase_usd: tcChaseUsd,
+  is_chasing: tcIsChasing,
+  is_below_trigger: tcIsBelowTrigger,
+  invalidated: tcIsInvalidated,
+  risk_usd: tcRiskUsd,
+  reward_1_usd: tcReward1Usd,
+  reward_2_usd: tcReward2Usd,
+  rr_1: tcRr1,
+  rr_2: tcRr2
+};
+
+const tcOperatorMemoryPrev =
+  (typeof window !== "undefined" && window.__AARON_OPERATOR_MEMORY_V2__) ||
+  { key: "", stable_ticks: 0 };
+
+const tcOperatorFmtR = (v) => v != null && Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)}R` : "—";
+const tcOperatorLiveLine = () => {
+  const bits = [];
+  if (tcLivePrice != null) bits.push(`preco ${tcLateMoney(tcLivePrice)}`);
+  if (tcPlanAnchor != null) bits.push(`gatilho ${tcLateMoney(tcPlanAnchor)}`);
+  if (tcStopPrice != null) bits.push(`cancela ${tcLateMoney(tcStopPrice)}`);
+  if (tcTarget1 != null) bits.push(`T1 ${tcLateMoney(tcTarget1)}`);
+  if (tcTarget2 != null) bits.push(`T2 ${tcLateMoney(tcTarget2)}`);
+  if (tcRr2 != null || tcRr1 != null) bits.push(`RR ${tcOperatorFmtR(tcRr2 ?? tcRr1)}`);
+  return bits.join(" | ");
+};
+
+const tcBuildOperatorDecisionV1 = () => {
+  const base = {
+    version: "operator_decision_v2",
+    direction: tcOperatorDir,
+    zone: tcZoneLabel,
+    mode: "is-wait",
+    main: "SEM ORDEM",
+    sub: "Aguardando leitura completa de EMA, Volume, RSI, Claude e convergencia.",
+    next: "Nao executar enquanto a mesa nao tiver gatilho limpo.",
+    reason: "payload_incomplete",
+    tape: tcOperatorTape
+  };
+
+  const withBase = (patch) => ({ ...base, ...patch });
+
+  if (tcPositionAction) {
+    return withBase({
+      main: tcPositionAction.main,
+      sub: tcPositionAction.sub,
+      mode: tcPositionAction.mode,
+      next: `Manejo vem antes de qualquer nova entrada. ${tcOperatorLiveLine()}`,
+      reason: "position_management"
+    });
   }
 
-  tcActionMode = "is-wait";
+  if (tcIsInvalidated) {
+    return withBase({
+      main: "SETUP INVALIDADO",
+      sub: `${tcOperatorDir}: preço ${tcLateMoney(tcLivePrice)} ja tocou a linha de cancelamento ${tcLateMoney(tcStopPrice)}.`,
+      mode: "is-no-trade",
+      next: "Zerar ideia. Nao reabrir nesse mesmo setup; esperar novo matcher.",
+      reason: "operator_invalidated"
+    });
+  }
 
-} else if (tcSpread == null) {
-  tcActionMain = "AGUARDANDO";
-  tcActionSub  = "Zona válida. Falta só o spread final da convergência.";
-  tcActionMode = "is-wait";
+  if (tcLateActive && tcLateStatus === "MISSED_VALID_MARKET") {
+    if (tcIsChasing && tcRr1 != null && tcRr1 < 0.85) {
+      return withBase({
+        main: "NÃO PERSEGUIR",
+        sub: `V43 ainda marcou mercado, mas o preço esticou ${tcLateMoney(tcChaseUsd)} alem do gatilho e o RR caiu para ${tcOperatorFmtR(tcRr1)}.`,
+        mode: "is-no-trade",
+        next: "Esperar respiro ou novo gatilho. O operador nao entra quando o risco ja virou tarde.",
+        reason: "v43_market_chase_rr_bad"
+      });
+    }
 
-} else if (tcSpread <= 0.20) {
-  tcActionMain = "ENTRADA PERFEITA";
-  tcActionSub  = "Zona válida + direção canônica do matcher + convergência extremamente fechada.";
-  tcActionMode = "is-perfect";
+    return withBase({
+      main: "ENTRA AGORA",
+      sub: `V43: entrada ideal passou ${tcLateMoney(tcLateMissedBy)}, mas o setup ainda esta vivo a mercado ${tcLateMoney(tcLateMarketPrice)}. ${tcOperatorLiveLine()}. Direção ${tcOperatorDir}.`,
+      mode: "is-good",
+      next: `Executar a mercado somente enquanto o preço estiver dentro do plano V43. Se afastar mais de ${tcLateMoney(tcChaseLimit)}, cancelar chase.`,
+      reason: "v43_market"
+    });
+  }
 
-} else if (tcSpread <= 0.50) {
-  tcActionMain = "ENTRE AGORA";
-  tcActionSub  = "Zona válida ativa com direção canônica do matcher e suporte favorável dos auxiliares.";
-  tcActionMode = "is-good";
+  if (tcLateActive && tcLateStatus === "MISSED_VALID_REDUCED") {
+    return withBase({
+      main: "ENTRA MENOR",
+      sub: `V43: entrada atrasada segue valida, mas perdeu qualidade. ${tcOperatorLiveLine()}.`,
+      mode: "is-acceptable",
+      next: "Se executar agora, usar tamanho reduzido; se o preço esticar, cancelar chase e esperar respiro.",
+      reason: "v43_reduced"
+    });
+  }
 
-} else if (tcSpread <= 1.00) {
-  tcActionMain = "ENTRADA RAZOÁVEL";
-  tcActionSub  = "Zona válida ativa, mas o spread ainda está mais largo. Exige cautela.";
-  tcActionMode = "is-acceptable";
+  if (tcLateActive && tcLateStatus === "WAIT_RESPIRO") {
+    const respiroTouched = tcIsAtOrThrough(tcLivePrice, tcLateRespiro);
 
-} else {
-  tcActionMain = "NÃO FAÇA TRADE";
-  tcActionSub  = "Mesmo em zona válida, os alvos estão muito dispersos. Não há convergência suficiente.";
-  tcActionMode = "is-no-trade";
-}
+    if (respiroTouched) {
+      return withBase({
+        main: "ENTRA NO RESPIRO",
+        sub: `V43: o preço chegou no respiro ${tcLateMoney(tcLateRespiro)}. ${tcOperatorLiveLine()}.`,
+        mode: "is-good",
+        next: "Executar no toque/confirmacao do respiro; se perder a invalidação, cancelar imediatamente.",
+        reason: "v43_respiro_touched"
+      });
+    }
+
+    return withBase({
+      main: "ARMAR RESPIRO",
+      sub: `V43: setup vivo, mas entrada a mercado perdeu vantagem. Armaria ordem/alerta no respiro ${tcLateMoney(tcLateRespiro)}; cancelar se tocar invalidação ${tcLateMoney(tcLateInvalidation)}. ${tcOperatorLiveLine()}.`,
+      mode: "is-wait",
+      next: `Nao perseguir candle seco. Distancia ate o respiro: ${tcAbsDist(tcLivePrice, tcLateRespiro) != null ? tcLateMoney(tcAbsDist(tcLivePrice, tcLateRespiro)) : "—"}.`,
+      reason: "v43_wait_respiro"
+    });
+  }
+
+  if (tcLateActive && (tcLateStatus === "TOO_LATE" || tcLateStatus === "INVALIDATED")) {
+    return withBase({
+      main: tcLateStatus === "TOO_LATE" ? "DEIXA PASSAR" : "NÃO ENTRAR AGORA",
+      sub: `V43: ${tcLateStatus.replace(/_/g, " ")}. Original ${tcLateOriginalStatus || "—"}. Nao transformar trade perdido em chase.`,
+      mode: "is-no-trade",
+      next: "Esperar novo setup. Esta leitura nao tem mais execucao limpa.",
+      reason: tcLateStatus === "TOO_LATE" ? "v43_too_late" : "v43_invalidated"
+    });
+  }
+
+  if (!tcHasAllTargets) {
+    return withBase({
+      main: "SEM ORDEM",
+      sub: "Faltam EMA Target, VOL Target ou Claude T1. Sem esses tres pontos, a mesa nao tem preco operacional.",
+      next: "Esperar o payload completar antes de decidir entrada.",
+      reason: "missing_targets"
+    });
+  }
+
+  if (tcInOpenDrive && !tcInEarlyMomentum) {
+    return withBase({
+      main: "NÃO ENTRAR AGORA",
+      sub: "OPEN DRIVE 7:29-7:45 MT: janela com concentração desproporcional dos stops. Operador nao compra/vende impulso seco aqui.",
+      mode: "is-no-trade",
+      next: "Esperar a janela limpar ou exigir setup V43 explicito.",
+      reason: "open_drive_block"
+    });
+  }
+
+  if (tcEarlyMomentumNeedsA10) {
+    return withBase({
+      main: "AGUARDAR CONFIRMAÇÃO",
+      sub: "EARLY MOMENTUM 07:30-08:30 MT: EMA 85-90 precisa AARON 10 confirmar T1/T2 expandindo antes de liberar entrada.",
+      next: "Se T1/T2 expandir a favor, liberar entrada reduzida; se travar, sem trade.",
+      reason: "early_momentum_needs_a10"
+    });
+  }
+
+  if (!tcRsiOk) {
+    return withBase({
+      main: "NÃO ENTRAR AGORA",
+      sub: `RSI fora da faixa saudavel (${tcRsi == null ? "—" : tcRsi.toFixed(1)}). Operador espera normalizar entre 30 e 75.`,
+      mode: "is-no-trade",
+      next: "Sem ordem nova enquanto RSI estiver extremo.",
+      reason: "rsi_extreme"
+    });
+  }
+
+  if ((tcValidZone || tcEarlyMomentumHotEmaOk) && !tcSideGateBar) {
+    return withBase({
+      main: "AGUARDAR ALINHAMENTO",
+      sub: `Zona de preço e valida, mas EMA e Volume brigam (${(tcEmaSide || "—").toUpperCase()} vs ${(tcVolSide || "—").toUpperCase()}).`,
+      next: "Nao executar ate EMA e Volume apontarem para o mesmo lado.",
+      reason: "ema_volume_conflict"
+    });
+  }
+
+  if (tcEarlyMomentumHotEmaOk) {
+    return withBase({
+      main: "ENTRADA REDUZIDA",
+      sub: `Early Momentum aceito para ${tcOperatorDir}. EMA ${fmtPct(tcEmaPct)} e VOL ${fmtPct(tcVolPct)} permitem operacao menor. ${tcOperatorLiveLine()}.`,
+      mode: "is-acceptable",
+      next: `Usar tamanho reduzido e respeitar o consensus. ${tcTargetDeskLine}.`,
+      reason: "early_momentum_reduced"
+    });
+  }
+
+  if (!tcEntryFilterOk) {
+    let sub = `Zona ainda nao classificada como executavel. EMA ${fmtPct(tcEmaPct)} | VOL ${fmtPct(tcVolPct)} | RSI ${tcRsi == null ? "—" : tcRsi.toFixed(1)}.`;
+    let main = "AGUARDAR GATILHO";
+    let mode = "is-wait";
+    let next = "Esperar reset da zona ou novo V43.";
+    let reason = "entry_filter_not_ok";
+
+    if (tcWorstZone) {
+      main = "NÃO FAÇA TRADE";
+      sub = `Pior zona: EMA ${fmtPct(tcEmaPct)}. A leitura esta tarde demais para abrir posicao nova.`;
+      mode = "is-no-trade";
+      next = "Somente novo setup ou respiro V43 muda a decisao.";
+      reason = "worst_zone";
+    } else if (tcBadZone) {
+      main = "NÃO PERSEGUIR";
+      sub = `Zona ruim: EMA>=75 e VOL>=75. O mercado ja carregou risco demais. EMA ${fmtPct(tcEmaPct)} | VOL ${fmtPct(tcVolPct)}.`;
+      next = "Esperar respiro real ou invalidar a ideia.";
+      reason = "bad_zone";
+    } else if (tcWorseEma) {
+      main = "AGUARDAR RESFRIAR";
+      sub = `EMA piorando: ${fmtPct(tcEmaPct)} na faixa 80-90. Sem entrada nova sem confirmacao A10 ou V43.`;
+      next = "Aguardar alvo expandir, respiro ou nova leitura.";
+      reason = "ema_worse";
+    } else if (tcHotEma) {
+      main = "AGUARDAR PREÇO";
+      sub = `EMA quente: ${fmtPct(tcEmaPct)} na faixa 75-80. Ainda pode existir trade, mas nao no chase.`;
+      next = "Esperar pullback/respiro ou spread fechar.";
+      reason = "ema_hot";
+    } else if (tcHotVol) {
+      main = "AGUARDAR VOLUME";
+      sub = `Volume quente: ${fmtPct(tcVolPct)} acima de 75. Risco de exaustao/flush aumentado.`;
+      next = "Esperar volume desacelerar ou V43 liberar execucao.";
+      reason = "vol_hot";
+    }
+
+    return withBase({ main, sub, mode, next, reason });
+  }
+
+  if (tcSpread == null) {
+    return withBase({
+      main: "ARMADO, FALTA SPREAD",
+      sub: `Zona valida para ${tcOperatorDir}, mas falta spread final da convergencia. ${tcTargetDeskLine}. ${tcOperatorLiveLine()}.`,
+      next: "Operador fica pronto, mas nao executa sem convergencia de preco.",
+      reason: "spread_missing"
+    });
+  }
+
+  if (tcIsChasing) {
+    return withBase({
+      main: "NÃO PERSEGUIR",
+      sub: `${tcOperatorDir}: preço esticou ${tcLateMoney(tcChaseUsd)} alem do gatilho ${tcLateMoney(tcPlanAnchor)}. Limite de chase ${tcLateMoney(tcChaseLimit)}.`,
+      mode: "is-no-trade",
+      next: "Esperar pullback/respiro ou novo V43. Entrada agora paga risco ruim.",
+      reason: "operator_chase_block"
+    });
+  }
+
+  if (tcIsBelowTrigger) {
+    return withBase({
+      main: "ARMAR GATILHO",
+      sub: `${tcOperatorDir}: leitura boa, mas o preço ainda nao chegou no gatilho ${tcLateMoney(tcPlanAnchor)}. ${tcOperatorLiveLine()}.`,
+      mode: "is-wait",
+      next: "Ficar armado. Executar so quando o preço tocar a zona; se o setup invalidar antes, cancelar.",
+      reason: "operator_wait_trigger"
+    });
+  }
+
+  if ((tcRr1 != null && tcRr1 < 0.75) || (tcRiskUsd != null && tcRiskUsd <= 0)) {
+    return withBase({
+      main: "NÃO EXECUTAR",
+      sub: `${tcOperatorDir}: entrada ate existe, mas o risco/retorno ficou ruim. ${tcOperatorLiveLine()}.`,
+      mode: "is-no-trade",
+      next: "Esperar preço melhorar ou alvo expandir. Sem trade com RR ruim.",
+      reason: "operator_rr_block"
+    });
+  }
+
+  if (tcSpread <= 0.20) {
+    return withBase({
+      main: "ENTRADA PERFEITA",
+      sub: `${tcOperatorDir}: zona valida + direção canônica + convergência extremamente fechada. ${tcTargetDeskLine}. ${tcOperatorLiveLine()}.`,
+      mode: "is-perfect",
+      next: "Executar se o preço ainda estiver perto do consensus; cancelar se perder a zona.",
+      reason: "perfect_entry"
+    });
+  }
+
+  if (tcSpread <= 0.50) {
+    return withBase({
+      main: "ENTRAR AGORA",
+      sub: `${tcOperatorDir}: zona valida ativa com suporte de EMA, Volume e alvo auxiliar. ${tcTargetDeskLine}. ${tcOperatorLiveLine()}.`,
+      mode: "is-good",
+      next: "Executar com plano definido; se afastar do consensus, reduzir ou esperar respiro.",
+      reason: "good_entry"
+    });
+  }
+
+  if (tcSpread <= 1.00) {
+    return withBase({
+      main: "ENTRAR REDUZIDO",
+      sub: `${tcOperatorDir}: leitura valida, mas spread largo. ${tcTargetDeskLine}. ${tcOperatorLiveLine()}.`,
+      mode: "is-acceptable",
+      next: "Tamanho menor. Se o spread fechar, pode virar entrada cheia; se abrir, cancela.",
+      reason: "acceptable_entry"
+    });
+  }
+
+  return withBase({
+    main: "NÃO EXECUTAR",
+    sub: `Mesmo com zona valida, os alvos estao dispersos demais. ${tcTargetDeskLine}.`,
+    mode: "is-no-trade",
+    next: "Sem ordem ate a convergencia fechar.",
+    reason: "spread_too_wide"
+  });
+};
+
+const tcOperatorDecisionV1 = tcBuildOperatorDecisionV1();
+const tcOperatorMemoryKey = [
+  tcOperatorDecisionV1.main,
+  tcOperatorDecisionV1.reason,
+  tcOperatorDecisionV1.direction,
+  tcOperatorDecisionV1.zone,
+  tcLateMoney(tcOperatorTape.anchor),
+  tcLateMoney(tcOperatorTape.stop)
+].join("|");
+const tcOperatorStableTicks =
+  tcOperatorMemoryPrev?.key === tcOperatorMemoryKey
+    ? (Number(tcOperatorMemoryPrev.stable_ticks) || 0) + 1
+    : 1;
+
+tcOperatorDecisionV1.key = tcOperatorMemoryKey;
+tcOperatorDecisionV1.stable_ticks = tcOperatorStableTicks;
+tcOperatorDecisionV1.memory_note =
+  tcOperatorStableTicks >= 3
+    ? "decisao_estavel"
+    : "decisao_nova_ou_em_confirmacao";
+
+let tcActionMain = tcOperatorDecisionV1.main;
+let tcActionSub  = `${tcOperatorDecisionV1.sub} ${tcOperatorDecisionV1.next ? `Proxima acao: ${tcOperatorDecisionV1.next}` : ""}`.trim();
+let tcActionMode = tcOperatorDecisionV1.mode;
+
+try {
+  window.__AARON_OPERATOR_DECISION_V1__ = tcOperatorDecisionV1;
+  window.__AARON_OPERATOR_DECISION_V2__ = tcOperatorDecisionV1;
+  window.__AARON_OPERATOR_MEMORY_V2__ = {
+    key: tcOperatorMemoryKey,
+    stable_ticks: tcOperatorStableTicks,
+    main: tcOperatorDecisionV1.main,
+    reason: tcOperatorDecisionV1.reason,
+    direction: tcOperatorDecisionV1.direction,
+    zone: tcOperatorDecisionV1.zone,
+    tape: tcOperatorTape,
+    updated_at: new Date().toISOString()
+  };
+} catch (_e) {}
 
 const tcActionNote = (() => {
   switch (tcZoneLabel) {
