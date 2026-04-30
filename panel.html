@@ -19473,9 +19473,11 @@ function updateCoPilotBlock(data){
         <div class="copilot-section-card is-core is-aaron10">
           <div class="copilot-section-header">${escapeHtml(readout.title)}</div>
           <div class="copilot-a10-card ${escapeHtml(readout.toneClass)}">
+            ${renderAaron10ExecutionHtml(readout.execution)}
+
             <div class="copilot-a10-top">
               <div class="copilot-a10-decision">
-                <span class="copilot-a10-label">Decisao</span>
+                <span class="copilot-a10-label">A10 Risk Gate | apoio</span>
                 <strong>${colorizeA10Text(readout.decision)}</strong>
                 <p>${colorizeA10Text(readout.subtitle)}</p>
               </div>
@@ -19488,7 +19490,6 @@ function updateCoPilotBlock(data){
             </div>
 
             ${renderAaron10TrendHtml(readout.trend)}
-            ${renderAaron10ExecutionHtml(readout.execution)}
             ${renderAaron10PositionHtml(readout.position)}
 
             <div class="copilot-a10-grid">
@@ -19502,7 +19503,7 @@ function updateCoPilotBlock(data){
             </div>
 
             <div class="copilot-a10-lists">
-              ${renderAaron10List("Bloqueios / Alertas", readout.alerts, "Sem bloqueio duro agora.")}
+              ${renderAaron10List("Risk Gate / Alertas", readout.alerts, "Sem bloqueio duro agora.")}
               ${renderAaron10List("Pontos verdes", readout.greens, "Ainda faltam confirmacoes.")}
               ${renderAaron10List("Proxima acao", readout.management, "Aguardar novo candle.")}
             </div>
@@ -20333,6 +20334,7 @@ function updateCoPilotBlock(data){
 
       let score = 0;
       const blockers = [];
+      const riskBlocks = [];
       const cautions = [];
       const greens = [];
       const management = [];
@@ -20341,6 +20343,8 @@ function updateCoPilotBlock(data){
         score += points;
         greens.push(`${text} (+${points})`);
       };
+      const addHardBlocker = (text) => blockers.push(text);
+      const addRiskBlocker = (text) => riskBlocks.push(text);
       const earlyMomentumMode =
         clockMinute !== null &&
         clockMinute >= ((7 * 60) + 30) &&
@@ -20378,14 +20382,14 @@ function updateCoPilotBlock(data){
           cautions.push("V43 WAIT_RESPIRO: setup vivo, mas a ordem correta agora e esperar o respiro.");
           management.unshift(lateExecution.subtitle);
         } else if (lateExecution.dead) {
-          blockers.push(`V43 ${lateExecution.status}: ${lateExecution.subtitle}`);
+          addHardBlocker(`V43 ${lateExecution.status}: ${lateExecution.subtitle}`);
         } else {
           greens.push(`V43 ${lateExecution.status || "LIVE"}: matcher ainda mantem estado de execucao ativo.`);
         }
       }
 
       if (windowInfo.blocked) {
-        blockers.push(`${windowInfo.name}: ${windowInfo.detail}`);
+        addHardBlocker(`${windowInfo.name}: ${windowInfo.detail}`);
       } else if (windowInfo.openDrive) {
         const openDriveClassicAllowed =
           emaPct !== null && emaPct >= 60 && emaPct < 75 &&
@@ -20402,7 +20406,7 @@ function updateCoPilotBlock(data){
           (emaPct < 85 || (emaPct < 90 && earlyMomentumStrongConfirm));
 
         if (!openDriveClassicAllowed && !openDriveEarlyMomentumAllowed) {
-          blockers.push("OPEN DRIVE exige Cont=SIM, Volume <80% e EMA <85% ou EMA 85-90% com T1/T2 expandindo.");
+          addRiskBlocker("OPEN DRIVE sem filtro ideal: tratar como risco alto, nao como bloqueio automatico.");
         } else if (openDriveEarlyMomentumAllowed && !openDriveClassicAllowed) {
           cautions.push("OPEN DRIVE em EARLY MOMENTUM: aprovado pelos dados 07:30-08:30, mas com tamanho reduzido.");
         } else {
@@ -20434,20 +20438,20 @@ function updateCoPilotBlock(data){
 
       if (emaPct !== null) {
         if (emaPct >= 90) {
-          blockers.push(`EMA ${fmtPctA10(emaPct)} >=90%: overextended mesmo no EARLY MOMENTUM.`);
+          addRiskBlocker(`EMA ${fmtPctA10(emaPct)} >=90%: overextended, so permitir se V43/tendencia compensar com tamanho minimo.`);
         } else if (emaPct >= 85) {
           if (earlyMomentumStrongConfirm) {
             cautions.push(`EARLY MOMENTUM: EMA ${fmtPctA10(emaPct)} 85-90% liberado so porque Cont=SIM e ${trendState.targetLabel || "T1/T2"} expande; reduzir tamanho.`);
           } else if (earlyMomentumMode) {
-            blockers.push(`EMA ${fmtPctA10(emaPct)} 85-90%: precisa Cont=SIM + T1/T2 expandindo para liberar na abertura.`);
+            addRiskBlocker(`EMA ${fmtPctA10(emaPct)} 85-90%: precisa Cont=SIM + T1/T2 expandindo para liberar na abertura.`);
           } else {
-            blockers.push(`EMA ${fmtPctA10(emaPct)} >=80%: overextended.`);
+            addRiskBlocker(`EMA ${fmtPctA10(emaPct)} >=80%: overextended, reduzir ou aguardar respiro.`);
           }
         } else if (emaPct >= 80) {
           if (earlyMomentumMode) {
             cautions.push(`EARLY MOMENTUM: EMA ${fmtPctA10(emaPct)} 80-85% nao bloqueia; entra menor.`);
           } else {
-            blockers.push(`EMA ${fmtPctA10(emaPct)} >=80%: overextended.`);
+            addRiskBlocker(`EMA ${fmtPctA10(emaPct)} >=80%: overextended, reduzir ou aguardar respiro.`);
           }
         } else if (emaPct >= 75) {
           cautions.push(`EMA ${fmtPctA10(emaPct)} em cautela 75-80%: reduzir 50%.`);
@@ -20463,7 +20467,7 @@ function updateCoPilotBlock(data){
           emaAvoidSoftened = true;
           cautions.push("EMA Avoid=True suavizado pelo EARLY MOMENTUM: so menor e enquanto T1/T2 expandir.");
         } else {
-          blockers.push("EMA Avoid=True: o matcher mandou nao entrar.");
+          addRiskBlocker("EMA Avoid=True: alerta forte do matcher, reduzir/agredir so com V43 ou tendencia 5+.");
         }
       }
       if (emaAvoid === false) greens.push("EMA Avoid=False.");
@@ -20475,7 +20479,7 @@ function updateCoPilotBlock(data){
             score -= 1;
             cautions.push(`EMA direction contra suavizado no EARLY MOMENTUM: sinal ${sideLabelA10(side)}, EMA ${sideLabelA10(emaDir)} (-1).`);
           } else {
-            blockers.push(`EMA direction contra: sinal ${sideLabelA10(side)}, EMA ${sideLabelA10(emaDir)}.`);
+            addRiskBlocker(`EMA direction contra: sinal ${sideLabelA10(side)}, EMA ${sideLabelA10(emaDir)}.`);
           }
         } else {
           addScore(2, `EMA direction alinhado ${sideLabelA10(side)}`);
@@ -20527,26 +20531,26 @@ function updateCoPilotBlock(data){
         if (side === "short") cautions.push("SHORT com Continuacao=NAO: reduzir 50%.");
       }
 
-      if (isConsolidating) blockers.push("Top Consolidacao=YES: mercado lateral.");
+      if (isConsolidating) addHardBlocker("Top Consolidacao=YES: mercado lateral.");
       if (hasNoConsolidation) greens.push("Top Consolidacao=NO.");
 
-      if (isReversal) blockers.push("Top Reversao=YES: nao brigar com reversao.");
+      if (isReversal) addHardBlocker("Top Reversao=YES: nao brigar com reversao.");
       if (hasNoReversal) greens.push("Top Reversao=NO.");
 
       if (rsi !== null) {
         const rsiText = `RSI ${rsi.toFixed(1)}`;
         if (side === "long") {
-          if (rsi < 30 || rsi > 75) blockers.push(`${rsiText}: extremo para LONG.`);
+          if (rsi < 30 || rsi > 75) addRiskBlocker(`${rsiText}: extremo para LONG.`);
           else if (rsi >= 50 && rsi <= 65) addScore(1, `${rsiText} na zona ideal LONG`);
           else if (rsi >= 40 && rsi <= 70) addScore(1, `${rsiText} na zona saudavel`);
           else cautions.push(`${rsiText}: fora da zona ideal LONG.`);
         } else if (side === "short") {
-          if (rsi < 30 || rsi > 70) blockers.push(`${rsiText}: extremo para SHORT.`);
+          if (rsi < 30 || rsi > 70) addRiskBlocker(`${rsiText}: extremo para SHORT.`);
           else if (rsi >= 35 && rsi <= 55) addScore(1, `${rsiText} na zona ideal SHORT`);
           else if (rsi >= 40 && rsi <= 70) addScore(1, `${rsiText} na zona saudavel`);
           else cautions.push(`${rsiText}: fora da zona ideal SHORT.`);
         } else {
-          if (rsi < 30 || rsi > 75) blockers.push(`${rsiText}: extremo.`);
+          if (rsi < 30 || rsi > 75) addRiskBlocker(`${rsiText}: extremo.`);
           else if (rsi >= 40 && rsi <= 70) addScore(1, `${rsiText} na zona saudavel`);
         }
       }
@@ -20850,14 +20854,18 @@ function updateCoPilotBlock(data){
       if (windowInfo.openDrive) mult *= 0.50;
       if (windowInfo.openDrive && side === "short") mult *= 0.50;
       if (emaPct !== null) {
-        if (emaPct >= 75 && emaPct < 80) mult *= 0.50;
-        else if (earlyMomentumMode && emaPct >= 80 && emaPct < 85) mult *= 0.50;
-        else if (earlyMomentumStrongConfirm && emaPct >= 85 && emaPct < 90) mult *= 0.50;
+        if (emaPct >= 90) mult = Math.min(mult, 0.25);
+        else if (emaPct >= 85) mult = Math.min(mult, earlyMomentumStrongConfirm ? 0.50 : 0.25);
+        else if (emaPct >= 80) mult = Math.min(mult, 0.50);
+        else if (emaPct >= 75) mult = Math.min(mult, 0.50);
       }
       if (volPct !== null && volPct >= 80) mult *= 0.50;
       else if (volPct !== null && volPct >= 75) mult *= 0.75;
       if (contNo && side === "short") mult *= 0.50;
       if (nextKind.includes("exhaustion")) mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
+      if (rsiExtreme) mult = Math.min(mult, 0.25);
+      if (emaAvoid === true && !earlyMomentumStrongConfirm) mult = Math.min(mult, 0.50);
+      if (side && emaDir && side !== emaDir && !earlyMomentumStrongConfirm) mult = Math.min(mult, 0.50);
       if (volumeAgainst) mult = Math.min(mult, 0.50);
       if (emaAvoidSoftened) mult = Math.min(mult, 0.50);
       if (emaDirectionSoftened) mult = Math.min(mult, 0.50);
@@ -20879,12 +20887,21 @@ function updateCoPilotBlock(data){
         badgeClass = "copilot-exit";
         mult = 0;
       } else if (blockers.length) {
-        decision = "NAO ENTRA";
-        subtitle = "Existe bloqueio -999 ativo pela Regra Mestre A10.";
+        decision = "BLOQUEIO DURO";
+        subtitle = blockers[0] || "Existe bloqueio duro ativo pela Regra Mestre A10.";
         toneClass = "is-block";
         badgeText = "BLOCK";
         badgeClass = "copilot-block";
         mult = 0;
+      } else if (trendState?.hasTarget && trendState.streak >= 5 && side) {
+        const trendSizePct = Math.max(25, Math.round(mult * 100));
+        decision = mult >= 1 ? "ENTRA 100%" : `ENTRA ${trendSizePct}%`;
+        subtitle = riskBlocks.length
+          ? `Tendencia 5+ segue como plano principal; Risk Gate ajusta tamanho por alerta: ${riskBlocks[0]}`
+          : "Tendencia ativa 5+: maxima confianca, T2 como plano principal.";
+        toneClass = mult >= 1 ? "is-enter" : "is-half";
+        badgeText = sideLabelA10(side);
+        badgeClass = side === "short" ? "copilot-short" : side === "long" ? "copilot-long" : "copilot-wait";
       } else if (score >= 7) {
         if (trendState?.hasTarget && trendState.streak >= 5 && mult >= 1) {
           decision = "ENTRA 100%";
@@ -20955,7 +20972,7 @@ function updateCoPilotBlock(data){
         lateExecution?.active &&
         !activeTrade &&
         !forceExit &&
-        !windowInfo.blocked;
+        !blockers.length;
 
       if (lateCanOverride) {
         if (lateExecution.immediateMarket) {
@@ -20996,12 +21013,13 @@ function updateCoPilotBlock(data){
           ? `${Math.round(mult * 100)}% | $${Math.round(capital).toLocaleString("en-US")}${shares !== null ? ` | ${shares} sh` : ""}`
           : lateExecution?.waitRespiro ? "0% | aguardando respiro" : "0% | bloqueado";
 
-      const alerts = [...blockers, ...cautions];
+      const alerts = [...blockers, ...riskBlocks, ...cautions];
       const scoreLabel =
         activeTrade && positionManagement?.visible ? "LIVE" :
         lateExecution?.active && !forceExit ? "V43" :
         forceExit ? "EXIT" :
         blockers.length ? "BLOCK" :
+        riskBlocks.length ? "RISK" :
         String(score);
 
       try{
@@ -21026,8 +21044,8 @@ function updateCoPilotBlock(data){
       }catch(_e){}
 
       return {
-        title: "🔬 AARON 10 — O QUE ESTA ACONTECENDO",
-        heroTitle: "AARON 10 — LEITURA DO MERCADO",
+        title: "🔬 AARON 10 — RISK GATE",
+        heroTitle: "AARON 10 — RISK GATE / LEITURA DO MERCADO",
         decision,
         subtitle,
         scoreLabel,
@@ -21035,6 +21053,8 @@ function updateCoPilotBlock(data){
         badgeText,
         badgeClass,
         alerts,
+        hardBlockers: blockers,
+        riskBlocks,
         greens,
         management,
         trend: trendState,
@@ -21112,6 +21132,16 @@ function updateCoPilotBlock(data){
     };
 
     const aaron10Readout = buildAaron10Readout();
+    try {
+      window.__AARON10_RISK_GATE__ = aaron10Readout ? {
+        hard_blocked: Array.isArray(aaron10Readout.hardBlockers) && aaron10Readout.hardBlockers.length > 0,
+        hardBlockers: aaron10Readout.hardBlockers || [],
+        riskBlocks: aaron10Readout.riskBlocks || [],
+        decision: aaron10Readout.decision || "",
+        badgeText: aaron10Readout.badgeText || "",
+        scoreLabel: aaron10Readout.scoreLabel || ""
+      } : null;
+    } catch (_e) {}
     const claudeText = pickFirstText(
       panel.claude_text,
       data.claude_text,
@@ -28555,6 +28585,16 @@ const tcOperatorTape = {
 const tcOperatorMemoryPrev =
   (typeof window !== "undefined" && window.__AARON_OPERATOR_MEMORY_V2__) ||
   { key: "", stable_ticks: 0 };
+const tcA10RiskGate =
+  (typeof window !== "undefined" && window.__AARON10_RISK_GATE__) ||
+  {};
+const tcA10HardBlocked =
+  tcA10RiskGate?.hard_blocked === true ||
+  String(tcA10RiskGate?.badgeText || "").toUpperCase() === "BLOCK";
+const tcA10HardReason =
+  Array.isArray(tcA10RiskGate?.hardBlockers) && tcA10RiskGate.hardBlockers.length
+    ? String(tcA10RiskGate.hardBlockers[0])
+    : "A10 Risk Gate marcou bloqueio duro.";
 
 const tcOperatorFmtR = (v) => v != null && Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)}R` : "—";
 const tcOperatorLiveLine = () => {
@@ -28590,6 +28630,16 @@ const tcBuildOperatorDecisionV1 = () => {
       mode: tcPositionAction.mode,
       next: `Manejo vem antes de qualquer nova entrada. ${tcOperatorLiveLine()}`,
       reason: "position_management"
+    });
+  }
+
+  if (tcA10HardBlocked) {
+    return withBase({
+      main: "BLOQUEIO DURO A10",
+      sub: `Risk Gate bloqueou nova entrada: ${tcA10HardReason}`,
+      mode: "is-no-trade",
+      next: "Nao abrir trade novo enquanto o bloqueio duro estiver ativo. Esperar V43 novo ou liberar Risk Gate.",
+      reason: "a10_hard_block"
     });
   }
 
