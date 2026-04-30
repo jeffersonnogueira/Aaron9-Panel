@@ -4269,6 +4269,124 @@
   overflow-wrap: anywhere;
 }
 
+#copilot-block .copilot-a10-position{
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(280px, .62fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(96,165,250,.34);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(96,165,250,.18), transparent 34%),
+    linear-gradient(180deg, rgba(15,35,58,.88) 0%, rgba(5,12,22,.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 0 1px rgba(96,165,250,.06);
+}
+
+#copilot-block .copilot-a10-position.is-hold{
+  border-color: rgba(34,197,94,.52);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(34,197,94,.20), transparent 34%),
+    linear-gradient(180deg, rgba(7,42,31,.88) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-position.is-protect,
+#copilot-block .copilot-a10-position.is-no-flip{
+  border-color: rgba(250,204,21,.46);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(250,204,21,.18), transparent 34%),
+    linear-gradient(180deg, rgba(47,38,12,.88) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-position.is-exit{
+  border-color: rgba(248,113,113,.48);
+  background:
+    radial-gradient(circle at 94% 0%, rgba(248,113,113,.18), transparent 34%),
+    linear-gradient(180deg, rgba(49,16,21,.88) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-position-head{
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+}
+
+#copilot-block .copilot-a10-position-k{
+  font-size: 17px;
+  line-height: 1.12;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.72);
+}
+
+#copilot-block .copilot-a10-position-v{
+  font-size: 40px;
+  line-height: 1.02;
+  font-weight: 950;
+  color: #93c5fd;
+  overflow-wrap: anywhere;
+}
+
+#copilot-block .copilot-a10-position.is-hold .copilot-a10-position-v{
+  color: #86efac;
+}
+
+#copilot-block .copilot-a10-position.is-protect .copilot-a10-position-v,
+#copilot-block .copilot-a10-position.is-no-flip .copilot-a10-position-v{
+  color: #fde68a;
+}
+
+#copilot-block .copilot-a10-position.is-exit .copilot-a10-position-v{
+  color: #fca5a5;
+}
+
+#copilot-block .copilot-a10-position-sub{
+  font-size: 21px;
+  line-height: 1.26;
+  font-weight: 820;
+  color: #dbeafe;
+  overflow-wrap: anywhere;
+}
+
+#copilot-block .copilot-a10-position-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#copilot-block .copilot-a10-position-cell{
+  min-width: 0;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: rgba(2,6,23,.24);
+}
+
+#copilot-block .copilot-a10-position-cell span{
+  display: block;
+  font-size: 14px;
+  line-height: 1.12;
+  font-weight: 950;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.70);
+}
+
+#copilot-block .copilot-a10-position-cell strong{
+  display: block;
+  margin-top: 6px;
+  font-size: 24px;
+  line-height: 1.06;
+  font-weight: 950;
+  color: #f8fafc;
+  overflow-wrap: anywhere;
+}
+
 #copilot-block .copilot-a10-grid{
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -5137,6 +5255,7 @@
   #copilot-block .copilot-a10-top,
   #copilot-block .copilot-a10-trend,
   #copilot-block .copilot-a10-exec,
+  #copilot-block .copilot-a10-position,
   #copilot-block .copilot-a10-grid,
   #copilot-block .copilot-a10-lists,
   #copilot-block .copilot-a10-rules-grid{
@@ -5171,7 +5290,15 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  #copilot-block .copilot-a10-position-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   #copilot-block .copilot-a10-exec-v{
+    font-size: 32px;
+  }
+
+  #copilot-block .copilot-a10-position-v{
     font-size: 32px;
   }
 
@@ -19132,16 +19259,16 @@ function updateCoPilotBlock(data){
     const a10HighlightClass = (token = "") => {
       const t = String(token || "").toUpperCase();
 
-      if (/NAO ENTRA|NÃO ENTRA|SAIR AGORA|DEIXA PASSAR|MORTO|INVALIDATED|TOO LATE|TOO_LATE|BLOQUE|BLOCK|EXIT|EXHAUSTION|AVOID|TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|RSI EXTREMO|FORA DO RTH/.test(t)) {
+      if (/NAO ENTRA|NÃO ENTRA|SAIR AGORA|SAIR DA POSICAO|SAIR DO TRADE|DEIXA PASSAR|MORTO|INVALIDATED|TOO LATE|TOO_LATE|BLOQUE|BLOCK|EXIT|EXHAUSTION|AVOID|TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|RSI EXTREMO|FORA DO RTH/.test(t)) {
         return "is-danger";
       }
 
       if (/SHORT|VENDA|BAIXA/.test(t)) return "is-short";
-      if (/LONG|COMPRA|ALTA|SIM|YES|TREND|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|ENTRA AGORA|MISSED_VALID_MARKET|SETUP VIVO|ENTRA 100%|ENTRA FORTE|JANELA OURO|GOLD SPOT|PONTOS VERDES|MAXIMA CONFIANCA/.test(t)) {
+      if (/LONG|COMPRA|ALTA|SIM|YES|TREND|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|SEGURA T2|CONTINUA|MANTEM|MANTÉM|ENTRA AGORA|MISSED_VALID_MARKET|SETUP VIVO|ENTRA 100%|ENTRA FORTE|JANELA OURO|GOLD SPOT|PONTOS VERDES|MAXIMA CONFIANCA/.test(t)) {
         return "is-long";
       }
 
-      if (/WAIT|WAIT_RESPIRO|ESPERA RESPIRO|AGUARDAR|AGUARDANDO|NAO|NÃO|NO|CHOP|OPEN DRIVE|JANELA MODERADA|JANELA FRACA|TENDENCIA 1|ENTRA 75%|ENTRA 50%|ENTRA MENOR|MISSED_VALID_REDUCED|T1|T2|RESPIRO/.test(t)) {
+      if (/WAIT|WAIT_RESPIRO|ESPERA RESPIRO|PROTEGER|NAO INVERTE|NÃO INVERTE|APERTE|AGUARDAR|AGUARDANDO|NAO|NÃO|NO|CHOP|OPEN DRIVE|JANELA MODERADA|JANELA FRACA|TENDENCIA 1|ENTRA 75%|ENTRA 50%|ENTRA MENOR|MISSED_VALID_REDUCED|T1|T2|RESPIRO/.test(t)) {
         return "is-wait";
       }
 
@@ -19150,7 +19277,7 @@ function updateCoPilotBlock(data){
 
     const colorizeA10Text = (value = "") => {
       const html = escapeHtml(value);
-      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|MAXIMA CONFIANCA|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|TENDENCIA 1|TENDENCIA NEUTRA|MISSED_VALID_MARKET|MISSED_VALID_REDUCED|WAIT_RESPIRO|TOO_LATE|INVALIDATED|SETUP VIVO|ENTRA AGORA|DEIXA PASSAR|ESPERA RESPIRO|ENTRA REDUZIDO|ENTRA 100%|ENTRA 75%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|EARLY MOMENTUM|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|V43|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
+      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|MAXIMA CONFIANCA|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|TENDENCIA 1|TENDENCIA NEUTRA|MISSED_VALID_MARKET|MISSED_VALID_REDUCED|WAIT_RESPIRO|TOO_LATE|INVALIDATED|SETUP VIVO|ENTRA AGORA|DEIXA PASSAR|ESPERA RESPIRO|SAIR DA POSICAO|SAIR DO TRADE|SEGURA T2|PROTEGER|NAO INVERTE|NÃO INVERTE|CONTINUA|MANTEM|MANTÉM|ENTRA REDUZIDO|ENTRA 100%|ENTRA 75%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|EARLY MOMENTUM|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|V43|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
 
       return html.replace(tokenRegex, (_full, prefix, match) =>
         `${prefix}<em class="copilot-a10-hl ${a10HighlightClass(match)}">${match}</em>`
@@ -19225,6 +19352,30 @@ function updateCoPilotBlock(data){
       `;
     };
 
+    const renderAaron10PositionHtml = (position) => {
+      if (!position?.visible) return "";
+
+      const rows = (position.rows || []).filter(Boolean).slice(0, 8);
+
+      return `
+        <div class="copilot-a10-position ${escapeHtml(position.className || "is-watch")}">
+          <div class="copilot-a10-position-head">
+            <div class="copilot-a10-position-k">Posicao Ativa</div>
+            <div class="copilot-a10-position-v">${colorizeA10Text(position.title || "MONITORAR")}</div>
+            <div class="copilot-a10-position-sub">${colorizeA10Text(position.subtitle || "Aguardando leitura da posicao.")}</div>
+          </div>
+          <div class="copilot-a10-position-grid">
+            ${rows.map(row => `
+              <div class="copilot-a10-position-cell">
+                <span>${escapeHtml(row.label || "—")}</span>
+                <strong>${colorizeA10Text(row.value || "—")}</strong>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    };
+
     const renderAaron10SectionHtml = (readout) => {
       if (!readout) return "";
 
@@ -19248,6 +19399,7 @@ function updateCoPilotBlock(data){
 
             ${renderAaron10TrendHtml(readout.trend)}
             ${renderAaron10ExecutionHtml(readout.execution)}
+            ${renderAaron10PositionHtml(readout.position)}
 
             <div class="copilot-a10-grid">
               ${readout.metrics.map(metric => `
@@ -20378,7 +20530,25 @@ function updateCoPilotBlock(data){
         now?.low
       ));
 
-      const activeTrade = boolA10(pickFirstValue(
+      const a10RuntimeScope = (typeof window !== "undefined") ? window : globalThis;
+      const previousA10Entry = a10RuntimeScope.__AARON10_LAST_ENTRY__ || {};
+      const positionQty = toNum(pickFirstValue(
+        panel?.position_qty,
+        digest?.position_qty,
+        ui?.position_qty,
+        root?.position_qty,
+        panel?.qty,
+        digest?.qty,
+        root?.qty,
+        panel?.active_trade?.qty,
+        digest?.active_trade?.qty,
+        root?.active_trade?.qty,
+        panel?.trade_ativo?.qty,
+        digest?.trade_ativo?.qty,
+        root?.trade_ativo?.qty
+      ));
+
+      const activeTrade = [
         panel?.trade_active,
         digest?.trade_active,
         root?.trade_active,
@@ -20388,15 +20558,61 @@ function updateCoPilotBlock(data){
         panel?.already_entered,
         digest?.already_entered,
         root?.already_entered
-      )) === true;
+      ].some(v => boolA10(v) === true) || (positionQty !== null && positionQty !== 0);
+
+      const positionSide = normSideA10(pickFirstValue(
+        canonicalRead?.position_side,
+        canonicalRead?.active_position_side,
+        canonicalRead?.entry_side,
+        panel?.position_side,
+        digest?.position_side,
+        ui?.position_side,
+        root?.position_side,
+        panel?.active_position_side,
+        digest?.active_position_side,
+        root?.active_position_side,
+        panel?.trade_active_side,
+        digest?.trade_active_side,
+        root?.trade_active_side,
+        panel?.in_position_side,
+        digest?.in_position_side,
+        root?.in_position_side,
+        panel?.entry_side,
+        digest?.entry_side,
+        ui?.entry_side,
+        root?.entry_side,
+        panel?.entered_side,
+        digest?.entered_side,
+        root?.entered_side,
+        panel?.active_trade?.side,
+        digest?.active_trade?.side,
+        root?.active_trade?.side,
+        panel?.trade_ativo?.side,
+        digest?.trade_ativo?.side,
+        root?.trade_ativo?.side,
+        previousA10Entry?.side
+      )) || (activeTrade ? (previousA10Entry?.side || side) : "");
+
+      const positionEntryMode = String(pickFirstValue(
+        canonicalRead?.position_entry_mode,
+        canonicalRead?.entry_mode,
+        panel?.position_entry_mode,
+        digest?.position_entry_mode,
+        root?.position_entry_mode,
+        panel?.active_trade?.entry_mode,
+        digest?.active_trade?.entry_mode,
+        root?.active_trade?.entry_mode,
+        previousA10Entry?.decision,
+        lateExecution?.status
+      ) || "").trim();
 
       let forceExit = false;
       let movementAgainst = null;
       let breathThreshold = null;
 
-      if (activeTrade && side && entryPrice !== null) {
-        if (side === "long" && candleLow !== null) movementAgainst = entryPrice - candleLow;
-        if (side === "short" && candleHigh !== null) movementAgainst = candleHigh - entryPrice;
+      if (activeTrade && positionSide && entryPrice !== null) {
+        if (positionSide === "long" && candleLow !== null) movementAgainst = entryPrice - candleLow;
+        if (positionSide === "short" && candleHigh !== null) movementAgainst = candleHigh - entryPrice;
 
         const stopDistance = stopPrice !== null ? Math.abs(entryPrice - stopPrice) : null;
         breathThreshold = Math.max(0.08, stopDistance !== null ? stopDistance * 0.50 : 0.08);
@@ -20409,6 +20625,117 @@ function updateCoPilotBlock(data){
         }
       } else {
         management.push("Sem trade ativo detectado: se entrar, defesa fica em $0.08 ou 50% do stop.");
+      }
+
+      const buildPositionManagement = () => {
+        if (!activeTrade) return { visible: false };
+
+        const signalSide = side || "";
+        const flipped = !!(positionSide && signalSide && positionSide !== signalSide);
+        const sameSide = !!(positionSide && signalSide && positionSide === signalSide);
+        const trendLabel = trendState?.streak >= 5
+          ? "5+ MAX"
+          : trendState?.streak >= 2
+            ? `${trendState.streak} T2`
+            : String(trendState?.streak ?? 0);
+        const breathText = movementAgainst !== null && breathThreshold !== null
+          ? `${fmtMoneyA10(movementAgainst)} / ${fmtMoneyA10(breathThreshold)}`
+          : "—";
+        const currentTarget = currentT2 !== null ? currentT2 : currentT1;
+        const currentTargetLabel = currentT2 !== null ? "T2" : "T1";
+
+        let title = "MONITORAR";
+        let subtitle = "Posicao aberta; aguardando leitura clara do proximo candle.";
+        let className = "is-watch";
+        let shouldExit = false;
+        let shouldNotFlip = false;
+        let shouldHoldT2 = false;
+        let shouldProtect = false;
+
+        if (forceExit) {
+          title = "SAIR AGORA";
+          subtitle = `Respiro contra bateu ${breathText}. Regra de defesa manda sair sem esperar stop.`;
+          className = "is-exit";
+          shouldExit = true;
+        } else if (isConsolidating) {
+          title = "SAIR DA POSICAO";
+          subtitle = "Top Consolidacao=YES apareceu com posicao aberta. Mercado perdeu direcionalidade; sair ou proteger imediatamente.";
+          className = "is-exit";
+          shouldExit = true;
+        } else if (isReversal) {
+          title = "SAIR DA POSICAO";
+          subtitle = "Top Reversao=YES apareceu. Nao briga com reversao quando ja esta dentro.";
+          className = "is-exit";
+          shouldExit = true;
+        } else if (nextIsExhaustion) {
+          title = "SAIR DA POSICAO";
+          subtitle = "EMA next=EXHAUSTION: motor acabou. Fechar ou proteger sem tentar T2.";
+          className = "is-exit";
+          shouldExit = true;
+        } else if (flipped && contYes) {
+          title = "SAIR DA POSICAO";
+          subtitle = `Sinal virou para ${sideLabelA10(signalSide)} com Continuacao=SIM. Sai do ${sideLabelA10(positionSide)}; nova entrada so depois do gatilho do lado novo.`;
+          className = "is-exit";
+          shouldExit = true;
+        } else if (flipped) {
+          title = "NAO INVERTE";
+          subtitle = `Sinal virou para ${sideLabelA10(signalSide)}, mas Continuacao=${contYes ? "SIM" : contNo ? "NAO" : "—"}. Protege ou sai do ${sideLabelA10(positionSide)}, mas nao vira a mao ainda.`;
+          className = "is-no-flip";
+          shouldNotFlip = true;
+          shouldProtect = true;
+        } else if (sameSide && contYes && trendState?.streak >= 2) {
+          title = "SEGURA T2";
+          subtitle = `Mesmo lado ${sideLabelA10(positionSide)} + Continuacao=SIM + tendencia ${trendLabel}. Mantem enquanto ${trendState.targetLabel || currentTargetLabel} expandir.`;
+          className = "is-hold";
+          shouldHoldT2 = true;
+        } else if (sameSide && contYes) {
+          title = "CONTINUA";
+          subtitle = `Mesmo lado ${sideLabelA10(positionSide)} com Continuacao=SIM. Fica no trade, mas confirma ${currentTargetLabel} no proximo candle.`;
+          className = "is-hold";
+        } else if (sameSide && contNo) {
+          title = "PROTEGER";
+          subtitle = `Mesmo lado, mas Continuacao=NAO. Nao casa com T2: mirar T1, apertar defesa ou sair se ${currentTargetLabel} parar.`;
+          className = "is-protect";
+          shouldProtect = true;
+        } else if (!signalSide) {
+          title = "PROTEGER";
+          subtitle = "Sem sinal LONG/SHORT novo. Mantem so se o alvo continuar expandindo; se travar, sai.";
+          className = "is-protect";
+          shouldProtect = true;
+        } else {
+          title = "MONITORAR";
+          subtitle = "Posicao aberta, mas sem conflito duro. Usar T1/T2 e respiro como guia.";
+          className = "is-watch";
+        }
+
+        return {
+          visible: true,
+          title,
+          subtitle,
+          className,
+          shouldExit,
+          shouldNotFlip,
+          shouldHoldT2,
+          shouldProtect,
+          flipped,
+          sameSide,
+          rows: [
+            { label: "Posicao", value: sideLabelA10(positionSide) },
+            { label: "Sinal", value: sideLabelA10(signalSide) },
+            { label: "Continua", value: contYes ? "SIM" : contNo ? "NAO" : "—" },
+            { label: "Trend", value: trendLabel },
+            { label: "Entrada", value: positionEntryMode ? positionEntryMode.replace(/_/g, " ") : "—" },
+            { label: "Preco", value: entryPrice !== null ? fmtMoneyA10(entryPrice) : "—" },
+            { label: "Respiro", value: breathText },
+            { label: currentTargetLabel, value: currentTarget !== null ? fmtMoneyA10(currentTarget) : "—" }
+          ]
+        };
+      };
+
+      const positionManagement = buildPositionManagement();
+
+      if (positionManagement?.visible) {
+        management.unshift(`Posicao ativa: ${positionManagement.title} — ${positionManagement.subtitle}`);
       }
 
       management.push("Candle +1: sair se consolidacao, exhaustion, EMA contra ou volume contra aparecer.");
@@ -20520,6 +20847,20 @@ function updateCoPilotBlock(data){
         mult = 0;
       }
 
+      if (activeTrade && positionManagement?.visible) {
+        decision = positionManagement.title;
+        subtitle = positionManagement.subtitle;
+        toneClass = positionManagement.shouldExit
+          ? "is-exit"
+          : positionManagement.shouldHoldT2
+            ? "is-enter"
+            : positionManagement.shouldProtect || positionManagement.shouldNotFlip
+              ? "is-half"
+              : "is-wait";
+        badgeText = sideLabelA10(positionSide);
+        badgeClass = positionSide === "short" ? "copilot-short" : positionSide === "long" ? "copilot-long" : "copilot-wait";
+      }
+
       const lateCanOverride =
         lateExecution?.active &&
         !activeTrade &&
@@ -20556,16 +20897,43 @@ function updateCoPilotBlock(data){
 
       const capital = 100000 * mult;
       const shares = sizingEntryPrice !== null && capital > 0 ? Math.floor(capital / sizingEntryPrice) : null;
-      const sizeDetail = capital > 0
-        ? `${Math.round(mult * 100)}% | $${Math.round(capital).toLocaleString("en-US")}${shares !== null ? ` | ${shares} sh` : ""}`
-        : lateExecution?.waitRespiro ? "0% | aguardando respiro" : "0% | bloqueado";
+      const activeQtyText = positionQty !== null && positionQty !== 0
+        ? `${Math.abs(positionQty).toLocaleString("en-US")} sh`
+        : "posicao aberta";
+      const sizeDetail = activeTrade
+        ? `${activeQtyText} | manejo ativo`
+        : capital > 0
+          ? `${Math.round(mult * 100)}% | $${Math.round(capital).toLocaleString("en-US")}${shares !== null ? ` | ${shares} sh` : ""}`
+          : lateExecution?.waitRespiro ? "0% | aguardando respiro" : "0% | bloqueado";
 
       const alerts = [...blockers, ...cautions];
       const scoreLabel =
+        activeTrade && positionManagement?.visible ? "LIVE" :
         lateExecution?.active && !forceExit ? "V43" :
         forceExit ? "EXIT" :
         blockers.length ? "BLOCK" :
         String(score);
+
+      try{
+        if (!activeTrade && /^ENTRA\b/i.test(String(decision || "")) && side) {
+          a10RuntimeScope.__AARON10_LAST_ENTRY__ = {
+            side,
+            decision,
+            entryPrice: sizingEntryPrice ?? currentPriceA10 ?? entryPrice,
+            entryMode: lateExecution?.status || decision,
+            updatedAt: updatedCandidate || clockMt || new Date().toISOString()
+          };
+        } else if (activeTrade && positionSide) {
+          a10RuntimeScope.__AARON10_LAST_ENTRY__ = {
+            ...(previousA10Entry || {}),
+            side: positionSide,
+            decision: previousA10Entry?.decision || positionEntryMode || "POSICAO ATIVA",
+            entryPrice: entryPrice ?? previousA10Entry?.entryPrice,
+            entryMode: positionEntryMode || previousA10Entry?.entryMode || "POSICAO ATIVA",
+            updatedAt: updatedCandidate || clockMt || new Date().toISOString()
+          };
+        }
+      }catch(_e){}
 
       return {
         title: "🔬 AARON 10 — O QUE ESTA ACONTECENDO",
@@ -20581,6 +20949,7 @@ function updateCoPilotBlock(data){
         management,
         trend: trendState,
         execution: lateExecution,
+        position: positionManagement,
         metrics: [
           {
             label: "Side",
@@ -20598,6 +20967,13 @@ function updateCoPilotBlock(data){
             detail: lateExecution?.visible
               ? `Status ${lateExecution.status || "—"} | Orig ${lateExecution.originalStatus || "—"}`
               : "Sem estado V43"
+          },
+          {
+            label: "Posicao",
+            value: positionManagement?.visible ? positionManagement.title : "—",
+            detail: positionManagement?.visible
+              ? `${sideLabelA10(positionSide)} aberto | sinal ${sideLabelA10(side)}`
+              : "Sem posicao ativa"
           },
           {
             label: "Horario",
@@ -20830,6 +21206,13 @@ const goldSpotRulesSection = {
     "- WAIT_RESPIRO: ESPERA RESPIRO, nao perseguir seco",
     "- TOO_LATE ou INVALIDATED: DEIXA PASSAR",
     "- Respiro pre-entry e oportunidade; respiro pos-entry e defesa",
+    "",
+    "🧭 POSIÇÃO ATIVA",
+    "- Mesmo lado + Continuacao=SIM + tendencia 2+: SEGURA T2",
+    "- Mesmo lado + Continuacao=NAO: PROTEGER, mirar T1",
+    "- Lado virou + Continuacao=SIM: SAIR DA POSICAO",
+    "- Lado virou + Continuacao=NAO: NAO INVERTE, protege ou sai",
+    "- Consolidação, reversão, exhaustion ou respiro contra: SAIR AGORA",
     "",
     "❌ BLOQUEIA SE",
     "- EMA >=80% fora do EARLY MOMENTUM",
@@ -27569,6 +27952,115 @@ const tcVolPct = tcPickNum(
       tcDirection = tcLateSide.toUpperCase();
     }
 
+    const tcPrevEntry = ((typeof window !== "undefined") ? window.__AARON10_LAST_ENTRY__ : null) || {};
+    const tcPositionQty = tcPickNum(
+      panel?.position_qty,
+      digest?.position_qty,
+      payload?.position_qty,
+      panel?.qty,
+      digest?.qty,
+      payload?.qty,
+      panel?.active_trade?.qty,
+      digest?.active_trade?.qty,
+      payload?.active_trade?.qty,
+      panel?.trade_ativo?.qty,
+      digest?.trade_ativo?.qty,
+      payload?.trade_ativo?.qty
+    );
+    const tcActivePosition = [
+      panel?.trade_active,
+      digest?.trade_active,
+      payload?.trade_active,
+      panel?.in_position,
+      digest?.in_position,
+      payload?.in_position,
+      panel?.already_entered,
+      digest?.already_entered,
+      payload?.already_entered
+    ].some(v => tcBool(v) === true) || (tcPositionQty != null && tcPositionQty !== 0);
+    const tcPositionSide = tcNormSide(
+      tcCanonicalRead?.position_side ||
+      tcCanonicalRead?.active_position_side ||
+      tcCanonicalRead?.entry_side ||
+      panel?.position_side ||
+      digest?.position_side ||
+      payload?.position_side ||
+      panel?.active_position_side ||
+      digest?.active_position_side ||
+      payload?.active_position_side ||
+      panel?.trade_active_side ||
+      digest?.trade_active_side ||
+      payload?.trade_active_side ||
+      panel?.in_position_side ||
+      digest?.in_position_side ||
+      payload?.in_position_side ||
+      panel?.entry_side ||
+      digest?.entry_side ||
+      payload?.entry_side ||
+      panel?.active_trade?.side ||
+      digest?.active_trade?.side ||
+      payload?.active_trade?.side ||
+      panel?.trade_ativo?.side ||
+      digest?.trade_ativo?.side ||
+      payload?.trade_ativo?.side ||
+      tcPrevEntry?.side
+    );
+    const tcSignalSide = tcNormSide(tcDirection);
+    const tcContRaw =
+      tcCanonicalRead?.continuacao_ativa ??
+      tcCanonicalRead?.continuacao ??
+      tcCanonicalRead?.continuation ??
+      panel?.continuacao_ui ??
+      digest?.continuacao_ui ??
+      payload?.continuacao_ui ??
+      panel?.continuation_ui ??
+      digest?.continuation_ui ??
+      payload?.continuation_ui;
+    const tcContYes = tcBool(tcContRaw) === true;
+    const tcContNo = tcBool(tcContRaw) === false;
+    const tcIsConsolidating = tcBool(panel?.top_consolidacao_ui ?? digest?.top_consolidacao_ui ?? payload?.top_consolidacao_ui) === true;
+    const tcIsReversal = tcBool(panel?.top_reversao_ui ?? digest?.top_reversao_ui ?? payload?.top_reversao_ui) === true;
+    const tcNextKind = String(
+      tcCanonicalRead?.ema_exhaustion_next_impulse_kind ||
+      panel?.ema_exhaustion_next_impulse_kind ||
+      digest?.ema_exhaustion_next_impulse_kind ||
+      payload?.ema_exhaustion_next_impulse_kind ||
+      tcEmaBlock?.ema_exhaustion_next_impulse_kind ||
+      tcEmaBlock?.next_impulse_kind ||
+      tcEmaBlock?.next_kind ||
+      ""
+    ).trim().toLowerCase();
+    const tcPositionFlipped = !!(tcActivePosition && tcPositionSide && tcSignalSide && tcPositionSide !== tcSignalSide);
+    const tcPositionSameSide = !!(tcActivePosition && tcPositionSide && tcSignalSide && tcPositionSide === tcSignalSide);
+    const tcPositionAction = (() => {
+      if (!tcActivePosition) return null;
+      const pos = tcPositionSide ? tcPositionSide.toUpperCase() : "POS";
+      const sig = tcSignalSide ? tcSignalSide.toUpperCase() : "WAIT";
+
+      if (tcIsConsolidating) {
+        return { main: "SAIR DA POSIÇÃO", sub: "Posição aberta + Top Consolidação=YES. Mercado sem direcionalidade; sair ou proteger agora.", mode: "is-no-trade", zone: "POS EXIT", displayDirection: pos };
+      }
+      if (tcIsReversal) {
+        return { main: "SAIR DA POSIÇÃO", sub: "Posição aberta + Top Reversão=YES. Não brigar com reversão.", mode: "is-no-trade", zone: "POS EXIT", displayDirection: pos };
+      }
+      if (tcNextKind.includes("exhaustion")) {
+        return { main: "SAIR DA POSIÇÃO", sub: "Posição aberta + EMA next=exhaustion. Motor acabou; não tentar T2.", mode: "is-no-trade", zone: "POS EXIT", displayDirection: pos };
+      }
+      if (tcPositionFlipped && tcContYes) {
+        return { main: "SAIR DA POSIÇÃO", sub: `Sinal virou ${sig} com Continuação=SIM. Sai do ${pos}; nova entrada só depois do gatilho novo.`, mode: "is-no-trade", zone: "POS FLIP", displayDirection: pos };
+      }
+      if (tcPositionFlipped) {
+        return { main: "NÃO INVERTE", sub: `Sinal virou ${sig}, mas Continuação=${tcContYes ? "SIM" : tcContNo ? "NAO" : "—"}. Protege ou sai do ${pos}; não vira a mão ainda.`, mode: "is-wait", zone: "POS NO FLIP", displayDirection: `${pos}/${sig}` };
+      }
+      if (tcPositionSameSide && tcContYes) {
+        return { main: "SEGURA T2", sub: `Posição ${pos} continua do mesmo lado com Continuação=SIM. Mantém enquanto T1/T2 expandir.`, mode: "is-good", zone: "POS HOLD", displayDirection: pos };
+      }
+      if (tcPositionSameSide && tcContNo) {
+        return { main: "PROTEGER", sub: `Posição ${pos} ainda está no mesmo lado, mas Continuação=NAO. Mirar T1 ou apertar defesa.`, mode: "is-acceptable", zone: "POS PROTECT", displayDirection: pos };
+      }
+      return { main: "MONITORAR POSIÇÃO", sub: "Posição aberta. Aguardar sinal claro; sem Continuação=SIM, não inverter.", mode: "is-wait", zone: "POS LIVE", displayDirection: pos };
+    })();
+
     const tcQualityLabel = (() => {
       if (tcSpread == null) return "—";
       if (tcSpread <= 0.20) return "🔥 PERFECT";
@@ -27790,11 +28282,20 @@ if (tcLateActive) {
   else if (tcLateStatus === "INVALIDATED") tcZoneLabel = "V43 DEAD";
 }
 
+if (tcPositionAction) {
+  tcZoneLabel = tcPositionAction.zone || "POS LIVE";
+}
+
 let tcActionMain = "AGUARDANDO";
 let tcActionSub  = "Aguardando leitura completa de EMA, Volume, RSI, Claude e Triple Convergence.";
 let tcActionMode = "is-wait";
 
-if (tcLateActive && tcLateStatus === "MISSED_VALID_MARKET") {
+if (tcPositionAction) {
+  tcActionMain = tcPositionAction.main;
+  tcActionSub = tcPositionAction.sub;
+  tcActionMode = tcPositionAction.mode;
+
+} else if (tcLateActive && tcLateStatus === "MISSED_VALID_MARKET") {
   tcActionMain = "ENTRA AGORA";
   tcActionSub  = `V43: entrada ideal passou ${tcLateMoney(tcLateMissedBy)}, mas o setup segue vivo a mercado ${tcLateMoney(tcLateMarketPrice)}. Invalidação ${tcLateMoney(tcLateInvalidation)}.`;
   tcActionMode = "is-good";
@@ -27923,25 +28424,38 @@ const tcActionNote = (() => {
       return "V43 Late = tarde demais para perseguir com qualidade.";
     case "V43 DEAD":
       return "V43 Dead = invalidação tocada; setup morto.";
+    case "POS HOLD":
+      return "Posição ativa = mesmo lado com Continuação=SIM; segurar T2 enquanto alvo expandir.";
+    case "POS PROTECT":
+      return "Posição ativa = mesmo lado sem Continuação; proteger, mirar T1 ou sair se travar.";
+    case "POS NO FLIP":
+      return "Não inverte = sinal virou contra, mas sem Continuação=SIM para validar reversão.";
+    case "POS FLIP":
+      return "Flip confirmado = sinal virou com Continuação=SIM; sair da posição atual antes de pensar no lado novo.";
+    case "POS EXIT":
+      return "Posição ativa = apareceu bloqueio de manejo; sair ou proteger imediatamente.";
+    case "POS LIVE":
+      return "Posição ativa = monitorar sem abrir nova entrada.";
     case "RSI EXT":
       return "RSI EXT = RSI fora da faixa saudável de 30–75.";
     default:
       return "Wait = aguardando classificação limpa da zona.";
   }
 })();
+const tcDisplayDirection = tcPositionAction?.displayDirection || tcDirection;
 const tcActionBar = el("tc-action-bar");
 if (tcActionBar) {
   tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait");
   tcActionBar.classList.add(tcActionMode);
 
-  if (tcDirection === "LONG") tcActionBar.classList.add("is-long");
-  if (tcDirection === "SHORT") tcActionBar.classList.add("is-short");
+  if (String(tcDisplayDirection || "").includes("LONG")) tcActionBar.classList.add("is-long");
+  if (String(tcDisplayDirection || "").includes("SHORT")) tcActionBar.classList.add("is-short");
 }
 
 if (el("tc-action-main"))      el("tc-action-main").textContent      = tcActionMain;
 if (el("tc-action-sub"))       el("tc-action-sub").textContent       = tcActionSub;
 if (el("tc-action-note"))      el("tc-action-note").textContent      = tcActionNote;
-if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDirection || "—";
+if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDisplayDirection || "—";
 if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcZoneLabel;
 if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "AUX";
 if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
