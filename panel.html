@@ -4153,6 +4153,122 @@
   color: rgba(203,213,225,.78);
 }
 
+#copilot-block .copilot-a10-exec{
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(250px, .56fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 15px 17px;
+  border-radius: 14px;
+  border: 1px solid rgba(34,211,238,.30);
+  background:
+    radial-gradient(circle at 96% 0%, rgba(34,211,238,.16), transparent 32%),
+    linear-gradient(180deg, rgba(12,35,49,.86) 0%, rgba(5,12,22,.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+#copilot-block .copilot-a10-exec.is-market{
+  border-color: rgba(34,197,94,.48);
+  background:
+    radial-gradient(circle at 96% 0%, rgba(34,197,94,.20), transparent 32%),
+    linear-gradient(180deg, rgba(7,42,31,.88) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-exec.is-reduced,
+#copilot-block .copilot-a10-exec.is-respiro{
+  border-color: rgba(250,204,21,.42);
+  background:
+    radial-gradient(circle at 96% 0%, rgba(250,204,21,.18), transparent 32%),
+    linear-gradient(180deg, rgba(45,36,10,.86) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-exec.is-dead{
+  border-color: rgba(248,113,113,.44);
+  background:
+    radial-gradient(circle at 96% 0%, rgba(248,113,113,.18), transparent 32%),
+    linear-gradient(180deg, rgba(45,14,18,.86) 0%, rgba(5,12,22,.98) 100%);
+}
+
+#copilot-block .copilot-a10-exec-head{
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+}
+
+#copilot-block .copilot-a10-exec-k{
+  font-size: 17px;
+  line-height: 1.12;
+  font-weight: 950;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.72);
+}
+
+#copilot-block .copilot-a10-exec-v{
+  font-size: 38px;
+  line-height: 1.02;
+  font-weight: 950;
+  color: #67e8f9;
+  overflow-wrap: anywhere;
+}
+
+#copilot-block .copilot-a10-exec.is-market .copilot-a10-exec-v{
+  color: #86efac;
+}
+
+#copilot-block .copilot-a10-exec.is-reduced .copilot-a10-exec-v,
+#copilot-block .copilot-a10-exec.is-respiro .copilot-a10-exec-v{
+  color: #fde68a;
+}
+
+#copilot-block .copilot-a10-exec.is-dead .copilot-a10-exec-v{
+  color: #fca5a5;
+}
+
+#copilot-block .copilot-a10-exec-sub{
+  font-size: 21px;
+  line-height: 1.26;
+  font-weight: 820;
+  color: #dbeafe;
+  overflow-wrap: anywhere;
+}
+
+#copilot-block .copilot-a10-exec-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#copilot-block .copilot-a10-exec-cell{
+  min-width: 0;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: rgba(2,6,23,.24);
+}
+
+#copilot-block .copilot-a10-exec-cell span{
+  display: block;
+  font-size: 14px;
+  line-height: 1.12;
+  font-weight: 950;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: rgba(203,213,225,.70);
+}
+
+#copilot-block .copilot-a10-exec-cell strong{
+  display: block;
+  margin-top: 6px;
+  font-size: 24px;
+  line-height: 1.06;
+  font-weight: 950;
+  color: #f8fafc;
+  overflow-wrap: anywhere;
+}
+
 #copilot-block .copilot-a10-grid{
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -5020,6 +5136,7 @@
 @media (max-width: 980px){
   #copilot-block .copilot-a10-top,
   #copilot-block .copilot-a10-trend,
+  #copilot-block .copilot-a10-exec,
   #copilot-block .copilot-a10-grid,
   #copilot-block .copilot-a10-lists,
   #copilot-block .copilot-a10-rules-grid{
@@ -5048,6 +5165,14 @@
 
   #copilot-block .copilot-a10-trend-track{
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #copilot-block .copilot-a10-exec-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #copilot-block .copilot-a10-exec-v{
+    font-size: 32px;
   }
 
   #copilot-block .copilot-a10-metric strong{
@@ -19007,16 +19132,16 @@ function updateCoPilotBlock(data){
     const a10HighlightClass = (token = "") => {
       const t = String(token || "").toUpperCase();
 
-      if (/NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUE|BLOCK|EXIT|EXHAUSTION|AVOID|TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|RSI EXTREMO|RESPIRO|FORA DO RTH/.test(t)) {
+      if (/NAO ENTRA|NÃO ENTRA|SAIR AGORA|DEIXA PASSAR|MORTO|INVALIDATED|TOO LATE|TOO_LATE|BLOQUE|BLOCK|EXIT|EXHAUSTION|AVOID|TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|RSI EXTREMO|FORA DO RTH/.test(t)) {
         return "is-danger";
       }
 
       if (/SHORT|VENDA|BAIXA/.test(t)) return "is-short";
-      if (/LONG|COMPRA|ALTA|SIM|YES|TREND|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|ENTRA 100%|ENTRA FORTE|JANELA OURO|GOLD SPOT|PONTOS VERDES|MAXIMA CONFIANCA/.test(t)) {
+      if (/LONG|COMPRA|ALTA|SIM|YES|TREND|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|ENTRA AGORA|MISSED_VALID_MARKET|SETUP VIVO|ENTRA 100%|ENTRA FORTE|JANELA OURO|GOLD SPOT|PONTOS VERDES|MAXIMA CONFIANCA/.test(t)) {
         return "is-long";
       }
 
-      if (/WAIT|AGUARDAR|AGUARDANDO|NAO|NÃO|NO|CHOP|OPEN DRIVE|JANELA MODERADA|JANELA FRACA|TENDENCIA 1|ENTRA 75%|ENTRA 50%|ENTRA MENOR|T1|T2/.test(t)) {
+      if (/WAIT|WAIT_RESPIRO|ESPERA RESPIRO|AGUARDAR|AGUARDANDO|NAO|NÃO|NO|CHOP|OPEN DRIVE|JANELA MODERADA|JANELA FRACA|TENDENCIA 1|ENTRA 75%|ENTRA 50%|ENTRA MENOR|MISSED_VALID_REDUCED|T1|T2|RESPIRO/.test(t)) {
         return "is-wait";
       }
 
@@ -19025,7 +19150,7 @@ function updateCoPilotBlock(data){
 
     const colorizeA10Text = (value = "") => {
       const html = escapeHtml(value);
-      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|MAXIMA CONFIANCA|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|TENDENCIA 1|TENDENCIA NEUTRA|ENTRA REDUZIDO|ENTRA 100%|ENTRA 75%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|EARLY MOMENTUM|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
+      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|MAXIMA CONFIANCA|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|TENDENCIA 1|TENDENCIA NEUTRA|MISSED_VALID_MARKET|MISSED_VALID_REDUCED|WAIT_RESPIRO|TOO_LATE|INVALIDATED|SETUP VIVO|ENTRA AGORA|DEIXA PASSAR|ESPERA RESPIRO|ENTRA REDUZIDO|ENTRA 100%|ENTRA 75%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|EARLY MOMENTUM|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|V43|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
 
       return html.replace(tokenRegex, (_full, prefix, match) =>
         `${prefix}<em class="copilot-a10-hl ${a10HighlightClass(match)}">${match}</em>`
@@ -19076,6 +19201,30 @@ function updateCoPilotBlock(data){
       `;
     };
 
+    const renderAaron10ExecutionHtml = (execution) => {
+      if (!execution?.visible) return "";
+
+      const rows = (execution.rows || []).filter(Boolean).slice(0, 8);
+
+      return `
+        <div class="copilot-a10-exec ${escapeHtml(execution.className || "is-live")}">
+          <div class="copilot-a10-exec-head">
+            <div class="copilot-a10-exec-k">Execucao V43</div>
+            <div class="copilot-a10-exec-v">${colorizeA10Text(execution.title || "SETUP AO VIVO")}</div>
+            <div class="copilot-a10-exec-sub">${colorizeA10Text(execution.subtitle || "Aguardando estado do matcher.")}</div>
+          </div>
+          <div class="copilot-a10-exec-grid">
+            ${rows.map(row => `
+              <div class="copilot-a10-exec-cell">
+                <span>${escapeHtml(row.label || "—")}</span>
+                <strong>${colorizeA10Text(row.value || "—")}</strong>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    };
+
     const renderAaron10SectionHtml = (readout) => {
       if (!readout) return "";
 
@@ -19098,6 +19247,7 @@ function updateCoPilotBlock(data){
             </div>
 
             ${renderAaron10TrendHtml(readout.trend)}
+            ${renderAaron10ExecutionHtml(readout.execution)}
 
             <div class="copilot-a10-grid">
               ${readout.metrics.map(metric => `
@@ -19154,6 +19304,17 @@ function updateCoPilotBlock(data){
         ui?.canonical_read_v1,
         root?.canonical_read_v1,
         deepFind(root, "canonical_read_v1"),
+        {}
+      ) || {};
+
+      const lateEntryRaw = pickFirstValue(
+        canonicalRead?.entrada_atrasada,
+        exec1x1?.entrada_atrasada,
+        panel?.entrada_atrasada,
+        digest?.entrada_atrasada,
+        ui?.entrada_atrasada,
+        root?.entrada_atrasada,
+        deepFind(root, "entrada_atrasada"),
         {}
       ) || {};
 
@@ -19737,6 +19898,179 @@ function updateCoPilotBlock(data){
       const trendState = buildTrendState();
       const vwapSetup = buildVwapSetup();
 
+      const buildLateEntryExecution = () => {
+        const rawStatus = String(pickFirstValue(
+          canonicalRead?.entrada_status_effective,
+          canonicalRead?.entrada_status,
+          lateEntryRaw?.status,
+          panel?.entrada_status_effective,
+          digest?.entrada_status_effective,
+          ui?.entrada_status_effective,
+          root?.entrada_status_effective,
+          panel?.entrada_status,
+          digest?.entrada_status,
+          ui?.entrada_status,
+          root?.entrada_status
+        ) || "").trim().toUpperCase();
+
+        const originalStatus = String(pickFirstValue(
+          canonicalRead?.entrada_status_original,
+          lateEntryRaw?.original_status,
+          panel?.entrada_status_original,
+          digest?.entrada_status_original,
+          ui?.entrada_status_original,
+          root?.entrada_status_original
+        ) || "").trim().toUpperCase();
+
+        const marketPrice = toNum(pickFirstValue(
+          lateEntryRaw?.market_price,
+          canonicalRead?.entrada_market_price,
+          panel?.entrada_market_price,
+          digest?.entrada_market_price,
+          ui?.entrada_market_price,
+          root?.entrada_market_price,
+          currentPriceA10
+        ));
+
+        const respiroEntry = toNum(pickFirstValue(
+          lateEntryRaw?.respiro_entry,
+          lateEntryRaw?.respiro_ate,
+          canonicalRead?.respiro_ate,
+          panel?.respiro_ate,
+          digest?.respiro_ate,
+          ui?.respiro_ate,
+          root?.respiro_ate
+        ));
+
+        const invalidation = toNum(pickFirstValue(
+          lateEntryRaw?.invalidation,
+          lateEntryRaw?.invalidacao,
+          canonicalRead?.reversao_em,
+          canonicalRead?.invalidation,
+          panel?.invalidation,
+          digest?.invalidation,
+          ui?.invalidation,
+          root?.invalidation
+        ));
+
+        const target1 = toNum(pickFirstValue(lateEntryRaw?.target_1, lateEntryRaw?.target1, currentT1));
+        const target2 = toNum(pickFirstValue(lateEntryRaw?.target_2, lateEntryRaw?.target2, currentT2));
+        const missedBy = toNum(pickFirstValue(
+          lateEntryRaw?.missed_by_usd,
+          canonicalRead?.entrada_missed_by,
+          panel?.entrada_missed_by,
+          digest?.entrada_missed_by,
+          ui?.entrada_missed_by,
+          root?.entrada_missed_by
+        ));
+        const rrMarket = toNum(pickFirstValue(lateEntryRaw?.rr_market, canonicalRead?.rr_market));
+        const rrRespiro = toNum(pickFirstValue(lateEntryRaw?.rr_respiro, canonicalRead?.rr_respiro));
+        const stillValid = boolA10(pickFirstValue(
+          lateEntryRaw?.still_valid,
+          canonicalRead?.entrada_still_valid,
+          panel?.entrada_still_valid,
+          digest?.entrada_still_valid,
+          ui?.entrada_still_valid,
+          root?.entrada_still_valid
+        ));
+        const invalidated = boolA10(lateEntryRaw?.invalidated) === true;
+        const shouldWaitRespiro = boolA10(lateEntryRaw?.should_wait_respiro) === true;
+        const marketEntryOk = boolA10(lateEntryRaw?.market_entry_ok) === true;
+        const reason = String(pickFirstValue(lateEntryRaw?.reason, canonicalRead?.manejo, "") || "").trim();
+
+        let status = rawStatus;
+        if (invalidated || (stillValid === false && /MISSED|WAIT_RESPIRO/.test(status))) status = "INVALIDATED";
+
+        const active =
+          boolA10(lateEntryRaw?.active) === true ||
+          /MISSED_VALID|WAIT_RESPIRO|TOO_LATE|INVALIDATED/.test(status);
+
+        const visible = active || !!status || !!originalStatus;
+        const statusLabel = status ? status.replace(/_/g, " ") : "—";
+        const missedText = missedBy === null ? "—" : fmtMoneyA10(missedBy);
+        const marketText = marketPrice === null ? "—" : fmtMoneyA10(marketPrice);
+        const respiroText = respiroEntry === null ? "—" : fmtMoneyA10(respiroEntry);
+        const invalidationText = invalidation === null ? "—" : fmtMoneyA10(invalidation);
+        const rrMarketText = rrMarket === null ? "—" : `${rrMarket.toFixed(2)}R`;
+        const rrRespiroText = rrRespiro === null ? "—" : `${rrRespiro.toFixed(2)}R`;
+
+        let title = statusLabel;
+        let subtitle = reason || "Matcher V43 aguardando estado de execucao.";
+        let className = "is-live";
+        let immediateMarket = false;
+        let reducedMarket = false;
+        let waitRespiro = false;
+        let dead = false;
+        let baseMult = null;
+
+        if (status === "MISSED_VALID_MARKET") {
+          title = "ENTRA AGORA";
+          subtitle = `Entrada ideal passou ${missedText}; V43 diz SETUP VIVO a mercado ${marketText}. Stop/invalidação ${invalidationText}; T2 mantido.`;
+          className = "is-market";
+          immediateMarket = true;
+          baseMult = 1;
+        } else if (status === "MISSED_VALID_REDUCED") {
+          title = "ENTRA MENOR";
+          subtitle = `Entrada atrasada ${missedText}; V43 ainda valida, mas com tamanho reduzido. Mercado ${marketText}; respiro ${respiroText}.`;
+          className = "is-reduced";
+          immediateMarket = true;
+          reducedMarket = true;
+          baseMult = 0.50;
+        } else if (status === "WAIT_RESPIRO" || shouldWaitRespiro) {
+          title = "ESPERA RESPIRO";
+          subtitle = `SETUP VIVO, mas nao perseguir seco. Esperar respiro em ${respiroText}; invalidação ${invalidationText}; T2 segue como plano.`;
+          className = "is-respiro";
+          waitRespiro = true;
+        } else if (status === "TOO_LATE") {
+          title = "DEIXA PASSAR";
+          subtitle = reason || `Entrada ficou tarde demais. Mercado ${marketText}; respiro ${respiroText}; RR mercado ${rrMarketText}.`;
+          className = "is-dead";
+          dead = true;
+        } else if (status === "INVALIDATED") {
+          title = "MORTO";
+          subtitle = reason || `A invalidação ${invalidationText} ja foi tocada. Nao reentrar nesse setup.`;
+          className = "is-dead";
+          dead = true;
+        } else if (status === "ARMED" || status === "CONFIRM_PENDING" || status === "HOT" || status === "TOUCH_HIT") {
+          title = "ZONA AO VIVO";
+          subtitle = `Entrada ainda nao virou missed. Mercado ${marketText}; invalidação ${invalidationText}; aguardar gatilho do matcher.`;
+          className = "is-live";
+        }
+
+        if (marketEntryOk && !immediateMarket && !dead) {
+          title = "SETUP VIVO";
+          className = "is-market";
+        }
+
+        return {
+          visible,
+          active,
+          status,
+          originalStatus,
+          title,
+          subtitle,
+          className,
+          immediateMarket,
+          reducedMarket,
+          waitRespiro,
+          dead,
+          baseMult,
+          priceForSizing: immediateMarket ? marketPrice : waitRespiro ? respiroEntry : null,
+          rows: [
+            { label: "Status", value: statusLabel },
+            { label: "Original", value: originalStatus ? originalStatus.replace(/_/g, " ") : "—" },
+            { label: "Missed", value: missedText },
+            { label: "Mercado", value: marketText },
+            { label: "Respiro", value: respiroText },
+            { label: "Inval", value: invalidationText },
+            { label: "RR Mkt", value: rrMarketText },
+            { label: "RR Resp", value: rrRespiroText }
+          ]
+        };
+      };
+
+      const lateExecution = buildLateEntryExecution();
+
       const hasSignals = [
         emaPct,
         emaAvoid,
@@ -19749,7 +20083,8 @@ function updateCoPilotBlock(data){
         reversalRaw,
         rsi,
         explicitSide,
-        vwapSetup?.hasData
+        vwapSetup?.hasData,
+        lateExecution?.visible
       ].some(v => v !== null && v !== undefined && v !== "");
 
       if (!hasSignals) return null;
@@ -19791,6 +20126,20 @@ function updateCoPilotBlock(data){
 
       if (!side) {
         cautions.push("Sem side LONG/SHORT definido: leitura fica em observacao.");
+      }
+
+      if (lateExecution?.active) {
+        if (lateExecution.immediateMarket) {
+          greens.push(`V43 ${lateExecution.status}: SETUP VIVO depois do missed; executar pelo modo ${lateExecution.reducedMarket ? "reduzido" : "mercado"}.`);
+          management.unshift(lateExecution.subtitle);
+        } else if (lateExecution.waitRespiro) {
+          cautions.push("V43 WAIT_RESPIRO: setup vivo, mas a ordem correta agora e esperar o respiro.");
+          management.unshift(lateExecution.subtitle);
+        } else if (lateExecution.dead) {
+          blockers.push(`V43 ${lateExecution.status}: ${lateExecution.subtitle}`);
+        } else {
+          greens.push(`V43 ${lateExecution.status || "LIVE"}: matcher ainda mantem estado de execucao ativo.`);
+        }
       }
 
       if (windowInfo.blocked) {
@@ -20103,6 +20452,7 @@ function updateCoPilotBlock(data){
       let toneClass = "is-wait";
       let badgeText = "WAIT";
       let badgeClass = "copilot-wait";
+      let sizingEntryPrice = entryPrice;
 
       if (forceExit) {
         decision = "SAIR AGORA";
@@ -20170,20 +20520,59 @@ function updateCoPilotBlock(data){
         mult = 0;
       }
 
+      const lateCanOverride =
+        lateExecution?.active &&
+        !activeTrade &&
+        !forceExit &&
+        !windowInfo.blocked;
+
+      if (lateCanOverride) {
+        if (lateExecution.immediateMarket) {
+          const lateBaseMult = lateExecution.baseMult || (lateExecution.reducedMarket ? 0.50 : 1);
+          mult = lateBaseMult;
+          sizingEntryPrice = lateExecution.priceForSizing ?? currentPriceA10 ?? entryPrice;
+          decision = lateExecution.reducedMarket ? "ENTRA MENOR" : "ENTRA AGORA";
+          subtitle = lateExecution.subtitle;
+          toneClass = lateExecution.reducedMarket ? "is-half" : "is-enter";
+          badgeText = sideLabelA10(side);
+          badgeClass = side === "short" ? "copilot-short" : side === "long" ? "copilot-long" : "copilot-wait";
+        } else if (lateExecution.waitRespiro) {
+          mult = 0;
+          sizingEntryPrice = lateExecution.priceForSizing ?? entryPrice;
+          decision = "ESPERA RESPIRO";
+          subtitle = lateExecution.subtitle;
+          toneClass = "is-half";
+          badgeText = "WAIT";
+          badgeClass = "copilot-wait";
+        } else if (lateExecution.dead) {
+          mult = 0;
+          decision = lateExecution.status === "TOO_LATE" ? "DEIXA PASSAR" : "NAO ENTRA";
+          subtitle = lateExecution.subtitle;
+          toneClass = "is-block";
+          badgeText = "BLOCK";
+          badgeClass = "copilot-block";
+        }
+      }
+
       const capital = 100000 * mult;
-      const shares = entryPrice !== null && capital > 0 ? Math.floor(capital / entryPrice) : null;
+      const shares = sizingEntryPrice !== null && capital > 0 ? Math.floor(capital / sizingEntryPrice) : null;
       const sizeDetail = capital > 0
         ? `${Math.round(mult * 100)}% | $${Math.round(capital).toLocaleString("en-US")}${shares !== null ? ` | ${shares} sh` : ""}`
-        : "0% | bloqueado";
+        : lateExecution?.waitRespiro ? "0% | aguardando respiro" : "0% | bloqueado";
 
       const alerts = [...blockers, ...cautions];
+      const scoreLabel =
+        lateExecution?.active && !forceExit ? "V43" :
+        forceExit ? "EXIT" :
+        blockers.length ? "BLOCK" :
+        String(score);
 
       return {
         title: "🔬 AARON 10 — O QUE ESTA ACONTECENDO",
         heroTitle: "AARON 10 — LEITURA DO MERCADO",
         decision,
         subtitle,
-        scoreLabel: forceExit ? "EXIT" : blockers.length ? "BLOCK" : String(score),
+        scoreLabel,
         toneClass,
         badgeText,
         badgeClass,
@@ -20191,6 +20580,7 @@ function updateCoPilotBlock(data){
         greens,
         management,
         trend: trendState,
+        execution: lateExecution,
         metrics: [
           {
             label: "Side",
@@ -20201,6 +20591,13 @@ function updateCoPilotBlock(data){
             label: "Fase",
             value: phase,
             detail: phaseDetail
+          },
+          {
+            label: "Exec V43",
+            value: lateExecution?.visible ? (lateExecution.title || lateExecution.status || "LIVE") : "—",
+            detail: lateExecution?.visible
+              ? `Status ${lateExecution.status || "—"} | Orig ${lateExecution.originalStatus || "—"}`
+              : "Sem estado V43"
           },
           {
             label: "Horario",
@@ -20426,6 +20823,13 @@ const goldSpotRulesSection = {
     "- EMA next=exhaustion reduz tamanho",
     "- OPEN DRIVE aprovado",
     "- Continuacao=NAO em SHORT",
+    "",
+    "🎯 EXECUÇÃO V43",
+    "- MISSED_VALID_MARKET: ENTRA AGORA a mercado",
+    "- MISSED_VALID_REDUCED: ENTRA MENOR",
+    "- WAIT_RESPIRO: ESPERA RESPIRO, nao perseguir seco",
+    "- TOO_LATE ou INVALIDATED: DEIXA PASSAR",
+    "- Respiro pre-entry e oportunidade; respiro pos-entry e defesa",
     "",
     "❌ BLOQUEIA SE",
     "- EMA >=80% fora do EARLY MOMENTUM",
@@ -26961,11 +27365,83 @@ if (microTake == null) {
       return s;
     };
 
+    const tcBool = (v) => {
+      if (v === null || v === undefined || v === "") return null;
+      if (typeof v === "boolean") return v;
+      if (typeof v === "number") return v !== 0;
+      const s = String(v).trim().toUpperCase();
+      if (["YES","SIM","TRUE","1","Y","S"].includes(s)) return true;
+      if (["NO","NAO","NÃO","FALSE","0","N"].includes(s)) return false;
+      return null;
+    };
+
     const tcRoot =
       panel?.triple_convergence ||
       digest?.triple_convergence ||
       payload?.triple_convergence ||
       {};
+
+    const tcCanonicalRead =
+      exec1x1?.canonical_read_v1 ||
+      panel?.canonical_read_v1 ||
+      digest?.canonical_read_v1 ||
+      payload?.canonical_read_v1 ||
+      {};
+
+    const tcLateEntryRaw =
+      tcCanonicalRead?.entrada_atrasada ||
+      exec1x1?.entrada_atrasada ||
+      panel?.entrada_atrasada ||
+      digest?.entrada_atrasada ||
+      payload?.entrada_atrasada ||
+      {};
+
+    let tcLateStatus = String(
+      tcCanonicalRead?.entrada_status_effective ||
+      tcCanonicalRead?.entrada_status ||
+      tcLateEntryRaw?.status ||
+      panel?.entrada_status_effective ||
+      digest?.entrada_status_effective ||
+      payload?.entrada_status_effective ||
+      panel?.entrada_status ||
+      digest?.entrada_status ||
+      payload?.entrada_status ||
+      ""
+    ).trim().toUpperCase();
+
+    const tcLateOriginalStatus = String(
+      tcCanonicalRead?.entrada_status_original ||
+      tcLateEntryRaw?.original_status ||
+      panel?.entrada_status_original ||
+      digest?.entrada_status_original ||
+      payload?.entrada_status_original ||
+      ""
+    ).trim().toUpperCase();
+
+    const tcLateStillValid = tcBool(
+      tcLateEntryRaw?.still_valid ??
+      tcCanonicalRead?.entrada_still_valid ??
+      panel?.entrada_still_valid ??
+      digest?.entrada_still_valid ??
+      payload?.entrada_still_valid
+    );
+    const tcLateInvalidated = tcBool(tcLateEntryRaw?.invalidated) === true;
+    if (tcLateInvalidated || (tcLateStillValid === false && /MISSED|WAIT_RESPIRO/.test(tcLateStatus))) {
+      tcLateStatus = "INVALIDATED";
+    }
+
+    const tcLateActive =
+      tcBool(tcLateEntryRaw?.active) === true ||
+      /MISSED_VALID|WAIT_RESPIRO|TOO_LATE|INVALIDATED/.test(tcLateStatus);
+
+    const tcLateSide = tcNormSide(
+      tcCanonicalRead?.side ||
+      tcCanonicalRead?.direction ||
+      tcCanonicalRead?.action ||
+      tcCanonicalRead?.trade_side ||
+      tcLateEntryRaw?.side ||
+      tcLateEntryRaw?.direction
+    );
 
     const tcEmaBlock =
       exec1x1?.ema_volume_exhaustion_premonition_v1 ||
@@ -27087,6 +27563,10 @@ const tcVolPct = tcPickNum(
           tcEmaSide === "short" ? "SHORT" : "";
       }
       if (tcActive == null) tcActive = false;
+    }
+
+    if (tcLateActive && tcLateSide) {
+      tcDirection = tcLateSide.toUpperCase();
     }
 
     const tcQualityLabel = (() => {
@@ -27296,11 +27776,45 @@ else if (tcAlsoExcellent) tcZoneLabel = "ALSO EXCELLENT";
 else if (tcGoodZone) tcZoneLabel = "GOOD ZONE";
 else if (tcHotVol) tcZoneLabel = "VOL HOT";
 
+const tcLateMissedBy = tcPickNum(tcLateEntryRaw?.missed_by_usd, tcCanonicalRead?.entrada_missed_by);
+const tcLateMarketPrice = tcPickNum(tcLateEntryRaw?.market_price, tcCanonicalRead?.entrada_market_price);
+const tcLateRespiro = tcPickNum(tcLateEntryRaw?.respiro_entry, tcLateEntryRaw?.respiro_ate, tcCanonicalRead?.respiro_ate);
+const tcLateInvalidation = tcPickNum(tcLateEntryRaw?.invalidation, tcLateEntryRaw?.invalidacao, tcCanonicalRead?.reversao_em, tcCanonicalRead?.invalidation);
+const tcLateMoney = (v) => v != null ? `$${fmt2(v)}` : "—";
+
+if (tcLateActive) {
+  if (tcLateStatus === "MISSED_VALID_MARKET") tcZoneLabel = "V43 MARKET";
+  else if (tcLateStatus === "MISSED_VALID_REDUCED") tcZoneLabel = "V43 REDUCED";
+  else if (tcLateStatus === "WAIT_RESPIRO") tcZoneLabel = "V43 RESPIRO";
+  else if (tcLateStatus === "TOO_LATE") tcZoneLabel = "V43 LATE";
+  else if (tcLateStatus === "INVALIDATED") tcZoneLabel = "V43 DEAD";
+}
+
 let tcActionMain = "AGUARDANDO";
 let tcActionSub  = "Aguardando leitura completa de EMA, Volume, RSI, Claude e Triple Convergence.";
 let tcActionMode = "is-wait";
 
-if (!tcHasAllTargets) {
+if (tcLateActive && tcLateStatus === "MISSED_VALID_MARKET") {
+  tcActionMain = "ENTRA AGORA";
+  tcActionSub  = `V43: entrada ideal passou ${tcLateMoney(tcLateMissedBy)}, mas o setup segue vivo a mercado ${tcLateMoney(tcLateMarketPrice)}. Invalidação ${tcLateMoney(tcLateInvalidation)}.`;
+  tcActionMode = "is-good";
+
+} else if (tcLateActive && tcLateStatus === "MISSED_VALID_REDUCED") {
+  tcActionMain = "ENTRA MENOR";
+  tcActionSub  = `V43: entrada atrasada ainda valida, mas reduzida. Mercado ${tcLateMoney(tcLateMarketPrice)} · respiro ${tcLateMoney(tcLateRespiro)}.`;
+  tcActionMode = "is-acceptable";
+
+} else if (tcLateActive && tcLateStatus === "WAIT_RESPIRO") {
+  tcActionMain = "ESPERA RESPIRO";
+  tcActionSub  = `V43: setup vivo, mas nao perseguir seco. Aguardar respiro em ${tcLateMoney(tcLateRespiro)}; invalidação ${tcLateMoney(tcLateInvalidation)}.`;
+  tcActionMode = "is-wait";
+
+} else if (tcLateActive && (tcLateStatus === "TOO_LATE" || tcLateStatus === "INVALIDATED")) {
+  tcActionMain = tcLateStatus === "TOO_LATE" ? "DEIXA PASSAR" : "NÃO ENTRAR AGORA";
+  tcActionSub  = `V43: ${tcLateStatus.replace(/_/g, " ")}. Original ${tcLateOriginalStatus || "—"}.`;
+  tcActionMode = "is-no-trade";
+
+} else if (!tcHasAllTargets) {
   tcActionMain = "AGUARDANDO";
   tcActionSub  = "Faltam EMA Target, VOL Target ou Claude T1.";
   tcActionMode = "is-wait";
@@ -27399,6 +27913,16 @@ const tcActionNote = (() => {
       return "Open Drive = 7:29–7:45 MT, janela com maior concentração de stops.";
     case "EARLY MOMENTUM":
       return "Early Momentum = 07:30–08:30 MT; EMA 80–85 vira cautela e EMA 85–90 depende do AARON 10 confirmar T1/T2.";
+    case "V43 MARKET":
+      return "V43 Market = missed ainda valido; a entrada vira execução a mercado.";
+    case "V43 REDUCED":
+      return "V43 Reduced = missed valido, mas com tamanho menor.";
+    case "V43 RESPIRO":
+      return "V43 Respiro = setup vivo, esperar pullback/respiro antes de entrar.";
+    case "V43 LATE":
+      return "V43 Late = tarde demais para perseguir com qualidade.";
+    case "V43 DEAD":
+      return "V43 Dead = invalidação tocada; setup morto.";
     case "RSI EXT":
       return "RSI EXT = RSI fora da faixa saudável de 30–75.";
     default:
