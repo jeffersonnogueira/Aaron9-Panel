@@ -19025,7 +19025,7 @@ function updateCoPilotBlock(data){
 
     const colorizeA10Text = (value = "") => {
       const html = escapeHtml(value);
-      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|MAXIMA CONFIANCA|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|TENDENCIA 1|TENDENCIA NEUTRA|ENTRA REDUZIDO|ENTRA 100%|ENTRA 75%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
+      const tokenRegex = /(^|[^A-Za-zÀ-ÿ0-9_])(TOP CONSOLIDACAO=YES|TOP REVERSAO=YES|EMA NEXT=EXHAUSTION|EMA AVOID=TRUE|RSI EXTREMO|MAXIMA CONFIANCA|TENDENCIA CONFIRMADA|TENDENCIA ATIVA|TENDENCIA 1|TENDENCIA NEUTRA|ENTRA REDUZIDO|ENTRA 100%|ENTRA 75%|ENTRA 50%|ENTRA FORTE|ENTRA MENOR|NAO ENTRA|NÃO ENTRA|SAIR AGORA|BLOQUEIA SE|BLOQUEADO|AGUARDANDO|AGUARDAR|OPEN DRIVE|EARLY MOMENTUM|JANELA OURO|JANELA BOA|JANELA MODERADA|JANELA FRACA|FORA DO RTH|PRE-MARKET|GOLD SPOT|PONTOS VERDES|RESPIRO|CANDLE \+1|REVERSAO|REVERSÃO|CONSOLIDACAO|CONSOLIDAÇÃO|TREND|CHOP|SHORT|LONG|WAIT|BLOCK|EXIT|SIM|YES|NAO|NÃO|NO|TARDE|T1|T2)(?=$|[^A-Za-zÀ-ÿ0-9_])/gi;
 
       return html.replace(tokenRegex, (_full, prefix, match) =>
         `${prefix}<em class="copilot-a10-hl ${a10HighlightClass(match)}">${match}</em>`
@@ -19764,6 +19764,30 @@ function updateCoPilotBlock(data){
         score += points;
         greens.push(`${text} (+${points})`);
       };
+      const earlyMomentumMode =
+        clockMinute !== null &&
+        clockMinute >= ((7 * 60) + 30) &&
+        clockMinute <= ((8 * 60) + 30);
+      const nextIsExhaustion = nextKind.includes("exhaustion");
+      const rsiExtreme = (() => {
+        if (rsi === null) return false;
+        if (side === "long") return rsi < 30 || rsi > 75;
+        if (side === "short") return rsi < 30 || rsi > 70;
+        return rsi < 30 || rsi > 75;
+      })();
+      const earlyMomentumExpanding =
+        earlyMomentumMode &&
+        !!(trendState?.hasTarget && trendState.streak >= 1);
+      const earlyMomentumStrongConfirm =
+        earlyMomentumMode &&
+        contYes &&
+        earlyMomentumExpanding &&
+        !isConsolidating &&
+        !isReversal &&
+        !nextIsExhaustion &&
+        !rsiExtreme;
+      let emaAvoidSoftened = false;
+      let emaDirectionSoftened = false;
 
       if (!side) {
         cautions.push("Sem side LONG/SHORT definido: leitura fica em observacao.");
@@ -19772,13 +19796,24 @@ function updateCoPilotBlock(data){
       if (windowInfo.blocked) {
         blockers.push(`${windowInfo.name}: ${windowInfo.detail}`);
       } else if (windowInfo.openDrive) {
-        const openDriveAllowed =
+        const openDriveClassicAllowed =
           emaPct !== null && emaPct >= 60 && emaPct < 75 &&
           contYes &&
           volPct !== null && volPct < 70;
+        const openDriveEarlyMomentumAllowed =
+          earlyMomentumMode &&
+          contYes &&
+          !isReversal &&
+          !rsiExtreme &&
+          emaPct !== null &&
+          volPct !== null &&
+          volPct < 80 &&
+          (emaPct < 85 || (emaPct < 90 && earlyMomentumStrongConfirm));
 
-        if (!openDriveAllowed) {
-          blockers.push("OPEN DRIVE exige EMA 60-75%, Continuacao=SIM e Volume <70%.");
+        if (!openDriveClassicAllowed && !openDriveEarlyMomentumAllowed) {
+          blockers.push("OPEN DRIVE exige Cont=SIM, Volume <80% e EMA <85% ou EMA 85-90% com T1/T2 expandindo.");
+        } else if (openDriveEarlyMomentumAllowed && !openDriveClassicAllowed) {
+          cautions.push("OPEN DRIVE em EARLY MOMENTUM: aprovado pelos dados 07:30-08:30, mas com tamanho reduzido.");
         } else {
           cautions.push("OPEN DRIVE liberado, mas com risco alto e tamanho reduzido.");
         }
@@ -19790,6 +19825,9 @@ function updateCoPilotBlock(data){
 
       if (clockMinute !== null && clockMinute >= (8 * 60) && clockMinute <= (9 * 60)) {
         addScore(1, "Horario 08:00-09:00 MT");
+      }
+      if (earlyMomentumMode) {
+        greens.push("EARLY MOMENTUM 07:30-08:30 MT: EMA alto vira leitura de momentum, nao bloqueio cego.");
       }
 
       if (vwapSetup?.active) {
@@ -19804,8 +19842,22 @@ function updateCoPilotBlock(data){
       }
 
       if (emaPct !== null) {
-        if (emaPct >= 80) {
-          blockers.push(`EMA ${fmtPctA10(emaPct)} >=80%: overextended.`);
+        if (emaPct >= 90) {
+          blockers.push(`EMA ${fmtPctA10(emaPct)} >=90%: overextended mesmo no EARLY MOMENTUM.`);
+        } else if (emaPct >= 85) {
+          if (earlyMomentumStrongConfirm) {
+            cautions.push(`EARLY MOMENTUM: EMA ${fmtPctA10(emaPct)} 85-90% liberado so porque Cont=SIM e ${trendState.targetLabel || "T1/T2"} expande; reduzir tamanho.`);
+          } else if (earlyMomentumMode) {
+            blockers.push(`EMA ${fmtPctA10(emaPct)} 85-90%: precisa Cont=SIM + T1/T2 expandindo para liberar na abertura.`);
+          } else {
+            blockers.push(`EMA ${fmtPctA10(emaPct)} >=80%: overextended.`);
+          }
+        } else if (emaPct >= 80) {
+          if (earlyMomentumMode) {
+            cautions.push(`EARLY MOMENTUM: EMA ${fmtPctA10(emaPct)} 80-85% nao bloqueia; entra menor.`);
+          } else {
+            blockers.push(`EMA ${fmtPctA10(emaPct)} >=80%: overextended.`);
+          }
         } else if (emaPct >= 75) {
           cautions.push(`EMA ${fmtPctA10(emaPct)} em cautela 75-80%: reduzir 50%.`);
         } else if (emaPct >= 60) {
@@ -19815,19 +19867,32 @@ function updateCoPilotBlock(data){
         }
       }
 
-      if (emaAvoid === true) blockers.push("EMA Avoid=True: o matcher mandou nao entrar.");
+      if (emaAvoid === true) {
+        if (earlyMomentumStrongConfirm) {
+          emaAvoidSoftened = true;
+          cautions.push("EMA Avoid=True suavizado pelo EARLY MOMENTUM: so menor e enquanto T1/T2 expandir.");
+        } else {
+          blockers.push("EMA Avoid=True: o matcher mandou nao entrar.");
+        }
+      }
       if (emaAvoid === false) greens.push("EMA Avoid=False.");
 
       if (side && emaDir) {
         if (side !== emaDir) {
-          blockers.push(`EMA direction contra: sinal ${sideLabelA10(side)}, EMA ${sideLabelA10(emaDir)}.`);
+          if (earlyMomentumStrongConfirm) {
+            emaDirectionSoftened = true;
+            score -= 1;
+            cautions.push(`EMA direction contra suavizado no EARLY MOMENTUM: sinal ${sideLabelA10(side)}, EMA ${sideLabelA10(emaDir)} (-1).`);
+          } else {
+            blockers.push(`EMA direction contra: sinal ${sideLabelA10(side)}, EMA ${sideLabelA10(emaDir)}.`);
+          }
         } else {
           addScore(2, `EMA direction alinhado ${sideLabelA10(side)}`);
         }
       }
 
       if (nextKind) {
-        if (nextKind.includes("exhaustion")) {
+        if (nextIsExhaustion) {
           cautions.push(`EMA next=${impulseLabelA10(nextKind)}: motor exauriu; se entrar, tamanho reduzido.`);
         } else if (
           (side === "long" && nextKind.includes("continue_up")) ||
@@ -19904,6 +19969,9 @@ function updateCoPilotBlock(data){
       } else if (isReversal || nextKind.includes("turn_up") || nextKind.includes("turn_down")) {
         phase = "REVERSAO";
         phaseDetail = "Segue novo sinal, nao briga.";
+      } else if (earlyMomentumMode && emaPct !== null && emaPct >= 80 && emaPct < 90 && contYes) {
+        phase = "EARLY MOMENTUM";
+        phaseDetail = "Abertura forte: EMA alto tratado como cautela, nao bloqueio automatico.";
       } else if (hasNoConsolidation && contYes && hasNoReversal && (
         nextKind.includes("continue_up") || nextKind.includes("continue_down")
       )) {
@@ -20015,12 +20083,18 @@ function updateCoPilotBlock(data){
       let mult = 1;
       if (windowInfo.openDrive) mult *= 0.50;
       if (windowInfo.openDrive && side === "short") mult *= 0.50;
-      if (emaPct !== null && emaPct >= 75 && emaPct < 80) mult *= 0.50;
+      if (emaPct !== null) {
+        if (emaPct >= 75 && emaPct < 80) mult *= 0.50;
+        else if (earlyMomentumMode && emaPct >= 80 && emaPct < 85) mult *= 0.50;
+        else if (earlyMomentumStrongConfirm && emaPct >= 85 && emaPct < 90) mult *= 0.50;
+      }
       if (volPct !== null && volPct >= 80) mult *= 0.50;
       else if (volPct !== null && volPct >= 75) mult *= 0.75;
       if (contNo && side === "short") mult *= 0.50;
       if (nextKind.includes("exhaustion")) mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
       if (volumeAgainst) mult = Math.min(mult, 0.50);
+      if (emaAvoidSoftened) mult = Math.min(mult, 0.50);
+      if (emaDirectionSoftened) mult = Math.min(mult, 0.50);
       if (trendState?.hasTarget && trendState.streak === 0) mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
       if (trendState?.hasTarget && trendState.streak === 1) mult = Math.min(mult, 0.75);
 
@@ -20346,19 +20420,23 @@ const goldSpotRulesSection = {
     "- Setup VWAP main/borda ativo",
     "- Tendencia=0 mas outros filtros verdes",
     "- EMA 75-80%",
+    "- EARLY MOMENTUM 07:30-08:30 com EMA 80-85%",
+    "- EMA 85-90% so com T1/T2 expandindo",
     "- Volume 75-80%",
     "- EMA next=exhaustion reduz tamanho",
     "- OPEN DRIVE aprovado",
     "- Continuacao=NAO em SHORT",
     "",
     "❌ BLOQUEIA SE",
-    "- EMA >=80%",
+    "- EMA >=80% fora do EARLY MOMENTUM",
+    "- EMA 85-90% sem T1/T2 expandindo na abertura",
+    "- EMA >=90%",
     "- EMA Avoid=True",
     "- Top Consolidacao=YES",
     "- Top Reversao=YES",
     "- RSI extremo",
     "- Fora do RTH",
-    "- OPEN DRIVE sem EMA 60-75%, Cont=SIM e Vol<70%",
+    "- OPEN DRIVE sem Cont=SIM, Vol<80% e regra EMA da abertura",
     "",
     "🛑 SAIDA DE DEFESA",
     "- Respiro contra >= $0.08 ou 50% do stop: sair imediatamente",
@@ -27118,9 +27196,27 @@ const tcClockMt = String(
   fmtTimeMT(new Date())
 ).trim();
 
+const tcClockMinute = (() => {
+  const m = tcClockMt.match(/^(\d{1,2})\s*:\s*(\d{2})\s*(AM|PM)?$/i);
+  if (!m) return null;
+  let hh = Number(m[1]);
+  const mm = Number(m[2]);
+  const ap = String(m[3] || "").toUpperCase();
+  if (ap === "PM" && hh < 12) hh += 12;
+  if (ap === "AM" && hh === 12) hh = 0;
+  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
+  return (hh * 60) + mm;
+})();
+
 const tcInOpenDrive =
-  /^7:(29|3\d|4\d|45)\s*(AM)?$/i.test(tcClockMt) ||
-  /^07:(29|3\d|4\d|45)$/.test(tcClockMt);
+  tcClockMinute !== null
+    ? tcClockMinute >= ((7 * 60) + 29) && tcClockMinute <= ((7 * 60) + 45)
+    : /^7:(29|3\d|4\d|45)\s*(AM)?$/i.test(tcClockMt) || /^07:(29|3\d|4\d|45)$/.test(tcClockMt);
+
+const tcInEarlyMomentum =
+  tcClockMinute !== null &&
+  tcClockMinute >= ((7 * 60) + 30) &&
+  tcClockMinute <= ((8 * 60) + 30);
 
 const tcRsiOk = (tcRsi == null) ? true : (tcRsi >= 30 && tcRsi <= 75);
 const tcSideGateBar = !!tcEmaSide && !!tcVolSide && tcEmaSide === tcVolSide;
@@ -27165,13 +27261,31 @@ const tcHotVol =
 const tcValidZone =
   tcGoldSpot || tcAlsoExcellent || tcGoodZone;
 
-const tcEntryFilterOk =
-  tcValidZone &&
+const tcEarlyMomentumHotEmaOk =
+  tcInEarlyMomentum &&
   tcRsiOk &&
-  !tcInOpenDrive;
+  tcEmaPct != null &&
+  tcVolPct != null &&
+  tcEmaPct >= 80 &&
+  tcEmaPct < 85 &&
+  tcVolPct < 80;
+
+const tcEarlyMomentumNeedsA10 =
+  tcInEarlyMomentum &&
+  tcRsiOk &&
+  tcEmaPct != null &&
+  tcVolPct != null &&
+  tcEmaPct >= 85 &&
+  tcEmaPct < 90 &&
+  tcVolPct < 80;
+
+const tcEntryFilterOk =
+  (tcValidZone && tcRsiOk && (!tcInOpenDrive || tcInEarlyMomentum)) ||
+  tcEarlyMomentumHotEmaOk;
 
 let tcZoneLabel = "WAIT";
-if (tcInOpenDrive) tcZoneLabel = "OPEN DRIVE";
+if (tcEarlyMomentumHotEmaOk || tcEarlyMomentumNeedsA10) tcZoneLabel = "EARLY MOMENTUM";
+else if (tcInOpenDrive) tcZoneLabel = "OPEN DRIVE";
 else if (!tcRsiOk) tcZoneLabel = "RSI EXT";
 else if (tcWorstZone) tcZoneLabel = "WORST ZONE";
 else if (tcBadZone) tcZoneLabel = "BAD ZONE";
@@ -27191,22 +27305,32 @@ if (!tcHasAllTargets) {
   tcActionSub  = "Faltam EMA Target, VOL Target ou Claude T1.";
   tcActionMode = "is-wait";
 
-} else if (tcInOpenDrive) {
+} else if (tcInOpenDrive && !tcInEarlyMomentum) {
   tcActionMain = "NÃO ENTRAR AGORA";
   tcActionSub  = "OPEN DRIVE 7:29–7:45 MT — janela com concentração desproporcional dos stops.";
   tcActionMode = "is-no-trade";
+
+} else if (tcEarlyMomentumNeedsA10) {
+  tcActionMain = "AGUARDE A10";
+  tcActionSub  = "EARLY MOMENTUM 07:30–08:30 MT — EMA 85–90 precisa T1/T2 expandindo no AARON 10.";
+  tcActionMode = "is-wait";
 
 } else if (!tcRsiOk) {
   tcActionMain = "NÃO ENTRAR AGORA";
   tcActionSub  = `RSI fora da faixa saudável (${tcRsi == null ? "—" : tcRsi.toFixed(1)}). Regra: operar entre 30 e 75.`;
   tcActionMode = "is-no-trade";
 
-} else if (tcValidZone && !tcSideGateBar) {
+} else if ((tcValidZone || tcEarlyMomentumHotEmaOk) && !tcSideGateBar) {
   tcActionMain = "AGUARDE";
   tcActionSub  = `Zona válida, mas EMA e Volume estão em conflito (${(tcEmaSide || "—").toUpperCase()} vs ${(tcVolSide || "—").toUpperCase()}).`;
   tcActionMode = "is-wait";
 
 
+
+} else if (tcEarlyMomentumHotEmaOk) {
+  tcActionMain = "EARLY MOMENTUM OK";
+  tcActionSub  = "07:30–08:30 MT — EMA 80–85 não bloqueia; AARON 10 define tamanho e T1/T2.";
+  tcActionMode = "is-acceptable";
 
 } else if (!tcEntryFilterOk) {
   tcActionMain = "AGUARDE";
@@ -27273,6 +27397,8 @@ const tcActionNote = (() => {
       return "Vol Hot = volume acima de 75, quente demais.";
     case "OPEN DRIVE":
       return "Open Drive = 7:29–7:45 MT, janela com maior concentração de stops.";
+    case "EARLY MOMENTUM":
+      return "Early Momentum = 07:30–08:30 MT; EMA 80–85 vira cautela e EMA 85–90 depende do AARON 10 confirmar T1/T2.";
     case "RSI EXT":
       return "RSI EXT = RSI fora da faixa saudável de 30–75.";
     default:
