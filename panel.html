@@ -19914,10 +19914,20 @@ function updateCoPilotBlock(data){
       ));
 
       const explicitSide = normSideA10(pickFirstValue(
+        canonicalRead?.direcao_oficial,
+        canonicalRead?.direcao,
+        canonicalRead?.official_direction,
+        canonicalRead?.direction_official,
+        canonicalRead?.supporting_engines?.action,
+        canonicalRead?.supporting_engines?.shape_direction,
         canonicalRead?.side,
         canonicalRead?.direction,
         canonicalRead?.action,
         canonicalRead?.trade_side,
+        panel?.direcao_oficial,
+        digest?.direcao_oficial,
+        ui?.direcao_oficial,
+        root?.direcao_oficial,
         panel?.side,
         digest?.side,
         ui?.side,
@@ -19931,7 +19941,9 @@ function updateCoPilotBlock(data){
         root?.action,
         panel?.direction,
         digest?.direction,
-        root?.direction
+        root?.direction,
+        deepFind(root, "direcao_oficial"),
+        deepFind(root, "official_direction")
       ));
 
       let side = explicitSide;
@@ -20317,24 +20329,39 @@ function updateCoPilotBlock(data){
         const rawStatus = String(pickFirstValue(
           canonicalRead?.entrada_status_effective,
           canonicalRead?.entrada_status,
+          canonicalRead?.entry_status_effective,
+          canonicalRead?.entry_status,
           lateEntryRaw?.status,
           panel?.entrada_status_effective,
           digest?.entrada_status_effective,
           ui?.entrada_status_effective,
           root?.entrada_status_effective,
+          panel?.entry_status_effective,
+          digest?.entry_status_effective,
+          ui?.entry_status_effective,
+          root?.entry_status_effective,
           panel?.entrada_status,
           digest?.entrada_status,
           ui?.entrada_status,
-          root?.entrada_status
+          root?.entrada_status,
+          panel?.entry_status,
+          digest?.entry_status,
+          ui?.entry_status,
+          root?.entry_status
         ) || "").trim().toUpperCase();
 
         const originalStatus = String(pickFirstValue(
           canonicalRead?.entrada_status_original,
+          canonicalRead?.entry_status_original,
           lateEntryRaw?.original_status,
           panel?.entrada_status_original,
           digest?.entrada_status_original,
           ui?.entrada_status_original,
-          root?.entrada_status_original
+          root?.entrada_status_original,
+          panel?.entry_status_original,
+          digest?.entry_status_original,
+          ui?.entry_status_original,
+          root?.entry_status_original
         ) || "").trim().toUpperCase();
 
         const marketPrice = toNum(pickFirstValue(
@@ -20485,6 +20512,45 @@ function updateCoPilotBlock(data){
       };
 
       const lateExecution = buildLateEntryExecution();
+      const canonicalEntryStatus = String(pickFirstValue(
+        canonicalRead?.entrada_status_effective,
+        canonicalRead?.entrada_status,
+        canonicalRead?.entry_status_effective,
+        canonicalRead?.entry_status,
+        lateExecution?.status,
+        panel?.entrada_status_effective,
+        digest?.entrada_status_effective,
+        ui?.entrada_status_effective,
+        root?.entrada_status_effective,
+        panel?.entry_status_effective,
+        digest?.entry_status_effective,
+        ui?.entry_status_effective,
+        root?.entry_status_effective,
+        panel?.entrada_status,
+        digest?.entrada_status,
+        ui?.entrada_status,
+        root?.entrada_status,
+        panel?.entry_status,
+        digest?.entry_status,
+        ui?.entry_status,
+        root?.entry_status,
+        deepFind(root, "entrada_status_effective"),
+        deepFind(root, "entrada_status"),
+        deepFind(root, "entry_status_effective"),
+        deepFind(root, "entry_status")
+      ) || "").trim().toUpperCase();
+      const canonicalConflictState = String(pickFirstValue(
+        canonicalRead?.conflict_state,
+        panel?.conflict_state,
+        digest?.conflict_state,
+        ui?.conflict_state,
+        root?.conflict_state,
+        deepFind(root, "conflict_state")
+      ) || "").trim().toUpperCase();
+      const matcherStatusBlocksEntry =
+        !!canonicalEntryStatus &&
+        !/MISSED_VALID|WAIT_RESPIRO|ARMED|CONFIRM_PENDING|HOT|TOUCH_HIT/.test(canonicalEntryStatus) &&
+        /BLOCK|NO_TRADE|CANCELLED|EXPIRED|INVALIDATED|TOO_LATE|EMA_EXHAUSTION|MISSED/.test(canonicalEntryStatus);
 
       const hasSignals = [
         emaPct,
@@ -20499,6 +20565,8 @@ function updateCoPilotBlock(data){
         rsi,
         explicitSide,
         vwapSetup?.hasData,
+        canonicalEntryStatus,
+        canonicalConflictState,
         lateExecution?.visible
       ].some(v => v !== null && v !== undefined && v !== "");
 
@@ -20543,7 +20611,15 @@ function updateCoPilotBlock(data){
       let emaDirectionSoftened = false;
 
       if (!side) {
-        cautions.push("Sem side LONG/SHORT definido: leitura fica em observacao.");
+        addHardBlocker("Sem side LONG/SHORT canonico: a UI nao pode liberar entrada com direcao WAIT.");
+      }
+
+      if (canonicalConflictState === "HARD_CONFLICT") {
+        addHardBlocker("Matcher conflict_state=HARD_CONFLICT: motores discordam forte, nao entra.");
+      }
+
+      if (matcherStatusBlocksEntry) {
+        addHardBlocker(`Matcher entrada_status=${canonicalEntryStatus}: nao liberar entrada reduzida.`);
       }
 
       if (lateExecution?.active) {
@@ -28078,22 +28154,34 @@ if (microTake == null) {
     let tcLateStatus = String(
       tcCanonicalRead?.entrada_status_effective ||
       tcCanonicalRead?.entrada_status ||
+      tcCanonicalRead?.entry_status_effective ||
+      tcCanonicalRead?.entry_status ||
       tcLateEntryRaw?.status ||
       panel?.entrada_status_effective ||
       digest?.entrada_status_effective ||
       payload?.entrada_status_effective ||
+      panel?.entry_status_effective ||
+      digest?.entry_status_effective ||
+      payload?.entry_status_effective ||
       panel?.entrada_status ||
       digest?.entrada_status ||
       payload?.entrada_status ||
+      panel?.entry_status ||
+      digest?.entry_status ||
+      payload?.entry_status ||
       ""
     ).trim().toUpperCase();
 
     const tcLateOriginalStatus = String(
       tcCanonicalRead?.entrada_status_original ||
+      tcCanonicalRead?.entry_status_original ||
       tcLateEntryRaw?.original_status ||
       panel?.entrada_status_original ||
       digest?.entrada_status_original ||
       payload?.entrada_status_original ||
+      panel?.entry_status_original ||
+      digest?.entry_status_original ||
+      payload?.entry_status_original ||
       ""
     ).trim().toUpperCase();
 
@@ -28114,6 +28202,12 @@ if (microTake == null) {
       /MISSED_VALID|WAIT_RESPIRO|TOO_LATE|INVALIDATED/.test(tcLateStatus);
 
     const tcLateSide = tcNormSide(
+      tcCanonicalRead?.direcao_oficial ||
+      tcCanonicalRead?.direcao ||
+      tcCanonicalRead?.official_direction ||
+      tcCanonicalRead?.direction_official ||
+      tcCanonicalRead?.supporting_engines?.action ||
+      tcCanonicalRead?.supporting_engines?.shape_direction ||
       tcCanonicalRead?.side ||
       tcCanonicalRead?.direction ||
       tcCanonicalRead?.action ||
@@ -28235,7 +28329,16 @@ const tcVolPct = tcPickNum(
 
       tcActive = tcPctGate && tcSideGate && tcSpread <= 0.50;
     } else {
-      tcDirection = String(tcRoot?.direction || "").toUpperCase();
+      tcDirection = String(
+        tcRoot?.direction ||
+        tcCanonicalRead?.direcao_oficial ||
+        tcCanonicalRead?.direcao ||
+        tcCanonicalRead?.official_direction ||
+        tcCanonicalRead?.direction_official ||
+        tcCanonicalRead?.direction ||
+        tcCanonicalRead?.action ||
+        ""
+      ).toUpperCase();
       if (!tcDirection) {
         tcDirection =
           tcEmaSide === "long" ? "LONG" :
@@ -28816,6 +28919,16 @@ const tcBuildOperatorDecisionV1 = () => {
       mode: "is-no-trade",
       next: "Nao abrir trade novo enquanto o bloqueio duro estiver ativo. Esperar V43 novo ou liberar Risk Gate.",
       reason: "a10_hard_block"
+    });
+  }
+
+  if (!tcSideSign) {
+    return withBase({
+      main: "SEM DIREÇÃO CANÔNICA",
+      sub: "A direção operacional ainda está em WAIT/indefinida; o operador não libera entrada reduzida sem LONG ou SHORT confirmado.",
+      mode: "is-wait",
+      next: "Esperar o matcher entregar direção canônica ou V43 validar explicitamente a execução.",
+      reason: "operator_direction_wait"
     });
   }
 
