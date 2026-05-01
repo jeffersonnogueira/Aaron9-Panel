@@ -21296,6 +21296,10 @@ function updateCoPilotBlock(data){
         heroTitle: "AARON 10 — RISK GATE / LEITURA DO MERCADO",
         decision,
         subtitle,
+        side,
+        score,
+        sizingPct: Math.round(mult * 100),
+        sizingText: sizeDetail,
         scoreLabel,
         toneClass,
         badgeText,
@@ -21386,6 +21390,11 @@ function updateCoPilotBlock(data){
         hardBlockers: aaron10Readout.hardBlockers || [],
         riskBlocks: aaron10Readout.riskBlocks || [],
         decision: aaron10Readout.decision || "",
+        side: aaron10Readout.side || "",
+        score: aaron10Readout.score ?? null,
+        sizingPct: aaron10Readout.sizingPct ?? null,
+        sizingText: aaron10Readout.sizingText || "",
+        trend: aaron10Readout.trend || null,
         badgeText: aaron10Readout.badgeText || "",
         scoreLabel: aaron10Readout.scoreLabel || ""
       } : null;
@@ -28874,6 +28883,31 @@ const tcA10HardReason =
   Array.isArray(tcA10RiskGate?.hardBlockers) && tcA10RiskGate.hardBlockers.length
     ? String(tcA10RiskGate.hardBlockers[0])
     : "A10 Risk Gate marcou bloqueio duro.";
+const tcA10Trend = tcA10RiskGate?.trend || {};
+const tcA10TrendStreakRaw = Number(tcA10Trend?.streak);
+const tcA10TrendStreak = Number.isFinite(tcA10TrendStreakRaw) ? tcA10TrendStreakRaw : 0;
+const tcA10TrendConfirmed =
+  !tcA10HardBlocked &&
+  tcA10Trend?.hasTarget === true &&
+  tcA10TrendStreak >= 2;
+const tcA10TrendMax = tcA10TrendConfirmed && tcA10TrendStreak >= 5;
+const tcA10TrendSide = tcNormSide(tcA10RiskGate?.side || tcA10Trend?.side || tcDirection);
+const tcA10TrendAligned =
+  tcA10TrendConfirmed &&
+  (!tcA10TrendSide || !tcOperatorDir || tcA10TrendSide.toUpperCase() === tcOperatorDir);
+const tcA10TrendTargetLabel = String(tcA10Trend?.targetLabel || "T2").toUpperCase();
+const tcA10SizingPct = tcPickNum(tcA10RiskGate?.sizingPct);
+const tcA10TrendRiskActive =
+  tcA10TrendAligned &&
+  (tcWorstZone || tcWorseEma || tcBadZone);
+
+if (
+  tcA10TrendRiskActive &&
+  !tcLateActive &&
+  !tcPositionAction
+) {
+  tcZoneLabel = "TREND RISK";
+}
 
 const tcOperatorFmtR = (v) => v != null && Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)}R` : "—";
 const tcOperatorLiveLine = () => {
@@ -29061,6 +29095,38 @@ const tcBuildOperatorDecisionV1 = () => {
     });
   }
 
+  if (!tcEntryFilterOk && tcA10TrendRiskActive) {
+    const tcNearT1 =
+      tcReward1Usd != null &&
+      tcReward1Usd <= Math.max(0.08, tcTriggerBand * 2);
+    const tcRrWeak = tcRr1 != null && tcRr1 < 0.85;
+    const tcTrendChaseTooLate = tcIsChasing || tcNearT1 || tcRrWeak;
+    const tcTrendSizingText =
+      tcA10SizingPct != null && tcA10SizingPct > 0
+        ? `${Math.round(tcA10SizingPct)}%`
+        : "tamanho reduzido";
+    const tcTrendBase =
+      `A10 confirmou tendencia ${tcA10TrendStreak}${tcA10TrendMax ? "+" : ""} para ${tcOperatorDir}: Cont=SIM e ${tcA10TrendTargetLabel} expandindo. EMA ${fmtPct(tcEmaPct)} ainda e zona extrema, entao isto nao e compra/venda cega. ${tcOperatorLiveLine()}.`;
+
+    if (tcTrendChaseTooLate) {
+      return withBase({
+        main: "TENDENCIA VIVA - NAO PERSEGUIR",
+        sub: tcTrendBase,
+        mode: "is-wait",
+        next: "Se ja entrou no respiro/entrada anterior, manejar para T2 enquanto o alvo expandir. Se esta fora, esperar respiro, novo CONFIRM ou preco voltar para zona; nao perseguir candle esticado.",
+        reason: "trend_confirmed_no_chase"
+      });
+    }
+
+    return withBase({
+      main: "ENTRADA TATICA",
+      sub: `${tcTrendBase} A10 permite somente ${tcTrendSizingText}.`,
+      mode: "is-acceptable",
+      next: `Executar pequeno apenas no gatilho, com stop/invalidação respeitado. Se ${tcA10TrendTargetLabel} parar ou inverter, cancelar/realizar.`,
+      reason: "trend_confirmed_tactical"
+    });
+  }
+
   if (!tcEntryFilterOk) {
     let sub = `Zona ainda nao classificada como executavel. EMA ${fmtPct(tcEmaPct)} | VOL ${fmtPct(tcVolPct)} | RSI ${tcRsi == null ? "—" : tcRsi.toFixed(1)}.`;
     let main = "AGUARDAR GATILHO";
@@ -29239,6 +29305,8 @@ const tcActionNote = (() => {
       return "Open Drive = 7:29–7:45 MT, janela com maior concentração de stops.";
     case "EARLY MOMENTUM":
       return "Early Momentum = 07:30–08:30 MT; EMA 80–85 vira cautela e EMA 85–90 depende do AARON 10 confirmar T1/T2.";
+    case "TREND RISK":
+      return "Trend Risk = A10 confirmou tendencia, mas EMA esta extrema; manejar se ja entrou, ou esperar respiro/novo gatilho se esta fora.";
     case "V43 MARKET":
       return "V43 Market = missed ainda valido; a entrada vira execução a mercado.";
     case "V43 REDUCED":
