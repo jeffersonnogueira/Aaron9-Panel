@@ -7736,6 +7736,202 @@
     0 0 0 1px rgba(255,255,255,.04);
 }
 
+#mc-card .mc-shell{
+  border: 1px solid rgba(255,204,102,.54);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(255,204,102,.18), transparent 30%),
+    linear-gradient(180deg, rgba(23,29,42,.98) 0%, rgba(6,12,23,.995) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 6px 0 0 rgba(255,204,102,.78),
+    0 18px 48px rgba(0,0,0,.36);
+  padding: 18px 20px;
+}
+
+#mc-card .mc-head{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+#mc-card .mc-k{
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.82);
+}
+
+#mc-card .mc-title{
+  margin-top: 8px;
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #ffcc66;
+}
+
+#mc-card .mc-badge{
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,204,102,.54);
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #111827;
+  background: #ffcc66;
+}
+
+#mc-card .mc-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+#mc-card .mc-box{
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 10px;
+  background: rgba(255,255,255,.045);
+  padding: 18px 20px;
+  min-height: 176px;
+}
+
+#mc-card .mc-box.is-t2{
+  border-color: rgba(74,222,128,.26);
+}
+
+#mc-card .mc-box.is-breakout{
+  border-color: rgba(96,165,250,.30);
+}
+
+#mc-card .mc-box-k,
+#mc-card .mc-strip-cell span{
+  display: block;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.72);
+}
+
+#mc-card .mc-big{
+  margin-top: 12px;
+  font-size: 58px;
+  line-height: .98;
+  font-weight: 950;
+  color: #f8fafc;
+}
+
+#mc-card .mc-verdict{
+  margin-top: 8px;
+  font-size: 29px;
+  line-height: 1.05;
+  font-weight: 950;
+  text-transform: uppercase;
+  color: #ffcc66;
+  overflow-wrap: anywhere;
+}
+
+#mc-card .mc-detail{
+  margin-top: 10px;
+  font-size: 21px;
+  line-height: 1.28;
+  font-weight: 800;
+  color: rgba(226,232,240,.92);
+  overflow-wrap: anywhere;
+}
+
+#mc-card .mc-break-row{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+#mc-card .mc-break-row > div{
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(2,6,23,.22);
+  padding: 12px 14px;
+}
+
+#mc-card .mc-break-row span{
+  display: block;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: .14em;
+  color: rgba(203,213,225,.72);
+}
+
+#mc-card .mc-break-row strong{
+  display: block;
+  margin-top: 7px;
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+#mc-card #mc-break-up{
+  color: #4ade80;
+}
+
+#mc-card #mc-break-down{
+  color: #f87171;
+}
+
+#mc-card .mc-strip{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+#mc-card .mc-strip-cell{
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(2,6,23,.22);
+  padding: 12px 14px;
+}
+
+#mc-card .mc-strip-cell strong{
+  display: block;
+  margin-top: 8px;
+  font-size: 24px;
+  line-height: 1.08;
+  font-weight: 950;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#mc-card.is-good #mc-t2-pct,
+#mc-card.is-good #mc-t2-verdict{
+  color: #4ade80;
+}
+
+#mc-card.is-wait #mc-t2-pct,
+#mc-card.is-wait #mc-t2-verdict{
+  color: #fde68a;
+}
+
+#mc-card.is-bad #mc-t2-pct,
+#mc-card.is-bad #mc-t2-verdict{
+  color: #f87171;
+}
+
 #level-flip-card .lfv44-shell{
   border: 1px solid rgba(34,211,238,.32);
   border-radius: 10px;
@@ -7856,6 +8052,14 @@
   #tc-action-bar .tc-action-detail strong{
     font-size: 18px;
   }
+
+  #mc-card .mc-grid{
+    grid-template-columns: 1fr;
+  }
+
+  #mc-card .mc-strip{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 1100px){
@@ -7886,6 +8090,26 @@
 
   #tc-action-bar .tc-action-detail strong{
     font-size: 17px;
+  }
+
+  #mc-card .mc-title{
+    font-size: 28px;
+  }
+
+  #mc-card .mc-big{
+    font-size: 46px;
+  }
+
+  #mc-card .mc-verdict{
+    font-size: 24px;
+  }
+
+  #mc-card .mc-detail{
+    font-size: 18px;
+  }
+
+  #mc-card .mc-strip{
+    grid-template-columns: 1fr;
   }
 }
 /* ===== /TC ACTION BAR ===== */
@@ -9465,6 +9689,63 @@ body.aaron-terminal-shell .top-right .kv .v{
   </div>
 </div>
 <!-- ===== /TC ACTION BAR ===== -->
+<!-- ===== MONTE CARLO — PLAN + BREAKOUT WATCH ===== -->
+<div class="prem-breakout-wrap" id="mc-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+  <div class="mc-shell">
+    <div class="mc-head">
+      <div>
+        <div class="mc-k">MONTE CARLO</div>
+        <div class="mc-title" id="mc-title">PLANO + ROMPIMENTO</div>
+      </div>
+      <div class="mc-badge" id="mc-badge">APOIO</div>
+    </div>
+
+    <div class="mc-grid">
+      <div class="mc-box is-t2">
+        <div class="mc-box-k">T2 PLAN</div>
+        <div class="mc-big" id="mc-t2-pct">—</div>
+        <div class="mc-verdict" id="mc-t2-verdict">—</div>
+        <div class="mc-detail" id="mc-t2-detail">—</div>
+      </div>
+
+      <div class="mc-box is-breakout">
+        <div class="mc-box-k">BREAKOUT</div>
+        <div class="mc-break-row">
+          <div>
+            <span>UP</span>
+            <strong id="mc-break-up">—</strong>
+          </div>
+          <div>
+            <span>DOWN</span>
+            <strong id="mc-break-down">—</strong>
+          </div>
+        </div>
+        <div class="mc-verdict" id="mc-break-first">—</div>
+        <div class="mc-detail" id="mc-break-detail">—</div>
+      </div>
+    </div>
+
+    <div class="mc-strip">
+      <div class="mc-strip-cell">
+        <span>UP LEVEL</span>
+        <strong id="mc-up-level">—</strong>
+      </div>
+      <div class="mc-strip-cell">
+        <span>DOWN LEVEL</span>
+        <strong id="mc-down-level">—</strong>
+      </div>
+      <div class="mc-strip-cell">
+        <span>ETA</span>
+        <strong id="mc-eta">—</strong>
+      </div>
+      <div class="mc-strip-cell">
+        <span>FALSE BREAK</span>
+        <strong id="mc-false-risk">—</strong>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== /MONTE CARLO ===== -->
 <!-- ===== LEVEL FLIP V44 — REAL LEVEL WATCH ===== -->
 <div class="prem-breakout-wrap" id="level-flip-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div class="lfv44-shell">
@@ -30478,6 +30759,318 @@ if (el("tc-action-level")) {
 if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "AUX";
 if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
 if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
+
+// ===== MONTE CARLO — T2 PLAN + BREAKOUT WATCH =====
+{
+  const mcCard = el("mc-card");
+  const mcSet = (id, value) => {
+    const node = el(id);
+    if (node) node.textContent = value == null || value === "" ? "—" : String(value);
+  };
+  const mcMoney = (v) => v != null && Number.isFinite(Number(v)) ? `$${fmt2(Number(v))}` : "—";
+  const mcPct = (v) => v != null && Number.isFinite(Number(v)) ? `${Math.round(Number(v))}%` : "—";
+  const mcClamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const mcHash = (s) => {
+    let h = 2166136261;
+    const text = String(s || "");
+    for (let i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  };
+  const mcRandFactory = (seed) => {
+    let a = seed >>> 0;
+    return () => {
+      a += 0x6D2B79F5;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+
+  const mcAtr = tcPickNum(
+    panel?.atr14,
+    digest?.atr14,
+    payload?.atr14,
+    panel?.atr_14,
+    digest?.atr_14,
+    payload?.atr_14,
+    tcEmaBlock?.current_state?.atr14,
+    tcVolBlock?.current_state?.atr14,
+    tcA10Vwap?.atr14,
+    tcA10Vwap?.atr
+  );
+
+  const mcVwapDigest =
+    root?.vwap_digest_v1 ||
+    panel?.vwap_digest_v1 ||
+    digest?.vwap_digest_v1 ||
+    ui?.vwap_digest_v1 ||
+    {};
+  const mcVwapBands =
+    root?.vwap_bands ||
+    panel?.vwap_bands ||
+    digest?.vwap_bands ||
+    ui?.vwap_bands ||
+    {};
+
+  const mcVwapLevel = tcPickNum(tcA10Vwap?.vwap, mcVwapDigest?.vwap, mcVwapBands?.vwap, tcA10Vwap?.level);
+  const mcUpperBand = tcPickNum(
+    tcA10Vwap?.upperBand,
+    tcA10Vwap?.upper_band,
+    mcVwapDigest?.upperBand,
+    mcVwapDigest?.upper_band,
+    mcVwapBands?.upperBand,
+    mcVwapBands?.upper,
+    panel?.upperBand,
+    digest?.upperBand,
+    payload?.upperBand
+  );
+  const mcLowerBand = tcPickNum(
+    tcA10Vwap?.lowerBand,
+    tcA10Vwap?.lower_band,
+    mcVwapDigest?.lowerBand,
+    mcVwapDigest?.lower_band,
+    mcVwapBands?.lowerBand,
+    mcVwapBands?.lower,
+    panel?.lowerBand,
+    digest?.lowerBand,
+    payload?.lowerBand
+  );
+
+  const mcBaseAtr = mcAtr != null && mcAtr > 0
+    ? mcAtr
+    : (tcLivePrice != null ? Math.max(Math.abs(tcLivePrice) * 0.0018, 0.05) : null);
+
+  const mcCanRun = !!mcCard && tcLivePrice != null && mcBaseAtr != null && mcBaseAtr > 0;
+  if (!mcCanRun) {
+    if (mcCard) mcCard.style.display = "none";
+  } else {
+    const mcCandidate = (name, level) => {
+      const n = tcPickNum(level);
+      return n == null ? null : { name, level: n };
+    };
+    const mcMinGap = Math.max(0.02, mcBaseAtr * 0.08);
+    const mcUpCandidates = [
+      mcCandidate("VWAP Upper", mcUpperBand),
+      mcCandidate("VWAP", mcVwapLevel),
+      mcCandidate("V44 trigger", lfTrigger),
+      mcCandidate("T1", tcTarget1),
+      mcCandidate("T2", tcTarget2),
+      mcCandidate("range high", tcA10Vwap?.high)
+    ].filter(x => x && x.level > tcLivePrice + mcMinGap)
+      .sort((a, b) => Math.abs(a.level - tcLivePrice) - Math.abs(b.level - tcLivePrice));
+    const mcDownCandidates = [
+      mcCandidate("VWAP Lower", mcLowerBand),
+      mcCandidate("VWAP", mcVwapLevel),
+      mcCandidate("V44 trigger", lfTrigger),
+      mcCandidate("V44 inval", lfInvalidation),
+      mcCandidate("stop", tcStopPrice),
+      mcCandidate("range low", tcA10Vwap?.low)
+    ].filter(x => x && x.level < tcLivePrice - mcMinGap)
+      .sort((a, b) => Math.abs(a.level - tcLivePrice) - Math.abs(b.level - tcLivePrice));
+
+    const mcUp = mcUpCandidates[0] || { name: "ATR up", level: tcLivePrice + mcBaseAtr };
+    const mcDown = mcDownCandidates[0] || { name: "ATR down", level: tcLivePrice - mcBaseAtr };
+    const mcPlanT2Valid =
+      !!tcSideSign &&
+      tcTarget2 != null &&
+      tcStopPrice != null &&
+      ((tcSideSign === 1 && tcTarget2 > tcLivePrice && tcStopPrice < tcLivePrice) ||
+       (tcSideSign === -1 && tcTarget2 < tcLivePrice && tcStopPrice > tcLivePrice));
+
+    const mcSideValue = (side) => {
+      const s = String(side || "").toUpperCase();
+      if (s === "LONG" || s === "BUY" || s === "UP") return 1;
+      if (s === "SHORT" || s === "SELL" || s === "DOWN") return -1;
+      return 0;
+    };
+    let mcBias = 0;
+    mcBias += mcSideValue(tcEmaSide) * 0.18;
+    mcBias += mcSideValue(tcVolSide) * 0.18;
+    mcBias += mcSideValue(tcClaudeSide) * 0.10;
+    mcBias += mcSideValue(tcA10VwapSide) * 0.08;
+    mcBias += tcLevelFlipActive ? mcSideValue(tcLevelFlipSide) * 0.08 : 0;
+    if (mcBias === 0) mcBias += mcSideValue(tcOperatorDir) * 0.05;
+    if (tcA10VwapChaseRisk && tcSideSign) mcBias -= tcSideSign * 0.05;
+    if (tcA10VwapAgainst && tcSideSign) mcBias -= tcSideSign * 0.07;
+    mcBias = mcClamp(mcBias, -0.45, 0.45);
+
+    const mcSims = 1200;
+    const mcHorizon = 24;
+    const mcSigma = Math.max(0.025, mcBaseAtr * 0.42);
+    const mcDrift = mcBaseAtr * mcBias * 0.12;
+    const mcSeed = mcHash([
+      root?.symbol || panel?.symbol || payload?.symbol || "SYM",
+      root?.time || payload?.time || root?.timestamp || payload?.timestamp || tcClockMt,
+      tcLivePrice,
+      tcOperatorDir,
+      tcTarget2,
+      tcStopPrice,
+      mcUp.name,
+      mcUp.level,
+      mcDown.name,
+      mcDown.level,
+      tcA10VwapStatus,
+      lfStatusRaw
+    ].join("|"));
+    const mcRand = mcRandFactory(mcSeed);
+    const mcRandn = () => {
+      const u = Math.max(1e-9, mcRand());
+      const v = Math.max(1e-9, mcRand());
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    };
+
+    let mcT2Hits = 0;
+    let mcStopHits = 0;
+    let mcPlanTimeout = 0;
+    let mcUpFirst = 0;
+    let mcDownFirst = 0;
+    let mcBreakTimeout = 0;
+    let mcFalseBreak = 0;
+    const mcEtaT2 = [];
+    const mcEtaBreak = [];
+
+    for (let s = 0; s < mcSims; s++) {
+      let px = tcLivePrice;
+      let planDone = false;
+      let breakDone = false;
+      let firstBreak = "";
+      let firstLevel = null;
+      let breakContinuation = false;
+      let breakFalse = false;
+
+      for (let bar = 1; bar <= mcHorizon; bar++) {
+        px += mcDrift + (mcRandn() * mcSigma);
+
+        if (mcPlanT2Valid && !planDone) {
+          const hitT2 = tcSideSign === 1 ? px >= tcTarget2 : px <= tcTarget2;
+          const hitStop = tcSideSign === 1 ? px <= tcStopPrice : px >= tcStopPrice;
+          if (hitT2) {
+            mcT2Hits++;
+            mcEtaT2.push(bar);
+            planDone = true;
+          } else if (hitStop) {
+            mcStopHits++;
+            planDone = true;
+          }
+        }
+
+        if (!breakDone) {
+          if (px >= mcUp.level) {
+            firstBreak = "UP";
+            firstLevel = mcUp.level;
+            mcUpFirst++;
+            mcEtaBreak.push(bar);
+            breakDone = true;
+          } else if (px <= mcDown.level) {
+            firstBreak = "DOWN";
+            firstLevel = mcDown.level;
+            mcDownFirst++;
+            mcEtaBreak.push(bar);
+            breakDone = true;
+          }
+        } else if (firstBreak && firstLevel != null && !breakFalse) {
+          if (firstBreak === "UP") {
+            if (px >= firstLevel + (mcBaseAtr * 0.45)) breakContinuation = true;
+            if (!breakContinuation && px <= firstLevel - (mcBaseAtr * 0.22)) {
+              mcFalseBreak++;
+              breakFalse = true;
+            }
+          } else {
+            if (px <= firstLevel - (mcBaseAtr * 0.45)) breakContinuation = true;
+            if (!breakContinuation && px >= firstLevel + (mcBaseAtr * 0.22)) {
+              mcFalseBreak++;
+              breakFalse = true;
+            }
+          }
+        }
+      }
+
+      if (mcPlanT2Valid && !planDone) mcPlanTimeout++;
+      if (!breakDone) mcBreakTimeout++;
+    }
+
+    const mcAvg = (arr) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
+    const mcT2Pct = mcPlanT2Valid ? (mcT2Hits / mcSims) * 100 : null;
+    const mcStopPct = mcPlanT2Valid ? (mcStopHits / mcSims) * 100 : null;
+    const mcTimeoutPct = mcPlanT2Valid ? (mcPlanTimeout / mcSims) * 100 : null;
+    const mcUpPct = (mcUpFirst / mcSims) * 100;
+    const mcDownPct = (mcDownFirst / mcSims) * 100;
+    const mcFalsePct = ((mcUpFirst + mcDownFirst) > 0) ? (mcFalseBreak / (mcUpFirst + mcDownFirst)) * 100 : null;
+    const mcEtaT2Avg = mcAvg(mcEtaT2);
+    const mcEtaBreakAvg = mcAvg(mcEtaBreak);
+    const mcFirstSide = mcUpPct > mcDownPct + 4 ? "UP PRIMEIRO" : mcDownPct > mcUpPct + 4 ? "DOWN PRIMEIRO" : "CHOP / EMPATE";
+    const mcFirstLevel = mcFirstSide.indexOf("UP") >= 0 ? mcUp : mcFirstSide.indexOf("DOWN") >= 0 ? mcDown : null;
+    const mcT2Verdict =
+      !mcPlanT2Valid ? "SEM PLANO T2" :
+      mcT2Pct >= 58 ? "APOIA T2" :
+      mcT2Pct >= 46 ? "TÁTICO" :
+      mcT2Pct >= 35 ? "ESPERAR" :
+      "NÃO PERSEGUIR";
+
+    mcCard.style.display = "";
+    mcCard.classList.remove("is-good", "is-wait", "is-bad");
+    mcCard.classList.add(!mcPlanT2Valid ? "is-wait" : mcT2Pct >= 46 ? "is-good" : mcT2Pct >= 35 ? "is-wait" : "is-bad");
+
+    mcSet("mc-title", `${root?.symbol || panel?.symbol || payload?.symbol || "AARON"} | ${mcSims} sims | ${mcHorizon}m`);
+    mcSet("mc-badge", tcOperatorDecisionV1.mode === "is-no-trade" ? "APOIO / BLOQUEIO" : "APOIO");
+    mcSet("mc-t2-pct", mcPlanT2Valid ? mcPct(mcT2Pct) : "—");
+    mcSet("mc-t2-verdict", mcT2Verdict);
+    mcSet(
+      "mc-t2-detail",
+      mcPlanT2Valid
+        ? `T2 ${mcMoney(tcTarget2)} antes do stop ${mcMoney(tcStopPrice)} | stop ${mcPct(mcStopPct)} | timeout ${mcPct(mcTimeoutPct)} | ETA T2 ${mcEtaT2Avg == null ? "—" : `~${Math.round(mcEtaT2Avg)}m`}`
+        : "Faltam T2/stop válidos na direção do plano. MC não libera entrada sozinho."
+    );
+    mcSet("mc-break-up", mcPct(mcUpPct));
+    mcSet("mc-break-down", mcPct(mcDownPct));
+    mcSet("mc-break-first", mcFirstSide);
+    mcSet(
+      "mc-break-detail",
+      mcFirstLevel
+        ? `${mcFirstLevel.name} ${mcMoney(mcFirstLevel.level)} | ETA ${mcEtaBreakAvg == null ? "—" : `~${Math.round(mcEtaBreakAvg)}m`}`
+        : `UP ${mcMoney(mcUp.level)} vs DOWN ${mcMoney(mcDown.level)} | sem lado dominante`
+    );
+    mcSet("mc-up-level", `${mcUp.name} ${mcMoney(mcUp.level)}`);
+    mcSet("mc-down-level", `${mcDown.name} ${mcMoney(mcDown.level)}`);
+    mcSet("mc-eta", mcEtaBreakAvg == null ? "—" : `~${Math.round(mcEtaBreakAvg)}m`);
+    mcSet("mc-false-risk", mcFalsePct == null ? "—" : mcPct(mcFalsePct));
+
+    try {
+      window.__AARON_MONTE_CARLO_V1__ = {
+        source: "ui_monte_carlo_v1",
+        sims: mcSims,
+        horizon_bars: mcHorizon,
+        price: tcLivePrice,
+        atr: mcBaseAtr,
+        bias: mcBias,
+        t2_plan: {
+          valid: mcPlanT2Valid,
+          target_2: tcTarget2,
+          stop: tcStopPrice,
+          hit_t2_pct: mcT2Pct,
+          stop_pct: mcStopPct,
+          timeout_pct: mcTimeoutPct,
+          eta_t2_avg_bars: mcEtaT2Avg,
+          verdict: mcT2Verdict
+        },
+        breakout: {
+          up_pct: mcUpPct,
+          down_pct: mcDownPct,
+          first_side: mcFirstSide,
+          up_level: mcUp,
+          down_level: mcDown,
+          eta_avg_bars: mcEtaBreakAvg,
+          false_break_pct: mcFalsePct
+        }
+      };
+    } catch (_e) {}
+  }
+}
+// ===== /MONTE CARLO =====
 
 
 
