@@ -20117,6 +20117,46 @@ function updateCoPilotBlock(data){
         canonicalRead?.entry_price
       ));
 
+      const vwapCandleOpenA10 = toNum(pickFirstValue(
+        root?.candle?.open,
+        panel?.open,
+        digest?.open,
+        ui?.open,
+        root?.open,
+        now?.open,
+        currentPriceA10
+      ));
+
+      const vwapCandleHighA10 = toNum(pickFirstValue(
+        root?.candle?.high,
+        panel?.high,
+        digest?.high,
+        ui?.high,
+        root?.high,
+        now?.high,
+        currentPriceA10
+      ));
+
+      const vwapCandleLowA10 = toNum(pickFirstValue(
+        root?.candle?.low,
+        panel?.low,
+        digest?.low,
+        ui?.low,
+        root?.low,
+        now?.low,
+        currentPriceA10
+      ));
+
+      const vwapCandleCloseA10 = toNum(pickFirstValue(
+        root?.candle?.close,
+        panel?.close,
+        digest?.close,
+        ui?.close,
+        root?.close,
+        now?.close,
+        currentPriceA10
+      ));
+
       const liveVwapA10 = toNum(pickFirstValue(
         panel?.live_vwap,
         digest?.live_vwap,
@@ -20150,22 +20190,56 @@ function updateCoPilotBlock(data){
         panel?.vwap_upper,
         panel?.vwap_upper_band,
         panel?.vwap_band_upper,
+        panel?.upper_band_1,
+        panel?.upperBand1,
+        panel?.upperBandValue1,
+        panel?.["Upper Band #1"],
+        digest?.upper_band_1,
+        digest?.upperBand1,
+        digest?.upperBandValue1,
+        digest?.["Upper Band #1"],
+        ui?.upper_band_1,
+        ui?.upperBand1,
+        ui?.upperBandValue1,
+        ui?.["Upper Band #1"],
+        root?.upper_band_1,
+        root?.upperBand1,
+        root?.upperBandValue1,
+        root?.["Upper Band #1"],
         panel?.indicator_premonition?.vwap?.upper,
         panel?.indicator_premonition?.vwap?.upper_band,
         deepFind(root, "vwap_upper"),
         deepFind(root, "vwap_upper_band"),
-        deepFind(root, "vwap_band_upper")
+        deepFind(root, "vwap_band_upper"),
+        deepFind(root, "upper_band_1")
       ));
 
       const explicitVwapLower = toNum(pickFirstValue(
         panel?.vwap_lower,
         panel?.vwap_lower_band,
         panel?.vwap_band_lower,
+        panel?.lower_band_1,
+        panel?.lowerBand1,
+        panel?.lowerBandValue1,
+        panel?.["Lower Band #1"],
+        digest?.lower_band_1,
+        digest?.lowerBand1,
+        digest?.lowerBandValue1,
+        digest?.["Lower Band #1"],
+        ui?.lower_band_1,
+        ui?.lowerBand1,
+        ui?.lowerBandValue1,
+        ui?.["Lower Band #1"],
+        root?.lower_band_1,
+        root?.lowerBand1,
+        root?.lowerBandValue1,
+        root?.["Lower Band #1"],
         panel?.indicator_premonition?.vwap?.lower,
         panel?.indicator_premonition?.vwap?.lower_band,
         deepFind(root, "vwap_lower"),
         deepFind(root, "vwap_lower_band"),
-        deepFind(root, "vwap_band_lower")
+        deepFind(root, "vwap_band_lower"),
+        deepFind(root, "lower_band_1")
       ));
 
       const buildVwapSetup = () => {
@@ -20179,9 +20253,23 @@ function updateCoPilotBlock(data){
         const threshold = Math.max(0.03, bandStep * 0.35);
         const upper = explicitVwapUpper !== null ? explicitVwapUpper : liveVwapA10 + bandStep;
         const lower = explicitVwapLower !== null ? explicitVwapLower : liveVwapA10 - bandStep;
+        const touchTolerance = Math.max(0.01, bandStep * 0.08);
+        const closePx = vwapCandleCloseA10 !== null ? vwapCandleCloseA10 : currentPriceA10;
+        const highPx = vwapCandleHighA10 !== null ? Math.max(vwapCandleHighA10, closePx, currentPriceA10) : Math.max(closePx, currentPriceA10);
+        const lowPx = vwapCandleLowA10 !== null ? Math.min(vwapCandleLowA10, closePx, currentPriceA10) : Math.min(closePx, currentPriceA10);
+        const hasCandleRange = Number.isFinite(highPx) && Number.isFinite(lowPx) && highPx >= lowPx;
+        const touchedLevel = (level) => (
+          Number.isFinite(level) &&
+          hasCandleRange &&
+          lowPx <= (level + touchTolerance) &&
+          highPx >= (level - touchTolerance)
+        );
         const nearMain = absDiff <= threshold;
         const nearUpper = Math.abs(currentPriceA10 - upper) <= threshold;
         const nearLower = Math.abs(currentPriceA10 - lower) <= threshold;
+        const touchMain = touchedLevel(liveVwapA10);
+        const touchUpper = touchedLevel(upper);
+        const touchLower = touchedLevel(lower);
         const vwapSide = diff >= 0 ? "above" : "below";
 
         let setupSide = "";
@@ -20189,25 +20277,83 @@ function updateCoPilotBlock(data){
         let detail = `Preco ${fmtMoneyA10(currentPriceA10)} | VWAP ${fmtMoneyA10(liveVwapA10)} | dist ${fmtMoneyA10(absDiff)}.`;
         let strength = 0;
         let active = false;
+        let touched = false;
+        let confirmed = false;
+        let rejected = false;
+        let needsConfirm = false;
+        let chaseRisk = false;
+        let status = "FAR_FROM_VWAP";
+        let level = null;
+        let levelName = "";
 
-        if (nearMain) {
+        const chooseTouch = (touchLabel, touchLevel, touchSide, confirmOk, rejectOk, touchStrength) => {
+          active = true;
+          touched = true;
+          setupSide = touchSide;
+          label = touchLabel;
+          level = touchLevel;
+          levelName = touchLabel;
+          confirmed = !!confirmOk;
+          rejected = !!rejectOk;
+          needsConfirm = !confirmed;
+          status = confirmed ? "TOUCH_CONFIRMED" : "TOUCH_WAIT_CONFIRM";
+          strength = confirmed ? touchStrength : 0;
+          detail = confirmed
+            ? `${sideLabelA10(setupSide)} ${touchLabel}: candle tocou ${fmtMoneyA10(touchLevel)} e fechou ${setupSide === "long" ? "acima" : "abaixo"} em ${fmtMoneyA10(closePx)}.`
+            : `${sideLabelA10(setupSide)} ${touchLabel}: candle tocou ${fmtMoneyA10(touchLevel)}, mas ainda nao confirmou no fechamento ${fmtMoneyA10(closePx)}.`;
+        };
+
+        if (side === "long" && touchLower) {
+          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 4);
+        } else if (side === "long" && touchMain) {
+          chooseTouch("VWAP MAIN", liveVwapA10, "long", closePx > liveVwapA10, closePx < liveVwapA10, 3);
+        } else if (side === "long" && touchUpper) {
+          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 2);
+          status = "TOUCH_AGAINST_SIGNAL";
+          strength = 0;
+        } else if (side === "short" && touchUpper) {
+          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 4);
+        } else if (side === "short" && touchMain) {
+          chooseTouch("VWAP MAIN", liveVwapA10, "short", closePx < liveVwapA10, closePx > liveVwapA10, 3);
+        } else if (side === "short" && touchLower) {
+          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 2);
+          status = "TOUCH_AGAINST_SIGNAL";
+          strength = 0;
+        } else if (!side && touchLower) {
+          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 3);
+        } else if (!side && touchUpper) {
+          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 3);
+        } else if (!side && touchMain) {
+          const inferredSide = closePx >= liveVwapA10 ? "long" : "short";
+          chooseTouch("VWAP MAIN", liveVwapA10, inferredSide, inferredSide === "long" ? closePx > liveVwapA10 : closePx < liveVwapA10, false, 3);
+        } else if (nearMain) {
           active = true;
           setupSide = side || (vwapSide === "above" ? "long" : "short");
           label = "VWAP MAIN";
-          detail = `${sideLabelA10(setupSide)} na linha principal VWAP | dist ${fmtMoneyA10(absDiff)}.`;
-          strength = 3;
+          level = liveVwapA10;
+          status = "NEAR_WAIT_TOUCH";
+          detail = `${sideLabelA10(setupSide)} perto da linha principal VWAP | dist ${fmtMoneyA10(absDiff)}. Aguardar candle tocar e fechar confirmando.`;
+          strength = 0;
         } else if (nearLower) {
           active = true;
           setupSide = side || "long";
           label = "VWAP BORDA LOW";
-          detail = `${sideLabelA10(setupSide)} na borda inferior VWAP | preco ${fmtMoneyA10(currentPriceA10)} / borda ${fmtMoneyA10(lower)}.`;
-          strength = setupSide === "long" ? 3 : 2;
+          level = lower;
+          status = "NEAR_WAIT_TOUCH";
+          detail = `${sideLabelA10(setupSide)} perto da borda inferior VWAP | preco ${fmtMoneyA10(currentPriceA10)} / borda ${fmtMoneyA10(lower)}. Aguardar toque real.`;
+          strength = 0;
         } else if (nearUpper) {
           active = true;
           setupSide = side || "short";
           label = "VWAP BORDA HIGH";
-          detail = `${sideLabelA10(setupSide)} na borda superior VWAP | preco ${fmtMoneyA10(currentPriceA10)} / borda ${fmtMoneyA10(upper)}.`;
-          strength = setupSide === "short" ? 3 : 2;
+          level = upper;
+          status = "NEAR_WAIT_TOUCH";
+          detail = `${sideLabelA10(setupSide)} perto da borda superior VWAP | preco ${fmtMoneyA10(currentPriceA10)} / borda ${fmtMoneyA10(upper)}. Aguardar toque real.`;
+          strength = 0;
+        } else if ((side === "long" && currentPriceA10 > upper + threshold) || (side === "short" && currentPriceA10 < lower - threshold)) {
+          chaseRisk = true;
+          status = "CHASE_RISK";
+          detail = `${sideLabelA10(side)} longe da VWAP/banda: preco ${fmtMoneyA10(currentPriceA10)} | VWAP ${fmtMoneyA10(liveVwapA10)}. Nao perseguir; esperar pullback.`;
         }
 
         return {
@@ -20217,11 +20363,24 @@ function updateCoPilotBlock(data){
           detail,
           side: setupSide,
           strength,
+          status,
+          touched,
+          confirmed,
+          rejected,
+          needsConfirm,
+          chaseRisk,
+          level,
+          levelName,
           vwapSide,
           distance: absDiff,
           threshold,
+          touchTolerance,
           upper,
           lower,
+          high: highPx,
+          low: lowPx,
+          close: closePx,
+          open: vwapCandleOpenA10,
           price: currentPriceA10,
           vwap: liveVwapA10
         };
@@ -20324,6 +20483,8 @@ function updateCoPilotBlock(data){
 
       const trendState = buildTrendState();
       const vwapSetup = buildVwapSetup();
+      const vwapExecutionOk = vwapSetup?.confirmed === true;
+      const vwapExecutionWatch = vwapSetup?.active === true && vwapSetup?.confirmed !== true;
 
       const buildLateEntryExecution = () => {
         const rawStatus = String(pickFirstValue(
@@ -20675,11 +20836,22 @@ function updateCoPilotBlock(data){
 
       if (vwapSetup?.active) {
         if (!side || !vwapSetup.side || vwapSetup.side === side) {
-          addScore(vwapSetup.strength || 2, vwapSetup.detail);
-          management.push(`Setup VWAP ativo: ${vwapSetup.label}. Confirmar rejeicao/reclaim no candle atual.`);
+          if (vwapSetup.confirmed) {
+            addScore(vwapSetup.strength || 3, vwapSetup.detail);
+            management.push(`VWAP confirmado: ${vwapSetup.label}. Pode executar pelo lado ${sideLabelA10(vwapSetup.side)} se os demais filtros nao bloquearem.`);
+          } else if (vwapSetup.touched) {
+            cautions.push(`VWAP tocou mas nao confirmou: ${vwapSetup.detail}`);
+            management.push("Aguardar fechamento de reclaim/rejeicao VWAP antes de executar.");
+          } else {
+            cautions.push(`VWAP perto mas sem toque real: ${vwapSetup.detail}`);
+            management.push("Nao antecipar VWAP: precisa high/low tocar a linha ou banda e fechar confirmando.");
+          }
         } else {
           cautions.push(`VWAP ativo contra o sinal: ${vwapSetup.detail}`);
         }
+      } else if (vwapSetup?.chaseRisk) {
+        cautions.push(`VWAP chase risk: ${vwapSetup.detail}`);
+        management.push("Nao perseguir longe da VWAP; esperar pullback na linha azul ou banda verde.");
       } else if (vwapSetup?.hasData) {
         greens.push(`VWAP longe: preco ${fmtMoneyA10(vwapSetup.price)} / VWAP ${fmtMoneyA10(vwapSetup.vwap)}.`);
       }
@@ -21110,14 +21282,14 @@ function updateCoPilotBlock(data){
       if (volPct !== null && volPct >= 80) mult *= 0.50;
       else if (volPct !== null && volPct >= 75) mult *= 0.75;
       if (contNo && side === "short") mult *= 0.50;
-      if (nextKind.includes("exhaustion")) mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
+      if (nextKind.includes("exhaustion")) mult = Math.min(mult, vwapExecutionOk ? 0.50 : 0.25);
       if (rsiExtreme) mult = Math.min(mult, 0.25);
       if (emaAvoid === true && !earlyMomentumStrongConfirm) mult = Math.min(mult, 0.50);
       if (side && emaDir && side !== emaDir && !earlyMomentumStrongConfirm) mult = Math.min(mult, 0.50);
       if (volumeAgainst) mult = Math.min(mult, 0.50);
       if (emaAvoidSoftened) mult = Math.min(mult, 0.50);
       if (emaDirectionSoftened) mult = Math.min(mult, 0.50);
-      if (trendState?.hasTarget && trendState.streak === 0) mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
+      if (trendState?.hasTarget && trendState.streak === 0) mult = Math.min(mult, vwapExecutionOk ? 0.50 : 0.25);
       if (trendState?.hasTarget && trendState.streak === 1) mult = Math.min(mult, 0.75);
 
       let decision = "AGUARDAR";
@@ -21189,10 +21361,12 @@ function updateCoPilotBlock(data){
           subtitle = `Score 4-6 + Tendencia 1: entrada 75%, ${trendState.targetLabel || "T2"} primeiro.`;
           toneClass = "is-half";
         } else {
-          mult = Math.min(mult, vwapSetup?.active ? 0.50 : 0.25);
+          mult = Math.min(mult, vwapExecutionOk ? 0.50 : 0.25);
           decision = mult <= 0.25 ? "ENTRA 25%" : "ENTRA 50%";
-          subtitle = vwapSetup?.active
-            ? `Setup VWAP + score 4-6: operar menor (${Math.round(mult * 100)}%).`
+          subtitle = vwapExecutionOk
+            ? `VWAP touch confirmado + score 4-6: operar menor (${Math.round(mult * 100)}%).`
+            : vwapExecutionWatch
+              ? "VWAP em observacao, mas sem confirmacao: entrada so tática minima depois do reclaim/rejeicao."
             : `Score 4-6 sem trend confirmada: entrada tática ${Math.round(mult * 100)}%.`;
           toneClass = "is-half";
         }
@@ -21310,6 +21484,7 @@ function updateCoPilotBlock(data){
         greens,
         management,
         trend: trendState,
+        vwap: vwapSetup,
         execution: lateExecution,
         position: positionManagement,
         metrics: [
@@ -21364,9 +21539,11 @@ function updateCoPilotBlock(data){
           },
           {
             label: "VWAP",
-            value: vwapSetup?.active ? vwapSetup.label : (vwapSetup?.hasData ? (vwapSetup.vwapSide === "above" ? "ABOVE" : "BELOW") : "—"),
+            value: vwapSetup?.active
+              ? `${vwapSetup.label} · ${vwapSetup.confirmed ? "CONFIRM" : vwapSetup.touched ? "TOUCH" : "WAIT"}`
+              : (vwapSetup?.chaseRisk ? "NAO PERSEGUIR" : (vwapSetup?.hasData ? (vwapSetup.vwapSide === "above" ? "ABOVE" : "BELOW") : "—")),
             detail: vwapSetup?.hasData
-              ? `${fmtMoneyA10(vwapSetup.price)} vs ${fmtMoneyA10(vwapSetup.vwap)} | dist ${fmtMoneyA10(vwapSetup.distance)}`
+              ? `${fmtMoneyA10(vwapSetup.low)}-${fmtMoneyA10(vwapSetup.high)} / close ${fmtMoneyA10(vwapSetup.close)} | VWAP ${fmtMoneyA10(vwapSetup.vwap)}`
               : "Sem VWAP"
           },
           {
@@ -21395,6 +21572,7 @@ function updateCoPilotBlock(data){
         sizingPct: aaron10Readout.sizingPct ?? null,
         sizingText: aaron10Readout.sizingText || "",
         trend: aaron10Readout.trend || null,
+        vwap: aaron10Readout.vwap || null,
         badgeText: aaron10Readout.badgeText || "",
         scoreLabel: aaron10Readout.scoreLabel || ""
       } : null;
@@ -21567,7 +21745,7 @@ const goldSpotRulesSection = {
     "",
     "⚠️ ENTRA MENOR SE",
     "- Score 4-6",
-    "- Setup VWAP main/borda ativo",
+    "- VWAP touch + reclaim/rejeicao confirmado",
     "- Tendencia=0 mas outros filtros verdes",
     "- EMA 75-80%",
     "- EARLY MOMENTUM 07:30-08:30 com EMA 80-85%",
@@ -21581,6 +21759,7 @@ const goldSpotRulesSection = {
     "- MISSED_VALID_MARKET: ENTRA AGORA a mercado",
     "- MISSED_VALID_REDUCED: ENTRA MENOR",
     "- WAIT_RESPIRO: ESPERA RESPIRO, nao perseguir seco",
+    "- VWAP sem toque/confirmacao: aguardar; preco longe da VWAP = nao perseguir",
     "- TOO_LATE ou INVALIDATED: DEIXA PASSAR",
     "- Respiro pre-entry e oportunidade; respiro pos-entry e defesa",
     "",
