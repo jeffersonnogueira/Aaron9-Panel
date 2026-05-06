@@ -19396,6 +19396,11 @@ function updateCoPilotBlock(data){
       return n === null ? "—" : `$${n.toFixed(2)}`;
     };
 
+    const extractNumAfterA10 = (text, re) => {
+      const m = String(text || "").match(re);
+      return m ? toNum(m[1]) : null;
+    };
+
     const normSideA10 = (v) => {
       const s = String(v || "").trim().toUpperCase();
       if (!s) return "";
@@ -20186,6 +20191,69 @@ function updateCoPilotBlock(data){
         deepFind(root, "atr14")
       ));
 
+      const dayStructA10 = pickFirstValue(
+        root?.day_structure,
+        digest?.day_structure,
+        panel?.day_structure,
+        ui?.day_structure,
+        deepFind(root, "day_structure"),
+        {}
+      );
+      const dayPremonitionA10 = pickFirstValue(
+        root?.premonition_day,
+        root?.premonition_day_v1,
+        digest?.premonition_day,
+        digest?.premonition_day_v1,
+        panel?.premonition_day,
+        panel?.premonition_day_v1,
+        ui?.premonition_day,
+        ui?.premonition_day_v1,
+        deepFind(root, "premonition_day"),
+        deepFind(root, "premonition_day_v1"),
+        {}
+      );
+      const dayStructTextA10 = pickFirstValue(
+        root?.day_structure_summary_pt,
+        digest?.day_structure_summary_pt,
+        panel?.day_structure_summary_pt,
+        ui?.day_structure_summary_pt,
+        dayStructA10?.summary_pt,
+        dayStructA10?.summary,
+        dayPremonitionA10?.structure,
+        dayPremonitionA10?.structure_name,
+        dayPremonitionA10?.label,
+        (typeof document !== "undefined" ? document.getElementById("pday-structure")?.textContent : null),
+        ""
+      );
+      const dayHighA10 = toNum(pickFirstValue(
+        dayStructA10?.teto,
+        dayStructA10?.top,
+        dayStructA10?.high,
+        dayStructA10?.range_high,
+        dayStructA10?.range_high_prev,
+        dayStructA10?.ceiling,
+        dayPremonitionA10?.teto,
+        dayPremonitionA10?.top,
+        dayPremonitionA10?.high,
+        dayPremonitionA10?.range_high,
+        dayPremonitionA10?.range_high_prev,
+        dayPremonitionA10?.ceiling,
+        extractNumAfterA10(dayStructTextA10, /(?:teto|topo|ceiling|high)\s*[:=]?\s*\$?\s*([0-9]+(?:[.,][0-9]+)?)/i)
+      ));
+      const dayLowA10 = toNum(pickFirstValue(
+        dayStructA10?.chao,
+        dayStructA10?.floor,
+        dayStructA10?.low,
+        dayStructA10?.range_low,
+        dayStructA10?.range_low_prev,
+        dayPremonitionA10?.chao,
+        dayPremonitionA10?.floor,
+        dayPremonitionA10?.low,
+        dayPremonitionA10?.range_low,
+        dayPremonitionA10?.range_low_prev,
+        extractNumAfterA10(dayStructTextA10, /(?:ch(?:a|ã)o|piso|floor|low)\s*[:=]?\s*\$?\s*([0-9]+(?:[.,][0-9]+)?)/i)
+      ));
+
       const explicitVwapUpper = toNum(pickFirstValue(
         panel?.vwap_upper,
         panel?.vwap_upper_band,
@@ -20220,6 +20288,7 @@ function updateCoPilotBlock(data){
         root?.["Upper Band #1"],
         panel?.indicator_premonition?.vwap?.upper,
         panel?.indicator_premonition?.vwap?.upper_band,
+        dayHighA10,
         deepFind(root, "vwap_upper"),
         deepFind(root, "vwap_upper_band"),
         deepFind(root, "vwap_band_upper"),
@@ -20263,6 +20332,7 @@ function updateCoPilotBlock(data){
         root?.["Lower Band #1"],
         panel?.indicator_premonition?.vwap?.lower,
         panel?.indicator_premonition?.vwap?.lower_band,
+        dayLowA10,
         deepFind(root, "vwap_lower"),
         deepFind(root, "vwap_lower_band"),
         deepFind(root, "vwap_band_lower"),
@@ -20287,6 +20357,9 @@ function updateCoPilotBlock(data){
         const closePx = vwapCandleCloseA10 !== null ? vwapCandleCloseA10 : currentPriceA10;
         const highPx = vwapCandleHighA10 !== null ? Math.max(vwapCandleHighA10, closePx, currentPriceA10) : Math.max(closePx, currentPriceA10);
         const lowPx = vwapCandleLowA10 !== null ? Math.min(vwapCandleLowA10, closePx, currentPriceA10) : Math.min(closePx, currentPriceA10);
+        const globalScope = (typeof window !== "undefined") ? window : globalThis;
+        const prevVwapState = globalScope.__AARON10_VWAP_STATE__ || {};
+        const prevVwapPrice = toNum(pickFirstValue(prevVwapState?.price, prevVwapState?.close));
         const hasCandleRange = Number.isFinite(highPx) && Number.isFinite(lowPx) && highPx >= lowPx;
         const touchedLevel = (level) => (
           Number.isFinite(level) &&
@@ -20294,12 +20367,30 @@ function updateCoPilotBlock(data){
           lowPx <= (level + touchTolerance) &&
           highPx >= (level - touchTolerance)
         );
+        const crossedLevel = (level) => (
+          Number.isFinite(level) &&
+          prevVwapPrice !== null &&
+          Math.abs(prevVwapPrice - currentPriceA10) > touchTolerance &&
+          (
+            (prevVwapPrice < level && currentPriceA10 >= level) ||
+            (prevVwapPrice > level && currentPriceA10 <= level)
+          )
+        );
         const nearMain = absDiff <= threshold;
         const nearUpper = Math.abs(currentPriceA10 - upper) <= threshold;
         const nearLower = Math.abs(currentPriceA10 - lower) <= threshold;
-        const touchMain = touchedLevel(liveVwapA10);
-        const touchUpper = touchedLevel(upper);
-        const touchLower = touchedLevel(lower);
+        const rangeTouchMain = touchedLevel(liveVwapA10);
+        const rangeTouchUpper = touchedLevel(upper);
+        const rangeTouchLower = touchedLevel(lower);
+        const crossedMain = crossedLevel(liveVwapA10);
+        const crossedUpper = crossedLevel(upper);
+        const crossedLower = crossedLevel(lower);
+        const touchMain = rangeTouchMain || crossedMain;
+        const touchUpper = rangeTouchUpper || crossedUpper;
+        const touchLower = rangeTouchLower || crossedLower;
+        const touchSourceMain = rangeTouchMain ? "range" : (crossedMain ? "cross_memory" : "");
+        const touchSourceUpper = rangeTouchUpper ? "range" : (crossedUpper ? "cross_memory" : "");
+        const touchSourceLower = rangeTouchLower ? "range" : (crossedLower ? "cross_memory" : "");
         const vwapSide = diff >= 0 ? "above" : "below";
 
         let setupSide = "";
@@ -20315,47 +20406,50 @@ function updateCoPilotBlock(data){
         let status = "FAR_FROM_VWAP";
         let level = null;
         let levelName = "";
+        let touchSource = "";
 
-        const chooseTouch = (touchLabel, touchLevel, touchSide, confirmOk, rejectOk, touchStrength) => {
+        const chooseTouch = (touchLabel, touchLevel, touchSide, confirmOk, rejectOk, touchStrength, source = "") => {
           active = true;
           touched = true;
           setupSide = touchSide;
           label = touchLabel;
           level = touchLevel;
           levelName = touchLabel;
+          touchSource = source;
           confirmed = !!confirmOk;
           rejected = !!rejectOk;
           needsConfirm = !confirmed;
           status = confirmed ? "TOUCH_CONFIRMED" : "TOUCH_WAIT_CONFIRM";
           strength = confirmed ? touchStrength : 0;
+          const touchVerb = source === "cross_memory" ? "cruzou" : "tocou";
           detail = confirmed
-            ? `${sideLabelA10(setupSide)} ${touchLabel}: candle tocou ${fmtMoneyA10(touchLevel)} e fechou ${setupSide === "long" ? "acima" : "abaixo"} em ${fmtMoneyA10(closePx)}.`
-            : `${sideLabelA10(setupSide)} ${touchLabel}: candle tocou ${fmtMoneyA10(touchLevel)}, mas ainda nao confirmou no fechamento ${fmtMoneyA10(closePx)}.`;
+            ? `${sideLabelA10(setupSide)} ${touchLabel}: preco ${touchVerb} ${fmtMoneyA10(touchLevel)} e fechou ${setupSide === "long" ? "acima" : "abaixo"} em ${fmtMoneyA10(closePx)}.`
+            : `${sideLabelA10(setupSide)} ${touchLabel}: preco ${touchVerb} ${fmtMoneyA10(touchLevel)}, mas ainda nao confirmou no fechamento ${fmtMoneyA10(closePx)}.`;
         };
 
         if (side === "long" && touchLower) {
-          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 4);
+          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 4, touchSourceLower);
         } else if (side === "long" && touchMain) {
-          chooseTouch("VWAP MAIN", liveVwapA10, "long", closePx > liveVwapA10, closePx < liveVwapA10, 3);
+          chooseTouch("VWAP MAIN", liveVwapA10, "long", closePx > liveVwapA10, closePx < liveVwapA10, 3, touchSourceMain);
         } else if (side === "long" && touchUpper) {
-          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 2);
+          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 2, touchSourceUpper);
           status = "TOUCH_AGAINST_SIGNAL";
           strength = 0;
         } else if (side === "short" && touchUpper) {
-          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 4);
+          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 4, touchSourceUpper);
         } else if (side === "short" && touchMain) {
-          chooseTouch("VWAP MAIN", liveVwapA10, "short", closePx < liveVwapA10, closePx > liveVwapA10, 3);
+          chooseTouch("VWAP MAIN", liveVwapA10, "short", closePx < liveVwapA10, closePx > liveVwapA10, 3, touchSourceMain);
         } else if (side === "short" && touchLower) {
-          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 2);
+          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 2, touchSourceLower);
           status = "TOUCH_AGAINST_SIGNAL";
           strength = 0;
         } else if (!side && touchLower) {
-          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 3);
+          chooseTouch("VWAP BORDA LOW", lower, "long", closePx > lower, closePx < lower, 3, touchSourceLower);
         } else if (!side && touchUpper) {
-          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 3);
+          chooseTouch("VWAP BORDA HIGH", upper, "short", closePx < upper, closePx > upper, 3, touchSourceUpper);
         } else if (!side && touchMain) {
           const inferredSide = closePx >= liveVwapA10 ? "long" : "short";
-          chooseTouch("VWAP MAIN", liveVwapA10, inferredSide, inferredSide === "long" ? closePx > liveVwapA10 : closePx < liveVwapA10, false, 3);
+          chooseTouch("VWAP MAIN", liveVwapA10, inferredSide, inferredSide === "long" ? closePx > liveVwapA10 : closePx < liveVwapA10, false, 3, touchSourceMain);
         } else if (nearMain) {
           active = true;
           setupSide = side || (vwapSide === "above" ? "long" : "short");
@@ -20386,7 +20480,7 @@ function updateCoPilotBlock(data){
           detail = `${sideLabelA10(side)} longe da VWAP/banda: preco ${fmtMoneyA10(currentPriceA10)} | VWAP ${fmtMoneyA10(liveVwapA10)}. Nao perseguir; esperar pullback.`;
         }
 
-        return {
+        const vwapOut = {
           active,
           hasData: true,
           label,
@@ -20401,6 +20495,11 @@ function updateCoPilotBlock(data){
           chaseRisk,
           level,
           levelName,
+          touchSource,
+          crossedMain,
+          crossedUpper,
+          crossedLower,
+          previousPrice: prevVwapPrice,
           vwapSide,
           distance: absDiff,
           threshold,
@@ -20414,6 +20513,23 @@ function updateCoPilotBlock(data){
           price: currentPriceA10,
           vwap: liveVwapA10
         };
+        try {
+          globalScope.__AARON10_VWAP_STATE__ = {
+            price: currentPriceA10,
+            close: closePx,
+            upper,
+            lower,
+            vwap: liveVwapA10,
+            label,
+            status,
+            side: setupSide,
+            touched,
+            confirmed,
+            updated_key: `${updatedCandidate || ""}|${clockMt || ""}`
+          };
+        } catch (_e) {}
+
+        return vwapOut;
       };
 
       const buildTrendState = () => {
@@ -21573,7 +21689,7 @@ function updateCoPilotBlock(data){
               ? `${vwapSetup.label} · ${vwapSetup.confirmed ? "CONFIRM" : vwapSetup.touched ? "TOUCH" : "WAIT"}`
               : (vwapSetup?.chaseRisk ? "NAO PERSEGUIR" : (vwapSetup?.hasData ? (vwapSetup.vwapSide === "above" ? "ABOVE" : "BELOW") : "—")),
             detail: vwapSetup?.hasData
-              ? `${fmtMoneyA10(vwapSetup.low)}-${fmtMoneyA10(vwapSetup.high)} / close ${fmtMoneyA10(vwapSetup.close)} | VWAP ${fmtMoneyA10(vwapSetup.vwap)}`
+              ? `${fmtMoneyA10(vwapSetup.low)}-${fmtMoneyA10(vwapSetup.high)} / close ${fmtMoneyA10(vwapSetup.close)} | VWAP ${fmtMoneyA10(vwapSetup.vwap)} | U ${fmtMoneyA10(vwapSetup.upper)} L ${fmtMoneyA10(vwapSetup.lower)}`
               : "Sem VWAP"
           },
           {
@@ -29220,9 +29336,9 @@ const tcBuildOperatorDecisionV1 = () => {
   if (tcA10HardBlocked) {
     return withBase({
       main: "BLOQUEIO DURO A10",
-      sub: `Risk Gate bloqueou nova entrada: ${tcA10HardReason}`,
+      sub: `Risk Gate bloqueou nova entrada: ${tcA10HardReason}${tcOperatorVwapLine ? ` ${tcOperatorVwapLine}` : ""}`,
       mode: "is-no-trade",
-      next: "Nao abrir trade novo enquanto o bloqueio duro estiver ativo. Esperar V43 novo ou liberar Risk Gate.",
+      next: `Nao abrir trade novo enquanto o bloqueio duro estiver ativo. Esperar V43 novo ou liberar Risk Gate.${tcOperatorVwapLine ? " VWAP fica como leitura de contexto/manejo, nao como liberacao de trade contra o bloqueio." : ""}`,
       reason: "a10_hard_block"
     });
   }
