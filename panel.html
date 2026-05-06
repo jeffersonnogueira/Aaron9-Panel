@@ -13416,12 +13416,12 @@ function renderTradeResponderOutput(data){
     return { html: esc(plain), plain };
   };
 
-  const flatten = (obj, prefix = "", out = [], depth = 0) => {
+  const flatten = (obj, prefix = "", out = [], depth = 0, maxDepth = 3) => {
     if (!obj || typeof obj !== "object") return out;
     for (const [k,v] of Object.entries(obj)){
       const key = prefix ? `${prefix}.${k}` : k;
       const isObj = v && typeof v === "object" && !Array.isArray(v);
-      if (isObj && depth < 2) flatten(v, key, out, depth+1);
+      if (isObj && depth < maxDepth) flatten(v, key, out, depth+1, maxDepth);
       else out.push([key, v]);
     }
     return out;
@@ -13433,7 +13433,20 @@ function renderTradeResponderOutput(data){
   const P_DIGEST = [
     "shape_focus.pattern_id","shape_focus.label","shape_focus.name_pt","shape_focus.family_en",
     "shape_focus.bias","shape_focus.direction","shape_focus.confidence_pct",
-    "sr_proxy.recent_high","sr_proxy.recent_low","intraday_bars","features_true","price_now"
+    "sr_proxy.recent_high","sr_proxy.recent_low","intraday_bars","features_true","price_now",
+    "live_vwap","shape_trigger_vwap_side",
+    "volume_premonition_v1.current_state.open",
+    "volume_premonition_v1.current_state.high",
+    "volume_premonition_v1.current_state.low",
+    "volume_premonition_v1.current_state.close",
+    "volume_premonition_v1.current_state.session_vwap",
+    "volume_premonition_v1.current_state.vwap_state",
+    "ema_volume_exhaustion_premonition_v1.current_state.open",
+    "ema_volume_exhaustion_premonition_v1.current_state.high",
+    "ema_volume_exhaustion_premonition_v1.current_state.low",
+    "ema_volume_exhaustion_premonition_v1.current_state.close",
+    "day.day_high","day.day_low","day.pre_high","day.pre_low",
+    "exec_1x1.level_flip_v1.zone_high","exec_1x1.level_flip_v1.zone_low"
   ];
 
   const renderCol = (title, obj, priorities, el) => {
@@ -19161,6 +19174,7 @@ function updateCoPilotBlock(data){
     const tradeParamFields = [
       { key: "direction", label: "Direção", aliases: ["Direcao", "Direction"] },
       { key: "patternContext", label: "Padrão/contexto", aliases: ["Padrao/contexto", "Padrao contexto", "Padrão contexto", "Pattern/context", "Contexto"] },
+      { key: "vwapContext", label: "Contexto VWAP", aliases: ["Contexto de VWAP", "VWAP context", "VWAP/banda", "VWAP banda", "VWAP"] },
       { key: "continuation", label: "Continuação", aliases: ["Continuacao", "Continuation"] },
       { key: "continueUntil", label: "Se sim, continua até", aliases: ["Se sim continua ate", "Se sim continua até", "Continua ate", "Continua até"] },
       { key: "noReason", label: "Se não, motivo", aliases: ["Se nao motivo", "Se não motivo", "Motivo", "No reason"] },
@@ -19178,7 +19192,7 @@ function updateCoPilotBlock(data){
     ];
 
     const tradeParamGroups = [
-      { title: "Contexto", className: "is-context", keys: ["direction", "patternContext", "continuation", "alreadyEntered"] },
+      { title: "Contexto", className: "is-context", keys: ["direction", "patternContext", "vwapContext", "continuation", "alreadyEntered"] },
       { title: "Continuação / Reversão", className: "is-continuation", keys: ["continueUntil", "noReason", "reversalAt", "breathUntil"] },
       { title: "Execução", className: "is-execution", keys: ["notEnteredEntry", "entry", "stop", "target1", "target2"] },
       { title: "Risco / Manejo", className: "is-risk", keys: ["riskPerShare", "rrApprox", "positionManagement"] }
@@ -19412,7 +19426,7 @@ function updateCoPilotBlock(data){
         title: "Contexto",
         icon: "▤",
         className: "is-context",
-        keys: ["direction", "patternContext", "continuation", "alreadyEntered"]
+        keys: ["direction", "patternContext", "vwapContext", "continuation", "alreadyEntered"]
       });
       const continuationHtml = renderTradePanel(parsed, {
         title: "Continuação / Reversão",
@@ -20245,6 +20259,29 @@ function updateCoPilotBlock(data){
 
       const trendTarget = currentT2 !== null ? currentT2 : currentT1;
       const trendTargetLabel = currentT2 !== null ? "T2" : "T1";
+      const volumeCurrentStateA10 = pickFirstValue(
+        panel?.volume_premonition_v1?.current_state,
+        digest?.volume_premonition_v1?.current_state,
+        ui?.volume_premonition_v1?.current_state,
+        root?.volume_premonition_v1?.current_state,
+        root?.exec_1x1?.volume_premonition_v1?.current_state,
+        deepFind(root, "volume_premonition_v1")?.current_state
+      );
+      const emaExhaustCurrentStateA10 = pickFirstValue(
+        panel?.ema_volume_exhaustion_premonition_v1?.current_state,
+        digest?.ema_volume_exhaustion_premonition_v1?.current_state,
+        ui?.ema_volume_exhaustion_premonition_v1?.current_state,
+        root?.ema_volume_exhaustion_premonition_v1?.current_state,
+        root?.exec_1x1?.ema_volume_exhaustion_premonition_v1?.current_state,
+        deepFind(root, "ema_volume_exhaustion_premonition_v1")?.current_state
+      );
+      const matcherCurrentStateA10 = pickFirstValue(
+        volumeCurrentStateA10,
+        emaExhaustCurrentStateA10,
+        now?.current_state,
+        root?.current_state,
+        {}
+      );
 
       const currentPriceA10 = toNum(pickFirstValue(
         panel?.price_now,
@@ -20256,12 +20293,21 @@ function updateCoPilotBlock(data){
         root?.last_price,
         now?.current,
         now?.price,
+        root?.vwap_digest_v1?.candle?.close,
+        root?.vwap_digest_v1?.close,
+        root?.vwap_bands?.close,
         canonicalRead?.entry,
         canonicalRead?.entry_price
       ));
 
       const vwapCandleOpenA10 = toNum(pickFirstValue(
+        root?.vwap_digest_v1?.candle?.open,
+        root?.vwap_digest_v1?.open,
+        root?.vwap_bands?.open,
         root?.candle?.open,
+        matcherCurrentStateA10?.open,
+        volumeCurrentStateA10?.open,
+        emaExhaustCurrentStateA10?.open,
         panel?.open,
         digest?.open,
         ui?.open,
@@ -20271,7 +20317,13 @@ function updateCoPilotBlock(data){
       ));
 
       const vwapCandleHighA10 = toNum(pickFirstValue(
+        root?.vwap_digest_v1?.candle?.high,
+        root?.vwap_digest_v1?.high,
+        root?.vwap_bands?.high,
         root?.candle?.high,
+        matcherCurrentStateA10?.high,
+        volumeCurrentStateA10?.high,
+        emaExhaustCurrentStateA10?.high,
         panel?.high,
         digest?.high,
         ui?.high,
@@ -20281,7 +20333,13 @@ function updateCoPilotBlock(data){
       ));
 
       const vwapCandleLowA10 = toNum(pickFirstValue(
+        root?.vwap_digest_v1?.candle?.low,
+        root?.vwap_digest_v1?.low,
+        root?.vwap_bands?.low,
         root?.candle?.low,
+        matcherCurrentStateA10?.low,
+        volumeCurrentStateA10?.low,
+        emaExhaustCurrentStateA10?.low,
         panel?.low,
         digest?.low,
         ui?.low,
@@ -20291,7 +20349,13 @@ function updateCoPilotBlock(data){
       ));
 
       const vwapCandleCloseA10 = toNum(pickFirstValue(
+        root?.vwap_digest_v1?.candle?.close,
+        root?.vwap_digest_v1?.close,
+        root?.vwap_bands?.close,
         root?.candle?.close,
+        matcherCurrentStateA10?.close,
+        volumeCurrentStateA10?.close,
+        emaExhaustCurrentStateA10?.close,
         panel?.close,
         digest?.close,
         ui?.close,
@@ -20301,6 +20365,14 @@ function updateCoPilotBlock(data){
       ));
 
       const liveVwapA10 = toNum(pickFirstValue(
+        root?.vwap_digest_v1?.vwap,
+        root?.vwap_bands?.vwap,
+        panel?.vwap_digest_v1?.vwap,
+        panel?.vwap_bands?.vwap,
+        digest?.vwap_digest_v1?.vwap,
+        digest?.vwap_bands?.vwap,
+        ui?.vwap_digest_v1?.vwap,
+        ui?.vwap_bands?.vwap,
         panel?.live_vwap,
         digest?.live_vwap,
         ui?.live_vwap,
@@ -20313,7 +20385,8 @@ function updateCoPilotBlock(data){
         panel?.indicator_premonition?.vwap?.vwap,
         panel?.indicator_premonition?.vwap?.price,
         deepFind(root, "live_vwap"),
-        deepFind(root, "session_vwap")
+        deepFind(root, "session_vwap"),
+        deepFind(root, "vwap")
       ));
 
       const atrA10 = toNum(pickFirstValue(
@@ -20393,6 +20466,22 @@ function updateCoPilotBlock(data){
       ));
 
       const explicitVwapUpper = toNum(pickFirstValue(
+        root?.vwap_digest_v1?.upperBand,
+        root?.vwap_digest_v1?.upper_band,
+        root?.vwap_bands?.upperBand,
+        root?.vwap_bands?.upper,
+        panel?.vwap_digest_v1?.upperBand,
+        panel?.vwap_digest_v1?.upper_band,
+        panel?.vwap_bands?.upperBand,
+        panel?.vwap_bands?.upper,
+        digest?.vwap_digest_v1?.upperBand,
+        digest?.vwap_digest_v1?.upper_band,
+        digest?.vwap_bands?.upperBand,
+        digest?.vwap_bands?.upper,
+        ui?.vwap_digest_v1?.upperBand,
+        ui?.vwap_digest_v1?.upper_band,
+        ui?.vwap_bands?.upperBand,
+        ui?.vwap_bands?.upper,
         panel?.vwap_upper,
         panel?.vwap_upper_band,
         panel?.vwap_band_upper,
@@ -20437,6 +20526,22 @@ function updateCoPilotBlock(data){
       ));
 
       const explicitVwapLower = toNum(pickFirstValue(
+        root?.vwap_digest_v1?.lowerBand,
+        root?.vwap_digest_v1?.lower_band,
+        root?.vwap_bands?.lowerBand,
+        root?.vwap_bands?.lower,
+        panel?.vwap_digest_v1?.lowerBand,
+        panel?.vwap_digest_v1?.lower_band,
+        panel?.vwap_bands?.lowerBand,
+        panel?.vwap_bands?.lower,
+        digest?.vwap_digest_v1?.lowerBand,
+        digest?.vwap_digest_v1?.lower_band,
+        digest?.vwap_bands?.lowerBand,
+        digest?.vwap_bands?.lower,
+        ui?.vwap_digest_v1?.lowerBand,
+        ui?.vwap_digest_v1?.lower_band,
+        ui?.vwap_bands?.lowerBand,
+        ui?.vwap_bands?.lower,
         panel?.vwap_lower,
         panel?.vwap_lower_band,
         panel?.vwap_band_lower,
