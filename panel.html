@@ -7890,6 +7890,98 @@
   color: #f87171;
 }
 
+#mc-card .mc-chart-panel{
+  margin-top: 14px;
+  border: 1px solid rgba(96,165,250,.24);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(34,211,238,.13), transparent 32%),
+    linear-gradient(180deg, rgba(2,12,24,.82) 0%, rgba(2,6,23,.96) 100%);
+  padding: 14px 16px 12px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 34px rgba(34,211,238,.10);
+}
+
+#mc-card .mc-chart-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+#mc-card .mc-chart-head span{
+  font-size: 15px;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.74);
+}
+
+#mc-card .mc-chart-head strong{
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 950;
+  color: #67e8f9;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+#mc-card #mc-chart{
+  display: block;
+  width: 100%;
+  height: 380px;
+  border-radius: 8px;
+  border: 1px solid rgba(148,163,184,.14);
+  background:
+    linear-gradient(180deg, rgba(3,7,18,.96), rgba(2,6,23,.98));
+}
+
+#mc-card .mc-chart-legend{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: rgba(226,232,240,.78);
+}
+
+#mc-card .mc-chart-legend span{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+#mc-card .mc-chart-legend i{
+  display: inline-block;
+  width: 24px;
+  height: 4px;
+  border-radius: 999px;
+}
+
+#mc-card .mc-chart-legend .is-band-wide{
+  background: rgba(34,211,238,.24);
+}
+
+#mc-card .mc-chart-legend .is-band-core{
+  background: rgba(34,211,238,.48);
+}
+
+#mc-card .mc-chart-legend .is-median{
+  background: #67e8f9;
+}
+
+#mc-card .mc-chart-legend .is-level{
+  background: #ffcc66;
+}
+
 #mc-card .mc-strip{
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -8060,6 +8152,10 @@
   #mc-card .mc-strip{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  #mc-card #mc-chart{
+    height: 340px;
+  }
 }
 
 @media (max-width: 1100px){
@@ -8090,6 +8186,20 @@
 
   #tc-action-bar .tc-action-detail strong{
     font-size: 17px;
+  }
+
+  #mc-card #mc-chart{
+    height: 320px;
+  }
+
+  #mc-card .mc-chart-head{
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #mc-card .mc-chart-head strong{
+    text-align: left;
+    font-size: 18px;
   }
 
   #mc-card .mc-title{
@@ -9722,6 +9832,20 @@ body.aaron-terminal-shell .top-right .kv .v{
         </div>
         <div class="mc-verdict" id="mc-break-first">—</div>
         <div class="mc-detail" id="mc-break-detail">—</div>
+      </div>
+    </div>
+
+    <div class="mc-chart-panel">
+      <div class="mc-chart-head">
+        <span>SIMULATED PATHS</span>
+        <strong id="mc-chart-caption">—</strong>
+      </div>
+      <canvas id="mc-chart" width="1200" height="380"></canvas>
+      <div class="mc-chart-legend">
+        <span><i class="is-band-wide"></i>P10–P90</span>
+        <span><i class="is-band-core"></i>P25–P75</span>
+        <span><i class="is-median"></i>MEDIANA</span>
+        <span><i class="is-level"></i>NÍVEIS</span>
       </div>
     </div>
 
@@ -30932,6 +31056,7 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
     let mcFalseBreak = 0;
     const mcEtaT2 = [];
     const mcEtaBreak = [];
+    const mcPaths = [];
 
     for (let s = 0; s < mcSims; s++) {
       let px = tcLivePrice;
@@ -30941,9 +31066,11 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
       let firstLevel = null;
       let breakContinuation = false;
       let breakFalse = false;
+      const mcPath = s < 180 ? [tcLivePrice] : null;
 
       for (let bar = 1; bar <= mcHorizon; bar++) {
         px += mcDrift + (mcRandn() * mcSigma);
+        if (mcPath) mcPath.push(px);
 
         if (mcPlanT2Valid && !planDone) {
           const hitT2 = tcSideSign === 1 ? px >= tcTarget2 : px <= tcTarget2;
@@ -30991,6 +31118,7 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
 
       if (mcPlanT2Valid && !planDone) mcPlanTimeout++;
       if (!breakDone) mcBreakTimeout++;
+      if (mcPath) mcPaths.push(mcPath);
     }
 
     const mcAvg = (arr) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
@@ -31038,6 +31166,175 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
     mcSet("mc-down-level", `${mcDown.name} ${mcMoney(mcDown.level)}`);
     mcSet("mc-eta", mcEtaBreakAvg == null ? "—" : `~${Math.round(mcEtaBreakAvg)}m`);
     mcSet("mc-false-risk", mcFalsePct == null ? "—" : mcPct(mcFalsePct));
+    mcSet("mc-chart-caption", `${mcPaths.length} caminhos visuais | σ ${mcMoney(mcSigma)}/bar | bias ${(mcBias * 100).toFixed(0)}%`);
+
+    let mcChartBands = null;
+    const mcRenderChart = () => {
+      const canvas = el("mc-chart");
+      if (!canvas || !mcPaths.length) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const cssW = Math.max(760, Math.floor(rect.width || canvas.parentElement?.clientWidth || 1200));
+      const cssH = Math.max(300, Math.floor(rect.height || 380));
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      canvas.width = Math.floor(cssW * dpr);
+      canvas.height = Math.floor(cssH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssW, cssH);
+
+      const pad = { l: 76, r: 108, t: 30, b: 42 };
+      const iw = cssW - pad.l - pad.r;
+      const ih = cssH - pad.t - pad.b;
+      const finite = (v) => v != null && Number.isFinite(Number(v));
+      const levelValues = [
+        tcLivePrice,
+        mcPlanT2Valid ? tcTarget2 : null,
+        mcPlanT2Valid ? tcStopPrice : null,
+        mcUp.level,
+        mcDown.level,
+        mcVwapLevel
+      ].filter(finite).map(Number);
+      const allVals = mcPaths.flat().filter(finite).map(Number).concat(levelValues);
+      let minY = Math.min(...allVals);
+      let maxY = Math.max(...allVals);
+      const rangePad = Math.max(mcBaseAtr * 0.7, (maxY - minY) * 0.08, 0.04);
+      minY -= rangePad;
+      maxY += rangePad;
+      if (maxY <= minY) {
+        maxY = minY + Math.max(mcBaseAtr, 0.1);
+      }
+
+      const x = (bar) => pad.l + (bar / mcHorizon) * iw;
+      const y = (price) => pad.t + ih - ((price - minY) / (maxY - minY)) * ih;
+
+      const bg = ctx.createLinearGradient(0, 0, 0, cssH);
+      bg.addColorStop(0, "rgba(8,17,31,0.98)");
+      bg.addColorStop(1, "rgba(2,6,23,0.98)");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, cssW, cssH);
+
+      ctx.strokeStyle = "rgba(148,163,184,.10)";
+      ctx.lineWidth = 1;
+      ctx.font = "800 12px Space Mono, monospace";
+      ctx.fillStyle = "rgba(203,213,225,.58)";
+      for (let i = 0; i <= 5; i++) {
+        const py = pad.t + (i / 5) * ih;
+        const price = maxY - (i / 5) * (maxY - minY);
+        ctx.beginPath();
+        ctx.moveTo(pad.l, py);
+        ctx.lineTo(cssW - pad.r, py);
+        ctx.stroke();
+        ctx.fillText(`$${price.toFixed(2)}`, 10, py + 4);
+      }
+      for (let i = 0; i <= 6; i++) {
+        const bar = Math.round((i / 6) * mcHorizon);
+        const px = x(bar);
+        ctx.beginPath();
+        ctx.moveTo(px, pad.t);
+        ctx.lineTo(px, cssH - pad.b);
+        ctx.stroke();
+        ctx.fillText(`+${bar}m`, px - 14, cssH - 14);
+      }
+
+      const quantile = (vals, q) => {
+        const arr = vals.filter(finite).map(Number).sort((a, b) => a - b);
+        if (!arr.length) return null;
+        const pos = (arr.length - 1) * q;
+        const lo = Math.floor(pos);
+        const hi = Math.ceil(pos);
+        if (lo === hi) return arr[lo];
+        return arr[lo] + (arr[hi] - arr[lo]) * (pos - lo);
+      };
+      const bands = { p10: [], p25: [], p50: [], p75: [], p90: [] };
+      for (let bar = 0; bar <= mcHorizon; bar++) {
+        const vals = mcPaths.map(path => path[bar]);
+        bands.p10.push(quantile(vals, 0.10));
+        bands.p25.push(quantile(vals, 0.25));
+        bands.p50.push(quantile(vals, 0.50));
+        bands.p75.push(quantile(vals, 0.75));
+        bands.p90.push(quantile(vals, 0.90));
+      }
+      mcChartBands = bands;
+
+      const drawBand = (upper, lower, color) => {
+        ctx.beginPath();
+        upper.forEach((v, i) => {
+          const px = x(i);
+          const py = y(v);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        for (let i = lower.length - 1; i >= 0; i--) {
+          ctx.lineTo(x(i), y(lower[i]));
+        }
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      };
+      const drawPath = (path, color, width = 1, dash = []) => {
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.setLineDash(dash);
+        ctx.beginPath();
+        path.forEach((v, i) => {
+          const px = x(i);
+          const py = y(v);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+        ctx.restore();
+      };
+
+      drawBand(bands.p90, bands.p10, "rgba(34,211,238,.12)");
+      drawBand(bands.p75, bands.p25, "rgba(34,211,238,.22)");
+      for (let i = 0; i < mcPaths.length; i += 3) {
+        const path = mcPaths[i];
+        const last = path[path.length - 1];
+        const color = last >= tcLivePrice ? "rgba(74,222,128,.16)" : "rgba(248,113,113,.15)";
+        drawPath(path, color, 0.85);
+      }
+      drawPath(bands.p50, "rgba(103,232,249,.95)", 2.8);
+
+      const levels = [
+        { label: "NOW", value: tcLivePrice, color: "rgba(226,232,240,.86)", dash: [] },
+        mcPlanT2Valid ? { label: "T2", value: tcTarget2, color: "rgba(74,222,128,.95)", dash: [7, 4] } : null,
+        mcPlanT2Valid ? { label: "STOP", value: tcStopPrice, color: "rgba(248,113,113,.95)", dash: [7, 4] } : null,
+        { label: "UP", value: mcUp.level, color: "rgba(52,211,153,.82)", dash: [3, 4] },
+        { label: "DOWN", value: mcDown.level, color: "rgba(251,113,133,.82)", dash: [3, 4] },
+        mcVwapLevel != null ? { label: "VWAP", value: mcVwapLevel, color: "rgba(96,165,250,.72)", dash: [2, 5] } : null
+      ].filter(Boolean);
+
+      levels.forEach((lv) => {
+        if (!finite(lv.value)) return;
+        const py = y(Number(lv.value));
+        ctx.save();
+        ctx.strokeStyle = lv.color;
+        ctx.lineWidth = lv.label === "NOW" ? 1.6 : 1.2;
+        ctx.setLineDash(lv.dash);
+        ctx.beginPath();
+        ctx.moveTo(pad.l, py);
+        ctx.lineTo(cssW - pad.r + 12, py);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.font = "950 13px Space Mono, monospace";
+        ctx.fillStyle = lv.color;
+        ctx.fillText(`${lv.label} $${Number(lv.value).toFixed(2)}`, cssW - pad.r + 18, py + 4);
+        ctx.restore();
+      });
+
+      ctx.font = "950 14px Space Mono, monospace";
+      ctx.fillStyle = "rgba(255,204,102,.92)";
+      ctx.fillText("MC PATH FAN", pad.l, 20);
+      ctx.fillStyle = "rgba(203,213,225,.62)";
+      ctx.font = "800 12px Space Mono, monospace";
+      ctx.fillText(`${mcSims} sims | ${mcHorizon} bars | ${mcFirstSide}`, pad.l + 110, 20);
+    };
+
+    mcRenderChart();
 
     try {
       window.__AARON_MONTE_CARLO_V1__ = {
@@ -31065,6 +31362,12 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
           down_level: mcDown,
           eta_avg_bars: mcEtaBreakAvg,
           false_break_pct: mcFalsePct
+        },
+        chart: {
+          paths_sampled: mcPaths.length,
+          p10: mcChartBands?.p10 || null,
+          p50: mcChartBands?.p50 || null,
+          p90: mcChartBands?.p90 || null
         }
       };
     } catch (_e) {}
