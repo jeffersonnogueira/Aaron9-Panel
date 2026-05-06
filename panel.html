@@ -20190,20 +20190,32 @@ function updateCoPilotBlock(data){
         panel?.vwap_upper,
         panel?.vwap_upper_band,
         panel?.vwap_band_upper,
+        panel?.upperBand,
+        panel?.upper_band,
         panel?.upper_band_1,
         panel?.upperBand1,
+        panel?.upperBandValue,
         panel?.upperBandValue1,
         panel?.["Upper Band #1"],
+        digest?.upperBand,
+        digest?.upper_band,
         digest?.upper_band_1,
         digest?.upperBand1,
+        digest?.upperBandValue,
         digest?.upperBandValue1,
         digest?.["Upper Band #1"],
+        ui?.upperBand,
+        ui?.upper_band,
         ui?.upper_band_1,
         ui?.upperBand1,
+        ui?.upperBandValue,
         ui?.upperBandValue1,
         ui?.["Upper Band #1"],
+        root?.upperBand,
+        root?.upper_band,
         root?.upper_band_1,
         root?.upperBand1,
+        root?.upperBandValue,
         root?.upperBandValue1,
         root?.["Upper Band #1"],
         panel?.indicator_premonition?.vwap?.upper,
@@ -20211,6 +20223,9 @@ function updateCoPilotBlock(data){
         deepFind(root, "vwap_upper"),
         deepFind(root, "vwap_upper_band"),
         deepFind(root, "vwap_band_upper"),
+        deepFind(root, "upperBand"),
+        deepFind(root, "upper_band"),
+        deepFind(root, "upperBandValue"),
         deepFind(root, "upper_band_1")
       ));
 
@@ -20218,20 +20233,32 @@ function updateCoPilotBlock(data){
         panel?.vwap_lower,
         panel?.vwap_lower_band,
         panel?.vwap_band_lower,
+        panel?.lowerBand,
+        panel?.lower_band,
         panel?.lower_band_1,
         panel?.lowerBand1,
+        panel?.lowerBandValue,
         panel?.lowerBandValue1,
         panel?.["Lower Band #1"],
+        digest?.lowerBand,
+        digest?.lower_band,
         digest?.lower_band_1,
         digest?.lowerBand1,
+        digest?.lowerBandValue,
         digest?.lowerBandValue1,
         digest?.["Lower Band #1"],
+        ui?.lowerBand,
+        ui?.lower_band,
         ui?.lower_band_1,
         ui?.lowerBand1,
+        ui?.lowerBandValue,
         ui?.lowerBandValue1,
         ui?.["Lower Band #1"],
+        root?.lowerBand,
+        root?.lower_band,
         root?.lower_band_1,
         root?.lowerBand1,
+        root?.lowerBandValue,
         root?.lowerBandValue1,
         root?.["Lower Band #1"],
         panel?.indicator_premonition?.vwap?.lower,
@@ -20239,6 +20266,9 @@ function updateCoPilotBlock(data){
         deepFind(root, "vwap_lower"),
         deepFind(root, "vwap_lower_band"),
         deepFind(root, "vwap_band_lower"),
+        deepFind(root, "lowerBand"),
+        deepFind(root, "lower_band"),
+        deepFind(root, "lowerBandValue"),
         deepFind(root, "lower_band_1")
       ));
 
@@ -29079,6 +29109,37 @@ const tcA10SizingPct = tcPickNum(tcA10RiskGate?.sizingPct);
 const tcA10TrendRiskActive =
   tcA10TrendAligned &&
   (tcWorstZone || tcWorseEma || tcBadZone);
+const tcA10Vwap = tcA10RiskGate?.vwap || {};
+const tcA10VwapHasData = tcA10Vwap?.hasData === true;
+const tcA10VwapStatus = String(tcA10Vwap?.status || "").trim().toUpperCase();
+const tcA10VwapLabel = String(tcA10Vwap?.label || "VWAP").trim();
+const tcA10VwapSideRaw = tcNormSide(tcA10Vwap?.side);
+const tcA10VwapSide = tcA10VwapSideRaw ? tcA10VwapSideRaw.toUpperCase() : "";
+const tcA10VwapTouched =
+  tcA10Vwap?.touched === true ||
+  tcA10VwapStatus.indexOf("TOUCH") >= 0;
+const tcA10VwapConfirmed =
+  tcA10Vwap?.confirmed === true ||
+  tcA10VwapStatus === "TOUCH_CONFIRMED";
+const tcA10VwapNeedsConfirm =
+  tcA10Vwap?.needsConfirm === true ||
+  tcA10VwapStatus === "TOUCH_WAIT_CONFIRM" ||
+  tcA10VwapStatus === "NEAR_WAIT_TOUCH";
+const tcA10VwapChaseRisk =
+  tcA10Vwap?.chaseRisk === true ||
+  tcA10VwapStatus === "CHASE_RISK";
+const tcA10VwapAgainst =
+  tcA10VwapStatus === "TOUCH_AGAINST_SIGNAL" ||
+  (
+    tcA10VwapTouched &&
+    tcA10VwapSide &&
+    tcOperatorDir &&
+    tcOperatorDir !== "—" &&
+    tcA10VwapSide !== tcOperatorDir
+  );
+const tcA10VwapAlignedConfirmed =
+  tcA10VwapConfirmed &&
+  (!tcA10VwapSide || !tcOperatorDir || tcOperatorDir === "—" || tcA10VwapSide === tcOperatorDir);
 
 if (
   tcA10TrendRiskActive &&
@@ -29089,6 +29150,35 @@ if (
 }
 
 const tcOperatorFmtR = (v) => v != null && Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)}R` : "—";
+const tcOperatorVwapLine = (() => {
+  if (!tcA10VwapHasData) return "";
+  const level = tcPickNum(tcA10Vwap?.level, tcA10Vwap?.vwap);
+  const close = tcPickNum(tcA10Vwap?.close, tcA10Vwap?.price, tcLivePrice);
+  const low = tcPickNum(tcA10Vwap?.low);
+  const high = tcPickNum(tcA10Vwap?.high);
+  const rangeTxt =
+    low != null && high != null
+      ? `${tcLateMoney(low)}-${tcLateMoney(high)}`
+      : `preco ${tcLateMoney(close)}`;
+  const levelTxt =
+    level != null
+      ? `${tcA10VwapLabel} ${tcLateMoney(level)}`
+      : tcA10VwapLabel;
+
+  if (tcA10VwapAgainst) {
+    return `VWAP contra ${tcOperatorDir}: ${levelTxt} tocada no candle ${rangeTxt}. Nao perseguir; esperar respiro ou novo confirm.`;
+  }
+  if (tcA10VwapChaseRisk) {
+    return `VWAP chase: preco longe da VWAP/banda para ${tcOperatorDir}. Nao perseguir; esperar voltar para a linha/borda.`;
+  }
+  if (tcA10VwapAlignedConfirmed) {
+    return `VWAP confirmou ${tcA10VwapSide || tcOperatorDir}: ${levelTxt}, close ${tcLateMoney(close)}.`;
+  }
+  if (tcA10VwapTouched || tcA10VwapNeedsConfirm) {
+    return `VWAP ${tcA10VwapLabel} tocou, mas ainda precisa fechamento confirmando.`;
+  }
+  return "";
+})();
 const tcOperatorLiveLine = () => {
   const bits = [];
   if (tcLivePrice != null) bits.push(`preco ${tcLateMoney(tcLivePrice)}`);
@@ -29097,6 +29187,7 @@ const tcOperatorLiveLine = () => {
   if (tcTarget1 != null) bits.push(`T1 ${tcLateMoney(tcTarget1)}`);
   if (tcTarget2 != null) bits.push(`T2 ${tcLateMoney(tcTarget2)}`);
   if (tcRr2 != null || tcRr1 != null) bits.push(`RR ${tcOperatorFmtR(tcRr2 ?? tcRr1)}`);
+  if (tcOperatorVwapLine) bits.push(tcOperatorVwapLine);
   return bits.join(" | ");
 };
 
@@ -29110,7 +29201,8 @@ const tcBuildOperatorDecisionV1 = () => {
     sub: "Aguardando leitura completa de EMA, Volume, RSI, Claude e convergencia.",
     next: "Nao executar enquanto a mesa nao tiver gatilho limpo.",
     reason: "payload_incomplete",
-    tape: tcOperatorTape
+    tape: tcOperatorTape,
+    vwap: tcA10VwapHasData ? tcA10Vwap : null
   };
 
   const withBase = (patch) => ({ ...base, ...patch });
@@ -29152,6 +29244,39 @@ const tcBuildOperatorDecisionV1 = () => {
       mode: "is-no-trade",
       next: "Zerar ideia. Nao reabrir nesse mesmo setup; esperar novo matcher.",
       reason: "operator_invalidated"
+    });
+  }
+
+  if (tcA10VwapAgainst && !tcPositionAction) {
+    return withBase({
+      main: "NÃO PERSEGUIR VWAP",
+      sub: tcOperatorVwapLine || `VWAP/banda tocou contra ${tcOperatorDir}.`,
+      mode: "is-no-trade",
+      zone: "VWAP RISK",
+      next: "Se ja esta posicionado, manejar parcial/T2; se esta fora, esperar respiro, reclaim ou novo gatilho do matcher.",
+      reason: "vwap_against_operator_side"
+    });
+  }
+
+  if (tcA10VwapChaseRisk && !tcPositionAction) {
+    return withBase({
+      main: "NÃO PERSEGUIR VWAP",
+      sub: tcOperatorVwapLine || "Preço esticado longe da VWAP/banda.",
+      mode: "is-no-trade",
+      zone: "VWAP CHASE",
+      next: "Aguardar pullback na VWAP/borda ou um novo V43. Entrada nova no candle esticado fica bloqueada.",
+      reason: "vwap_chase_risk"
+    });
+  }
+
+  if (tcA10VwapTouched && tcA10VwapNeedsConfirm && !tcA10VwapConfirmed && !tcPositionAction) {
+    return withBase({
+      main: "AGUARDAR VWAP",
+      sub: tcOperatorVwapLine || "VWAP tocou, mas ainda nao confirmou no fechamento.",
+      mode: "is-wait",
+      zone: "VWAP WAIT",
+      next: "Executar somente depois do fechamento confirmar a borda/linha para o lado do trade.",
+      reason: "vwap_wait_confirmation"
     });
   }
 
@@ -29428,6 +29553,9 @@ const tcOperatorMemoryKey = [
   tcOperatorDecisionV1.reason,
   tcOperatorDecisionV1.direction,
   tcOperatorDecisionV1.zone,
+  tcA10VwapStatus || "no-vwap-status",
+  tcA10VwapLabel || "no-vwap-label",
+  tcLateMoney(tcPickNum(tcA10Vwap?.level, tcA10Vwap?.vwap)),
   tcLateMoney(tcOperatorTape.anchor),
   tcLateMoney(tcOperatorTape.stop)
 ].join("|");
@@ -29457,6 +29585,7 @@ try {
     reason: tcOperatorDecisionV1.reason,
     direction: tcOperatorDecisionV1.direction,
     zone: tcOperatorDecisionV1.zone,
+    vwap: tcA10VwapHasData ? tcA10Vwap : null,
     tape: tcOperatorTape,
     updated_at: new Date().toISOString()
   };
