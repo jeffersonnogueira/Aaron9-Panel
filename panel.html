@@ -9031,6 +9031,7 @@ body.aaron-terminal-shell #copilot-block .prem-breakout-title{
 }
 
 body.aaron-terminal-shell #copilot-block,
+body.aaron-terminal-shell #mc-card,
 body.aaron-terminal-shell #triple-conv-card,
 body.aaron-terminal-shell #indicator-prem-card{
   border-color:rgba(255,204,102,.34) !important;
@@ -9800,7 +9801,7 @@ body.aaron-terminal-shell .top-right .kv .v{
 </div>
 <!-- ===== /TC ACTION BAR ===== -->
 <!-- ===== MONTE CARLO — PLAN + BREAKOUT WATCH ===== -->
-<div class="prem-breakout-wrap" id="mc-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+<div class="prem-breakout-wrap" id="mc-card" style="margin-top:10px; grid-column: 1 / -1;">
   <div class="mc-shell">
     <div class="mc-head">
       <div>
@@ -29203,14 +29204,16 @@ renderOptions("");
   }
 
   function updateExecMicroBox(){
-    if (!el("prem-exec-micro")) return;
     // Current (pega do KPI da direita ou do header)
     const current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
 
     // Payload & ctx (não depende do bloco do retângulo amarelo)
-    const payload = window.__AARON_LAST_PAYLOAD__ || {};
-    const panel   = payload.panel || payload || {};
-    const digest  = payload.digest || {};
+    const rawPayload = window.__AARON_LAST_PAYLOAD__ || {};
+    const payload = Array.isArray(rawPayload) ? (rawPayload[0] || {}) : rawPayload;
+    const root = payload && typeof payload === "object" ? payload : {};
+    const panel   = root.panel || root || {};
+    const digest  = root.digest || {};
+    const ui      = root.ui || panel.ui || digest.ui || {};
     const ctx     = window.__A10_EG_CTX || {};
 
     const numPick = (...vals) => {
@@ -30062,6 +30065,9 @@ const tcTargetDeskLine = (() => {
 })();
 
 const tcLivePrice = tcPickNum(
+  current,
+  window.__AARON_LAST_PANEL_JSON__?.price,
+  window.__AARON_LAST_PANEL_JSON__?.last_price,
   panel?.price_now,
   digest?.price_now,
   payload?.price_now,
@@ -33680,6 +33686,7 @@ const tpTxt = (() => {
     { id:"prem", label:"Prem", icon:"P", tone:"gold", title:"Premonition", targets:["premonition-section"] },
     { id:"ind", label:"Indic", icon:"I", tone:"green", title:"Indicators", targets:["indicator-prem-card", "first-hour-prem-card"] },
     { id:"tri", label:"Triple", icon:"T", tone:"gold", title:"Triple Convergence", targets:["triple-conv-card"] },
+    { id:"mc", label:"MC", icon:"M", tone:"gold", title:"Monte Carlo", targets:["mc-card"] },
     { id:"cop", label:"Copilot", icon:"C", tone:"purple", title:"Copilot", targets:["copilot-block"] },
     { id:"vol", label:"Volume", icon:"V", tone:"green", title:"Volume Premonition", targets:["zz-volume-row", "vol-engine-card"] },
     { id:"ent", label:"Entry", icon:"E", tone:"gold", title:"Entry Engine", targets:["entry-prem-card", "ee-engine-card"] },
