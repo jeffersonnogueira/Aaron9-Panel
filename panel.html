@@ -7566,8 +7566,8 @@
 #tc-action-bar .tc-action-details{
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 2px;
+  gap: 14px;
+  margin-top: 6px;
 }
 
 #tc-action-bar .tc-action-detail{
@@ -7575,13 +7575,14 @@
   border: 1px solid rgba(255,255,255,.13);
   border-radius: 8px;
   background: rgba(255,255,255,.045);
-  padding: 12px 14px;
+  padding: 16px 18px;
+  min-height: 72px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
 }
 
 #tc-action-bar .tc-action-detail span{
   display: block;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -7591,9 +7592,9 @@
 
 #tc-action-bar .tc-action-detail strong{
   display: block;
-  margin-top: 8px;
-  font-size: 15px;
-  line-height: 1.28;
+  margin-top: 10px;
+  font-size: 20px;
+  line-height: 1.25;
   font-weight: 850;
   color: rgba(255,255,255,.92);
   white-space: normal;
@@ -7616,8 +7617,8 @@
 #tc-action-bar .tc-action-note{
   max-width: 1100px;
   border-left: 4px solid rgba(255,204,102,.72);
-  padding: 8px 0 8px 14px;
-  font-size: 15px;
+  padding: 10px 0 10px 16px;
+  font-size: 18px;
   line-height: 1.28;
   color: rgba(255,255,255,.88);
   opacity: .94;
@@ -7851,6 +7852,10 @@
   #tc-action-bar .tc-action-sub{
     font-size: 16px;
   }
+
+  #tc-action-bar .tc-action-detail strong{
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 1100px){
@@ -7877,6 +7882,10 @@
 
   #tc-action-bar .tc-action-details{
     grid-template-columns: 1fr;
+  }
+
+  #tc-action-bar .tc-action-detail strong{
+    font-size: 17px;
   }
 }
 /* ===== /TC ACTION BAR ===== */
