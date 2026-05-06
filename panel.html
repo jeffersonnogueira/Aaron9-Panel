@@ -28578,13 +28578,16 @@ renderOptions("");
     const lfActive =
       levelFlipV44?.enabled === true ||
       ["TRIGGERED", "ACTIVE", "ARMED"].includes(lfStatusRaw);
-    const lfSide =
-      lfSideRaw.includes("LONG") ? "LONG" :
-      lfSideRaw.includes("SHORT") ? "SHORT" : "";
     const lfStateLabel =
       lfStateRaw === "RESISTANCE_BECAME_SUPPORT" ? "RESISTENCIA VIROU SUPORTE" :
       lfStateRaw === "SUPPORT_BECAME_RESISTANCE" ? "SUPORTE VIROU RESISTENCIA" :
       "LEVEL WATCH";
+    const lfSide =
+      lfSideRaw.includes("LONG") ? "LONG" :
+      lfSideRaw.includes("SHORT") ? "SHORT" :
+      lfStateRaw === "RESISTANCE_BECAME_SUPPORT" ? "LONG" :
+      lfStateRaw === "SUPPORT_BECAME_RESISTANCE" ? "SHORT" :
+      "";
     const lfZoneLow = numPick(levelFlipV44?.zone_low);
     const lfZoneHigh = numPick(levelFlipV44?.zone_high);
     const lfZoneMid = numPick(levelFlipV44?.zone_mid);
