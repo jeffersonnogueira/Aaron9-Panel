@@ -11681,7 +11681,7 @@ main.layout,
     <h3>Qtd &amp; Risco</h3>
     <p id="sb-position-size" class="sb-result-main">Qtd sugerida: –</p>
     <p id="sb-risk-dollar" class="sb-result-sub">Risco aprox.: –</p>
-    <p id="sb-risk-percent" class="sb-result-sub">Risco % trade / conta: –</p>
+    <p id="sb-risk-percent-out" class="sb-result-sub">Risco % trade / conta: –</p>
   </div>
 </div>
 
@@ -14261,8 +14261,191 @@ setHTML(
   }
 }
 
+function normalizeAaronPayload(input){
+  try{
+    const asObj = (v) => (v && typeof v === "object" && !Array.isArray(v)) ? v : {};
+    const hasObj = (v) => v && typeof v === "object" && !Array.isArray(v) && Object.keys(v).length > 0;
+    const firstObj = (...vals) => vals.find(hasObj) || {};
+    const firstVal = (...vals) => {
+      for (const v of vals){
+        if (v == null) continue;
+        if (typeof v === "string" && !v.trim()) continue;
+        return v;
+      }
+      return null;
+    };
+    const firstNum = (...vals) => {
+      for (const v of vals){
+        if (v == null || v === "") continue;
+        const n = Number(v);
+        if (Number.isFinite(n)) return n;
+      }
+      return null;
+    };
+    const putIfMissing = (target, key, value) => {
+      if (target && typeof target === "object" && hasObj(value) && !hasObj(target[key])) target[key] = value;
+    };
+
+    let root = Array.isArray(input) ? (input[0] || {}) : (input || {});
+    if (hasObj(root.json)) root = root.json;
+    if (hasObj(root.body)) root = root.body;
+    if (hasObj(root.data) && !hasObj(root.panel) && !hasObj(root.digest)){
+      root = {
+        ...root.data,
+        symbol: root.data.symbol ?? root.symbol,
+        timeframe: root.data.timeframe ?? root.timeframe,
+        time: root.data.time ?? root.time,
+        timestamp: root.data.timestamp ?? root.timestamp
+      };
+    }
+    if (hasObj(root.matcher)) root = { ...root.matcher, ...root, matcher: root.matcher };
+    if (!root || typeof root !== "object") return input || {};
+    if (root.__aaron_normalized_v1 === true) return root;
+
+    const hasPanel = hasObj(root.panel);
+    const panel = hasPanel ? root.panel : root;
+    const digest = hasObj(root.digest) ? root.digest : {};
+    const ui = hasObj(root.ui) ? root.ui : {};
+    const live = asObj(root.live);
+    if (hasPanel) root.panel = panel;
+    root.digest = digest;
+    root.ui = ui;
+
+    const exec1x1 = firstObj(root.exec_1x1, panel.exec_1x1, digest.exec_1x1, ui.exec_1x1, live.exec_1x1);
+    if (hasObj(exec1x1)){
+      root.exec_1x1 = exec1x1;
+      putIfMissing(panel, "exec_1x1", exec1x1);
+      putIfMissing(digest, "exec_1x1", exec1x1);
+    }
+
+    const focusPack = firstObj(root.claude_focus_pack_v1, panel.claude_focus_pack_v1, digest.claude_focus_pack_v1, ui.claude_focus_pack_v1);
+    putIfMissing(root, "claude_focus_pack_v1", focusPack);
+    putIfMissing(panel, "claude_focus_pack_v1", focusPack);
+    putIfMissing(digest, "claude_focus_pack_v1", focusPack);
+
+    const canonical = firstObj(
+      root.canonical_read_v1,
+      exec1x1.canonical_read_v1,
+      live.canonical_read_v1,
+      panel.canonical_read_v1,
+      digest.canonical_read_v1,
+      ui.canonical_read_v1,
+      focusPack.canonical_read
+    );
+    putIfMissing(root, "canonical_read_v1", canonical);
+    putIfMissing(panel, "canonical_read_v1", canonical);
+    putIfMissing(digest, "canonical_read_v1", canonical);
+    putIfMissing(ui, "canonical_read_v1", canonical);
+
+    const emaBlock = firstObj(
+      root.ema_volume_exhaustion_premonition_v1,
+      exec1x1.ema_volume_exhaustion_premonition_v1,
+      live.ema_volume_exhaustion_premonition_v1,
+      panel.ema_volume_exhaustion_premonition_v1,
+      digest.ema_volume_exhaustion_premonition_v1,
+      ui.ema_volume_exhaustion_premonition_v1
+    );
+    putIfMissing(root, "ema_volume_exhaustion_premonition_v1", emaBlock);
+    putIfMissing(panel, "ema_volume_exhaustion_premonition_v1", emaBlock);
+    putIfMissing(digest, "ema_volume_exhaustion_premonition_v1", emaBlock);
+
+    const volumeBlock = firstObj(
+      root.volume_premonition_v1,
+      exec1x1.volume_premonition_v1,
+      live.volume_premonition_v1,
+      panel.volume_premonition_v1,
+      digest.volume_premonition_v1,
+      ui.volume_premonition_v1
+    );
+    putIfMissing(root, "volume_premonition_v1", volumeBlock);
+    putIfMissing(panel, "volume_premonition_v1", volumeBlock);
+    putIfMissing(digest, "volume_premonition_v1", volumeBlock);
+
+    const pivotBlock = firstObj(
+      root.pivot_premonition_v1,
+      exec1x1.pivot_premonition_v1,
+      live.pivot_premonition_v1,
+      panel.pivot_premonition_v1,
+      digest.pivot_premonition_v1,
+      ui.pivot_premonition_v1
+    );
+    putIfMissing(root, "pivot_premonition_v1", pivotBlock);
+    putIfMissing(panel, "pivot_premonition_v1", pivotBlock);
+    putIfMissing(digest, "pivot_premonition_v1", pivotBlock);
+
+    const levelFlip = firstObj(root.level_flip_v1, exec1x1.level_flip_v1, live.level_flip_v1, panel.level_flip_v1, digest.level_flip_v1, ui.level_flip_v1);
+    putIfMissing(root, "level_flip_v1", levelFlip);
+    putIfMissing(panel, "level_flip_v1", levelFlip);
+    putIfMissing(digest, "level_flip_v1", levelFlip);
+
+    const vwapSrc = firstObj(root.vwap_digest_v1, panel.vwap_digest_v1, digest.vwap_digest_v1, ui.vwap_digest_v1, live.vwap_digest_v1, focusPack.vwap);
+    const bands = firstObj(root.vwap_bands, panel.vwap_bands, digest.vwap_bands, ui.vwap_bands, live.vwap_bands);
+    const candle = firstObj(root.candle, panel.candle, digest.candle, ui.candle, vwapSrc.candle, volumeBlock.current_state, emaBlock.current_state);
+    const vwapDigest = {
+      ...vwapSrc,
+      candle,
+      vwap: firstNum(vwapSrc.vwap, bands.vwap, panel.live_vwap, digest.live_vwap, root.live_vwap, volumeBlock.current_state?.session_vwap, emaBlock.current_state?.session_vwap),
+      upperBand: firstNum(vwapSrc.upperBand, vwapSrc.upper_band, bands.upperBand, bands.upper, root.upperBand, root.upper_band),
+      lowerBand: firstNum(vwapSrc.lowerBand, vwapSrc.lower_band, bands.lowerBand, bands.lower, root.lowerBand, root.lower_band),
+      close: firstNum(vwapSrc.close, candle.close, bands.close),
+      high: firstNum(vwapSrc.high, candle.high, bands.high),
+      low: firstNum(vwapSrc.low, candle.low, bands.low)
+    };
+    if (hasObj(vwapSrc) || vwapDigest.vwap !== null || vwapDigest.upperBand !== null || vwapDigest.lowerBand !== null){
+      root.vwap_digest_v1 = vwapDigest;
+      if (!hasObj(panel.vwap_digest_v1)) panel.vwap_digest_v1 = vwapDigest;
+      if (!hasObj(digest.vwap_digest_v1)) digest.vwap_digest_v1 = vwapDigest;
+      if (hasObj(candle)){
+        if (!hasObj(root.candle)) root.candle = candle;
+        if (!hasObj(panel.candle)) panel.candle = candle;
+      }
+      if (!hasObj(root.vwap_bands)){
+        root.vwap_bands = {
+          vwap: vwapDigest.vwap,
+          upperBand: vwapDigest.upperBand,
+          lowerBand: vwapDigest.lowerBand,
+          high: vwapDigest.high,
+          low: vwapDigest.low,
+          close: vwapDigest.close
+        };
+      }
+    }
+
+    const symbol = firstVal(root.symbol, panel.symbol, digest.symbol, canonical.symbol);
+    const timeframe = firstVal(root.timeframe, panel.timeframe, digest.timeframe, canonical.timeframe);
+    if (symbol != null){
+      root.symbol = root.symbol || symbol;
+      panel.symbol = panel.symbol || symbol;
+    }
+    if (timeframe != null){
+      root.timeframe = root.timeframe || timeframe;
+      panel.timeframe = panel.timeframe || timeframe;
+    }
+
+    const priceNow = firstNum(root.price_now, panel.price_now, digest.price_now, root.last_price, panel.last_price, vwapDigest.close, candle.close, canonical.current, canonical.entrada_market_price);
+    if (priceNow !== null){
+      root.price_now = root.price_now ?? priceNow;
+      panel.price_now = panel.price_now ?? priceNow;
+      digest.price_now = digest.price_now ?? priceNow;
+    }
+
+    root.__aaron_normalized_v1 = true;
+    root.normalized_v1 = {
+      source: "ui_normalizer_v1",
+      canonical_read_v1: root.canonical_read_v1 || null,
+      vwap_digest_v1: root.vwap_digest_v1 || null,
+      level_flip_v1: root.level_flip_v1 || null
+    };
+    return root;
+  }catch(e){
+    console.warn("[AARON UI] normalizeAaronPayload falhou", e);
+    return Array.isArray(input) ? (input[0] || {}) : (input || {});
+  }
+}
+
 function updatePremonitionPanel(payload){
   try{
+    payload = (typeof normalizeAaronPayload === "function") ? normalizeAaronPayload(payload) : payload;
     const panel  = payload?.panel  || payload || {};
     const ui     = payload?.ui     || {};
     const digest = payload?.digest || {};
@@ -18954,9 +19137,11 @@ function updateAaronCommentaryBlock(data){
 }
 function updateCoPilotBlock(data){
   try{
-    data = Array.isArray(data) ? (data[0] ?? {}) : (data ?? {});
+    data = (typeof normalizeAaronPayload === "function")
+      ? normalizeAaronPayload(data)
+      : (Array.isArray(data) ? (data[0] ?? {}) : (data ?? {}));
 
-    const panel  = data?.panel  || {};
+    const panel  = data?.panel  || data || {};
     const ui     = data?.ui     || {};
     const digest = data?.digest || {};
 
@@ -22322,7 +22507,9 @@ return;
 
   if (reqId !== __AARON_MATCHER_REQ_ID) return;
 
-  const data = Array.isArray(raw) ? (raw[0] ?? {}) : (raw ?? {});
+  const data = (typeof normalizeAaronPayload === "function")
+    ? normalizeAaronPayload(raw)
+    : (Array.isArray(raw) ? (raw[0] ?? {}) : (raw ?? {}));
   window.__AARON_MATCHER_LAST__ = data; // debug
 
   // ✅ bloco “RESPONDER OUTPUT”
@@ -22568,7 +22755,7 @@ const els = {
 // ===== DEBUG BOOT VISIBLE =====
 (function aaronBootProbe() {
   try {
-    console.log("[AARON DEBUG] boot probe executou");
+    if (window.__AARON_DEBUG_BOOT__ !== true) return;
 
     const s = document.getElementById("symbol-label");
     const t = document.getElementById("timeframe-label");
@@ -23247,7 +23434,7 @@ const sbEls = {
   outTakePrice: document.getElementById('sb-take-price'),
   outPositionSize: document.getElementById('sb-position-size'),
   outRiskDollar: document.getElementById('sb-risk-dollar'),
-  outRiskPercent: document.querySelector('p#sb-risk-percent'),
+  outRiskPercent: document.getElementById('sb-risk-percent-out'),
 
   calcBtn: document.getElementById('sb-calcular'),
   status: document.getElementById('sb-status'),
@@ -26098,8 +26285,15 @@ const payload = {
     console.warn("[AARON UI] bridgeFirestoreToLegacyContracts falhou", e);
   }
 })(payload);
+
+const normalizedPayload = (typeof normalizeAaronPayload === "function")
+  ? normalizeAaronPayload(payload)
+  : payload;
+const normalizedPanel = normalizedPayload?.panel || panel;
+const normalizedRaw = normalizedPayload?.raw || raw;
+
 // salva debug
-window.__AARON_LAST_PAYLOAD__ = payload;
+window.__AARON_LAST_PAYLOAD__ = normalizedPayload;
 
 // responder output / trade card / painéis
 const safeRun = (label, fn, arg) => {
@@ -26110,25 +26304,25 @@ const safeRun = (label, fn, arg) => {
   }
 };
 
-safeRun("renderTradeResponderOutput", renderTradeResponderOutput, payload);
-safeRun("applyResponderIntoTradeCard", applyResponderIntoTradeCard, payload);
-safeRun("updatePremonitionPanel", updatePremonitionPanel, payload);
-safeRun("updateRespiroReversaoPanel", updateRespiroReversaoPanel, payload);
-safeRun("updateAaronCommentaryBlock", updateAaronCommentaryBlock, payload);
-safeRun("updateCoPilotBlock", updateCoPilotBlock, payload);
-safeRun("updateFirstHourPremonitionPanel", updateFirstHourPremonitionPanel, payload);
-safeRun("updateIndicatorPremonitionPanel", updateIndicatorPremonitionPanel, payload);
-safeRun("a10UpdateWindowsCardFromPayload", a10UpdateWindowsCardFromPayload, payload);
-safeRun("renderResponderInline", renderResponderInline, payload);
+safeRun("renderTradeResponderOutput", renderTradeResponderOutput, normalizedPayload);
+safeRun("applyResponderIntoTradeCard", applyResponderIntoTradeCard, normalizedPayload);
+safeRun("updatePremonitionPanel", updatePremonitionPanel, normalizedPayload);
+safeRun("updateRespiroReversaoPanel", updateRespiroReversaoPanel, normalizedPayload);
+safeRun("updateAaronCommentaryBlock", updateAaronCommentaryBlock, normalizedPayload);
+safeRun("updateCoPilotBlock", updateCoPilotBlock, normalizedPayload);
+safeRun("updateFirstHourPremonitionPanel", updateFirstHourPremonitionPanel, normalizedPayload);
+safeRun("updateIndicatorPremonitionPanel", updateIndicatorPremonitionPanel, normalizedPayload);
+safeRun("a10UpdateWindowsCardFromPayload", a10UpdateWindowsCardFromPayload, normalizedPayload);
+safeRun("renderResponderInline", renderResponderInline, normalizedPayload);
 
 window.dispatchEvent(new Event("aaron:panelUpdated"));
 
 // segue o fluxo normal
 const pxNow =
-  panel.price_now ||
-  panel.last_price ||
-  panel.reference_price ||
-  (raw && raw.candle && raw.candle.close);
+  normalizedPanel.price_now ||
+  normalizedPanel.last_price ||
+  normalizedPanel.reference_price ||
+  (normalizedRaw && normalizedRaw.candle && normalizedRaw.candle.close);
 
 if (pxNow != null && isFinite(Number(pxNow))) {
   apMarketPrice = Number(pxNow);
@@ -26520,7 +26714,7 @@ function a10ResetLiveChart(reason = '') {
     window.__A10_LIVE_LAST_45__ = null;
     window.__A10_LIVE_LAST_RAW__ = null;
 
-    console.log('[A10] reset live chart', reason);
+    if (window.__A10_DEBUG__ === true) console.log('[A10] reset live chart', reason);
   } catch (e) {
     console.warn('[A10] reset live chart failed', e);
   }
