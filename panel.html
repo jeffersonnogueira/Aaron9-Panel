@@ -30070,6 +30070,19 @@ const tcLivePrice = tcPickNum(
   payload?.last_price,
   panel?.reference_price,
   digest?.reference_price,
+  payload?.reference_price,
+  tcCanonicalRead?.current,
+  tcCanonicalRead?.entrada_market_price,
+  tcCanonicalRead?.market_price,
+  panel?.current,
+  digest?.current,
+  payload?.current,
+  panel?.close,
+  digest?.close,
+  payload?.close,
+  root?.vwap_digest_v1?.close,
+  root?.vwap_digest_v1?.candle?.close,
+  root?.vwap_bands?.close,
   tcLateActive ? tcLateMarketPrice : null
 );
 
@@ -30970,7 +30983,59 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
 
   const mcCanRun = !!mcCard && tcLivePrice != null && mcBaseAtr != null && mcBaseAtr > 0;
   if (!mcCanRun) {
-    if (mcCard) mcCard.style.display = "none";
+    if (mcCard) {
+      mcCard.style.display = "";
+      mcCard.classList.remove("is-good", "is-wait", "is-bad");
+      mcCard.classList.add("is-wait");
+      mcSet("mc-title", `${root?.symbol || panel?.symbol || payload?.symbol || "AARON"} | aguardando dados`);
+      mcSet("mc-badge", "AGUARDANDO");
+      mcSet("mc-t2-pct", "—");
+      mcSet("mc-t2-verdict", "AGUARDANDO DADOS");
+      mcSet("mc-t2-detail", `Falta ${tcLivePrice == null ? "preço atual" : ""}${tcLivePrice == null && mcBaseAtr == null ? " e " : ""}${mcBaseAtr == null ? "ATR/base de volatilidade" : ""}.`);
+      mcSet("mc-break-up", "—");
+      mcSet("mc-break-down", "—");
+      mcSet("mc-break-first", "SEM SIMULAÇÃO");
+      mcSet("mc-break-detail", "O bloco está ativo; assim que preço/ATR chegarem ele desenha os caminhos.");
+      mcSet("mc-up-level", "—");
+      mcSet("mc-down-level", "—");
+      mcSet("mc-eta", "—");
+      mcSet("mc-false-risk", "—");
+      mcSet("mc-chart-caption", "aguardando preço e volatilidade");
+      const canvas = el("mc-chart");
+      const ctx = canvas?.getContext?.("2d");
+      if (canvas && ctx) {
+        const rect = canvas.getBoundingClientRect();
+        const cssW = Math.max(760, Math.floor(rect.width || canvas.parentElement?.clientWidth || 1200));
+        const cssH = Math.max(300, Math.floor(rect.height || 380));
+        const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+        canvas.width = Math.floor(cssW * dpr);
+        canvas.height = Math.floor(cssH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, cssW, cssH);
+        ctx.fillStyle = "rgba(2,6,23,.98)";
+        ctx.fillRect(0, 0, cssW, cssH);
+        ctx.strokeStyle = "rgba(148,163,184,.14)";
+        ctx.lineWidth = 1;
+        for (let x = 40; x < cssW; x += 80) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, cssH);
+          ctx.stroke();
+        }
+        for (let y = 36; y < cssH; y += 54) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(cssW, y);
+          ctx.stroke();
+        }
+        ctx.font = "950 28px Space Mono, monospace";
+        ctx.fillStyle = "rgba(255,204,102,.92)";
+        ctx.fillText("MONTE CARLO AGUARDANDO DADOS", 38, 72);
+        ctx.font = "850 18px Space Mono, monospace";
+        ctx.fillStyle = "rgba(226,232,240,.76)";
+        ctx.fillText("Assim que preço + ATR chegarem, o fan chart aparece aqui.", 38, 110);
+      }
+    }
   } else {
     const mcCandidate = (name, level) => {
       const n = tcPickNum(level);
