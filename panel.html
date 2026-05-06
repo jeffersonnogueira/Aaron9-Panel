@@ -7683,6 +7683,102 @@
     0 0 0 1px rgba(255,255,255,.04);
 }
 
+#level-flip-card .lfv44-shell{
+  border: 1px solid rgba(34,211,238,.32);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(34,211,238,.16), transparent 32%),
+    linear-gradient(180deg, rgba(10,28,42,.94) 0%, rgba(5,12,22,.99) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 18px 42px rgba(2,6,23,.34);
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(520px, 1fr);
+  gap: 18px;
+}
+
+#level-flip-card .lfv44-k{
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.78);
+}
+
+#level-flip-card .lfv44-main{
+  margin-top: 8px;
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 950;
+  color: #67e8f9;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+#level-flip-card .lfv44-sub{
+  margin-top: 10px;
+  font-size: 20px;
+  line-height: 1.25;
+  color: rgba(226,232,240,.92);
+}
+
+#level-flip-card .lfv44-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#level-flip-card .lfv44-cell{
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+  padding: 12px 14px;
+}
+
+#level-flip-card .lfv44-cell span{
+  display: block;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 950;
+  opacity: .72;
+}
+
+#level-flip-card .lfv44-cell strong{
+  display: block;
+  margin-top: 8px;
+  font-size: 25px;
+  line-height: 1.04;
+  font-weight: 950;
+  color: #ffcc66;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#level-flip-card.is-long .lfv44-main,
+#level-flip-card.is-long .lfv44-cell strong.is-side{
+  color: var(--success);
+}
+
+#level-flip-card.is-short .lfv44-main,
+#level-flip-card.is-short .lfv44-cell strong.is-side{
+  color: var(--danger);
+}
+
+#level-flip-card.is-triggered .lfv44-shell{
+  border-color: rgba(255,204,102,.55);
+}
+
+@media (max-width: 1300px){
+  #level-flip-card .lfv44-shell{
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1600px){
   #tc-action-bar .tc-action-shell{
     grid-template-columns: 1fr;
@@ -9264,6 +9360,11 @@ body.aaron-terminal-shell .top-right .kv .v{
       </div>
 
       <div class="tc-action-box">
+        <div class="tc-action-box-k">LEVEL V44</div>
+        <div class="tc-action-box-v" id="tc-action-level">—</div>
+      </div>
+
+      <div class="tc-action-box">
         <div class="tc-action-box-k">CLAUDE</div>
         <div class="tc-action-box-v" id="tc-action-claude">—</div>
       </div>
@@ -9281,6 +9382,43 @@ body.aaron-terminal-shell .top-right .kv .v{
   </div>
 </div>
 <!-- ===== /TC ACTION BAR ===== -->
+<!-- ===== LEVEL FLIP V44 — REAL LEVEL WATCH ===== -->
+<div class="prem-breakout-wrap" id="level-flip-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+  <div class="lfv44-shell">
+    <div>
+      <div class="lfv44-k">V44 REAL LEVEL WATCH</div>
+      <div class="lfv44-main" id="lfv44-main">—</div>
+      <div class="lfv44-sub" id="lfv44-sub">—</div>
+    </div>
+    <div class="lfv44-grid">
+      <div class="lfv44-cell">
+        <span>Status</span>
+        <strong class="is-side" id="lfv44-status">—</strong>
+      </div>
+      <div class="lfv44-cell">
+        <span>Zone</span>
+        <strong id="lfv44-zone">—</strong>
+      </div>
+      <div class="lfv44-cell">
+        <span>Trigger</span>
+        <strong id="lfv44-trigger">—</strong>
+      </div>
+      <div class="lfv44-cell">
+        <span>Invalidation</span>
+        <strong id="lfv44-inval">—</strong>
+      </div>
+      <div class="lfv44-cell">
+        <span>Confidence</span>
+        <strong id="lfv44-conf">—</strong>
+      </div>
+      <div class="lfv44-cell">
+        <span>Touches</span>
+        <strong id="lfv44-touches">—</strong>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== /LEVEL FLIP V44 ===== -->
  <!-- ===== MICRO PREMONITION — ABOVE COPILOT ===== -->
 <div class="prem-breakout-wrap" id="micro-premo-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
@@ -28305,6 +28443,85 @@ renderOptions("");
       payload.ui?.exec_1x1 ||
       null;
 
+    const levelFlipV44 =
+      exec1x1?.level_flip_v1 ||
+      panel?.level_flip_v1 ||
+      digest?.level_flip_v1 ||
+      payload?.level_flip_v1 ||
+      payload?.ui?.level_flip_v1 ||
+      payload?.live?.level_flip_v1 ||
+      (typeof deepFind === "function" ? deepFind(payload, "level_flip_v1") : null) ||
+      {};
+
+    const lfPickText = (...vals) => {
+      for (const v of vals) {
+        if (typeof v !== "string") continue;
+        const s = v.trim();
+        if (s) return s;
+      }
+      return "";
+    };
+
+    const lfMoney = (v) => {
+      const n = numPick(v);
+      return n != null ? `$${fmt2(n)}` : "—";
+    };
+
+    const lfStatusRaw = String(levelFlipV44?.status || "NO_SETUP").trim().toUpperCase();
+    const lfStateRaw = String(levelFlipV44?.state || "NO_FLIP").trim().toUpperCase();
+    const lfSideRaw = String(levelFlipV44?.side || "").trim().toUpperCase();
+    const lfActive =
+      levelFlipV44?.enabled === true ||
+      ["TRIGGERED", "ACTIVE", "ARMED"].includes(lfStatusRaw);
+    const lfSide =
+      lfSideRaw.includes("LONG") ? "LONG" :
+      lfSideRaw.includes("SHORT") ? "SHORT" : "";
+    const lfStateLabel =
+      lfStateRaw === "RESISTANCE_BECAME_SUPPORT" ? "RESISTENCIA VIROU SUPORTE" :
+      lfStateRaw === "SUPPORT_BECAME_RESISTANCE" ? "SUPORTE VIROU RESISTENCIA" :
+      "LEVEL WATCH";
+    const lfZoneLow = numPick(levelFlipV44?.zone_low);
+    const lfZoneHigh = numPick(levelFlipV44?.zone_high);
+    const lfZoneMid = numPick(levelFlipV44?.zone_mid);
+    const lfZoneText =
+      lfZoneLow != null && lfZoneHigh != null
+        ? `${lfMoney(lfZoneLow)}-${lfMoney(lfZoneHigh)}`
+        : lfZoneMid != null ? lfMoney(lfZoneMid) : "—";
+    const lfTrigger = numPick(levelFlipV44?.trigger_price);
+    const lfInvalidation = numPick(levelFlipV44?.invalidation);
+    const lfConfidence = numPick(levelFlipV44?.confidence_pct);
+    const lfTouches = numPick(levelFlipV44?.touch_count, levelFlipV44?.pivot_touch_count);
+    const lfReadText = lfPickText(
+      levelFlipV44?.tactical_read_pt,
+      levelFlipV44?.message_pt,
+      levelFlipV44?.tactical_read_en,
+      levelFlipV44?.message_en
+    );
+
+    const lfCard = el("level-flip-card");
+    if (lfCard) {
+      lfCard.style.display = lfActive ? "" : "none";
+      lfCard.classList.remove("is-long", "is-short", "is-triggered", "is-active", "is-armed");
+      if (lfSide === "LONG") lfCard.classList.add("is-long");
+      if (lfSide === "SHORT") lfCard.classList.add("is-short");
+      if (lfStatusRaw === "TRIGGERED") lfCard.classList.add("is-triggered");
+      if (lfStatusRaw === "ACTIVE") lfCard.classList.add("is-active");
+      if (lfStatusRaw === "ARMED") lfCard.classList.add("is-armed");
+    }
+    if (el("lfv44-main")) el("lfv44-main").textContent = lfStateLabel;
+    if (el("lfv44-sub")) {
+      el("lfv44-sub").textContent = lfActive
+        ? `${lfReadText || "Level flip ativo."} Sinal de contexto operacional; o Operador Final ainda manda na execução.`
+        : "Nenhum level flip ativo agora.";
+    }
+    if (el("lfv44-status")) el("lfv44-status").textContent = lfActive ? `${lfSide || "—"} ${lfStatusRaw}` : "—";
+    if (el("lfv44-zone")) el("lfv44-zone").textContent = lfZoneText;
+    if (el("lfv44-trigger")) el("lfv44-trigger").textContent = lfMoney(lfTrigger);
+    if (el("lfv44-inval")) el("lfv44-inval").textContent = lfMoney(lfInvalidation);
+    if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
+    if (el("lfv44-touches")) el("lfv44-touches").textContent = lfTouches != null ? String(Math.round(lfTouches)) : "—";
+    if (el("tc-action-level")) el("tc-action-level").textContent = lfActive ? `${lfSide || "V44"} ${lfStatusRaw}` : "—";
+
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
     const atr14     = numPick(ctx.atr14, digest.atr14, panel.atr14, digest.indicators?.atr14, panel.indicators?.atr14, exec1x1?.atr14);
     let microTake = numPick(ctx.microTake, digest.micro_target, digest.micro_take, panel.micro_target, panel.micro_take, exec1x1?.micro_take, exec1x1?.microTake);
@@ -29025,6 +29242,25 @@ const tcOperatorDir = (() => {
   return dir || "—";
 })();
 
+const tcLevelFlipActive = !!lfActive;
+const tcLevelFlipSide = lfSide || "";
+const tcLevelFlipAligned =
+  tcLevelFlipActive &&
+  tcLevelFlipSide &&
+  tcOperatorDir &&
+  tcOperatorDir !== "—" &&
+  tcLevelFlipSide === tcOperatorDir;
+const tcLevelFlipContra =
+  tcLevelFlipActive &&
+  tcLevelFlipSide &&
+  tcOperatorDir &&
+  tcOperatorDir !== "—" &&
+  tcLevelFlipSide !== tcOperatorDir;
+
+if (tcLevelFlipActive && !tcLateActive && !tcPositionAction) {
+  tcZoneLabel = tcLevelFlipAligned ? "V44 LEVEL" : "V44 CONTRA";
+}
+
 const tcTargetDeskLine = (() => {
   const parts = [];
   if (tcConsensus != null) parts.push(`consensus ${tcLateMoney(tcConsensus)}`);
@@ -29192,7 +29428,8 @@ const tcOperatorTape = {
   reward_1_usd: tcReward1Usd,
   reward_2_usd: tcReward2Usd,
   rr_1: tcRr1,
-  rr_2: tcRr2
+  rr_2: tcRr2,
+  level_flip_v1: tcLevelFlipActive ? levelFlipV44 : null
 };
 
 const tcOperatorMemoryPrev =
@@ -29266,6 +29503,16 @@ if (
 }
 
 const tcOperatorFmtR = (v) => v != null && Number.isFinite(Number(v)) ? `${Number(v).toFixed(2)}R` : "—";
+const tcOperatorLevelFlipLine = (() => {
+  if (!tcLevelFlipActive) return "";
+  const sideTxt = tcLevelFlipSide || "V44";
+  const statusTxt = lfStatusRaw || "ACTIVE";
+  const triggerTxt = lfTrigger != null ? `trigger ${tcLateMoney(lfTrigger)}` : "";
+  const invalTxt = lfInvalidation != null ? `invalida ${tcLateMoney(lfInvalidation)}` : "";
+  const zoneTxt = lfZoneText && lfZoneText !== "—" ? `zona ${lfZoneText}` : "";
+  const conflictTxt = tcLevelFlipContra ? " CONTRA direcao canonica; nao executar sem novo matcher." : "";
+  return `V44 Level Flip ${sideTxt} ${statusTxt}: ${[zoneTxt, triggerTxt, invalTxt].filter(Boolean).join(" | ")}.${conflictTxt}`.replace(/\s+\./g, ".");
+})();
 const tcOperatorVwapLine = (() => {
   if (!tcA10VwapHasData) return "";
   const level = tcPickNum(tcA10Vwap?.level, tcA10Vwap?.vwap);
@@ -29303,6 +29550,7 @@ const tcOperatorLiveLine = () => {
   if (tcTarget1 != null) bits.push(`T1 ${tcLateMoney(tcTarget1)}`);
   if (tcTarget2 != null) bits.push(`T2 ${tcLateMoney(tcTarget2)}`);
   if (tcRr2 != null || tcRr1 != null) bits.push(`RR ${tcOperatorFmtR(tcRr2 ?? tcRr1)}`);
+  if (tcOperatorLevelFlipLine) bits.push(tcOperatorLevelFlipLine);
   if (tcOperatorVwapLine) bits.push(tcOperatorVwapLine);
   return bits.join(" | ");
 };
@@ -29318,7 +29566,8 @@ const tcBuildOperatorDecisionV1 = () => {
     next: "Nao executar enquanto a mesa nao tiver gatilho limpo.",
     reason: "payload_incomplete",
     tape: tcOperatorTape,
-    vwap: tcA10VwapHasData ? tcA10Vwap : null
+    vwap: tcA10VwapHasData ? tcA10Vwap : null,
+    level_flip_v1: tcLevelFlipActive ? levelFlipV44 : null
   };
 
   const withBase = (patch) => ({ ...base, ...patch });
@@ -29361,6 +29610,33 @@ const tcBuildOperatorDecisionV1 = () => {
       next: "Zerar ideia. Nao reabrir nesse mesmo setup; esperar novo matcher.",
       reason: "operator_invalidated"
     });
+  }
+
+  if (tcLevelFlipActive && !tcLateActive && !tcPositionAction) {
+    if (tcLevelFlipContra) {
+      return withBase({
+        main: "V44 CONTRA CANÔNICO",
+        sub: `${tcOperatorLevelFlipLine} O operador nao executa level flip contra a direcao oficial.`,
+        mode: "is-wait",
+        zone: "V44 CONTRA",
+        next: "Usar como alerta de possivel virada; precisa novo matcher/canonico antes de virar trade.",
+        reason: "v44_level_flip_contra"
+      });
+    }
+
+    if (tcLevelFlipAligned) {
+      const triggered = lfStatusRaw === "TRIGGERED";
+      return withBase({
+        main: triggered ? "ENTRADA TÁTICA V44" : "ARMAR LEVEL FLIP",
+        sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine}`,
+        mode: triggered ? "is-acceptable" : "is-wait",
+        zone: "V44 LEVEL",
+        next: triggered
+          ? "Executar apenas pequeno/tatico se spread e candle nao estiverem esticados; cancelar se perder a invalidação."
+          : "Ficar armado no trigger V44. Sem trigger cruzado, nao antecipar.",
+        reason: triggered ? "v44_level_flip_triggered" : "v44_level_flip_armed"
+      });
+    }
   }
 
   if (tcA10VwapAgainst && !tcPositionAction) {
@@ -29671,6 +29947,9 @@ const tcOperatorMemoryKey = [
   tcOperatorDecisionV1.zone,
   tcA10VwapStatus || "no-vwap-status",
   tcA10VwapLabel || "no-vwap-label",
+  lfActive ? lfStatusRaw : "no-level-flip",
+  lfActive ? lfSide : "no-level-side",
+  lfActive ? lfZoneText : "no-level-zone",
   tcLateMoney(tcPickNum(tcA10Vwap?.level, tcA10Vwap?.vwap)),
   tcLateMoney(tcOperatorTape.anchor),
   tcLateMoney(tcOperatorTape.stop)
@@ -29702,6 +29981,7 @@ try {
     direction: tcOperatorDecisionV1.direction,
     zone: tcOperatorDecisionV1.zone,
     vwap: tcA10VwapHasData ? tcA10Vwap : null,
+    level_flip_v1: tcLevelFlipActive ? levelFlipV44 : null,
     tape: tcOperatorTape,
     updated_at: new Date().toISOString()
   };
@@ -29741,6 +30021,10 @@ const tcActionNote = (() => {
       return "V43 Late = tarde demais para perseguir com qualidade.";
     case "V43 DEAD":
       return "V43 Dead = invalidação tocada; setup morto.";
+    case "V44 LEVEL":
+      return "V44 Level = resistencia virou suporte ou suporte virou resistencia; usar como gatilho tatico, nao como chase.";
+    case "V44 CONTRA":
+      return "V44 Contra = level flip apareceu contra a direcao canonica; alerta de virada, nao ordem.";
     case "POS HOLD":
       return "Posição ativa = mesmo lado com Continuação=SIM; segurar T2 enquanto alvo expandir.";
     case "POS PROTECT":
@@ -29774,6 +30058,14 @@ if (el("tc-action-sub"))       el("tc-action-sub").textContent       = tcActionS
 if (el("tc-action-note"))      el("tc-action-note").textContent      = tcActionNote;
 if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDisplayDirection || "—";
 if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcZoneLabel;
+if (el("tc-action-level")) {
+  el("tc-action-level").textContent = tcLevelFlipActive ? `${tcLevelFlipSide || "V44"} ${lfStatusRaw}` : "—";
+  el("tc-action-level").style.color = tcLevelFlipSide === "LONG"
+    ? "var(--success)"
+    : tcLevelFlipSide === "SHORT"
+      ? "var(--danger)"
+      : "";
+}
 if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "AUX";
 if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
 if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
