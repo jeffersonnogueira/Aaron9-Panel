@@ -2888,3 +2888,169 @@ body.aaron-terminal-shell #replay-mode-card .replay-value {
     font-size: 28px !important;
   }
 }
+
+/* =========================================================
+   AARON MARKET STRIP MODERN
+   Cleaner Bloomberg-style ticker and compact symbol bar.
+========================================================= */
+
+@media (min-width: 901px) {
+  body.aaron-terminal-shell .aaron-live-tape {
+    gap: 0 !important;
+    background: rgba(8, 10, 12, 0.98) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.085) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.36) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand {
+    position: relative !important;
+    flex: 0 0 288px !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 0 20px !important;
+    background:
+      linear-gradient(90deg, rgba(7, 22, 28, 0.96), rgba(12, 24, 31, 0.86)) !important;
+    border-right: 1px solid rgba(90, 200, 250, 0.20) !important;
+    color: rgba(90, 200, 250, 0.98) !important;
+    font-size: 19px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.16em !important;
+    text-shadow: 0 0 16px rgba(90, 200, 250, 0.18) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand span:not(.aaron-live-dot) {
+    font-size: 19px !important;
+    color: rgba(90, 200, 250, 0.98) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-dot {
+    width: 9px !important;
+    height: 9px !important;
+    box-shadow: 0 0 12px rgba(48, 209, 88, 0.82) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-viewport {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.018), transparent 32%) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-track {
+    gap: 0 !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-item {
+    position: relative !important;
+    min-width: 210px !important;
+    justify-content: center !important;
+    padding: 0 30px !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
+    background: rgba(255, 255, 255, 0.012) !important;
+    font-size: 0 !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-symbol,
+  body.aaron-terminal-shell .aaron-live-price,
+  body.aaron-terminal-shell .aaron-live-change {
+    font-size: 22px !important;
+    line-height: 1 !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-symbol {
+    color: rgba(245, 245, 247, 0.56) !important;
+    font-weight: 900 !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-price {
+    color: rgba(245, 245, 247, 0.94) !important;
+    font-weight: 950 !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-change {
+    color: #30d158 !important;
+    font-weight: 950 !important;
+    text-shadow: 0 0 12px rgba(48, 209, 88, 0.28) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-change.down {
+    color: #ff453a !important;
+    text-shadow: 0 0 12px rgba(255, 69, 58, 0.24) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-refresh {
+    order: 8 !important;
+    height: 38px !important;
+    margin: 0 14px !important;
+    border-radius: 8px !important;
+    border-color: rgba(255, 255, 255, 0.13) !important;
+    background: rgba(255, 255, 255, 0.055) !important;
+    color: rgba(245, 245, 247, 0.74) !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-status {
+    order: 9 !important;
+    min-width: 150px !important;
+    color: rgba(245, 245, 247, 0.34) !important;
+    font-size: 17px !important;
+    font-weight: 850 !important;
+    letter-spacing: 0.08em !important;
+    text-align: left !important;
+  }
+
+  body.aaron-terminal-shell .top-bar {
+    margin-top: 8px !important;
+    min-height: 82px !important;
+    padding: 14px 20px !important;
+    background:
+      linear-gradient(90deg, rgba(10, 132, 255, 0.095), rgba(18, 24, 30, 0.94) 30%, rgba(18, 30, 22, 0.90)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.078) !important;
+    border-radius: 0 0 12px 12px !important;
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.30) !important;
+  }
+
+  body.aaron-terminal-shell .top-left,
+  body.aaron-terminal-shell .top-right {
+    gap: 8px 12px !important;
+  }
+
+  body.aaron-terminal-shell .brand-title {
+    flex: 0 0 auto !important;
+    font-size: 26px !important;
+    line-height: 1 !important;
+    letter-spacing: 0.15em !important;
+    margin-right: 6px !important;
+    text-shadow: 0 0 18px rgba(10, 132, 255, 0.28) !important;
+  }
+
+  body.aaron-terminal-shell .pill-small,
+  body.aaron-terminal-shell .tf-picker,
+  body.aaron-terminal-shell .lang-toggle,
+  body.aaron-terminal-shell .pill-state,
+  body.aaron-terminal-shell .btn-refresh {
+    min-height: 34px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.045) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  body.aaron-terminal-shell .pill-small,
+  body.aaron-terminal-shell .tf-btn,
+  body.aaron-terminal-shell .lang-btn,
+  body.aaron-terminal-shell .pill-state,
+  body.aaron-terminal-shell .btn-refresh {
+    font-size: 17px !important;
+    letter-spacing: 0.03em !important;
+  }
+
+  body.aaron-terminal-shell .tf-btn {
+    min-width: 42px !important;
+  }
+
+  body.aaron-terminal-shell .pill-state {
+    min-width: 190px !important;
+    color: #0a84ff !important;
+    background: rgba(10, 132, 255, 0.10) !important;
+    border-color: rgba(10, 132, 255, 0.34) !important;
+  }
+}
