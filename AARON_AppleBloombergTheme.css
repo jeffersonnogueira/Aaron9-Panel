@@ -2469,3 +2469,296 @@ body.aaron-terminal-shell #replay-mode-card .replay-actions {
     line-height: 1.35 !important;
   }
 }
+
+/* =========================================================
+   AARON READABILITY BOOST
+   Larger live-monitor typography while keeping the layout usable.
+========================================================= */
+
+body.aaron-terminal-shell {
+  font-size: 18px !important;
+}
+
+body.aaron-terminal-shell .aaron-side-tab strong {
+  font-size: 28px !important;
+}
+
+body.aaron-terminal-shell .aaron-side-tab span {
+  font-size: 12px !important;
+}
+
+body.aaron-terminal-shell .aaron-live-brand,
+body.aaron-terminal-shell .aaron-live-brand span,
+body.aaron-terminal-shell .aaron-live-refresh {
+  font-size: 17px !important;
+}
+
+body.aaron-terminal-shell .aaron-live-item {
+  font-size: 18px !important;
+}
+
+body.aaron-terminal-shell .aaron-live-status {
+  font-size: 14px !important;
+}
+
+body.aaron-terminal-shell .brand-title {
+  font-size: 22px !important;
+}
+
+body.aaron-terminal-shell .top-bar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  min-height: 92px !important;
+}
+
+body.aaron-terminal-shell .top-left {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+body.aaron-terminal-shell .top-right {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+}
+
+body.aaron-terminal-shell .pill-small,
+body.aaron-terminal-shell .pill-soft,
+body.aaron-terminal-shell .pill-state,
+body.aaron-terminal-shell .tf-btn,
+body.aaron-terminal-shell .lang-btn,
+body.aaron-terminal-shell .btn-refresh {
+  font-size: 16px !important;
+}
+
+body.aaron-terminal-shell .pill-state {
+  min-width: 178px !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+}
+
+body.aaron-terminal-shell .top-right .kv {
+  min-width: 86px !important;
+}
+
+body.aaron-terminal-shell .pill-small strong,
+body.aaron-terminal-shell .pill-soft strong {
+  font-size: 18px !important;
+}
+
+body.aaron-terminal-shell .top-right .kv .k {
+  font-size: 13px !important;
+}
+
+body.aaron-terminal-shell .top-right .kv .v {
+  font-size: 22px !important;
+}
+
+body.aaron-terminal-shell .prem-breakout-title,
+body.aaron-terminal-shell .card-title,
+body.aaron-terminal-shell .decision-title,
+body.aaron-terminal-shell .execm-side-title,
+body.aaron-terminal-shell .fh-k,
+body.aaron-terminal-shell .tc-box-title,
+body.aaron-terminal-shell #vol-engine-card .prem-breakout-title,
+body.aaron-terminal-shell #pivot-prem-card .prem-breakout-title,
+body.aaron-terminal-shell #entry-prem-card .prem-breakout-title,
+body.aaron-terminal-shell #zz-route-card .prem-breakout-title,
+body.aaron-terminal-shell #ema-exhaust-card .prem-breakout-title,
+body.aaron-terminal-shell #replay-mode-card .prem-breakout-title,
+body.aaron-terminal-shell #bw-prem-card .prem-breakout-title {
+  font-size: 20px !important;
+  line-height: 1.15 !important;
+}
+
+body.aaron-terminal-shell .win-badge,
+body.aaron-terminal-shell #vol-engine-card .win-badge,
+body.aaron-terminal-shell #pivot-prem-card .win-badge,
+body.aaron-terminal-shell #entry-prem-card .win-badge,
+body.aaron-terminal-shell #zz-route-card .win-badge,
+body.aaron-terminal-shell #ema-exhaust-card .win-badge,
+body.aaron-terminal-shell #replay-mode-card .win-badge,
+body.aaron-terminal-shell #bw-prem-card .win-badge {
+  font-size: 18px !important;
+  padding: 7px 12px !important;
+}
+
+body.aaron-terminal-shell #tc-action-bar .tc-action-main {
+  font-size: 58px !important;
+  line-height: 1.04 !important;
+}
+
+body.aaron-terminal-shell #tc-action-bar .tc-action-sub,
+body.aaron-terminal-shell #tc-action-bar .tc-action-detail strong,
+body.aaron-terminal-shell #tc-action-bar .tc-action-note {
+  font-size: 22px !important;
+  line-height: 1.35 !important;
+}
+
+body.aaron-terminal-shell #tc-action-bar .tc-action-box-v {
+  font-size: 28px !important;
+}
+
+body.aaron-terminal-shell #indicator-prem-card [style*="font-size:11px"],
+body.aaron-terminal-shell #indicator-prem-card [style*="font-size:12px"],
+body.aaron-terminal-shell #indicator-prem-card [style*="font-size:14px"],
+body.aaron-terminal-shell #zz-route-card [style*="font-size:11px"],
+body.aaron-terminal-shell #zz-route-card [style*="font-size:12px"],
+body.aaron-terminal-shell #zz-route-card [style*="font-size:14px"],
+body.aaron-terminal-shell #pivot-prem-card [style*="font-size:11px"],
+body.aaron-terminal-shell #pivot-prem-card [style*="font-size:12px"],
+body.aaron-terminal-shell #pivot-prem-card [style*="font-size:14px"],
+body.aaron-terminal-shell #vol-engine-card [style*="font-size:11px"],
+body.aaron-terminal-shell #vol-engine-card [style*="font-size:12px"],
+body.aaron-terminal-shell #vol-engine-card [style*="font-size:14px"] {
+  font-size: 24px !important;
+  line-height: 1.28 !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-k,
+body.aaron-terminal-shell #mc-card .mc-box-k,
+body.aaron-terminal-shell #mc-card .mc-strip-cell span,
+body.aaron-terminal-shell #mc-card .mc-chart-head span {
+  font-size: 18px !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-title {
+  font-size: 34px !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-badge {
+  font-size: 18px !important;
+  padding: 7px 12px !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-big {
+  font-size: 58px !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-verdict {
+  font-size: 34px !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-detail,
+body.aaron-terminal-shell #mc-card .mc-chart-head strong,
+body.aaron-terminal-shell #mc-card .mc-chart-legend,
+body.aaron-terminal-shell #mc-card .mc-strip-cell strong {
+  font-size: 22px !important;
+  line-height: 1.35 !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-break-row span {
+  font-size: 17px !important;
+}
+
+body.aaron-terminal-shell #mc-card .mc-break-row strong {
+  font-size: 44px !important;
+}
+
+body.aaron-terminal-shell #vol-engine-card .vp-sec-title,
+body.aaron-terminal-shell #ema-exhaust-card .eex-sec-title,
+body.aaron-terminal-shell #entry-prem-card .entryprem-k,
+body.aaron-terminal-shell #entry-prem-card .entryprem-read-title,
+body.aaron-terminal-shell #bw-prem-card .bwp-sec-title,
+body.aaron-terminal-shell #replay-mode-card .replay-label {
+  font-size: 20px !important;
+}
+
+body.aaron-terminal-shell #vol-engine-card .vp-sec-body,
+body.aaron-terminal-shell #vol-engine-card .vp-mini,
+body.aaron-terminal-shell #vol-engine-card .vp-soft,
+body.aaron-terminal-shell #ema-exhaust-card .eex-sec-body,
+body.aaron-terminal-shell #ema-exhaust-card .eex-mini,
+body.aaron-terminal-shell #ema-exhaust-card .eex-soft,
+body.aaron-terminal-shell #entry-prem-card .entryprem-sub,
+body.aaron-terminal-shell #entry-prem-card .entryprem-v,
+body.aaron-terminal-shell #bw-prem-card .bwp-sec-body,
+body.aaron-terminal-shell #bw-prem-card .bwp-foot,
+body.aaron-terminal-shell #replay-mode-card .replay-note,
+body.aaron-terminal-shell #zz-route-card #zzr-step1,
+body.aaron-terminal-shell #zz-route-card #zzr-step2,
+body.aaron-terminal-shell #zz-route-card #zzr-step1state,
+body.aaron-terminal-shell #zz-route-card #zzr-step2state,
+body.aaron-terminal-shell #zz-route-card #zzr-cancel {
+  font-size: 24px !important;
+  line-height: 1.3 !important;
+}
+
+body.aaron-terminal-shell #vol-engine-card > div[style*="border:1px"] > div:nth-of-type(2),
+body.aaron-terminal-shell #vol-engine-card .vp-reading,
+body.aaron-terminal-shell #ema-exhaust-card .eex-state,
+body.aaron-terminal-shell #ema-exhaust-card .eex-primary,
+body.aaron-terminal-shell #ema-exhaust-card .eex-reading,
+body.aaron-terminal-shell #entry-prem-card .entryprem-mode,
+body.aaron-terminal-shell #entry-prem-card .entryprem-read-body,
+body.aaron-terminal-shell #bw-prem-card .bwp-primary,
+body.aaron-terminal-shell #bw-prem-card .bwp-reading,
+body.aaron-terminal-shell #replay-mode-card .replay-value {
+  font-size: 34px !important;
+  line-height: 1.18 !important;
+}
+
+@media (max-width: 900px) {
+  body.aaron-terminal-shell {
+    font-size: 16px !important;
+  }
+
+  body.aaron-terminal-shell .top-bar {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: 0 !important;
+    align-items: start !important;
+  }
+
+  body.aaron-terminal-shell .top-right {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  body.aaron-terminal-shell .brand-title {
+    font-size: 18px !important;
+  }
+
+  body.aaron-terminal-shell .tf-btn,
+  body.aaron-terminal-shell .lang-btn,
+  body.aaron-terminal-shell .pill-small,
+  body.aaron-terminal-shell .pill-state {
+    font-size: 14px !important;
+  }
+
+  body.aaron-terminal-shell .pill-state {
+    min-width: 180px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs-inner {
+    width: 100% !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab strong {
+    font-size: 24px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab span {
+    font-size: 7px !important;
+    letter-spacing: 0.02em !important;
+    white-space: nowrap !important;
+  }
+
+  body.aaron-terminal-shell #tc-action-bar .tc-action-main {
+    font-size: 46px !important;
+  }
+
+  body.aaron-terminal-shell #tc-action-bar .tc-action-sub,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-detail strong,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-note,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-box-v {
+    font-size: 20px !important;
+  }
+}
