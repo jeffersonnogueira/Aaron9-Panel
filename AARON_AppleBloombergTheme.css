@@ -3056,6 +3056,453 @@ body.aaron-terminal-shell #replay-mode-card .replay-value {
 }
 
 /* =========================================================
+   AARON RESPONSIVE DEVICE FIT
+   Tablet and phone layouts for iPad Pro / mobile use.
+========================================================= */
+
+@media (min-width: 901px) and (max-width: 1366px) {
+  body.aaron-terminal-shell .page {
+    padding-left: 96px !important;
+    padding-right: 14px !important;
+    padding-top: 86px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs {
+    width: 78px !important;
+    padding: 12px 8px 14px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-logo {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 20px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab {
+    width: 60px !important;
+    height: 58px !important;
+    border-radius: 12px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab strong {
+    font-size: 26px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab span {
+    font-size: 10px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-tape {
+    left: 78px !important;
+    height: 48px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand {
+    flex-basis: 222px !important;
+    height: 48px !important;
+    padding: 0 16px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand span:not(.aaron-live-dot) {
+    font-size: 16px !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-item {
+    min-width: 178px !important;
+    height: 48px !important;
+    padding: 0 22px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-symbol,
+  body.aaron-terminal-shell .aaron-live-price,
+  body.aaron-terminal-shell .aaron-live-change {
+    font-size: 18px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-refresh {
+    height: 34px !important;
+    margin: 0 10px !important;
+    font-size: 14px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-status {
+    min-width: 112px !important;
+    height: 48px !important;
+    font-size: 13px !important;
+  }
+
+  body.aaron-terminal-shell .top-bar {
+    top: 56px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: auto !important;
+    min-height: 0 !important;
+    padding: 12px 14px !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  body.aaron-terminal-shell .top-left,
+  body.aaron-terminal-shell .top-right {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  body.aaron-terminal-shell .brand-title {
+    font-size: 24px !important;
+    white-space: normal !important;
+  }
+
+  body.aaron-terminal-shell .pill-small,
+  body.aaron-terminal-shell .tf-btn,
+  body.aaron-terminal-shell .lang-btn,
+  body.aaron-terminal-shell .pill-state,
+  body.aaron-terminal-shell .btn-refresh {
+    min-height: 34px !important;
+    font-size: 16px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv {
+    min-width: 88px !important;
+    height: 36px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .k {
+    font-size: 12px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .v {
+    font-size: 20px !important;
+  }
+
+  body.aaron-terminal-shell .premonition-container {
+    padding: 10px !important;
+    border-radius: 14px !important;
+  }
+
+  body.aaron-terminal-shell .premonition-chart {
+    padding: 8px !important;
+    border-radius: 12px !important;
+  }
+
+  body.aaron-terminal-shell #tc-action-bar .tc-action-shell {
+    gap: 14px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-top,
+  body.aaron-terminal-shell #copilot-block .copilot-a10-trend {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-grid,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-trade-metric:first-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.aaron-terminal-shell #zz-volume-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1100px) {
+  body.aaron-terminal-shell .page {
+    padding-left: 86px !important;
+    padding-right: 10px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs {
+    width: 70px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-tape {
+    left: 70px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand {
+    flex-basis: 190px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-item {
+    min-width: 160px !important;
+    padding: 0 18px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body.aaron-terminal-shell {
+    font-size: 15px !important;
+  }
+
+  body.aaron-terminal-shell .page {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 44px !important;
+    padding-bottom: 82px !important;
+    gap: 8px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-tape {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: 34px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand {
+    flex: 0 0 142px !important;
+    height: 34px !important;
+    padding: 0 10px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand span:not(.aaron-live-dot) {
+    font-size: 11px !important;
+    letter-spacing: 0.10em !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-item {
+    min-width: 138px !important;
+    height: 34px !important;
+    padding: 0 12px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-symbol,
+  body.aaron-terminal-shell .aaron-live-price,
+  body.aaron-terminal-shell .aaron-live-change {
+    font-size: 12px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-refresh,
+  body.aaron-terminal-shell .aaron-live-status {
+    display: none !important;
+  }
+
+  body.aaron-terminal-shell .top-bar {
+    top: 38px !important;
+    width: auto !important;
+    min-height: 0 !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  body.aaron-terminal-shell .top-left,
+  body.aaron-terminal-shell .top-right {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  body.aaron-terminal-shell .brand-title {
+    width: 100% !important;
+    font-size: 16px !important;
+    line-height: 1.18 !important;
+    white-space: normal !important;
+  }
+
+  body.aaron-terminal-shell .pill-small,
+  body.aaron-terminal-shell .tf-btn,
+  body.aaron-terminal-shell .lang-btn,
+  body.aaron-terminal-shell .pill-state,
+  body.aaron-terminal-shell .btn-refresh {
+    min-height: 30px !important;
+    font-size: 12px !important;
+  }
+
+  body.aaron-terminal-shell .pill-state {
+    min-width: 138px !important;
+    max-width: 100% !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv {
+    min-width: 70px !important;
+    height: 32px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .k {
+    font-size: 10px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .v {
+    font-size: 16px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs {
+    height: 66px !important;
+    padding: 6px 8px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-logo {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 16px !important;
+    margin: 0 6px 0 0 !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab {
+    height: 50px !important;
+    min-width: 50px !important;
+    padding: 4px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab strong {
+    font-size: 20px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab span {
+    font-size: 7px !important;
+  }
+
+  body.aaron-terminal-shell .premonition-banner {
+    margin: 8px 0 !important;
+  }
+
+  body.aaron-terminal-shell .premonition-container {
+    padding: 6px !important;
+    border-radius: 10px !important;
+    overflow: visible !important;
+  }
+
+  body.aaron-terminal-shell .premonition-chart {
+    padding: 5px !important;
+    border-radius: 9px !important;
+    overflow: visible !important;
+  }
+
+  body.aaron-terminal-shell .prem-breakout-wrap,
+  body.aaron-terminal-shell #copilot-block,
+  body.aaron-terminal-shell #mc-card .mc-shell,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-shell {
+    border-radius: 10px !important;
+    padding: 10px !important;
+  }
+
+  body.aaron-terminal-shell #tc-action-bar .tc-action-shell,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-right,
+  body.aaron-terminal-shell #mc-card .mc-grid,
+  body.aaron-terminal-shell #mc-card .mc-strip,
+  body.aaron-terminal-shell #zz-volume-row,
+  body.aaron-terminal-shell #zz-left-stack,
+  body.aaron-terminal-shell #zz-side-stack,
+  body.aaron-terminal-shell #vol-engine-card .vp-main-grid,
+  body.aaron-terminal-shell #ema-exhaust-card .eex-main-grid,
+  body.aaron-terminal-shell #bw-prem-card .bwp-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.aaron-terminal-shell #tc-action-bar .tc-action-main {
+    font-size: 34px !important;
+    line-height: 1.02 !important;
+  }
+
+  body.aaron-terminal-shell #tc-action-bar .tc-action-sub,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-detail strong,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-note,
+  body.aaron-terminal-shell #tc-action-bar .tc-action-box-v {
+    font-size: 15px !important;
+    line-height: 1.28 !important;
+  }
+
+  body.aaron-terminal-shell #mc-card #mc-chart {
+    height: 210px !important;
+  }
+
+  body.aaron-terminal-shell #mc-card .mc-big {
+    font-size: 28px !important;
+  }
+
+  body.aaron-terminal-shell #mc-card .mc-verdict {
+    font-size: 17px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block > div:first-child {
+    padding: 0 0 10px 8px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .prem-breakout-title {
+    font-size: 21px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block > div:first-child > div:last-child > div:first-child {
+    min-height: 30px !important;
+    line-height: 30px !important;
+    font-size: 11px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-badge {
+    min-height: 30px !important;
+    padding: 0 12px !important;
+    font-size: 15px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-shell,
+  body.aaron-terminal-shell #copilot-block .copilot-section-card.is-aaron10,
+  body.aaron-terminal-shell #copilot-block .copilot-section-card.is-trade {
+    padding: 8px !important;
+    border-radius: 9px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-hero {
+    min-height: 0 !important;
+    padding: 12px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-hero-title {
+    font-size: 23px !important;
+    line-height: 1.1 !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-decision strong {
+    font-size: 30px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-decision p,
+  body.aaron-terminal-shell #copilot-block .copilot-a10-trend-sub {
+    font-size: 16px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-top,
+  body.aaron-terminal-shell #copilot-block .copilot-a10-trend,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-lower-grid,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-grid,
+  body.aaron-terminal-shell #copilot-block .copilot-a10-trend-track,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-score strong {
+    font-size: 38px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-trend-v {
+    font-size: 30px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-metric strong,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-metric-value,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-row-value {
+    font-size: 19px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-metric small,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-wide-value,
+  body.aaron-terminal-shell #copilot-block .copilot-section-card.is-invalidation .copilot-section-body {
+    font-size: 16px !important;
+  }
+}
+
+/* =========================================================
    AARON COPILOT MODERN PANEL
    Cleaner institutional readout for the A10 / Copilot block.
 ========================================================= */
@@ -3814,5 +4261,73 @@ body.aaron-terminal-shell #copilot-block .copilot-section-card.is-invalidation .
 
   body.aaron-terminal-shell #copilot-block .copilot-section-card.is-invalidation .copilot-section-body {
     font-size: 20px !important;
+  }
+}
+
+/* Final mobile guardrail: no element should create page-wide sideways scroll. */
+@media (max-width: 900px) {
+  html,
+  body,
+  body.aaron-terminal-shell {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-tape,
+  body.aaron-terminal-shell .aaron-live-viewport {
+    overflow: hidden !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-track {
+    width: max-content !important;
+    max-width: none !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs-inner {
+    min-width: max-content !important;
+    max-width: none !important;
+  }
+
+  body.aaron-terminal-shell .page,
+  body.aaron-terminal-shell .premonition-banner,
+  body.aaron-terminal-shell .premonition-container,
+  body.aaron-terminal-shell .premonition-chart,
+  body.aaron-terminal-shell .prem-breakout-wrap,
+  body.aaron-terminal-shell #copilot-block,
+  body.aaron-terminal-shell #zz-volume-row,
+  body.aaron-terminal-shell #zz-left-stack,
+  body.aaron-terminal-shell #zz-side-stack {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  body.aaron-terminal-shell .entryprem-mode,
+  body.aaron-terminal-shell #ep-mode,
+  body.aaron-terminal-shell .prem-breakout-title,
+  body.aaron-terminal-shell .copilot-a10-decision strong,
+  body.aaron-terminal-shell .copilot-a10-metric strong,
+  body.aaron-terminal-shell .copilot-trade-metric-value,
+  body.aaron-terminal-shell .copilot-trade-row-value {
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-a10-grid,
+  body.aaron-terminal-shell #copilot-block .copilot-a10-trend-track,
+  body.aaron-terminal-shell #copilot-block .copilot-trade-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block .copilot-trade-metric:first-child {
+    grid-column: 1 / -1 !important;
   }
 }
