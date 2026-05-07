@@ -2762,3 +2762,129 @@ body.aaron-terminal-shell #replay-mode-card .replay-value {
     font-size: 20px !important;
   }
 }
+
+/* =========================================================
+   AARON TOP CHROME BOOST
+   Bigger ticker, header controls, and side navigation.
+========================================================= */
+
+@media (min-width: 901px) {
+  body.aaron-terminal-shell .page {
+    padding-top: 96px !important;
+    padding-left: 114px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs {
+    width: 96px !important;
+    padding: 14px 10px 16px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-logo {
+    width: 58px !important;
+    height: 58px !important;
+    font-size: 22px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tabs-inner {
+    gap: 8px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab {
+    width: 72px !important;
+    height: 68px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab strong {
+    font-size: 36px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-side-tab span {
+    font-size: 13px !important;
+    letter-spacing: 0.03em !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-tape {
+    left: 96px !important;
+    height: 58px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand {
+    height: 58px !important;
+    padding: 0 22px !important;
+    font-size: 22px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-brand span {
+    font-size: 22px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-item {
+    height: 58px !important;
+    padding: 0 26px !important;
+    gap: 8px !important;
+    font-size: 22px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-item *,
+  body.aaron-terminal-shell .aaron-live-status *,
+  body.aaron-terminal-shell .aaron-live-refresh * {
+    font-size: inherit !important;
+    line-height: inherit !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-status {
+    min-width: 188px !important;
+    height: 58px !important;
+    padding: 0 18px !important;
+    font-size: 20px !important;
+  }
+
+  body.aaron-terminal-shell .aaron-live-refresh {
+    height: 40px !important;
+    padding: 0 18px !important;
+    font-size: 18px !important;
+  }
+
+  body.aaron-terminal-shell .top-bar {
+    top: 68px !important;
+    min-height: 116px !important;
+    padding: 18px 22px !important;
+  }
+
+  body.aaron-terminal-shell .brand-title {
+    font-size: 30px !important;
+    line-height: 1.06 !important;
+  }
+
+  body.aaron-terminal-shell .pill-small,
+  body.aaron-terminal-shell .pill-soft,
+  body.aaron-terminal-shell .pill-state,
+  body.aaron-terminal-shell .tf-btn,
+  body.aaron-terminal-shell .lang-btn,
+  body.aaron-terminal-shell .btn-refresh {
+    min-height: 40px !important;
+    font-size: 20px !important;
+  }
+
+  body.aaron-terminal-shell .pill-small strong,
+  body.aaron-terminal-shell .pill-soft strong {
+    font-size: 22px !important;
+  }
+
+  body.aaron-terminal-shell .pill-state {
+    min-width: 220px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv {
+    min-width: 112px !important;
+    height: 44px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .k {
+    font-size: 16px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .v {
+    font-size: 28px !important;
+  }
+}
