@@ -7774,6 +7774,186 @@
     0 0 0 1px rgba(255,255,255,.04);
 }
 
+/* ===== TREND T2 COMMAND — NEW TOP BLOCK ===== */
+#trend-t2-command-card{
+  display: block;
+  margin: 10px 0 12px !important;
+  position: relative;
+  z-index: 8;
+}
+
+#trend-t2-command-card .tt2-shell{
+  width: 100%;
+  min-height: 178px;
+  border: 2px solid rgba(148,163,184,.30);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56,189,248,.13), transparent 32%),
+    linear-gradient(90deg, rgba(15,23,42,.98) 0%, rgba(8,13,25,.99) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 6px 0 0 rgba(148,163,184,.60),
+    0 18px 44px rgba(0,0,0,.36);
+  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(460px, .95fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+#trend-t2-command-card .tt2-left{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+#trend-t2-command-card .tt2-k{
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.72);
+}
+
+#trend-t2-command-card .tt2-main{
+  font-size: 58px;
+  line-height: .96;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  overflow-wrap: anywhere;
+}
+
+#trend-t2-command-card .tt2-sub{
+  max-width: 1120px;
+  font-size: 17px;
+  line-height: 1.34;
+  color: rgba(226,232,240,.86);
+  overflow-wrap: anywhere;
+}
+
+#trend-t2-command-card .tt2-pills{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+#trend-t2-command-card .tt2-pill{
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.045);
+  padding: 7px 11px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(226,232,240,.86);
+}
+
+#trend-t2-command-card .tt2-metrics{
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+#trend-t2-command-card .tt2-box{
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,.045);
+  padding: 13px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+#trend-t2-command-card .tt2-box span{
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.66);
+}
+
+#trend-t2-command-card .tt2-box strong{
+  font-size: 23px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: rgba(255,255,255,.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#trend-t2-command-card.is-entry .tt2-shell{
+  border-color: rgba(52,211,153,.76);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(52,211,153,.28), transparent 34%),
+    linear-gradient(90deg, rgba(4,120,87,.42) 0%, rgba(8,13,25,.99) 62%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 6px 0 0 rgba(52,211,153,.96),
+    0 20px 54px rgba(0,0,0,.42),
+    0 0 0 1px rgba(52,211,153,.13);
+}
+
+#trend-t2-command-card.is-entry .tt2-main,
+#trend-t2-command-card.is-entry #tt2-t2,
+#trend-t2-command-card.is-entry #tt2-trend{
+  color: #34d399;
+}
+
+#trend-t2-command-card.is-wait-t2 .tt2-main{
+  color: #ffcc66;
+}
+
+#trend-t2-command-card.is-block .tt2-shell{
+  border-color: rgba(248,113,113,.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 6px 0 0 rgba(248,113,113,.90),
+    0 18px 44px rgba(0,0,0,.38);
+}
+
+#trend-t2-command-card.is-block .tt2-main{
+  color: #f97373;
+}
+
+@media (max-width: 1100px){
+  #trend-t2-command-card .tt2-shell{
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  #trend-t2-command-card .tt2-main{
+    font-size: 44px;
+  }
+
+  #trend-t2-command-card .tt2-metrics{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px){
+  #trend-t2-command-card .tt2-main{
+    font-size: 34px;
+  }
+
+  #trend-t2-command-card .tt2-metrics{
+    grid-template-columns: 1fr;
+  }
+}
+
 #mc-card .mc-shell{
   border: 1px solid rgba(255,204,102,.54);
   border-radius: 10px;
@@ -9767,6 +9947,49 @@ body.aaron-terminal-shell .top-right .kv .v{
     </div>
 
     <div class="premonition-chart">
+      <!-- ===== TREND T2 COMMAND — NEW TOP BLOCK ===== -->
+      <div class="prem-breakout-wrap" id="trend-t2-command-card" style="grid-column: 1 / -1;">
+        <div class="tt2-shell">
+          <div class="tt2-left">
+            <div class="tt2-k">NOVO BLOCO · ENTRA AGORA QUANDO TREND + T2 &gt; T1</div>
+            <div class="tt2-main" id="tt2-main">AGUARDANDO TREND</div>
+            <div class="tt2-sub" id="tt2-sub">Esperando tendência ativar e T2 expandir além do T1.</div>
+            <div class="tt2-pills">
+              <span class="tt2-pill" id="tt2-pill-trend">TREND —</span>
+              <span class="tt2-pill" id="tt2-pill-t2">T2 —</span>
+              <span class="tt2-pill" id="tt2-pill-risk">RISK —</span>
+            </div>
+          </div>
+
+          <div class="tt2-metrics">
+            <div class="tt2-box">
+              <span>Direção</span>
+              <strong id="tt2-dir">—</strong>
+            </div>
+            <div class="tt2-box">
+              <span>Gatilho</span>
+              <strong id="tt2-trigger">—</strong>
+            </div>
+            <div class="tt2-box">
+              <span>Stop</span>
+              <strong id="tt2-stop">—</strong>
+            </div>
+            <div class="tt2-box">
+              <span>Target 1</span>
+              <strong id="tt2-t1">—</strong>
+            </div>
+            <div class="tt2-box">
+              <span>Target 2</span>
+              <strong id="tt2-t2">—</strong>
+            </div>
+            <div class="tt2-box">
+              <span>Tendência</span>
+              <strong id="tt2-trend">—</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ===== /TREND T2 COMMAND ===== -->
       <!-- ===== INDICATORS (EMA / VWAP / RSI) — ABOVE ENTRY ENGINE ===== -->
        <div class="prem-breakout-wrap" id="first-hour-prem-card" style="display:none;">
   <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
@@ -31520,6 +31743,68 @@ if (el("tc-action-spread")) {
 if (el("tc-action-consensus")) {
   el("tc-action-consensus").textContent = tcTrendPhaseText && tcTrendPhaseText !== "—" ? tcTrendPhaseText : tcZoneLabel;
   el("tc-action-consensus").style.color = tcA10TrendConfirmed ? "#67e8f9" : "";
+}
+
+const tt2Card = el("trend-t2-command-card");
+if (tt2Card) {
+  const tt2Set = (id, value) => {
+    const node = el(id);
+    if (node) node.textContent = value == null || value === "" ? "—" : String(value);
+  };
+  const tt2Money = (v) => v != null && Number.isFinite(Number(v)) ? `$${fmt2(Number(v))}` : "—";
+  const tt2TrendOn = tcA10TrendAligned;
+  const tt2RiskBlocked =
+    tcA10HardBlocked ||
+    tcIsInvalidated ||
+    tcIsChasing ||
+    tcIsBelowTrigger ||
+    tcA10VwapAgainst ||
+    tcA10VwapChaseRisk ||
+    (tcA10VwapTouched && tcA10VwapNeedsConfirm && !tcA10VwapConfirmed) ||
+    tcLevelFlipContra;
+
+  let tt2Mode = "is-wait";
+  let tt2Main = "AGUARDANDO TREND";
+  let tt2Sub = "Esperando tendencia A10 alinhar e T2 expandir alem do T1.";
+  let tt2RiskText = "RISK OK";
+
+  if (tcTrendEntryReady) {
+    tt2Mode = "is-entry";
+    tt2Main = "ENTRA AGORA";
+    tt2Sub = `${tcOperatorDir}: tendencia ativa + ${tcTrendEntryLine} Gatilho ${tt2Money(tcPlanAnchor)} | stop ${tt2Money(tcStopPrice)}.`;
+  } else if (tt2RiskBlocked) {
+    tt2Mode = "is-block";
+    tt2Main = tcA10HardBlocked || tcIsInvalidated ? "BLOQUEADO" : "NÃO PERSEGUIR";
+    tt2RiskText = tcA10VwapAgainst || tcA10VwapChaseRisk ? "VWAP BLOQUEIA" : tcIsChasing ? "CHASE" : "RISK BLOQUEIA";
+    tt2Sub = tcOperatorDecisionV1?.sub || "Existe bloqueio antes da entrada. Nao abrir ate liberar risco.";
+  } else if (tt2TrendOn && !tcTarget2ExtendsTarget1) {
+    tt2Mode = "is-wait-t2";
+    tt2Main = "AGUARDAR T2";
+    tt2Sub = `${tcOperatorDir}: tendencia alinhada, mas o T2 ainda nao expandiu alem do T1.`;
+  } else if (tcA10TrendConfirmed && !tt2TrendOn) {
+    tt2Mode = "is-block";
+    tt2Main = "TREND CONTRA";
+    tt2RiskText = "DIREÇÃO NÃO BATE";
+    tt2Sub = "A10 tem tendencia, mas ela nao esta alinhada com a direcao canonica do operador.";
+  } else if (tcOperatorDecisionV1?.main && tcOperatorDecisionV1.reason !== "payload_incomplete") {
+    tt2Main = tcOperatorDecisionV1.main;
+    tt2Sub = tcOperatorDecisionV1.sub || tt2Sub;
+  }
+
+  tt2Card.classList.remove("is-entry", "is-wait", "is-wait-t2", "is-block");
+  tt2Card.classList.add(tt2Mode);
+
+  tt2Set("tt2-main", tt2Main);
+  tt2Set("tt2-sub", tt2Sub);
+  tt2Set("tt2-pill-trend", tt2TrendOn ? `TREND ON ${tcA10TrendStreak}${tcA10TrendMax ? "+" : ""}` : "TREND WAIT");
+  tt2Set("tt2-pill-t2", tcTarget2ExtendsTarget1 ? "T2 > T1 OK" : "T2 WAIT");
+  tt2Set("tt2-pill-risk", tt2RiskText);
+  tt2Set("tt2-dir", tcDisplayDirection || "—");
+  tt2Set("tt2-trigger", tt2Money(tcPlanAnchor));
+  tt2Set("tt2-stop", tt2Money(tcStopPrice));
+  tt2Set("tt2-t1", tt2Money(tcTarget1));
+  tt2Set("tt2-t2", tt2Money(tcTarget2));
+  tt2Set("tt2-trend", tcTrendPhaseText && tcTrendPhaseText !== "—" ? tcTrendPhaseText : tcZoneLabel);
 }
 
 // ===== MONTE CARLO — T2 PLAN + BREAKOUT WATCH =====
