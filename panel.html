@@ -7789,6 +7789,12 @@
   box-shadow: none !important;
 }
 
+#trend-t2-command-card .tt2-stage{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 #trend-t2-command-card .tt2-shell{
   width: 100%;
   min-height: 340px;
@@ -7943,6 +7949,80 @@
   text-overflow: ellipsis;
 }
 
+#trend-t2-command-card .tt2-strip{
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#trend-t2-command-card .tt2-mcard{
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 12px;
+  background: rgba(4,9,20,.92);
+  padding: 15px 17px;
+  min-height: 102px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 16px 34px rgba(0,0,0,.28);
+}
+
+#trend-t2-command-card .tt2-mcard::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: .82;
+}
+
+#trend-t2-command-card .tt2-mcard.c-cyan::before{ background: #22d3ee; }
+#trend-t2-command-card .tt2-mcard.c-green::before{ background: #34d399; }
+#trend-t2-command-card .tt2-mcard.c-blue::before{ background: #60a5fa; }
+#trend-t2-command-card .tt2-mcard.c-amber::before{ background: #fbbf24; }
+#trend-t2-command-card .tt2-mcard.c-violet::before{ background: #a78bfa; }
+#trend-t2-command-card .tt2-mcard.c-red::before{ background: #f87171; }
+
+#trend-t2-command-card .tt2-mk{
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(148,163,184,.82);
+  font-weight: 950;
+}
+
+#trend-t2-command-card .tt2-mv{
+  margin-top: 9px;
+  font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 950;
+  color: rgba(255,255,255,.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#trend-t2-command-card .tt2-ms{
+  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.25;
+  color: rgba(148,163,184,.72);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#trend-t2-command-card .tt2-mv.cy{ color: #22d3ee; }
+#trend-t2-command-card .tt2-mv.up{ color: #34d399; }
+#trend-t2-command-card .tt2-mv.am{ color: #fbbf24; }
+#trend-t2-command-card .tt2-mv.dn{ color: #f87171; }
+#trend-t2-command-card .tt2-mv.vi{ color: #a78bfa; }
+
 #trend-t2-command-card.is-entry .tt2-shell{
   border-color: rgba(52,211,153,.34);
   background:
@@ -8025,6 +8105,10 @@
   #trend-t2-command-card .tt2-metrics{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  #trend-t2-command-card .tt2-strip{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 680px){
@@ -8033,6 +8117,10 @@
   }
 
   #trend-t2-command-card .tt2-metrics{
+    grid-template-columns: 1fr;
+  }
+
+  #trend-t2-command-card .tt2-strip{
     grid-template-columns: 1fr;
   }
 }
@@ -10032,43 +10120,78 @@ body.aaron-terminal-shell .top-right .kv .v{
     <div class="premonition-chart">
       <!-- ===== TREND T2 COMMAND — NEW TOP BLOCK ===== -->
       <div class="prem-breakout-wrap" id="trend-t2-command-card" style="grid-column: 1 / -1;">
-        <div class="tt2-shell">
-          <div class="tt2-left">
-            <div class="tt2-k">NOVO BLOCO · ENTRA AGORA QUANDO TREND + T2 &gt; T1</div>
-            <div class="tt2-main" id="tt2-main">AGUARDANDO TREND</div>
-            <div class="tt2-state" id="tt2-state">TREND T2 WATCH</div>
-            <div class="tt2-sub" id="tt2-sub">Esperando tendência ativar e T2 expandir além do T1.</div>
-            <div class="tt2-pills">
-              <span class="tt2-pill" id="tt2-pill-trend">TREND —</span>
-              <span class="tt2-pill" id="tt2-pill-t2">T2 —</span>
-              <span class="tt2-pill" id="tt2-pill-risk">RISK —</span>
+        <div class="tt2-stage">
+          <div class="tt2-shell">
+            <div class="tt2-left">
+              <div class="tt2-k">NOVO BLOCO · ENTRA AGORA QUANDO TREND + T2 &gt; T1</div>
+              <div class="tt2-main" id="tt2-main">AGUARDANDO TREND</div>
+              <div class="tt2-state" id="tt2-state">TREND T2 WATCH</div>
+              <div class="tt2-sub" id="tt2-sub">Esperando tendência ativar e T2 expandir além do T1.</div>
+              <div class="tt2-pills">
+                <span class="tt2-pill" id="tt2-pill-trend">TREND —</span>
+                <span class="tt2-pill" id="tt2-pill-t2">T2 —</span>
+                <span class="tt2-pill" id="tt2-pill-risk">RISK —</span>
+              </div>
+            </div>
+
+            <div class="tt2-metrics">
+              <div class="tt2-box">
+                <span>Direção</span>
+                <strong id="tt2-dir">—</strong>
+              </div>
+              <div class="tt2-box">
+                <span>Gatilho</span>
+                <strong id="tt2-trigger">—</strong>
+              </div>
+              <div class="tt2-box">
+                <span>Stop</span>
+                <strong id="tt2-stop">—</strong>
+              </div>
+              <div class="tt2-box">
+                <span>Target 1</span>
+                <strong id="tt2-t1">—</strong>
+              </div>
+              <div class="tt2-box">
+                <span>Target 2</span>
+                <strong id="tt2-t2">—</strong>
+              </div>
+              <div class="tt2-box">
+                <span>Tendência</span>
+                <strong id="tt2-trend">—</strong>
+              </div>
             </div>
           </div>
 
-          <div class="tt2-metrics">
-            <div class="tt2-box">
-              <span>Direção</span>
-              <strong id="tt2-dir">—</strong>
+          <div class="tt2-strip">
+            <div class="tt2-mcard c-cyan">
+              <div class="tt2-mk">Price Now</div>
+              <div class="tt2-mv cy" id="tt2-met-price">—</div>
+              <div class="tt2-ms" id="tt2-met-price-sub">1-minute</div>
             </div>
-            <div class="tt2-box">
-              <span>Gatilho</span>
-              <strong id="tt2-trigger">—</strong>
+            <div class="tt2-mcard c-green">
+              <div class="tt2-mk">Trend Phase</div>
+              <div class="tt2-mv up" id="tt2-met-trend">—</div>
+              <div class="tt2-ms" id="tt2-met-trend-sub">A10 trend</div>
             </div>
-            <div class="tt2-box">
-              <span>Stop</span>
-              <strong id="tt2-stop">—</strong>
+            <div class="tt2-mcard c-blue">
+              <div class="tt2-mk">Entry Trigger</div>
+              <div class="tt2-mv cy" id="tt2-met-trigger">—</div>
+              <div class="tt2-ms" id="tt2-met-trigger-sub">gatilho operacional</div>
             </div>
-            <div class="tt2-box">
-              <span>Target 1</span>
-              <strong id="tt2-t1">—</strong>
+            <div class="tt2-mcard c-amber">
+              <div class="tt2-mk">VWAP</div>
+              <div class="tt2-mv am" id="tt2-met-vwap">—</div>
+              <div class="tt2-ms" id="tt2-met-vwap-sub">route watch</div>
             </div>
-            <div class="tt2-box">
-              <span>Target 2</span>
-              <strong id="tt2-t2">—</strong>
+            <div class="tt2-mcard c-violet">
+              <div class="tt2-mk">T2 Edge</div>
+              <div class="tt2-mv vi" id="tt2-met-edge">—</div>
+              <div class="tt2-ms" id="tt2-met-edge-sub">T2 vs T1</div>
             </div>
-            <div class="tt2-box">
-              <span>Tendência</span>
-              <strong id="tt2-trend">—</strong>
+            <div class="tt2-mcard c-red">
+              <div class="tt2-mk">Risk</div>
+              <div class="tt2-mv dn" id="tt2-met-risk">—</div>
+              <div class="tt2-ms" id="tt2-met-risk-sub">stop / RR</div>
             </div>
           </div>
         </div>
@@ -31898,6 +32021,40 @@ if (tt2Card) {
   tt2Set("tt2-t1", tt2Money(tcTarget1));
   tt2Set("tt2-t2", tt2Money(tcTarget2));
   tt2Set("tt2-trend", tcTrendPhaseText && tcTrendPhaseText !== "—" ? tcTrendPhaseText : tcZoneLabel);
+
+  const tt2Symbol = String(root?.symbol || panel?.symbol || payload?.symbol || "AARON").toUpperCase();
+  const tt2VwapLevel = tcPickNum(tcA10Vwap?.level, tcA10Vwap?.vwap);
+  const tt2Edge =
+    tcTarget1 != null && tcTarget2 != null
+      ? Math.abs(tcTarget2 - tcTarget1)
+      : null;
+  const tt2TrendMetric =
+    tcA10TrendConfirmed
+      ? tcA10TrendMax
+        ? "Phase 5+"
+        : `Phase ${tcA10TrendStreak}`
+      : "WAIT";
+  const tt2RiskMetric =
+    tt2RiskBlocked
+      ? "BLOCK"
+      : tcRr2 != null
+        ? `${Number(tcRr2).toFixed(2)}R`
+        : tcRr1 != null
+          ? `${Number(tcRr1).toFixed(2)}R`
+          : "OK";
+
+  tt2Set("tt2-met-price", tt2Money(tcLivePrice));
+  tt2Set("tt2-met-price-sub", `${tt2Symbol} 1-min`);
+  tt2Set("tt2-met-trend", tt2TrendMetric);
+  tt2Set("tt2-met-trend-sub", tcA10TrendConfirmed ? `${tcA10TrendTargetLabel} expand watch` : "A10 trend wait");
+  tt2Set("tt2-met-trigger", tt2Money(tcPlanAnchor));
+  tt2Set("tt2-met-trigger-sub", tcIsBelowTrigger ? "ainda nao tocou" : "gatilho operacional");
+  tt2Set("tt2-met-vwap", tt2VwapLevel != null ? tt2Money(tt2VwapLevel) : (tcA10VwapLabel || "—"));
+  tt2Set("tt2-met-vwap-sub", tcA10VwapHasData ? (tcA10VwapStatus || tcA10VwapLabel || "route watch") : "sem vwap route");
+  tt2Set("tt2-met-edge", tt2Edge != null ? `+$${fmt2(tt2Edge)}` : "—");
+  tt2Set("tt2-met-edge-sub", tcTarget2ExtendsTarget1 ? "T2 expandiu" : "esperando T2");
+  tt2Set("tt2-met-risk", tt2RiskMetric);
+  tt2Set("tt2-met-risk-sub", tcStopPrice != null ? `stop ${tt2Money(tcStopPrice)}` : tt2RiskText);
 }
 
 // ===== MONTE CARLO — T2 PLAN + BREAKOUT WATCH =====
