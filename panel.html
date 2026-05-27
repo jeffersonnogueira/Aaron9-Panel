@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <title>AARON 9 – Painel Institucional em Tempo Real </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 
   <style>
@@ -7777,28 +7780,45 @@
 /* ===== TREND T2 COMMAND — NEW TOP BLOCK ===== */
 #trend-t2-command-card{
   display: block;
-  margin: 10px 0 12px !important;
+  margin: 18px 0 18px !important;
   position: relative;
   z-index: 8;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 #trend-t2-command-card .tt2-shell{
   width: 100%;
-  min-height: 178px;
-  border: 2px solid rgba(148,163,184,.30);
-  border-radius: 8px;
+  min-height: 340px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 18px;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 0% 0%, rgba(56,189,248,.13), transparent 32%),
-    linear-gradient(90deg, rgba(15,23,42,.98) 0%, rgba(8,13,25,.99) 100%);
+    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(251,191,36,.15) 0%, transparent 62%),
+    linear-gradient(135deg, #1a160a 0%, #0a1020 58%, #050914 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.07),
-    inset 6px 0 0 rgba(148,163,184,.60),
-    0 18px 44px rgba(0,0,0,.36);
-  padding: 20px 22px;
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 28px 70px rgba(0,0,0,.48),
+    0 0 0 1px rgba(255,255,255,.035);
+  padding: 34px 40px;
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(460px, .95fr);
-  gap: 18px;
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr) minmax(520px, .72fr);
+  gap: 30px;
+  align-items: center;
+  position: relative;
+}
+
+#trend-t2-command-card .tt2-shell::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #fbbf24, transparent 72%);
+  opacity: .95;
 }
 
 #trend-t2-command-card .tt2-left{
@@ -7806,48 +7826,73 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  gap: 0;
 }
 
 #trend-t2-command-card .tt2-k{
-  font-size: 13px;
+  font-size: 11px;
   line-height: 1;
-  letter-spacing: .16em;
+  letter-spacing: .24em;
   text-transform: uppercase;
-  font-weight: 950;
-  color: rgba(203,213,225,.72);
+  font-weight: 900;
+  color: rgba(148,163,184,.70);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+#trend-t2-command-card .tt2-k::after{
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,.13), transparent);
 }
 
 #trend-t2-command-card .tt2-main{
-  font-size: 58px;
-  line-height: .96;
+  font-family: "Syne", "Arial Black", Impact, sans-serif;
+  font-size: 86px;
+  line-height: .90;
   font-weight: 950;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: #cbd5e1;
+  color: #fbbf24;
   overflow-wrap: anywhere;
+  text-shadow: 0 0 54px rgba(251,191,36,.22);
+}
+
+#trend-t2-command-card .tt2-state{
+  font-family: "Syne", system-ui, sans-serif;
+  margin-top: 14px;
+  font-size: 28px;
+  line-height: 1.05;
+  font-weight: 850;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.70);
 }
 
 #trend-t2-command-card .tt2-sub{
+  margin-top: 18px;
   max-width: 1120px;
-  font-size: 17px;
-  line-height: 1.34;
-  color: rgba(226,232,240,.86);
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(226,232,240,.58);
   overflow-wrap: anywhere;
 }
 
 #trend-t2-command-card .tt2-pills{
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 3px;
+  gap: 9px;
+  margin-top: 22px;
 }
 
 #trend-t2-command-card .tt2-pill{
-  border: 1px solid rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.18);
   border-radius: 999px;
   background: rgba(255,255,255,.045);
-  padding: 7px 11px;
+  padding: 9px 13px;
   font-size: 12px;
   line-height: 1;
   font-weight: 950;
@@ -7860,33 +7905,36 @@
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
   align-items: stretch;
 }
 
 #trend-t2-command-card .tt2-box{
   min-width: 0;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 12px;
   background: rgba(255,255,255,.045);
-  padding: 13px 14px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  min-height: 98px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
 }
 
 #trend-t2-command-card .tt2-box span{
   font-size: 11px;
   line-height: 1;
-  letter-spacing: .13em;
+  letter-spacing: .18em;
   text-transform: uppercase;
   font-weight: 950;
-  color: rgba(203,213,225,.66);
+  color: rgba(148,163,184,.76);
 }
 
 #trend-t2-command-card .tt2-box strong{
-  font-size: 23px;
+  font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+  font-size: 28px;
   line-height: 1.05;
   font-weight: 950;
   color: rgba(255,255,255,.92);
@@ -7896,47 +7944,82 @@
 }
 
 #trend-t2-command-card.is-entry .tt2-shell{
-  border-color: rgba(52,211,153,.76);
+  border-color: rgba(52,211,153,.34);
   background:
-    radial-gradient(circle at 0% 0%, rgba(52,211,153,.28), transparent 34%),
-    linear-gradient(90deg, rgba(4,120,87,.42) 0%, rgba(8,13,25,.99) 62%);
+    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(52,211,153,.21) 0%, transparent 62%),
+    linear-gradient(135deg, #0b1e18 0%, #0a1020 58%, #050914 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.08),
-    inset 6px 0 0 rgba(52,211,153,.96),
-    0 20px 54px rgba(0,0,0,.42),
-    0 0 0 1px rgba(52,211,153,.13);
+    0 28px 70px rgba(0,0,0,.48),
+    0 0 0 1px rgba(52,211,153,.08);
+}
+
+#trend-t2-command-card.is-entry .tt2-shell::before{
+  background: linear-gradient(90deg, #34d399, transparent 72%);
 }
 
 #trend-t2-command-card.is-entry .tt2-main,
 #trend-t2-command-card.is-entry #tt2-t2,
 #trend-t2-command-card.is-entry #tt2-trend{
   color: #34d399;
+  text-shadow: 0 0 60px rgba(52,211,153,.26);
+}
+
+#trend-t2-command-card.is-entry.is-short-side .tt2-shell{
+  border-color: rgba(248,113,113,.34);
+  background:
+    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(248,113,113,.18) 0%, transparent 62%),
+    linear-gradient(135deg, #1e0b0b 0%, #180a14 58%, #050914 100%);
+}
+
+#trend-t2-command-card.is-entry.is-short-side .tt2-shell::before{
+  background: linear-gradient(90deg, #f87171, transparent 72%);
+}
+
+#trend-t2-command-card.is-entry.is-short-side .tt2-main,
+#trend-t2-command-card.is-entry.is-short-side #tt2-t2,
+#trend-t2-command-card.is-entry.is-short-side #tt2-trend{
+  color: #f87171;
+  text-shadow: 0 0 60px rgba(248,113,113,.24);
 }
 
 #trend-t2-command-card.is-wait-t2 .tt2-main{
   color: #ffcc66;
 }
 
+#trend-t2-command-card.is-wait-t2 .tt2-shell::before{
+  background: linear-gradient(90deg, #ffcc66, transparent 72%);
+}
+
 #trend-t2-command-card.is-block .tt2-shell{
-  border-color: rgba(248,113,113,.58);
+  border-color: rgba(248,113,113,.34);
+  background:
+    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(248,113,113,.18) 0%, transparent 62%),
+    linear-gradient(135deg, #1e0b0b 0%, #180a14 58%, #050914 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.08),
-    inset 6px 0 0 rgba(248,113,113,.90),
-    0 18px 44px rgba(0,0,0,.38);
+    0 28px 70px rgba(0,0,0,.48),
+    0 0 0 1px rgba(248,113,113,.08);
+}
+
+#trend-t2-command-card.is-block .tt2-shell::before{
+  background: linear-gradient(90deg, #f87171, transparent 72%);
 }
 
 #trend-t2-command-card.is-block .tt2-main{
   color: #f97373;
+  text-shadow: 0 0 60px rgba(248,113,113,.24);
 }
 
 @media (max-width: 1100px){
   #trend-t2-command-card .tt2-shell{
     grid-template-columns: 1fr;
     min-height: 0;
+    padding: 28px 28px;
   }
 
   #trend-t2-command-card .tt2-main{
-    font-size: 44px;
+    font-size: 64px;
   }
 
   #trend-t2-command-card .tt2-metrics{
@@ -7946,7 +8029,7 @@
 
 @media (max-width: 680px){
   #trend-t2-command-card .tt2-main{
-    font-size: 34px;
+    font-size: 44px;
   }
 
   #trend-t2-command-card .tt2-metrics{
@@ -9953,6 +10036,7 @@ body.aaron-terminal-shell .top-right .kv .v{
           <div class="tt2-left">
             <div class="tt2-k">NOVO BLOCO · ENTRA AGORA QUANDO TREND + T2 &gt; T1</div>
             <div class="tt2-main" id="tt2-main">AGUARDANDO TREND</div>
+            <div class="tt2-state" id="tt2-state">TREND T2 WATCH</div>
             <div class="tt2-sub" id="tt2-sub">Esperando tendência ativar e T2 expandir além do T1.</div>
             <div class="tt2-pills">
               <span class="tt2-pill" id="tt2-pill-trend">TREND —</span>
@@ -31765,36 +31849,45 @@ if (tt2Card) {
 
   let tt2Mode = "is-wait";
   let tt2Main = "AGUARDANDO TREND";
+  let tt2State = "TREND T2 WATCH";
   let tt2Sub = "Esperando tendencia A10 alinhar e T2 expandir alem do T1.";
   let tt2RiskText = "RISK OK";
 
   if (tcTrendEntryReady) {
     tt2Mode = "is-entry";
     tt2Main = "ENTRA AGORA";
+    tt2State = `${tcOperatorDir} ENTRY READY`;
     tt2Sub = `${tcOperatorDir}: tendencia ativa + ${tcTrendEntryLine} Gatilho ${tt2Money(tcPlanAnchor)} | stop ${tt2Money(tcStopPrice)}.`;
   } else if (tt2RiskBlocked) {
     tt2Mode = "is-block";
     tt2Main = tcA10HardBlocked || tcIsInvalidated ? "BLOQUEADO" : "NÃO PERSEGUIR";
+    tt2State = tcOperatorDir && tcOperatorDir !== "—" ? `${tcOperatorDir} RISK BLOCK` : "RISK BLOCK";
     tt2RiskText = tcA10VwapAgainst || tcA10VwapChaseRisk ? "VWAP BLOQUEIA" : tcIsChasing ? "CHASE" : "RISK BLOQUEIA";
     tt2Sub = tcOperatorDecisionV1?.sub || "Existe bloqueio antes da entrada. Nao abrir ate liberar risco.";
   } else if (tt2TrendOn && !tcTarget2ExtendsTarget1) {
     tt2Mode = "is-wait-t2";
     tt2Main = "AGUARDAR T2";
+    tt2State = `${tcOperatorDir} TREND ACTIVE`;
     tt2Sub = `${tcOperatorDir}: tendencia alinhada, mas o T2 ainda nao expandiu alem do T1.`;
   } else if (tcA10TrendConfirmed && !tt2TrendOn) {
     tt2Mode = "is-block";
     tt2Main = "TREND CONTRA";
+    tt2State = "SEM ALINHAMENTO";
     tt2RiskText = "DIREÇÃO NÃO BATE";
     tt2Sub = "A10 tem tendencia, mas ela nao esta alinhada com a direcao canonica do operador.";
   } else if (tcOperatorDecisionV1?.main && tcOperatorDecisionV1.reason !== "payload_incomplete") {
     tt2Main = tcOperatorDecisionV1.main;
+    tt2State = tcOperatorDecisionV1.zone || "OPERADOR FINAL";
     tt2Sub = tcOperatorDecisionV1.sub || tt2Sub;
   }
 
-  tt2Card.classList.remove("is-entry", "is-wait", "is-wait-t2", "is-block");
+  tt2Card.classList.remove("is-entry", "is-wait", "is-wait-t2", "is-block", "is-long-side", "is-short-side");
   tt2Card.classList.add(tt2Mode);
+  if (String(tcDisplayDirection || "").includes("LONG")) tt2Card.classList.add("is-long-side");
+  if (String(tcDisplayDirection || "").includes("SHORT")) tt2Card.classList.add("is-short-side");
 
   tt2Set("tt2-main", tt2Main);
+  tt2Set("tt2-state", tt2State);
   tt2Set("tt2-sub", tt2Sub);
   tt2Set("tt2-pill-trend", tt2TrendOn ? `TREND ON ${tcA10TrendStreak}${tcA10TrendMax ? "+" : ""}` : "TREND WAIT");
   tt2Set("tt2-pill-t2", tcTarget2ExtendsTarget1 ? "T2 > T1 OK" : "T2 WAIT");
