@@ -8127,9 +8127,112 @@
   border-color: rgba(255,204,102,.55);
 }
 
+#pattern-route-card .prw46-shell{
+  border: 1px solid rgba(255,204,102,.34);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(255,204,102,.16), transparent 32%),
+    linear-gradient(180deg, rgba(42,31,12,.94) 0%, rgba(5,12,22,.99) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 18px 42px rgba(2,6,23,.34);
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(560px, 1fr);
+  gap: 18px;
+}
+
+#pattern-route-card .prw46-k{
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.78);
+}
+
+#pattern-route-card .prw46-main{
+  margin-top: 8px;
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 950;
+  color: #ffcc66;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+#pattern-route-card .prw46-sub{
+  margin-top: 10px;
+  font-size: 20px;
+  line-height: 1.25;
+  color: rgba(226,232,240,.92);
+}
+
+#pattern-route-card .prw46-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#pattern-route-card .prw46-cell{
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+  padding: 12px 14px;
+}
+
+#pattern-route-card .prw46-cell span{
+  display: block;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 950;
+  opacity: .72;
+}
+
+#pattern-route-card .prw46-cell strong{
+  display: block;
+  margin-top: 8px;
+  font-size: 24px;
+  line-height: 1.04;
+  font-weight: 950;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#pattern-route-card .prw46-cell strong.is-side{
+  color: #ffcc66;
+}
+
+#pattern-route-card.is-long .prw46-main,
+#pattern-route-card.is-long .prw46-cell strong.is-side{
+  color: var(--success);
+}
+
+#pattern-route-card.is-short .prw46-main,
+#pattern-route-card.is-short .prw46-cell strong.is-side{
+  color: var(--danger);
+}
+
+#pattern-route-card.is-inactive{
+  opacity: .82;
+}
+
 @media (max-width: 1300px){
   #level-flip-card .lfv44-shell{
     grid-template-columns: 1fr;
+  }
+
+  #pattern-route-card .prw46-shell{
+    grid-template-columns: 1fr;
+  }
+
+  #pattern-route-card .prw46-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -9933,6 +10036,51 @@ body.aaron-terminal-shell .top-right .kv .v{
   </div>
 </div>
 <!-- ===== /LEVEL FLIP V44 ===== -->
+<!-- ===== PATTERN ROUTE V46 — ROUTE WATCH ===== -->
+<div class="prem-breakout-wrap" id="pattern-route-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+  <div class="prw46-shell">
+    <div>
+      <div class="prw46-k">V46 PATTERN ROUTE WATCH</div>
+      <div class="prw46-main" id="prw46-main">—</div>
+      <div class="prw46-sub" id="prw46-sub">—</div>
+    </div>
+    <div class="prw46-grid">
+      <div class="prw46-cell">
+        <span>Bias</span>
+        <strong class="is-side" id="prw46-bias">—</strong>
+      </div>
+      <div class="prw46-cell">
+        <span>Next Move</span>
+        <strong id="prw46-next">—</strong>
+      </div>
+      <div class="prw46-cell">
+        <span>Pivot / Zone</span>
+        <strong id="prw46-pivot">—</strong>
+      </div>
+      <div class="prw46-cell">
+        <span>Max Allowed</span>
+        <strong id="prw46-max">—</strong>
+      </div>
+      <div class="prw46-cell">
+        <span>Trigger</span>
+        <strong id="prw46-trigger">—</strong>
+      </div>
+      <div class="prw46-cell">
+        <span>Target 1</span>
+        <strong id="prw46-target">—</strong>
+      </div>
+      <div class="prw46-cell">
+        <span>Invalidation</span>
+        <strong id="prw46-inval">—</strong>
+      </div>
+      <div class="prw46-cell">
+        <span>Mode</span>
+        <strong id="prw46-mode">—</strong>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== /PATTERN ROUTE V46 ===== -->
  <!-- ===== MICRO PREMONITION — ABOVE COPILOT ===== -->
 <div class="prem-breakout-wrap" id="micro-premo-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
@@ -29363,6 +29511,98 @@ renderOptions("");
     if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
     if (el("lfv44-touches")) el("lfv44-touches").textContent = lfTouches != null ? String(Math.round(lfTouches)) : "—";
     if (el("tc-action-level")) el("tc-action-level").textContent = lfActive ? `${lfSide || "V44"} ${lfStatusRaw}` : "—";
+
+    const patternRouteV46 =
+      exec1x1?.pattern_route_watch_v1 ||
+      panel?.pattern_route_watch_v1 ||
+      digest?.pattern_route_watch_v1 ||
+      payload?.pattern_route_watch_v1 ||
+      payload?.ui?.pattern_route_watch_v1 ||
+      payload?.live?.pattern_route_watch_v1 ||
+      ui?.pattern_route_watch_v1 ||
+      (typeof deepFind === "function" ? deepFind(payload, "pattern_route_watch_v1") : null) ||
+      {};
+
+    const prwPickText = (...vals) => {
+      for (const v of vals) {
+        if (typeof v !== "string") continue;
+        const s = v.trim();
+        if (s) return s;
+      }
+      return "";
+    };
+
+    const prwStateRaw = String(patternRouteV46?.state || "").trim().toUpperCase();
+    const prwBiasRaw = String(patternRouteV46?.main_bias || patternRouteV46?.bias || "").trim().toUpperCase();
+    const prwNextRaw = String(patternRouteV46?.next_move || "").trim().toUpperCase();
+    const prwAfterRaw = String(patternRouteV46?.after_retrace || "").trim().toUpperCase();
+    const prwModeRaw = String(patternRouteV46?.execution_mode || "").trim().toUpperCase();
+    const prwPatternName = prwPickText(
+      patternRouteV46?.pattern_name,
+      patternRouteV46?.name_pt,
+      patternRouteV46?.name_en,
+      patternRouteV46?.pattern_key
+    );
+    const prwHasBlock = !!(
+      patternRouteV46 &&
+      typeof patternRouteV46 === "object" &&
+      (
+        patternRouteV46?.schema === "pattern_route_watch_v1" ||
+        patternRouteV46?.version ||
+        prwPatternName ||
+        prwStateRaw
+      )
+    );
+    const prwEnabled =
+      patternRouteV46?.enabled === true ||
+      !!(prwBiasRaw && prwNextRaw && !["NO_PATTERN_ROUTE", "ERROR"].includes(prwStateRaw));
+    const prwSide =
+      prwBiasRaw.includes("SHORT") ? "SHORT" :
+      prwBiasRaw.includes("LONG") ? "LONG" :
+      "";
+    const prwPivot = numPick(patternRouteV46?.pivot_return_price);
+    const prwZoneLow = numPick(patternRouteV46?.pivot_return_zone_low);
+    const prwZoneHigh = numPick(patternRouteV46?.pivot_return_zone_high);
+    const prwMaxAllowed = numPick(patternRouteV46?.max_allowed_price);
+    const prwTrigger = numPick(patternRouteV46?.continuation_trigger);
+    const prwTarget = numPick(patternRouteV46?.continuation_target_1);
+    const prwInvalidation = numPick(patternRouteV46?.invalidation);
+    const prwPivotText =
+      prwZoneLow != null && prwZoneHigh != null
+        ? `${lfMoney(prwZoneLow)}-${lfMoney(prwZoneHigh)}`
+        : prwPivot != null ? lfMoney(prwPivot) : "—";
+    const prwMessage = prwPickText(
+      patternRouteV46?.message_pt,
+      patternRouteV46?.message_en
+    );
+    const prwCard = el("pattern-route-card");
+    if (prwCard) {
+      prwCard.style.display = prwHasBlock ? "" : "none";
+      prwCard.classList.remove("is-long", "is-short", "is-active", "is-inactive");
+      if (prwSide === "LONG") prwCard.classList.add("is-long");
+      if (prwSide === "SHORT") prwCard.classList.add("is-short");
+      prwCard.classList.add(prwEnabled ? "is-active" : "is-inactive");
+    }
+    if (el("prw46-main")) {
+      el("prw46-main").textContent = prwHasBlock
+        ? `${prwPatternName || "PATTERN"} — ${prwStateRaw || (prwEnabled ? "ACTIVE" : "WATCH")}`
+        : "—";
+    }
+    if (el("prw46-sub")) {
+      el("prw46-sub").textContent = prwHasBlock
+        ? (prwMessage || (prwEnabled
+            ? `${prwSide || "BIAS"}: rota ${prwNextRaw || "—"} antes de ${prwAfterRaw || "continuação"}.`
+            : "Sem rota ativa agora; o bloco mostra o ultimo estado estrutural recebido."))
+        : "—";
+    }
+    if (el("prw46-bias")) el("prw46-bias").textContent = prwSide || prwBiasRaw || "—";
+    if (el("prw46-next")) el("prw46-next").textContent = prwNextRaw || "—";
+    if (el("prw46-pivot")) el("prw46-pivot").textContent = prwPivotText;
+    if (el("prw46-max")) el("prw46-max").textContent = lfMoney(prwMaxAllowed);
+    if (el("prw46-trigger")) el("prw46-trigger").textContent = lfMoney(prwTrigger);
+    if (el("prw46-target")) el("prw46-target").textContent = lfMoney(prwTarget);
+    if (el("prw46-inval")) el("prw46-inval").textContent = lfMoney(prwInvalidation);
+    if (el("prw46-mode")) el("prw46-mode").textContent = prwModeRaw || (prwEnabled ? "WATCH" : "NO ROUTE");
 
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
     const atr14     = numPick(ctx.atr14, digest.atr14, panel.atr14, digest.indicators?.atr14, panel.indicators?.atr14, exec1x1?.atr14);
