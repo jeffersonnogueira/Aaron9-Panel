@@ -7707,11 +7707,36 @@
     0 0 0 1px rgba(74,222,128,.10);
 }
 
-#tc-action-bar.is-good .tc-action-main{
+#tc-action-bar.is-trend-now .tc-action-shell{
+  border-color: rgba(52,211,153,.72);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(52,211,153,.30), transparent 36%),
+    linear-gradient(90deg, rgba(16,185,129,.20) 0%, rgba(16,185,129,.055) 30%, rgba(15,23,42,.98) 100%),
+    linear-gradient(180deg, rgba(16,24,39,.98) 0%, rgba(5,10,20,.995) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 6px 0 0 rgba(52,211,153,.96),
+    0 24px 70px rgba(0,0,0,.48),
+    0 0 0 1px rgba(52,211,153,.14);
+}
+
+#tc-action-bar.is-trend-now .tc-action-main,
+#tc-action-bar.is-trend-now .tc-action-box-v.is-t2,
+#tc-action-bar.is-trend-now .tc-action-box-v.is-trend{
+  color: #34d399;
+}
+
+#tc-action-bar.is-trend-now .tc-action-live-pill{
+  border-color: rgba(52,211,153,.72);
+  background: #34d399;
+  box-shadow: 0 10px 24px rgba(52,211,153,.20);
+}
+
+#tc-action-bar.is-good:not(.is-trend-now) .tc-action-main{
   color: #ffcc66;
 }
 
-#tc-action-bar.is-good .tc-action-shell{
+#tc-action-bar.is-good:not(.is-trend-now) .tc-action-shell{
   border-color: rgba(255,204,102,.58);
 }
 
@@ -9985,7 +10010,7 @@ body.aaron-terminal-shell .top-right .kv .v{
   <div class="tc-action-shell">
     <div class="tc-action-left">
       <div class="tc-action-command-row">
-        <div class="tc-action-k">OPERADOR FINAL | AARON EXECUTION</div>
+        <div class="tc-action-k">COMANDO FINAL | TREND + T1/T2</div>
         <div class="tc-action-live-pill">SIGA ESTE BLOCO</div>
       </div>
       <div class="tc-action-main" id="tc-action-main">AGUARDANDO</div>
@@ -10015,33 +10040,33 @@ body.aaron-terminal-shell .top-right .kv .v{
 
     <div class="tc-action-right">
       <div class="tc-action-box">
-        <div class="tc-action-box-k">DIRECTION</div>
-        <div class="tc-action-box-v" id="tc-action-dir">—</div>
+        <div class="tc-action-box-k">DIREÇÃO</div>
+        <div class="tc-action-box-v is-dir" id="tc-action-dir">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">ZONE</div>
+        <div class="tc-action-box-k">GATILHO</div>
         <div class="tc-action-box-v" id="tc-action-gate">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">LEVEL V44</div>
+        <div class="tc-action-box-k">STOP</div>
         <div class="tc-action-box-v" id="tc-action-level">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">CLAUDE</div>
+        <div class="tc-action-box-k">TARGET 1</div>
         <div class="tc-action-box-v" id="tc-action-claude">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">SPREAD</div>
-        <div class="tc-action-box-v" id="tc-action-spread">—</div>
+        <div class="tc-action-box-k">TARGET 2</div>
+        <div class="tc-action-box-v is-t2" id="tc-action-spread">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">CONSENSUS</div>
-        <div class="tc-action-box-v" id="tc-action-consensus">—</div>
+        <div class="tc-action-box-k">TENDÊNCIA</div>
+        <div class="tc-action-box-v is-trend" id="tc-action-consensus">—</div>
       </div>
     </div>
   </div>
@@ -30834,6 +30859,37 @@ const tcA10VwapAlignedConfirmed =
   tcA10VwapConfirmed &&
   (!tcA10VwapSide || !tcOperatorDir || tcOperatorDir === "—" || tcA10VwapSide === tcOperatorDir);
 
+const tcTarget2ExtendsTarget1 =
+  tcTarget1 != null &&
+  tcTarget2 != null &&
+  !!tcSideSign &&
+  (
+    tcSideSign === 1
+      ? tcTarget2 > tcTarget1
+      : tcTarget2 < tcTarget1
+  );
+const tcTrendPhaseText =
+  tcA10TrendConfirmed
+    ? `${tcA10TrendMax ? "TEND 5+" : `TEND ${tcA10TrendStreak}`} | ${tcA10TrendTargetLabel}${tcTarget2ExtendsTarget1 ? " EXP" : ""}`
+    : "—";
+const tcTrendEntryReady =
+  tcA10TrendAligned &&
+  tcTarget2ExtendsTarget1 &&
+  !tcPositionAction &&
+  !tcLateActive &&
+  !tcIsInvalidated &&
+  !tcIsChasing &&
+  !tcIsBelowTrigger &&
+  !tcA10VwapAgainst &&
+  !tcA10VwapChaseRisk &&
+  !(tcA10VwapTouched && tcA10VwapNeedsConfirm && !tcA10VwapConfirmed) &&
+  !tcLevelFlipContra &&
+  (!tcLevelFlipAligned || lfStatusRaw === "TRIGGERED");
+const tcTrendEntryLine =
+  tcTarget2ExtendsTarget1
+    ? `T2 expandiu alem de T1 (${tcLateMoney(tcTarget1)} -> ${tcLateMoney(tcTarget2)}).`
+    : "T2 ainda nao expandiu alem de T1.";
+
 if (
   tcA10TrendRiskActive &&
   !tcLateActive &&
@@ -30949,6 +31005,23 @@ const tcBuildOperatorDecisionV1 = () => {
       mode: "is-no-trade",
       next: "Zerar ideia. Nao reabrir nesse mesmo setup; esperar novo matcher.",
       reason: "operator_invalidated"
+    });
+  }
+
+  if (tcTrendEntryReady) {
+    const tcTrendSize =
+      tcA10SizingPct != null && tcA10SizingPct > 0
+        ? `${Math.round(tcA10SizingPct)}%`
+        : tcA10TrendMax
+          ? "100%"
+          : "75%";
+    return withBase({
+      main: "ENTRA AGORA",
+      sub: `${tcOperatorDir}: tendencia A10 ativa ${tcA10TrendStreak}${tcA10TrendMax ? "+" : ""}; ${tcTrendEntryLine} ${tcOperatorLiveLine()}.`,
+      mode: tcA10TrendMax ? "is-perfect" : "is-good",
+      zone: tcA10TrendMax ? "TREND 5+" : "TREND ACTIVE",
+      next: `Executar no gatilho ${tcLateMoney(tcPlanAnchor)} com tamanho ${tcTrendSize}. T1 ${tcLateMoney(tcTarget1)} | T2 ${tcLateMoney(tcTarget2)} | stop ${tcLateMoney(tcStopPrice)}.`,
+      reason: "trend_t2_expansion_entry"
     });
   }
 
@@ -31328,6 +31401,9 @@ let tcActionSub = [
   tcOperatorDecisionV1.direction,
   tcA10VwapHasData ? (tcA10VwapLabel || "VWAP") : ""
 ].filter(Boolean).join(" • ") || tcActionReasonText;
+if (tcOperatorDecisionV1.reason === "trend_t2_expansion_entry") {
+  tcActionSub = tcActionReasonText;
+}
 let tcActionMode = tcOperatorDecisionV1.mode;
 
 try {
@@ -31371,6 +31447,10 @@ const tcActionNote = (() => {
       return "Early Momentum = 07:30–08:30 MT; EMA 80–85 vira cautela e EMA 85–90 depende do AARON 10 confirmar T1/T2.";
     case "TREND RISK":
       return "Trend Risk = A10 confirmou tendencia, mas EMA esta extrema; manejar se ja entrou, ou esperar respiro/novo gatilho se esta fora.";
+    case "TREND ACTIVE":
+      return "Trend Active = A10 confirmou tendencia e T2 expandiu alem do T1; entrada liberada se nao houver chase, VWAP contra ou invalidacao.";
+    case "TREND 5+":
+      return "Trend 5+ = tendencia forte com expansao de T2; segue o quadro final e respeita stop/T1/T2.";
     case "V43 MARKET":
       return "V43 Market = missed ainda valido; a entrada vira execução a mercado.";
     case "V43 REDUCED":
@@ -31406,8 +31486,11 @@ const tcActionNote = (() => {
 const tcDisplayDirection = tcPositionAction?.displayDirection || tcDirection;
 const tcActionBar = el("tc-action-bar");
 if (tcActionBar) {
-  tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait");
+  tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait", "is-trend-now");
   tcActionBar.classList.add(tcActionMode);
+  if (tcOperatorDecisionV1.reason === "trend_t2_expansion_entry") {
+    tcActionBar.classList.add("is-trend-now");
+  }
 
   if (String(tcDisplayDirection || "").includes("LONG")) tcActionBar.classList.add("is-long");
   if (String(tcDisplayDirection || "").includes("SHORT")) tcActionBar.classList.add("is-short");
@@ -31421,18 +31504,23 @@ if (el("tc-action-vwap"))      el("tc-action-vwap").textContent      = tcActionV
 if (el("tc-action-v43v44"))    el("tc-action-v43v44").textContent    = tcActionV43V44Text;
 if (el("tc-action-note"))      el("tc-action-note").textContent      = tcActionNote;
 if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDisplayDirection || "—";
-if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcZoneLabel;
+if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcPlanAnchor != null ? `$${fmt2(tcPlanAnchor)}` : tcZoneLabel;
 if (el("tc-action-level")) {
-  el("tc-action-level").textContent = tcLevelFlipActive ? `${tcLevelFlipSide || "V44"} ${lfStatusRaw}` : "—";
-  el("tc-action-level").style.color = tcLevelFlipSide === "LONG"
-    ? "var(--success)"
-    : tcLevelFlipSide === "SHORT"
-      ? "var(--danger)"
-      : "";
+  el("tc-action-level").textContent = tcStopPrice != null ? `$${fmt2(tcStopPrice)}` : "—";
+  el("tc-action-level").style.color = tcStopPrice != null ? "var(--danger)" : "";
 }
-if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "AUX";
-if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
-if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
+if (el("tc-action-claude")) {
+  el("tc-action-claude").textContent = tcTarget1 != null ? `$${fmt2(tcTarget1)}` : "—";
+  el("tc-action-claude").style.color = "";
+}
+if (el("tc-action-spread")) {
+  el("tc-action-spread").textContent = tcTarget2 != null ? `$${fmt2(tcTarget2)}` : "—";
+  el("tc-action-spread").style.color = tcTarget2ExtendsTarget1 ? "#34d399" : "";
+}
+if (el("tc-action-consensus")) {
+  el("tc-action-consensus").textContent = tcTrendPhaseText && tcTrendPhaseText !== "—" ? tcTrendPhaseText : tcZoneLabel;
+  el("tc-action-consensus").style.color = tcA10TrendConfirmed ? "#67e8f9" : "";
+}
 
 // ===== MONTE CARLO — T2 PLAN + BREAKOUT WATCH =====
 {
