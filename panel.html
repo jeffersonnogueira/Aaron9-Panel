@@ -8418,18 +8418,6 @@ body.aaron-terminal-shell #trend-t2-command-card{
   color: #f87171;
 }
 
-#level-flip-card{
-  order: 44;
-}
-
-#pattern-route-card{
-  order: 45;
-}
-
-#vwap-route-card{
-  order: 46;
-}
-
 #level-flip-card .lfv44-shell{
   border: 1px solid rgba(34,211,238,.32);
   border-radius: 10px;
@@ -10627,8 +10615,9 @@ body.aaron-terminal-shell .top-right .kv .v{
   </div>
 </div>
 <!-- ===== /LEVEL FLIP V44 ===== -->
+<div id="route-watch-dock" style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:10px; margin-top:10px;">
 <!-- ===== PATTERN ROUTE V46 — ROUTE WATCH ===== -->
-<div class="prem-breakout-wrap" id="pattern-route-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+<div class="prem-breakout-wrap" id="pattern-route-card" style="display:none; margin-top:0; grid-column: 1 / -1;">
   <div class="prw46-shell">
     <div>
       <div class="prw46-k">V46 PATTERN ROUTE WATCH</div>
@@ -10673,7 +10662,7 @@ body.aaron-terminal-shell .top-right .kv .v{
 </div>
 <!-- ===== /PATTERN ROUTE V46 ===== -->
 <!-- ===== VWAP ROUTE V47 — LOWER / MIDDLE / TOP ===== -->
-<div class="prem-breakout-wrap" id="vwap-route-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+<div class="prem-breakout-wrap" id="vwap-route-card" style="display:none; margin-top:0; grid-column: 1 / -1;">
   <div class="vrw47-shell">
     <div>
       <div class="vrw47-k">V48 VWAP SESSION · BAND #1</div>
@@ -10717,6 +10706,7 @@ body.aaron-terminal-shell .top-right .kv .v{
   </div>
 </div>
 <!-- ===== /VWAP ROUTE V47 ===== -->
+</div>
  <!-- ===== MICRO PREMONITION — ABOVE COPILOT ===== -->
 <div class="prem-breakout-wrap" id="micro-premo-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
@@ -30000,11 +29990,15 @@ renderOptions("");
     const level = document.getElementById("level-flip-card");
     const pattern = document.getElementById("pattern-route-card");
     const vwap = document.getElementById("vwap-route-card");
+    const dock = document.getElementById("route-watch-dock");
     const parent = level?.parentElement;
-    if (!parent || !pattern || !vwap) return;
+    if (!parent || !pattern || !vwap || !dock) return;
 
-    parent.insertBefore(pattern, level.nextSibling);
-    parent.insertBefore(vwap, pattern.nextSibling);
+    if (dock.parentElement !== parent || dock.previousElementSibling !== level) {
+      parent.insertBefore(dock, level.nextSibling);
+    }
+    if (pattern.parentElement !== dock) dock.appendChild(pattern);
+    if (vwap.parentElement !== dock) dock.appendChild(vwap);
   }
     // MICRO/MACRO dock: coloca os 3 blocos reais do MICRO na coluna MICRO (sem alterar nada do micro)
   function dockMicroMacro(){
