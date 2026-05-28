@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>AARON 9 – Painel Institucional em Tempo Real </title>
+  <title>AARON 10 – Painel Institucional em Tempo Real </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1058,7 +1058,7 @@
     .text-soft {
       color: var(--text-soft);
     }
-    /* ====== AARON 9 – COLUNA DIREITA (DECISION PANEL) ====== */
+    /* ====== AARON 10 – COLUNA DIREITA (DECISION PANEL) ====== */
 
 .decision-column {
   display: flex;
@@ -7781,12 +7781,17 @@
 #trend-t2-command-card{
   display: block;
   margin: 18px 0 18px !important;
-  position: relative;
-  z-index: 8;
+  position: sticky;
+  top: 10px;
+  z-index: 10005;
   border: 0 !important;
   background: transparent !important;
   padding: 0 !important;
   box-shadow: none !important;
+}
+
+body.aaron-terminal-shell #trend-t2-command-card{
+  top: 124px;
 }
 
 #trend-t2-command-card .tt2-stage{
@@ -9931,9 +9936,9 @@ body.aaron-terminal-shell .top-right .kv .v{
           </div>
         </div>
 
-        <!-- Título do painel AARON 9 -->
+        <!-- Título do painel AARON 10 -->
         <div class="brand-title">
-          <span>AARON 9</span>&nbsp;INSTITUTIONAL PANEL
+          <span>AARON 10</span>&nbsp;INSTITUTIONAL PANEL
         </div>
 
 
@@ -13220,7 +13225,7 @@ main.layout,
   <div class="card-header">
     <div>
       <div class="card-title" data-i18n="summary.title">Resumo institucional</div>
-      <div class="card-subtitle" data-i18n="summary.subtitle">Leitura consolidada do AARON 9</div>
+      <div class="card-subtitle" data-i18n="summary.subtitle">Leitura consolidada do AARON 10</div>
     </div>
     <div class="badge-outline">
       <span class="dot"></span>
@@ -13228,7 +13233,7 @@ main.layout,
     </div>
   </div>
 
-<!-- ====== AARON 9 – COLUNA DIREITA (DECISION PANEL) ====== -->
+<!-- ====== AARON 10 – COLUNA DIREITA (DECISION PANEL) ====== -->
 <div class="decision-column">
 
     <!-- AUTO PILOT (fora do Citadel, dentro do Resumo Institucional) -->
@@ -26166,8 +26171,8 @@ v = Math.max(0, Math.min(100, v));
       ? (data.text_en || data.text)
       : (data.text_pt || data.text)) ||
     (currentLang === 'en'
-      ? 'AARON 9 sees this pullback as aligned with the main direction. Focus on trades with the trend and avoid fighting the move.'
-      : 'O AARON 9 vê este pullback como alinhado com a direção principal. Foque em operações a favor e evite brigar com o movimento.');
+      ? 'AARON 10 sees this pullback as aligned with the main direction. Focus on trades with the trend and avoid fighting the move.'
+      : 'O AARON 10 vê este pullback como alinhado com a direção principal. Foque em operações a favor e evite brigar com o movimento.');
 
   if (els.pullbackHeadline) els.pullbackHeadline.textContent = headline;
   if (els.pullbackText) els.pullbackText.textContent = body;
@@ -28770,7 +28775,7 @@ function a10BindStudiesUI() {
 }
 
 // ====== INICIALIZAÇÃO ======
-function initAaron9() {
+function initAaron10() {
   // liga chart + estudos
   a10InitChart();
   a10BindStudiesUI();
@@ -28964,7 +28969,7 @@ const I18N = {
 
     // RESUMO INSTITUCIONAL
     'summary.title': 'Resumo institucional',
-    'summary.subtitle': 'Leitura consolidada do AARON 9',
+    'summary.subtitle': 'Leitura consolidada do AARON 10',
     'summary.risk_mgmt': 'Gestão de risco',
 
     // RADAR
@@ -29045,7 +29050,7 @@ const I18N = {
 
     // SUMMARY
     'summary.title': 'Institutional summary',
-    'summary.subtitle': 'Consolidated reading from AARON 9',
+    'summary.subtitle': 'Consolidated reading from AARON 10',
     'summary.risk_mgmt': 'Risk management',
 
     // RADAR
@@ -29330,9 +29335,9 @@ applyLang(currentLang);
 
 // garante que roda depois que o DOM existe
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAaron9);
+  document.addEventListener('DOMContentLoaded', initAaron10);
 } else {
-  initAaron9();
+  initAaron10();
 }
 
    // ================== GARIMPO DE HOJE - DADOS EXEMPLO ==================
@@ -34922,7 +34927,7 @@ const tpTxt = (() => {
 
     const logo = document.createElement("div");
     logo.className = "aaron-side-logo";
-    logo.textContent = "A9";
+    logo.textContent = "A10";
     nav.appendChild(logo);
 
     const inner = document.createElement("div");
