@@ -76,16 +76,92 @@ input[type=range].saas::-moz-range-thumb{width:26px;height:26px;border-radius:50
 
 /* SaaS app presentation */
 .saas-side-stage{display:flex;justify-content:center;margin:24px 0;}
-.saas-side-frame{width:100%;max-width:760px;min-height:520px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:.5px solid rgba(93,202,165,0.34);border-radius:var(--r);background:linear-gradient(180deg,rgba(93,202,165,0.08),rgba(127,119,221,0.05)),var(--bg2);}
-.saas-side-frame img{display:block;width:min(88%,560px);height:auto;max-height:92%;object-fit:contain;}
+.saas-side-frame{width:100%;max-width:760px;min-height:700px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;border:.5px solid rgba(93,202,165,0.34);border-radius:var(--r);background:radial-gradient(circle at 18% 18%,rgba(61,165,255,0.18),transparent 32%),radial-gradient(circle at 82% 82%,rgba(208,104,255,0.15),transparent 36%),linear-gradient(180deg,rgba(57,255,120,0.08),rgba(61,165,255,0.04) 48%,rgba(255,176,32,0.05)),#080f1c;}
+.premonition-phone-shell{width:min(74%,320px);max-width:340px;aspect-ratio:390/844;border-radius:44px;padding:10px;background:#05070d;border:1px solid rgba(255,255,255,0.14);box-shadow:0 24px 80px rgba(0,0,0,0.58),0 0 42px rgba(61,165,255,0.16);position:relative;}
+.premonition-phone-shell::before{content:"";position:absolute;top:18px;left:50%;width:86px;height:22px;transform:translateX(-50%);border-radius:0 0 15px 15px;background:#02040a;z-index:4;}
+.premonition-phone-screen{height:100%;display:flex;flex-direction:column;overflow:hidden;border-radius:35px;background:#040810;color:#fff;border:1px solid rgba(255,255,255,0.06);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;}
+.prem-status{height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.82);background:#040810;}
+.prem-topbar{background:#080f1c;border-bottom:1px solid rgba(255,255,255,0.09);}
+.prem-toprow{display:flex;align-items:center;gap:8px;padding:10px 13px 8px;}
+.prem-logo{width:28px;height:28px;border-radius:8px;background:#3DA5FF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex:0 0 auto;}
+.prem-title{flex:1;min-width:0;font-size:12px;font-weight:800;color:rgba(255,255,255,0.94);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prem-title strong{color:#fff;}
+.prem-live{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:rgba(57,255,120,0.14);border:1px solid rgba(48,209,88,0.2);color:#39FF78;font-size:9px;font-weight:800;flex:0 0 auto;}
+.prem-live::before{content:"";width:6px;height:6px;border-radius:50%;background:#39FF78;opacity:.7;}
+.prem-clock{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:rgba(255,255,255,0.78);flex:0 0 auto;}
+.prem-tape{height:30px;display:flex;align-items:center;overflow:hidden;border-top:1px solid rgba(255,255,255,0.06);}
+.prem-ticker{display:flex;min-width:max-content;animation:premTape 25s linear infinite;}
+.prem-tick{width:120px;height:30px;display:flex;align-items:center;gap:5px;padding:0 12px;border-right:1px solid rgba(255,255,255,0.09);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:rgba(255,255,255,0.60);}
+.prem-tick b{font-size:11px;color:#fff;}
+.prem-up{color:#39FF78;}
+.prem-down{color:#FF5349;}
+@keyframes premTape{from{transform:translateX(0);}to{transform:translateX(-480px);}}
+.prem-scroll{flex:1;overflow:hidden;padding:14px 14px 78px;background:#040810;}
+.prem-card{background:rgba(255,255,255,0.042);border:1px solid rgba(255,255,255,0.09);border-radius:18px;padding:12px;margin-bottom:9px;overflow:hidden;}
+.prem-hero-row{display:flex;gap:12px;align-items:center;}
+.prem-score{flex:1;min-width:0;}
+.prem-label{font-size:9px;font-weight:800;color:rgba(255,255,255,0.70);text-transform:uppercase;}
+.prem-score-big{display:flex;align-items:baseline;gap:2px;margin-top:1px;}
+.prem-score-num{font-size:48px;line-height:50px;font-weight:800;color:#39FF78;}
+.prem-score-den{font-size:25px;font-weight:300;color:rgba(255,255,255,0.60);}
+.prem-score-track{height:3px;border-radius:3px;overflow:hidden;background:rgba(255,255,255,0.09);margin-top:7px;}
+.prem-score-fill{height:100%;width:72%;background:#39FF78;border-radius:3px;}
+.prem-hero-meta{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.prem-badge{display:inline-flex;padding:3px 8px;border-radius:999px;border:1px solid rgba(48,209,88,0.2);background:rgba(57,255,120,0.14);color:#39FF78;font-size:10px;font-weight:800;}
+.prem-symbol{font-size:22px;font-weight:800;color:#fff;}
+.prem-tf{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:rgba(255,255,255,0.60);}
+.prem-price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;font-weight:800;color:#3DA5FF;}
+.prem-section{display:flex;align-items:center;gap:8px;margin:4px 0 8px;font-size:10px;font-weight:800;text-transform:uppercase;color:rgba(255,255,255,0.90);}
+.prem-section::after{content:"";height:1px;background:rgba(255,255,255,0.09);flex:1;}
+.prem-state-row,.prem-kv-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.09);}
+.prem-state-row:last-child,.prem-kv-row:last-child{border-bottom:none;}
+.prem-state-ico{width:18px;color:rgba(255,255,255,0.60);font-size:13px;text-align:center;}
+.prem-state-label,.prem-kv-key{flex:1;font-size:12px;color:rgba(255,255,255,0.70);}
+.prem-badge.blue{background:rgba(61,165,255,0.16);border-color:rgba(10,132,255,0.2);color:#3DA5FF;}
+.prem-badge.gray{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.09);color:rgba(255,255,255,0.94);}
+.prem-prob{margin-bottom:10px;}
+.prem-prob-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.92);}
+.prem-prob-head span:last-child{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.prem-prob-track{height:4px;border-radius:4px;background:rgba(255,255,255,0.09);overflow:hidden;}
+.prem-prob-fill{height:100%;border-radius:4px;background:#3DA5FF;}
+.prem-prob-fill.green{width:68%;background:#39FF78;}
+.prem-prob-fill.red{width:19%;background:#FF5349;}
+.prem-prob-fill.orange{width:13%;background:#FFB020;}
+.prem-tactical{padding:11px 12px;margin-bottom:9px;border-radius:18px;border:1px solid rgba(255,176,32,0.16);background:rgba(255,176,32,0.09);font-size:12px;line-height:1.45;color:#FFB020;}
+.prem-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.prem-chip{display:flex;gap:6px;align-items:center;border-radius:12px;padding:7px 9px;background:rgba(255,255,255,0.075);border:1px solid rgba(255,255,255,0.09);font-size:11px;}
+.prem-chip span{color:rgba(255,255,255,0.60);}
+.prem-chip b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#3DA5FF;}
+.prem-chip.sl b{color:#FF5349;}
+.prem-chip.tp b{color:#39FF78;}
+.prem-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:0 0 9px;}
+.prem-mini{border-radius:12px;padding:9px;background:rgba(255,255,255,0.042);border:1px solid rgba(255,255,255,0.09);}
+.prem-mini span{display:block;font-size:10px;color:rgba(255,255,255,0.60);margin-bottom:3px;}
+.prem-mini b{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prem-mini .blue{color:#3DA5FF;}
+.prem-mini .green{color:#39FF78;}
+.prem-mini .red{color:#FF5349;}
+.prem-mini .muted{color:rgba(255,255,255,0.60);}
+.prem-kv-row{font-size:12px;}
+.prem-kv-val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:800;color:#fff;}
+.prem-tabs{position:absolute;left:10px;right:10px;bottom:10px;height:70px;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;background:#080f1c;border-top:1px solid rgba(255,255,255,0.09);border-radius:0 0 35px 35px;padding:6px 7px 10px;}
+.prem-tabitem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:rgba(255,255,255,0.35);font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;}
+.prem-tabitem i{font-style:normal;font-size:15px;line-height:17px;}
+.prem-tabitem.active{color:#3DA5FF;}
 @media(min-width:1500px){
   .saas-side-stage{position:fixed;left:calc(50% + 500px);right:42px;top:150px;bottom:36px;margin:0;z-index:1;pointer-events:none;}
   .saas-side-frame{max-width:none;height:100%;min-height:0;}
-  .saas-side-frame img{width:min(92%,620px);}
+  .premonition-phone-shell{width:min(72%,38vh,340px);}
 }
 @media(min-width:1900px){
   .saas-side-stage{right:58px;}
-  .saas-side-frame img{width:min(90%,680px);}
+  .premonition-phone-shell{width:min(70%,40vh,360px);}
+}
+@media(max-width:600px){
+  .saas-side-frame{min-height:620px;}
+  .premonition-phone-shell{width:min(88%,292px);}
+  .prem-tabs{grid-template-columns:repeat(4,1fr);}
+  .prem-tabitem:nth-child(5){display:none;}
 }
 
 /* metrics */
@@ -235,7 +311,107 @@ tr.last td{font-weight:500;border-top:.5px solid var(--border2);}
     </div>
     <aside class="saas-side-stage" aria-label="Premonition app presentation">
       <div class="saas-side-frame">
-        <img src="/assets/premonition-iphone-mock.svg" alt="Premonition app iPhone mockup with sample market signal data" loading="lazy">
+        <div class="premonition-phone-shell" aria-label="Premonition Xcode app preview with sample market data">
+          <div class="premonition-phone-screen">
+            <div class="prem-status"><span>9:41</span><span>LTE 100%</span></div>
+            <div class="prem-topbar">
+              <div class="prem-toprow">
+                <div class="prem-logo">P</div>
+                <div class="prem-title">AARON 10 - <strong>NVDA</strong> - 1m</div>
+                <div class="prem-live">LIVE</div>
+                <div class="prem-clock">09:41:22</div>
+              </div>
+              <div class="prem-tape" aria-hidden="true">
+                <div class="prem-ticker">
+                  <div class="prem-tick">SPY <b>547.82</b> <span class="prem-up">+0.43%</span></div>
+                  <div class="prem-tick">QQQ <b>452.19</b> <span class="prem-down">-0.12%</span></div>
+                  <div class="prem-tick">NVDA <b>164.95</b> <span class="prem-up">+1.21%</span></div>
+                  <div class="prem-tick">VIX <b>14.32</b> <span class="prem-up">+2.14%</span></div>
+                  <div class="prem-tick">SPY <b>547.82</b> <span class="prem-up">+0.43%</span></div>
+                  <div class="prem-tick">QQQ <b>452.19</b> <span class="prem-down">-0.12%</span></div>
+                  <div class="prem-tick">NVDA <b>164.95</b> <span class="prem-up">+1.21%</span></div>
+                  <div class="prem-tick">VIX <b>14.32</b> <span class="prem-up">+2.14%</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="prem-scroll">
+              <div class="prem-card">
+                <div class="prem-hero-row">
+                  <div class="prem-score">
+                    <div class="prem-label">Premonition score</div>
+                    <div class="prem-score-big"><span class="prem-score-num">72</span><span class="prem-score-den">/100</span></div>
+                    <div class="prem-score-track"><div class="prem-score-fill"></div></div>
+                  </div>
+                  <div class="prem-hero-meta">
+                    <span class="prem-badge">BUY</span>
+                    <div class="prem-symbol">NVDA</div>
+                    <div class="prem-tf">1M</div>
+                    <div class="prem-price">$164.95</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="prem-card">
+                <div class="prem-section">System State</div>
+                <div class="prem-state-row"><span class="prem-state-ico">A</span><span class="prem-state-label">Action</span><span class="prem-badge">BUY</span></div>
+                <div class="prem-state-row"><span class="prem-state-ico">T</span><span class="prem-state-label">Trend</span><span class="prem-badge blue">BULLISH</span></div>
+                <div class="prem-state-row"><span class="prem-state-ico">V</span><span class="prem-state-label">Volume</span><span class="prem-badge gray">EXPANSION</span></div>
+                <div class="prem-state-row"><span class="prem-state-ico">R</span><span class="prem-state-label">Regime</span><span class="prem-badge gray">TREND</span></div>
+              </div>
+
+              <div class="prem-card">
+                <div class="prem-section">Direction Probability</div>
+                <div class="prem-prob">
+                  <div class="prem-prob-head"><span>Bull</span><span class="prem-up">68.4%</span></div>
+                  <div class="prem-prob-track"><div class="prem-prob-fill green"></div></div>
+                </div>
+                <div class="prem-prob">
+                  <div class="prem-prob-head"><span>Bear</span><span class="prem-down">18.9%</span></div>
+                  <div class="prem-prob-track"><div class="prem-prob-fill red"></div></div>
+                </div>
+                <div class="prem-prob">
+                  <div class="prem-prob-head"><span>Neutral</span><span style="color:#FFB020;">12.7%</span></div>
+                  <div class="prem-prob-track"><div class="prem-prob-fill orange"></div></div>
+                </div>
+              </div>
+
+              <div class="prem-tactical">Pullback accepted above VWAP. Long bias while volume stays expanded.</div>
+
+              <div class="prem-card">
+                <div class="prem-section">Key Levels</div>
+                <div class="prem-chips">
+                  <div class="prem-chip"><span>Entry</span><b>$164.70</b></div>
+                  <div class="prem-chip sl"><span>SL</span><b>$163.85</b></div>
+                  <div class="prem-chip tp"><span>TP</span><b>$167.40</b></div>
+                </div>
+              </div>
+
+              <div class="prem-section">Live Indicators</div>
+              <div class="prem-grid">
+                <div class="prem-mini"><span>Price</span><b class="blue">$164.95</b></div>
+                <div class="prem-mini"><span>VWAP</span><b class="green">$164.18</b></div>
+                <div class="prem-mini"><span>RSI 14</span><b class="green">58.42</b></div>
+                <div class="prem-mini"><span>EMA DIFF</span><b class="blue">+0.3812</b></div>
+                <div class="prem-mini"><span>EMA20</span><b>$164.32</b></div>
+                <div class="prem-mini"><span>EMA50</span><b class="muted">$163.70</b></div>
+              </div>
+
+              <div class="prem-card">
+                <div class="prem-section">Session Data</div>
+                <div class="prem-kv-row"><span class="prem-kv-key">Symbol</span><span class="prem-kv-val">NVDA</span></div>
+                <div class="prem-kv-row"><span class="prem-kv-key">Timeframe</span><span class="prem-kv-val">1M</span></div>
+                <div class="prem-kv-row"><span class="prem-kv-key">Price</span><span class="prem-kv-val" style="color:#3DA5FF;">$164.95</span></div>
+              </div>
+            </div>
+            <div class="prem-tabs">
+              <div class="prem-tabitem active"><i>O</i><span>Overview</span></div>
+              <div class="prem-tabitem"><i>S</i><span>Structure</span></div>
+              <div class="prem-tabitem"><i>E</i><span>EMA Exh.</span></div>
+              <div class="prem-tabitem"><i>V</i><span>Volume</span></div>
+              <div class="prem-tabitem"><i>P</i><span>Pivot</span></div>
+            </div>
+          </div>
+        </div>
       </div>
     </aside>
     <p class="sec">Summary — month 12</p>
