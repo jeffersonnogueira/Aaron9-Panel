@@ -74,9 +74,19 @@ input[type=range].saas::-moz-range-thumb{width:26px;height:26px;border-radius:50
 .tnm{font-size:12px;font-weight:500;min-width:52px;}
 .tpr{font-size:12px;color:var(--text2);min-width:52px;}
 
-/* SaaS preview */
-.phone-preview-card{display:flex;justify-content:center;align-items:center;overflow:hidden;padding:18px;border-color:rgba(93,202,165,0.28);background:linear-gradient(180deg,rgba(93,202,165,0.08),rgba(127,119,221,0.05)),var(--bg2);}
-.phone-preview-card img{display:block;width:min(100%,340px);height:auto;}
+/* SaaS app presentation */
+.saas-side-stage{display:flex;justify-content:center;margin:24px 0;}
+.saas-side-frame{width:100%;max-width:760px;min-height:520px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:.5px solid rgba(93,202,165,0.34);border-radius:var(--r);background:linear-gradient(180deg,rgba(93,202,165,0.08),rgba(127,119,221,0.05)),var(--bg2);}
+.saas-side-frame img{display:block;width:min(88%,560px);height:auto;max-height:92%;object-fit:contain;}
+@media(min-width:1500px){
+  .saas-side-stage{position:fixed;left:calc(50% + 500px);right:42px;top:150px;bottom:36px;margin:0;z-index:1;pointer-events:none;}
+  .saas-side-frame{max-width:none;height:100%;min-height:0;}
+  .saas-side-frame img{width:min(92%,620px);}
+}
+@media(min-width:1900px){
+  .saas-side-stage{right:58px;}
+  .saas-side-frame img{width:min(90%,680px);}
+}
 
 /* metrics */
 hr{border:none;border-top:.5px solid var(--border);margin:8px 0;}
@@ -223,9 +233,11 @@ tr.last td{font-weight:500;border-top:.5px solid var(--border2);}
         </div>
       </div>
     </div>
-    <div class="card phone-preview-card">
-      <img src="/assets/premonition-iphone-mock.svg" alt="Premonition app iPhone mockup with sample market signal data" loading="lazy">
-    </div>
+    <aside class="saas-side-stage" aria-label="Premonition app presentation">
+      <div class="saas-side-frame">
+        <img src="/assets/premonition-iphone-mock.svg" alt="Premonition app iPhone mockup with sample market signal data" loading="lazy">
+      </div>
+    </aside>
     <p class="sec">Summary — month 12</p>
     <div class="g4" id="s-kpis"></div>
     <div class="hl hl-g"><span class="hl-l">Your net monthly revenue — month 12</span><span class="hl-v" id="sv-net12">—</span></div>
