@@ -8418,6 +8418,18 @@ body.aaron-terminal-shell #trend-t2-command-card{
   color: #f87171;
 }
 
+#level-flip-card{
+  order: 44;
+}
+
+#pattern-route-card{
+  order: 45;
+}
+
+#vwap-route-card{
+  order: 46;
+}
+
 #level-flip-card .lfv44-shell{
   border: 1px solid rgba(34,211,238,.32);
   border-radius: 10px;
@@ -29984,6 +29996,16 @@ renderOptions("");
     const card = document.getElementById("slflex-card");
     if (dock && card && card.parentElement !== dock) dock.appendChild(card);
   }
+  function dockRouteCardsBelowLevelFlip(){
+    const level = document.getElementById("level-flip-card");
+    const pattern = document.getElementById("pattern-route-card");
+    const vwap = document.getElementById("vwap-route-card");
+    const parent = level?.parentElement;
+    if (!parent || !pattern || !vwap) return;
+
+    parent.insertBefore(pattern, level.nextSibling);
+    parent.insertBefore(vwap, pattern.nextSibling);
+  }
     // MICRO/MACRO dock: coloca os 3 blocos reais do MICRO na coluna MICRO (sem alterar nada do micro)
   function dockMicroMacro(){
     const microCol = document.getElementById("mm-col-micro");
@@ -30000,6 +30022,10 @@ renderOptions("");
   }
   window.addEventListener("DOMContentLoaded", dockMicroMacro);
   window.addEventListener("DOMContentLoaded", dockSLFlex);
+  window.addEventListener("DOMContentLoaded", () => {
+    dockRouteCardsBelowLevelFlip();
+    requestAnimationFrame(dockRouteCardsBelowLevelFlip);
+  });
 
   function t(id){ return (el(id)?.textContent || "").trim(); }
   function numFrom(s){
