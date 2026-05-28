@@ -277,7 +277,9 @@ tr.last td{font-weight:500;border-top:.5px solid var(--border2);}
       <div class="hl hl-b" style="margin-bottom:0;"><span class="hl-l">Fund annual revenue</span><span class="hl-v" id="c-fannual">—</span></div>
       <div class="hl hl-g" style="margin-bottom:0;"><span class="hl-l">SaaS annual revenue</span><span class="hl-v" id="c-sannual">—</span></div>
     </div>
-    <div class="hl hl-a"><span class="hl-l">Total combined annual revenue</span><span class="hl-v" id="c-annual">—</span></div>
+    <div class="hl hl-a" style="margin-bottom:18px;"><span class="hl-l">Total combined annual revenue</span><span class="hl-v" id="c-annual">—</span></div>
+    <p class="sec">Monthly breakdown</p>
+    <div class="card tbl-box"><table id="c-tbl"></table></div>
     <p class="note"><b>Note:</b> All values pulled live from Fund and SaaS tabs. Change any slider in either tab, then return here to see the updated combined view.</p>
   </div>
 </div>
@@ -507,6 +509,23 @@ tr.last td{font-weight:500;border-top:.5px solid var(--border2);}
     v('c-sannual').textContent=fmtK(sCum);
     v('c-annual').textContent=fmtK(totalAnnual);
     buildCChart(fRows,sRows);
+    var th='<thead><tr><th>Month</th><th style="color:var(--purple-l)">Fund net</th><th style="color:var(--teal-l)">SaaS net</th><th>Total</th><th>AIM fund</th><th>AIM SaaS</th><th>Total AIMs</th><th>Cumulative</th></tr></thead>';
+    var acc=0;
+    var tb='<tbody>'+fRows.map(function(r,i){
+      var s=sRows[i], tot=r.net+s.net, aims=r.aimC+s.aimPay;
+      acc+=tot;
+      return'<tr'+(i===11?' class="last" style="color:var(--amber-l)"':'')+'>'+
+        '<td>'+r.mo+'</td>'+
+        '<td style="color:var(--purple-l)">'+fmt(r.net)+'</td>'+
+        '<td style="color:var(--teal-l)">'+fmt(s.net)+'</td>'+
+        '<td style="font-weight:500">'+fmt(tot)+'</td>'+
+        '<td>'+fmt(r.aimC)+'</td>'+
+        '<td>'+fmt(s.aimPay)+'</td>'+
+        '<td>'+fmt(aims)+'</td>'+
+        '<td>'+fmtK(acc)+'</td>'+
+      '</tr>';
+    }).join('')+'</tbody>';
+    v('c-tbl').innerHTML=th+tb;
   }
 
   /* ──────────── INIT ──────────── */
