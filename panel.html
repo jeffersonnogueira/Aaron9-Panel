@@ -8675,9 +8675,8 @@ body.aaron-terminal-shell #trend-t2-command-card{
   line-height: 1.04;
   font-weight: 950;
   color: #f8fafc;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 #vwap-route-card .vrw47-cell strong.is-side{
@@ -10665,41 +10664,41 @@ body.aaron-terminal-shell .top-right .kv .v{
 <div class="prem-breakout-wrap" id="vwap-route-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div class="vrw47-shell">
     <div>
-      <div class="vrw47-k">V47 VWAP ROUTE WATCH</div>
+      <div class="vrw47-k">V47 VWAP SESSION · BAND #1</div>
       <div class="vrw47-main" id="vrw47-main">—</div>
       <div class="vrw47-sub" id="vrw47-sub">—</div>
     </div>
     <div class="vrw47-grid">
       <div class="vrw47-cell">
-        <span>Line</span>
+        <span>Lado</span>
         <strong class="is-side" id="vrw47-line">—</strong>
       </div>
       <div class="vrw47-cell">
-        <span>State</span>
+        <span>Entrada</span>
         <strong id="vrw47-state">—</strong>
       </div>
       <div class="vrw47-cell">
-        <span>Top Base</span>
+        <span>Alvo</span>
         <strong id="vrw47-top">—</strong>
       </div>
       <div class="vrw47-cell">
-        <span>Middle</span>
+        <span>Cancela</span>
         <strong id="vrw47-middle">—</strong>
       </div>
       <div class="vrw47-cell">
-        <span>Lower Base</span>
+        <span>Linha Real</span>
         <strong id="vrw47-lower">—</strong>
       </div>
       <div class="vrw47-cell">
-        <span>Trigger</span>
+        <span>Se Voltar</span>
         <strong id="vrw47-trigger">—</strong>
       </div>
       <div class="vrw47-cell">
-        <span>Target</span>
+        <span>Próxima Linha</span>
         <strong id="vrw47-target">—</strong>
       </div>
       <div class="vrw47-cell">
-        <span>Invalidation</span>
+        <span>Técnico</span>
         <strong id="vrw47-inval">—</strong>
       </div>
     </div>
@@ -30276,36 +30275,103 @@ renderOptions("");
       vwapRouteV47?.message_pt,
       vwapRouteV47?.message_en
     );
-    const vrwMainLabel = vrwChase
-      ? "NÃO PERSEGUIR VWAP"
-      : vrwConfirmed
-        ? `${vrwLineRaw || "VWAP"} — CONFIRMADO`
-        : `${vrwLineRaw || "VWAP"} — ${vrwStateRaw || "WATCH"}`;
+    const vrwClean = (value) => String(value || "")
+      .replace(/_/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    const vrwLineText = vrwClean(vrwLineRaw || "VWAP");
+    const vrwStateText = vrwClean(vrwStateRaw || "WATCH");
+    const vrwExpectedText = vrwClean(vrwExpectedRaw);
+    const vrwAlternativeText = vrwClean(vrwAlternativeRaw);
+    const vrwLineName = (() => {
+      if (vrwLineRaw.includes("TOP") || vrwLineRaw.includes("UPPER")) return "Upper Band #1";
+      if (vrwLineRaw.includes("LOWER")) return "Lower Band #1";
+      if (vrwLineRaw.includes("MIDDLE") || vrwLineRaw.includes("VWAP")) return "VWAP";
+      return vrwLineText || "VWAP";
+    })();
+    const vrwStateLooksShort =
+      /DOWN|LOST|REJECTED DOWN|BROKEN DOWN|BREAK LOWER/.test(vrwStateText) ||
+      /SHORT/.test(vrwExpectedText);
+    const vrwStateLooksLong =
+      /UP|RECLAIMED|REJECTED UP|BROKEN UP|BOUNCE/.test(vrwStateText) ||
+      /LONG/.test(vrwExpectedText);
+    const vrwActionSide =
+      vrwSideRaw.includes("SHORT") || vrwStateLooksShort ? "SHORT" :
+      vrwSideRaw.includes("LONG") || vrwStateLooksLong ? "LONG" :
+      "";
+    const vrwLineLevel = (() => {
+      if (vrwLineRaw.includes("TOP")) return vrwTop;
+      if (vrwLineRaw.includes("MIDDLE")) return vrwMiddle;
+      if (vrwLineRaw.includes("LOWER")) return vrwLower;
+      return numPick(vrwTrigger, vrwMiddle, vrwLower, vrwTop);
+    })();
+    const vrwEntryWord = vrwActionSide === "SHORT" ? "abaixo de" : vrwActionSide === "LONG" ? "acima de" : "em";
+    const vrwEntryWordCaps = vrwActionSide === "SHORT" ? "ABAIXO DE" : vrwActionSide === "LONG" ? "ACIMA DE" : "EM";
+    const vrwCancelWord = vrwActionSide === "SHORT" ? "acima de" : vrwActionSide === "LONG" ? "abaixo de" : "em";
+    const vrwCancelWordCaps = vrwActionSide === "SHORT" ? "ACIMA DE" : vrwActionSide === "LONG" ? "ABAIXO DE" : "EM";
+    const vrwEntryText =
+      vrwTrigger != null && vrwActionSide
+        ? `${vrwEntryWordCaps} ${lfMoney(vrwTrigger)}`
+        : vrwChase
+          ? "ESPERAR RESPIRO"
+          : "AGUARDAR FECHAMENTO";
+    const vrwCancelText =
+      vrwInvalidation != null && vrwActionSide
+        ? `${vrwCancelWordCaps} ${lfMoney(vrwInvalidation)}`
+        : "—";
+    const vrwLineCellText =
+      `${vrwLineName}${vrwLineLevel != null ? ` ${lfMoney(vrwLineLevel)}` : ""}`;
+    const vrwReturnText =
+      vrwActionSide === "SHORT"
+        ? `Se voltar acima de ${lfMoney(vrwInvalidation)}, para de vender`
+        : vrwActionSide === "LONG"
+          ? `Se voltar abaixo de ${lfMoney(vrwInvalidation)}, para de comprar`
+          : vrwAlternativeText || "Esperar novo fechamento";
+    const vrwMapText =
+      vrwActionSide === "SHORT"
+        ? `VWAP ${lfMoney(vrwMiddle)}`
+        : vrwActionSide === "LONG"
+          ? `Upper Band #1 ${lfMoney(vrwTop)}`
+          : `VWAP ${lfMoney(vrwMiddle)}`;
+    const vrwMainLabel =
+      vrwChase
+        ? "NÃO ENTRAR AGORA"
+        : vrwActionSide && vrwTrigger != null
+          ? `${vrwActionSide} ${vrwEntryWordCaps} ${lfMoney(vrwTrigger)}`
+          : vrwConfirmed
+            ? `${vrwLineText} CONFIRMADO`
+            : "AGUARDAR VWAP";
+    const vrwSimpleLine =
+      vrwActionSide && vrwTrigger != null
+        ? `${vrwActionSide}: entra/continua ${vrwEntryWord} ${lfMoney(vrwTrigger)}. Alvo ${lfMoney(vrwTarget)}. Cancela ${vrwCancelWord} ${lfMoney(vrwInvalidation)}.`
+        : vrwChase
+          ? `Preço esticado. Não perseguir. Esperar voltar para ${vrwLineCellText} ou novo fechamento confirmando.`
+          : `Aguardar fechamento confirmando ${vrwLineCellText}.`;
     const vrwSubFallback = vrwHasBlock
-      ? `${vrwExpectedRaw || "WAIT"}${vrwAlternativeRaw ? ` | ${vrwAlternativeRaw}` : ""}`
+      ? vrwSimpleLine
       : "—";
 
     const vrwCard = el("vwap-route-card");
     if (vrwCard) {
       vrwCard.style.display = vrwHasBlock ? "" : "none";
       vrwCard.classList.remove("is-long", "is-short", "is-wait", "is-chase", "is-confirm", "is-active", "is-inactive");
-      if (vrwSide === "LONG") vrwCard.classList.add("is-long");
-      else if (vrwSide === "SHORT") vrwCard.classList.add("is-short");
+      if (!vrwChase && vrwActionSide === "LONG") vrwCard.classList.add("is-long");
+      else if (!vrwChase && vrwActionSide === "SHORT") vrwCard.classList.add("is-short");
       else vrwCard.classList.add("is-wait");
       if (vrwChase) vrwCard.classList.add("is-chase");
       if (vrwConfirmed) vrwCard.classList.add("is-confirm");
       vrwCard.classList.add(vrwEnabled ? "is-active" : "is-inactive");
     }
     if (el("vrw47-main")) el("vrw47-main").textContent = vrwHasBlock ? vrwMainLabel : "—";
-    if (el("vrw47-sub")) el("vrw47-sub").textContent = vrwHasBlock ? (vrwMessage || vrwSubFallback) : "—";
-    if (el("vrw47-line")) el("vrw47-line").textContent = vrwLineRaw || "—";
-    if (el("vrw47-state")) el("vrw47-state").textContent = vrwStateRaw || "—";
-    if (el("vrw47-top")) el("vrw47-top").textContent = lfMoney(vrwTop);
-    if (el("vrw47-middle")) el("vrw47-middle").textContent = lfMoney(vrwMiddle);
-    if (el("vrw47-lower")) el("vrw47-lower").textContent = lfMoney(vrwLower);
-    if (el("vrw47-trigger")) el("vrw47-trigger").textContent = lfMoney(vrwTrigger);
-    if (el("vrw47-target")) el("vrw47-target").textContent = lfMoney(vrwTarget);
-    if (el("vrw47-inval")) el("vrw47-inval").textContent = lfMoney(vrwInvalidation);
+    if (el("vrw47-sub")) el("vrw47-sub").textContent = vrwHasBlock ? vrwSubFallback : "—";
+    if (el("vrw47-line")) el("vrw47-line").textContent = vrwActionSide || (vrwChase ? "WAIT" : "—");
+    if (el("vrw47-state")) el("vrw47-state").textContent = vrwEntryText;
+    if (el("vrw47-top")) el("vrw47-top").textContent = lfMoney(vrwTarget);
+    if (el("vrw47-middle")) el("vrw47-middle").textContent = vrwCancelText;
+    if (el("vrw47-lower")) el("vrw47-lower").textContent = vrwLineCellText || "—";
+    if (el("vrw47-trigger")) el("vrw47-trigger").textContent = vrwReturnText;
+    if (el("vrw47-target")) el("vrw47-target").textContent = vrwMapText;
+    if (el("vrw47-inval")) el("vrw47-inval").textContent = vrwStateText || "—";
 
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
     const atr14     = numPick(ctx.atr14, digest.atr14, panel.atr14, digest.indicators?.atr14, panel.indicators?.atr14, exec1x1?.atr14);
