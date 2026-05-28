@@ -10627,9 +10627,7 @@ body.aaron-terminal-shell .top-right .kv .v{
       </div>
     </div>
   </div>
-</div>
-<!-- ===== /LEVEL FLIP V44 ===== -->
-<div id="route-watch-dock">
+  <div id="route-watch-dock">
 <!-- ===== PATTERN ROUTE V46 — ROUTE WATCH ===== -->
 <div class="prem-breakout-wrap" id="pattern-route-card" style="display:none; margin-top:0; grid-column: 1 / -1;">
   <div class="prw46-shell">
@@ -10720,7 +10718,9 @@ body.aaron-terminal-shell .top-right .kv .v{
   </div>
 </div>
 <!-- ===== /VWAP ROUTE V47 ===== -->
+  </div>
 </div>
+<!-- ===== /LEVEL FLIP V44 ===== -->
  <!-- ===== MICRO PREMONITION — ABOVE COPILOT ===== -->
 <div class="prem-breakout-wrap" id="micro-premo-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
@@ -30005,11 +30005,12 @@ renderOptions("");
     const pattern = document.getElementById("pattern-route-card");
     const vwap = document.getElementById("vwap-route-card");
     const dock = document.getElementById("route-watch-dock");
-    const parent = level?.parentElement;
+    const shell = level?.querySelector(".lfv44-shell");
+    const parent = shell?.parentElement || level;
     if (!parent || !level || !pattern || !vwap || !dock) return;
 
-    if (dock.parentElement !== parent || dock.previousElementSibling !== level) {
-      parent.insertBefore(dock, level.nextSibling);
+    if (dock.parentElement !== parent || dock.previousElementSibling !== shell) {
+      parent.insertBefore(dock, shell ? shell.nextSibling : parent.firstChild);
     }
     if (pattern.parentElement !== dock) dock.appendChild(pattern);
     if (vwap.parentElement !== dock) dock.appendChild(vwap);
