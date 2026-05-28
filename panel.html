@@ -8418,6 +8418,20 @@ body.aaron-terminal-shell #trend-t2-command-card{
   color: #f87171;
 }
 
+#route-watch-dock{
+  grid-column: 1 / -1 !important;
+  width: 100%;
+  display: flex !important;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#route-watch-dock #pattern-route-card,
+#route-watch-dock #vwap-route-card{
+  margin-top: 0 !important;
+}
+
 #level-flip-card .lfv44-shell{
   border: 1px solid rgba(34,211,238,.32);
   border-radius: 10px;
@@ -10615,7 +10629,7 @@ body.aaron-terminal-shell .top-right .kv .v{
   </div>
 </div>
 <!-- ===== /LEVEL FLIP V44 ===== -->
-<div id="route-watch-dock" style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+<div id="route-watch-dock">
 <!-- ===== PATTERN ROUTE V46 — ROUTE WATCH ===== -->
 <div class="prem-breakout-wrap" id="pattern-route-card" style="display:none; margin-top:0; grid-column: 1 / -1;">
   <div class="prw46-shell">
@@ -29991,14 +30005,26 @@ renderOptions("");
     const pattern = document.getElementById("pattern-route-card");
     const vwap = document.getElementById("vwap-route-card");
     const dock = document.getElementById("route-watch-dock");
-    const parent = level?.parentElement;
-    if (!parent || !pattern || !vwap || !dock) return;
+    const volumeRow = document.getElementById("zz-volume-row");
+    const parent = (volumeRow && volumeRow.parentElement) || level?.parentElement;
+    if (!parent || !level || !pattern || !vwap || !dock) return;
 
-    if (dock.parentElement !== parent || dock.previousElementSibling !== level) {
+    if (volumeRow) {
+      if (dock.parentElement !== parent || dock.nextElementSibling !== volumeRow) {
+        parent.insertBefore(dock, volumeRow);
+      }
+    } else if (dock.parentElement !== parent || dock.previousElementSibling !== level) {
       parent.insertBefore(dock, level.nextSibling);
     }
     if (pattern.parentElement !== dock) dock.appendChild(pattern);
     if (vwap.parentElement !== dock) dock.appendChild(vwap);
+  }
+  function keepRouteCardsBelowLevelFlip(){
+    dockRouteCardsBelowLevelFlip();
+    setTimeout(dockRouteCardsBelowLevelFlip, 50);
+    setTimeout(dockRouteCardsBelowLevelFlip, 200);
+    setTimeout(dockRouteCardsBelowLevelFlip, 600);
+    setTimeout(dockRouteCardsBelowLevelFlip, 1400);
   }
     // MICRO/MACRO dock: coloca os 3 blocos reais do MICRO na coluna MICRO (sem alterar nada do micro)
   function dockMicroMacro(){
@@ -30016,10 +30042,9 @@ renderOptions("");
   }
   window.addEventListener("DOMContentLoaded", dockMicroMacro);
   window.addEventListener("DOMContentLoaded", dockSLFlex);
-  window.addEventListener("DOMContentLoaded", () => {
-    dockRouteCardsBelowLevelFlip();
-    requestAnimationFrame(dockRouteCardsBelowLevelFlip);
-  });
+  window.addEventListener("DOMContentLoaded", keepRouteCardsBelowLevelFlip);
+  window.addEventListener("load", keepRouteCardsBelowLevelFlip);
+  setInterval(dockRouteCardsBelowLevelFlip, 1000);
 
   function t(id){ return (el(id)?.textContent || "").trim(); }
   function numFrom(s){
