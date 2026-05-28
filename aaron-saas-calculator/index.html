@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AARON — SaaS Revenue Calculator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
+  --text:#f0f0f5;--text2:#888899;--text3:#505060;
+  --teal:#1D9E75;--teal-light:#5DCAA5;
+  --purple:#7F77DD;--purple-light:#AFA9EC;
+  --amber:#EF9F27;--amber-light:#FAC775;
+  --green-bg:rgba(29,158,117,0.13);--green-text:#5DCAA5;
+  --blue-bg:rgba(127,119,221,0.13);--blue-text:#AFA9EC;
+  --amber-bg:rgba(239,159,39,0.13);--amber-text:#FAC775;
+  --r:12px;--rs:8px;
+}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;font-size:14px;line-height:1.6;padding:1.25rem 1rem;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;}
+h1{font-size:20px;font-weight:500;letter-spacing:-0.3px;margin-bottom:4px;}
+.sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;}
+.sec{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;}
+.card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:12px;}
+.ct{font-size:13px;font-weight:500;margin-bottom:12px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+@media(max-width:600px){.g2{grid-template-columns:1fr;}.g4{grid-template-columns:repeat(2,1fr);}body{padding:1rem .75rem;}}
+.sl{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sl label{font-size:12px;color:var(--text2);flex:2;min-width:0;line-height:1.4;}
+.sl-v{font-size:13px;font-weight:500;color:var(--text);min-width:52px;text-align:right;}
+input[type=range]{
+  flex:2;min-width:80px;height:28px;
+  -webkit-appearance:none;appearance:none;
+  background:transparent;cursor:pointer;padding:0;
+}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--bg3);border-radius:2px;border:.5px solid var(--border);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--teal-light);margin-top:-11px;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--teal-light);}
+input[type=range]::-moz-range-track{height:4px;background:var(--bg3);border-radius:2px;}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--teal-light);border:2px solid var(--bg);}
+hr{border:none;border-top:.5px solid var(--border);margin:8px 0;}
+.tier-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:.5px solid var(--border);}
+.tier-row:last-child{border-bottom:none;padding-bottom:0;}
+.tier-name{font-size:12px;font-weight:500;min-width:52px;}
+.tier-price{font-size:12px;color:var(--text2);min-width:52px;}
+.metric{background:var(--bg3);border-radius:var(--rs);padding:.85rem .9rem;}
+.m-l{font-size:11px;color:var(--text2);margin-bottom:3px;}
+.m-v{font-size:18px;font-weight:500;}
+.m-s{font-size:11px;color:var(--text3);margin-top:3px;}
+.hl{border-radius:var(--rs);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.hl-g{background:var(--green-bg);}
+.hl-b{background:var(--blue-bg);}
+.hl-a{background:var(--amber-bg);}
+.hl-l{font-size:13px;font-weight:500;}
+.hl-v{font-size:17px;font-weight:500;}
+.hl-g .hl-l,.hl-g .hl-v{color:var(--green-text);}
+.hl-b .hl-l,.hl-b .hl-v{color:var(--blue-text);}
+.hl-a .hl-l,.hl-a .hl-v{color:var(--amber-text);}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-bottom:10px;}
+.leg span{display:flex;align-items:center;gap:5px;}
+.dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+#chart-box{width:100%;margin-bottom:18px;}
+#chart-box canvas{display:block;width:100% !important;}
+.tbl-box{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;font-size:12px;border-collapse:collapse;min-width:500px;}
+th{font-size:11px;font-weight:500;color:var(--text3);text-align:right;padding:5px 7px;border-bottom:.5px solid var(--border);white-space:nowrap;}
+th:first-child{text-align:left;}
+td{text-align:right;padding:5px 7px;white-space:nowrap;}
+td:first-child{text-align:left;color:var(--text2);}
+tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+tr.last td{font-weight:500;border-top:.5px solid var(--border2);color:var(--teal-light);}
+.note{font-size:12px;color:var(--text3);background:var(--bg3);border-radius:var(--rs);padding:10px 12px;margin-top:16px;line-height:1.7;}
+.note b{color:var(--text2);}
+.mix-warn{color:#E24B4A;}
+.mix-ok{color:var(--teal-light);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AARON — SaaS Revenue Calculator</h1>
+  <p class="sub">Subscribers start on Starter, upgrade as they trust the system.</p>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Subscriber growth</div>
+      <div class="sl"><label for="s-start">Starting subscribers</label><input type="range" id="s-start" min="0" max="50" step="1" value="5"><span class="sl-v" id="o-sstart">5</span></div>
+      <div class="sl"><label for="n-aims">Active AIMs (affiliates)</label><input type="range" id="n-aims" min="0" max="12" step="1" value="3"><span class="sl-v" id="o-naims">3</span></div>
+      <div class="sl"><label for="cli-aim">New subscribers per AIM / month</label><input type="range" id="cli-aim" min="0" max="10" step="1" value="3"><span class="sl-v" id="o-cliAim">3</span></div>
+      <div class="sl"><label for="churn">Monthly churn rate</label><input type="range" id="churn" min="0" max="20" step="1" value="5"><span class="sl-v" id="o-churn">5%</span></div>
+      <div class="sl"><label for="aim-com">AIM commission (% of gross revenue)</label><input type="range" id="aim-com" min="10" max="40" step="5" value="30"><span class="sl-v" id="o-aimcom">30%</span></div>
+    </div>
+
+    <div class="card">
+      <div class="ct">Subscription tier mix</div>
+      <div class="tier-row">
+        <span class="tier-name" style="color:var(--teal-light);">Starter</span>
+        <span class="tier-price">$49/mo</span>
+        <input type="range" id="t-starter" min="0" max="100" step="5" value="50" style="flex:1;">
+        <span class="sl-v" id="o-starter">50%</span>
+      </div>
+      <div class="tier-row">
+        <span class="tier-name" style="color:var(--purple-light);">Pro</span>
+        <span class="tier-price">$147/mo</span>
+        <input type="range" id="t-pro" min="0" max="100" step="5" value="35" style="flex:1;">
+        <span class="sl-v" id="o-pro">35%</span>
+      </div>
+      <div class="tier-row">
+        <span class="tier-name" style="color:var(--amber-light);">Elite</span>
+        <span class="tier-price">$297/mo</span>
+        <input type="range" id="t-elite" min="0" max="100" step="5" value="15" style="flex:1;">
+        <span class="sl-v" id="o-elite">15%</span>
+      </div>
+      <hr>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px;">
+        <span>Total mix</span>
+        <span id="mix-total" style="font-weight:500;">100%</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);">
+        <span>Weighted avg. ARPU</span>
+        <span id="arpu" style="font-weight:500;color:var(--teal-light);">$113/mo</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="sec">Summary — month 12</p>
+  <div class="g4" id="kpis"></div>
+
+  <div class="hl hl-g"><span class="hl-l">Your net monthly revenue — month 12</span><span class="hl-v" id="v-net12">—</span></div>
+  <div class="hl hl-b"><span class="hl-l">Total paid to AIMs — month 12</span><span class="hl-v" id="v-aims12">—</span></div>
+  <div class="hl hl-a" style="margin-bottom:18px;"><span class="hl-l">Your cumulative annual revenue</span><span class="hl-v" id="v-annual">—</span></div>
+
+  <p class="sec">Monthly evolution</p>
+  <div class="leg">
+    <span><span class="dot" style="background:rgba(93,202,165,0.35);"></span>Subscribers</span>
+    <span><span class="dot" style="background:#7F77DD;"></span>Gross revenue</span>
+    <span><span class="dot" style="background:#5DCAA5;"></span>Your net revenue</span>
+  </div>
+  <div id="chart-box"><canvas id="ch"></canvas></div>
+
+  <p class="sec">Monthly breakdown</p>
+  <div class="card tbl-box"><table id="tbl"></table></div>
+
+  <p class="note"><b>Model logic:</b> Each month (AIMs × new/AIM) subscribers join. Churn removes a % of the existing base. Tier mix sets the weighted ARPU. AIM commission is paid on gross revenue. Your net = gross − AIM commissions.</p>
+</div>
+
+<script>
+(function(){
+  var CH=null;
+  function v(id){return document.getElementById(id);}
+  function fmt(n){return '$'+Math.round(n).toLocaleString('en-US');}
+  function fmtK(n){var r=Math.round(n/1000);return r>=1?'$'+r+'k':fmt(n);}
+
+  var sliders=[
+    {id:'s-start',  out:'o-sstart',  fn:function(x){return x;}},
+    {id:'n-aims',   out:'o-naims',   fn:function(x){return x;}},
+    {id:'cli-aim',  out:'o-cliAim',  fn:function(x){return x;}},
+    {id:'churn',    out:'o-churn',   fn:function(x){return x+'%';}},
+    {id:'aim-com',  out:'o-aimcom',  fn:function(x){return x+'%';}},
+    {id:'t-starter',out:'o-starter', fn:function(x){return x+'%';}},
+    {id:'t-pro',    out:'o-pro',     fn:function(x){return x+'%';}},
+    {id:'t-elite',  out:'o-elite',   fn:function(x){return x+'%';}}
+  ];
+
+  function getArpu(){
+    var s=parseInt(v('t-starter').value)/100;
+    var p=parseInt(v('t-pro').value)/100;
+    var e=parseInt(v('t-elite').value)/100;
+    var tot=s+p+e;
+    if(tot===0) return 0;
+    return (s*49+p*147+e*297)/tot;
+  }
+
+  function compute(){
+    var start  = parseInt(v('s-start').value);
+    var nAims  = parseInt(v('n-aims').value);
+    var cliAim = parseInt(v('cli-aim').value);
+    var churn  = parseInt(v('churn').value)/100;
+    var aimCom = parseInt(v('aim-com').value)/100;
+    var avg    = getArpu();
+    var MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var subs=start, rows=[];
+    for(var m=0;m<12;m++){
+      var newSubs=nAims*cliAim;
+      if(m>0) subs=Math.max(0,Math.round(subs*(1-churn)+newSubs));
+      var gross=subs*avg;
+      var aimPay=gross*aimCom;
+      var net=gross-aimPay;
+      rows.push({mo:MO[m],subs:Math.round(subs),gross:gross,aimPay:aimPay,net:net});
+    }
+    return rows;
+  }
+
+  function buildChart(rows){
+    var box=v('chart-box'), canvas=v('ch');
+    var dpr=window.devicePixelRatio||1;
+    var w=box.offsetWidth||320;
+    var h=Math.max(180,Math.min(260,Math.round(w*0.40)));
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+    if(CH){CH.destroy();CH=null;}
+    var ctx=canvas.getContext('2d');
+    if(!ctx) return;
+    CH=new Chart(ctx,{
+      data:{
+        labels:rows.map(function(r){return r.mo;}),
+        datasets:[
+          {type:'bar',  label:'Subscribers', data:rows.map(function(r){return r.subs;}),               backgroundColor:'rgba(93,202,165,0.22)',borderColor:'rgba(93,202,165,0.6)',borderWidth:1,borderRadius:3,yAxisID:'y2'},
+          {type:'line', label:'Gross',        data:rows.map(function(r){return Math.round(r.gross);}),  borderColor:'#7F77DD',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#7F77DD',tension:0.3,yAxisID:'y1'},
+          {type:'line', label:'Your net',     data:rows.map(function(r){return Math.round(r.net);}),   borderColor:'#5DCAA5',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#5DCAA5',tension:0.3,yAxisID:'y1'}
+        ]
+      },
+      options:{
+        responsive:false,maintainAspectRatio:false,devicePixelRatio:dpr,animation:{duration:200},
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:function(c){return ' '+c.dataset.label+': '+(c.dataset.yAxisID==='y2'?c.parsed.y+' subs':'$'+c.parsed.y.toLocaleString('en-US'));}}}
+        },
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},maxRotation:0}},
+          y1:{position:'left',grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},callback:function(val){return '$'+(val>=1000?Math.round(val/1000)+'k':val);}}},
+          y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#666',font:{size:10}}}
+        }
+      }
+    });
+  }
+
+  function update(){
+    sliders.forEach(function(s){
+      var el=v(s.id); if(el) v(s.out).textContent=s.fn(el.value);
+    });
+    var avg=getArpu();
+    var s=parseInt(v('t-starter').value), p=parseInt(v('t-pro').value), e=parseInt(v('t-elite').value);
+    var tot=s+p+e;
+    var mixEl=v('mix-total');
+    mixEl.textContent=tot+'%';
+    mixEl.className=tot===100?'mix-ok':'mix-warn';
+    v('arpu').textContent='$'+Math.round(avg)+'/mo';
+
+    var rows=compute();
+    var last=rows[11];
+    var cum=rows.reduce(function(a,r){return a+r.net;},0);
+    var nAims=parseInt(v('n-aims').value)||1;
+
+    var kdata=[
+      {l:'Subscribers month 12', v:last.subs.toLocaleString('en-US'), s:'active base'},
+      {l:'Gross revenue mo. 12',  v:fmtK(last.gross),                  s:'before commissions'},
+      {l:'Your annual revenue',   v:fmtK(cum),                          s:'12 months net'},
+      {l:'Avg. ARPU',             v:'$'+Math.round(avg)+'/mo',          s:'weighted by tiers'}
+    ];
+    v('kpis').innerHTML=kdata.map(function(k){
+      return '<div class="metric"><div class="m-l">'+k.l+'</div><div class="m-v">'+k.v+'</div><div class="m-s">'+k.s+'</div></div>';
+    }).join('');
+
+    v('v-net12').textContent=fmt(last.net);
+    v('v-aims12').textContent=fmt(last.aimPay)+' ('+fmt(last.aimPay/nAims)+'/AIM)';
+    v('v-annual').textContent=fmtK(cum);
+
+    buildChart(rows);
+
+    var th='<thead><tr><th>Month</th><th>Subscribers</th><th>Gross revenue</th><th>AIM commission</th><th>Your net</th><th>Cumulative</th></tr></thead>';
+    var acc=0;
+    var tb='<tbody>'+rows.map(function(r,i){
+      acc+=r.net;
+      return '<tr'+(i===11?' class="last"':'')+'>'+
+        '<td>'+r.mo+'</td>'+
+        '<td>'+r.subs.toLocaleString('en-US')+'</td>'+
+        '<td>'+fmt(r.gross)+'</td>'+
+        '<td>'+fmt(r.aimPay)+'</td>'+
+        '<td>'+fmt(r.net)+'</td>'+
+        '<td>'+fmtK(acc)+'</td>'+
+      '</tr>';
+    }).join('')+'</tbody>';
+    v('tbl').innerHTML=th+tb;
+  }
+
+  function init(){
+    if(typeof Chart==='undefined'){setTimeout(init,100);return;}
+    sliders.forEach(function(s){
+      var el=v(s.id); if(!el) return;
+      el.addEventListener('input', update);
+      el.addEventListener('change', update);
+    });
+    update();
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else setTimeout(init,0);
+
+  var rt;
+  window.addEventListener('resize',function(){
+    clearTimeout(rt);
+    rt=setTimeout(function(){buildChart(compute());},150);
+  });
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</body>
+</html>
