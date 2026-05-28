@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AARON — Business Calculator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
+  --text:#f0f0f5;--text2:#888899;--text3:#505060;
+  --teal:#1D9E75;--teal-l:#5DCAA5;
+  --purple:#7F77DD;--purple-l:#AFA9EC;
+  --amber:#EF9F27;--amber-l:#FAC775;
+  --red:#E24B4A;
+  --green-bg:rgba(29,158,117,0.13);--green-t:#5DCAA5;
+  --blue-bg:rgba(127,119,221,0.13);--blue-t:#AFA9EC;
+  --amber-bg:rgba(239,159,39,0.13);--amber-t:#FAC775;
+  --r:12px;--rs:8px;
+}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.page{max-width:960px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+
+/* header */
+.hdr{margin-bottom:1.5rem;}
+.hdr h1{font-size:22px;font-weight:500;letter-spacing:-0.4px;}
+.hdr p{font-size:13px;color:var(--text2);margin-top:3px;}
+
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:1.5rem;background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:5px;}
+.tab{flex:1;text-align:center;padding:9px 12px;font-size:13px;font-weight:500;border-radius:8px;cursor:pointer;color:var(--text2);transition:background .15s,color .15s;border:none;background:transparent;}
+.tab.active{background:var(--bg3);color:var(--text);border:.5px solid var(--border2);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* summary bar */
+.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:1.5rem;}
+.sum-item{text-align:center;}
+.sum-lbl{font-size:11px;color:var(--text3);margin-bottom:3px;}
+.sum-val{font-size:16px;font-weight:500;}
+.sum-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* section title */
+.sec{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;}
+.card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:12px;}
+.ct{font-size:13px;font-weight:500;margin-bottom:12px;color:var(--text);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+@media(max-width:600px){
+  .g2{grid-template-columns:1fr;}
+  .g4{grid-template-columns:repeat(2,1fr);}
+  .summary{grid-template-columns:1fr 1fr;}
+  body{font-size:13px;}
+  .page{padding:1rem .75rem 3rem;}
+}
+
+/* sliders */
+.sl{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sl label{font-size:12px;color:var(--text2);flex:2;min-width:0;line-height:1.4;}
+.slv{font-size:13px;font-weight:500;color:var(--text);min-width:54px;text-align:right;white-space:nowrap;}
+input[type=range]{flex:2;min-width:80px;height:28px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;padding:0;}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--bg3);border-radius:2px;border:.5px solid var(--border);}
+input[type=range].fund::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--purple-l);margin-top:-11px;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--purple);}
+input[type=range].saas::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--teal-l);margin-top:-11px;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--teal);}
+input[type=range]::-moz-range-track{height:4px;background:var(--bg3);border-radius:2px;}
+input[type=range].fund::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--purple-l);border:2px solid var(--bg);}
+input[type=range].saas::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--teal-l);border:2px solid var(--bg);}
+
+/* tier rows */
+.tier-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:.5px solid var(--border);}
+.tier-row:last-child{border-bottom:none;padding-bottom:0;}
+.tnm{font-size:12px;font-weight:500;min-width:52px;}
+.tpr{font-size:12px;color:var(--text2);min-width:52px;}
+
+/* metrics */
+hr{border:none;border-top:.5px solid var(--border);margin:8px 0;}
+.metric{background:var(--bg3);border-radius:var(--rs);padding:.85rem .9rem;}
+.m-l{font-size:11px;color:var(--text2);margin-bottom:3px;}
+.m-v{font-size:18px;font-weight:500;}
+.m-s{font-size:11px;color:var(--text3);margin-top:3px;}
+.hl{border-radius:var(--rs);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.hl-g{background:var(--green-bg);}
+.hl-b{background:var(--blue-bg);}
+.hl-a{background:var(--amber-bg);}
+.hl-l{font-size:13px;font-weight:500;}
+.hl-v{font-size:17px;font-weight:500;}
+.hl-g .hl-l,.hl-g .hl-v{color:var(--green-t);}
+.hl-b .hl-l,.hl-b .hl-v{color:var(--blue-t);}
+.hl-a .hl-l,.hl-a .hl-v{color:var(--amber-t);}
+
+/* chart */
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-bottom:10px;}
+.leg span{display:flex;align-items:center;gap:5px;}
+.dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.chart-box{width:100%;margin-bottom:18px;}
+.chart-box canvas{display:block;width:100% !important;}
+
+/* table */
+.tbl-box{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;font-size:12px;border-collapse:collapse;min-width:500px;}
+th{font-size:11px;font-weight:500;color:var(--text3);text-align:right;padding:5px 7px;border-bottom:.5px solid var(--border);white-space:nowrap;}
+th:first-child{text-align:left;}
+td{text-align:right;padding:5px 7px;white-space:nowrap;}
+td:first-child{text-align:left;color:var(--text2);}
+tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+tr.last td{font-weight:500;border-top:.5px solid var(--border2);}
+.last-fund td{color:var(--purple-l);}
+.last-saas td{color:var(--teal-l);}
+
+/* combined tab */
+.combined-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+@media(max-width:600px){.combined-grid{grid-template-columns:1fr;}}
+.combined-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;}
+.combined-card.fund-card{border-color:rgba(127,119,221,0.3);}
+.combined-card.saas-card{border-color:rgba(93,202,165,0.3);}
+.cc-title{font-size:13px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;}
+.badge-f{background:rgba(127,119,221,0.15);color:var(--purple-l);}
+.badge-s{background:rgba(93,202,165,0.15);color:var(--teal-l);}
+.cc-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;}
+.cc-l{color:var(--text2);}
+.cc-v{font-weight:500;}
+.total-box{background:var(--bg3);border-radius:var(--rs);padding:1rem;text-align:center;margin-bottom:18px;}
+.total-lbl{font-size:12px;color:var(--text2);margin-bottom:4px;}
+.total-val{font-size:28px;font-weight:500;color:var(--amber-l);}
+.total-sub{font-size:12px;color:var(--text2);margin-top:4px;}
+.note{font-size:12px;color:var(--text3);background:var(--bg3);border-radius:var(--rs);padding:10px 12px;margin-top:16px;line-height:1.7;}
+.note b{color:var(--text2);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <h1>AARON — Business Calculator</h1>
+    <p>Fund (AUM) + SaaS combined revenue model</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" id="tab-fund"   onclick="switchTab('fund')">Fund (AUM)</button>
+    <button class="tab"        id="tab-saas"   onclick="switchTab('saas')">SaaS</button>
+    <button class="tab"        id="tab-combined" onclick="switchTab('combined')">Combined</button>
+  </div>
+
+  <!-- ═══════════════ FUND PANEL ═══════════════ -->
+  <div class="tab-panel active" id="panel-fund">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Clients start small, see results, scale up capital over time.</p>
+    <div class="g2">
+      <div class="card">
+        <div class="ct">Fund structure</div>
+        <div class="sl"><label for="f-ret">Daily return</label><input type="range" class="fund" id="f-ret" min="0.1" max="1.0" step="0.05" value="0.5"><span class="slv" id="o-fret">0.50%</span></div>
+        <div class="sl"><label for="f-mgmt">Management fee (annual)</label><input type="range" class="fund" id="f-mgmt" min="0.5" max="3" step="0.5" value="2"><span class="slv" id="o-fmgmt">2.0%</span></div>
+        <div class="sl"><label for="f-perf">Performance fee</label><input type="range" class="fund" id="f-perf" min="10" max="30" step="5" value="20"><span class="slv" id="o-fperf">20%</span></div>
+        <div class="sl"><label for="f-aimcut">AIM commission (% of perf. fee)</label><input type="range" class="fund" id="f-aimcut" min="5" max="30" step="5" value="20"><span class="slv" id="o-faimcut">20%</span></div>
+        <div class="sl"><label for="f-own">Your own capital ($k)</label><input type="range" class="fund" id="f-own" min="0" max="500" step="10" value="100"><span class="slv" id="o-fown">$100k</span></div>
+      </div>
+      <div class="card">
+        <div class="ct">Client lifecycle</div>
+        <div class="sl"><label for="f-naims">Active AIMs</label><input type="range" class="fund" id="f-naims" min="1" max="12" step="1" value="3"><span class="slv" id="o-fnaims">3</span></div>
+        <div class="sl"><label for="f-newcli">New clients per AIM / month</label><input type="range" class="fund" id="f-newcli" min="0" max="5" step="1" value="1"><span class="slv" id="o-fnewcli">1</span></div>
+        <div class="sl"><label for="f-capinit">Starting capital / client ($k)</label><input type="range" class="fund" id="f-capinit" min="5" max="100" step="5" value="15"><span class="slv" id="o-fcapinit">$15k</span></div>
+        <div class="sl"><label for="f-capgrow">Client capital growth / month</label><input type="range" class="fund" id="f-capgrow" min="0" max="30" step="5" value="15"><span class="slv" id="o-fcapgrow">15%</span></div>
+        <div class="sl"><label for="f-capmax">Max capital / client ($k)</label><input type="range" class="fund" id="f-capmax" min="20" max="300" step="10" value="100"><span class="slv" id="o-fcapmax">$100k</span></div>
+      </div>
+    </div>
+    <p class="sec">Summary — month 12</p>
+    <div class="g4" id="f-kpis"></div>
+    <div class="hl hl-g"><span class="hl-l">Your net monthly revenue — month 12</span><span class="hl-v" id="fv-net12">—</span></div>
+    <div class="hl hl-b" style="margin-bottom:18px;"><span class="hl-l">Total paid to AIMs — month 12</span><span class="hl-v" id="fv-aims12">—</span></div>
+    <p class="sec">Monthly evolution</p>
+    <div class="leg">
+      <span><span class="dot" style="background:rgba(175,169,236,0.45);"></span>AUM ($k)</span>
+      <span><span class="dot" style="background:#7F77DD;"></span>Your net revenue</span>
+      <span><span class="dot" style="background:#EF9F27;border:1px dashed #EF9F27;"></span>Revenue per AIM</span>
+    </div>
+    <div class="chart-box" id="f-chart-box"><canvas id="f-ch"></canvas></div>
+    <p class="sec">Monthly breakdown</p>
+    <div class="card tbl-box"><table id="f-tbl"></table></div>
+    <p class="note"><b>Logic:</b> Each month (AIMs × new clients) join at starting capital. Capital grows monthly up to the cap. AIM commission on perf. fee from their clients' capital only.</p>
+  </div>
+
+  <!-- ═══════════════ SAAS PANEL ═══════════════ -->
+  <div class="tab-panel" id="panel-saas">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Subscribers start on Starter, upgrade as they trust the system.</p>
+    <div class="g2">
+      <div class="card">
+        <div class="ct">Subscriber growth</div>
+        <div class="sl"><label for="s-start">Starting subscribers</label><input type="range" class="saas" id="s-start" min="0" max="50" step="1" value="5"><span class="slv" id="o-sstart">5</span></div>
+        <div class="sl"><label for="s-naims">Active AIMs (affiliates)</label><input type="range" class="saas" id="s-naims" min="0" max="12" step="1" value="3"><span class="slv" id="o-snaims">3</span></div>
+        <div class="sl"><label for="s-cliAim">New subscribers per AIM / month</label><input type="range" class="saas" id="s-cliAim" min="0" max="10" step="1" value="3"><span class="slv" id="o-scliAim">3</span></div>
+        <div class="sl"><label for="s-churn">Monthly churn rate</label><input type="range" class="saas" id="s-churn" min="0" max="20" step="1" value="5"><span class="slv" id="o-schurn">5%</span></div>
+        <div class="sl"><label for="s-aimcom">AIM commission (% of gross)</label><input type="range" class="saas" id="s-aimcom" min="10" max="40" step="5" value="30"><span class="slv" id="o-saimcom">30%</span></div>
+      </div>
+      <div class="card">
+        <div class="ct">Subscription tier mix</div>
+        <div class="tier-row">
+          <span class="tnm" style="color:var(--teal-l);">Starter</span><span class="tpr">$49/mo</span>
+          <input type="range" class="saas" id="t-starter" min="0" max="100" step="5" value="50" style="flex:1;">
+          <span class="slv" id="o-tstarter">50%</span>
+        </div>
+        <div class="tier-row">
+          <span class="tnm" style="color:var(--purple-l);">Pro</span><span class="tpr">$147/mo</span>
+          <input type="range" class="saas" id="t-pro" min="0" max="100" step="5" value="35" style="flex:1;">
+          <span class="slv" id="o-tpro">35%</span>
+        </div>
+        <div class="tier-row">
+          <span class="tnm" style="color:var(--amber-l);">Elite</span><span class="tpr">$297/mo</span>
+          <input type="range" class="saas" id="t-elite" min="0" max="100" step="5" value="15" style="flex:1;">
+          <span class="slv" id="o-telite">15%</span>
+        </div>
+        <hr>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px;">
+          <span>Total mix</span><span id="s-mix-total" style="font-weight:500;">100%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);">
+          <span>Weighted avg. ARPU</span><span id="s-arpu" style="font-weight:500;color:var(--teal-l);">$113/mo</span>
+        </div>
+      </div>
+    </div>
+    <p class="sec">Summary — month 12</p>
+    <div class="g4" id="s-kpis"></div>
+    <div class="hl hl-g"><span class="hl-l">Your net monthly revenue — month 12</span><span class="hl-v" id="sv-net12">—</span></div>
+    <div class="hl hl-b" style="margin-bottom:18px;"><span class="hl-l">Total paid to AIMs — month 12</span><span class="hl-v" id="sv-aims12">—</span></div>
+    <p class="sec">Monthly evolution</p>
+    <div class="leg">
+      <span><span class="dot" style="background:rgba(93,202,165,0.35);"></span>Subscribers</span>
+      <span><span class="dot" style="background:#7F77DD;"></span>Gross revenue</span>
+      <span><span class="dot" style="background:#5DCAA5;"></span>Your net revenue</span>
+    </div>
+    <div class="chart-box" id="s-chart-box"><canvas id="s-ch"></canvas></div>
+    <p class="sec">Monthly breakdown</p>
+    <div class="card tbl-box"><table id="s-tbl"></table></div>
+    <p class="note"><b>Logic:</b> Each month (AIMs × new/AIM) subscribers join. Churn removes % of existing base. Tier mix sets weighted ARPU. Your net = gross − AIM commissions.</p>
+  </div>
+
+  <!-- ═══════════════ COMBINED PANEL ═══════════════ -->
+  <div class="tab-panel" id="panel-combined">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Live snapshot from your Fund and SaaS parameters. Adjust values in each tab to update here.</p>
+    <div class="total-box">
+      <div class="total-lbl">Combined monthly revenue — month 12</div>
+      <div class="total-val" id="c-total12">—</div>
+      <div class="total-sub" id="c-total-sub">—</div>
+    </div>
+    <div class="combined-grid">
+      <div class="combined-card fund-card">
+        <div class="cc-title"><span class="badge badge-f">Fund</span> Revenue breakdown</div>
+        <div class="cc-row"><span class="cc-l">AUM month 12</span><span class="cc-v" id="c-faum">—</span></div>
+        <div class="cc-row"><span class="cc-l">Fund gain / month</span><span class="cc-v" id="c-fgain">—</span></div>
+        <div class="cc-row"><span class="cc-l">Mgmt fee</span><span class="cc-v" id="c-fmgmt">—</span></div>
+        <div class="cc-row"><span class="cc-l">Perf. fee (gross)</span><span class="cc-v" id="c-fperf">—</span></div>
+        <div class="cc-row"><span class="cc-l">Paid to AIMs</span><span class="cc-v" id="c-faim">—</span></div>
+        <hr>
+        <div class="cc-row"><span class="cc-l" style="font-weight:500;">Your net</span><span class="cc-v" style="color:var(--purple-l);" id="c-fnet">—</span></div>
+      </div>
+      <div class="combined-card saas-card">
+        <div class="cc-title"><span class="badge badge-s">SaaS</span> Revenue breakdown</div>
+        <div class="cc-row"><span class="cc-l">Subscribers month 12</span><span class="cc-v" id="c-ssubs">—</span></div>
+        <div class="cc-row"><span class="cc-l">ARPU</span><span class="cc-v" id="c-sarpu">—</span></div>
+        <div class="cc-row"><span class="cc-l">Gross revenue</span><span class="cc-v" id="c-sgross">—</span></div>
+        <div class="cc-row"><span class="cc-l">Paid to AIMs</span><span class="cc-v" id="c-saim">—</span></div>
+        <div class="cc-row" style="visibility:hidden;"><span>&nbsp;</span><span>&nbsp;</span></div>
+        <hr>
+        <div class="cc-row"><span class="cc-l" style="font-weight:500;">Your net</span><span class="cc-v" style="color:var(--teal-l);" id="c-snet">—</span></div>
+      </div>
+    </div>
+    <p class="sec">Combined 12-month evolution</p>
+    <div class="leg">
+      <span><span class="dot" style="background:var(--purple-l);"></span>Fund net</span>
+      <span><span class="dot" style="background:var(--teal-l);"></span>SaaS net</span>
+      <span><span class="dot" style="background:var(--amber-l);"></span>Total combined</span>
+    </div>
+    <div class="chart-box" id="c-chart-box"><canvas id="c-ch"></canvas></div>
+    <p class="sec">Annual projections</p>
+    <div class="g2" style="margin-bottom:18px;">
+      <div class="hl hl-b" style="margin-bottom:0;"><span class="hl-l">Fund annual revenue</span><span class="hl-v" id="c-fannual">—</span></div>
+      <div class="hl hl-g" style="margin-bottom:0;"><span class="hl-l">SaaS annual revenue</span><span class="hl-v" id="c-sannual">—</span></div>
+    </div>
+    <div class="hl hl-a"><span class="hl-l">Total combined annual revenue</span><span class="hl-v" id="c-annual">—</span></div>
+    <p class="note"><b>Note:</b> All values pulled live from Fund and SaaS tabs. Change any slider in either tab, then return here to see the updated combined view.</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+(function(){
+  var FC=null, SC=null, CC=null;
+  var currentTab='fund';
+
+  function v(id){return document.getElementById(id);}
+  function fmt(n){return '$'+Math.round(n).toLocaleString('en-US');}
+  function fmtK(n){var r=Math.round(n/1000);return r>=1?'$'+r+'k':fmt(n);}
+  function gi(id){return parseInt(v(id).value);}
+  function gf(id){return parseFloat(v(id).value);}
+
+  /* ── switch tabs ── */
+  function switchTab(t){
+    currentTab=t;
+    ['fund','saas','combined'].forEach(function(x){
+      v('tab-'+x).classList.toggle('active',x===t);
+      v('panel-'+x).classList.toggle('active',x===t);
+    });
+    if(t==='combined') updateCombined();
+    else setTimeout(function(){
+      if(t==='fund') buildFChart(computeFund());
+      else buildSChart(computeSaas());
+    },50);
+  }
+
+  /* ──────────── FUND ──────────── */
+  var fSliders=[
+    {id:'f-ret',    out:'o-fret',    fn:function(x){return gf('f-ret').toFixed(2)+'%';}},
+    {id:'f-mgmt',   out:'o-fmgmt',   fn:function(x){return gf('f-mgmt').toFixed(1)+'%';}},
+    {id:'f-perf',   out:'o-fperf',   fn:function(x){return x+'%';}},
+    {id:'f-aimcut', out:'o-faimcut', fn:function(x){return x+'%';}},
+    {id:'f-own',    out:'o-fown',    fn:function(x){return '$'+x+'k';}},
+    {id:'f-naims',  out:'o-fnaims',  fn:function(x){return x;}},
+    {id:'f-newcli', out:'o-fnewcli', fn:function(x){return x;}},
+    {id:'f-capinit',out:'o-fcapinit',fn:function(x){return '$'+x+'k';}},
+    {id:'f-capgrow',out:'o-fcapgrow',fn:function(x){return x+'%';}},
+    {id:'f-capmax', out:'o-fcapmax', fn:function(x){return '$'+x+'k';}}
+  ];
+
+  function computeFund(){
+    var ret=gf('f-ret')/100, mgmtA=gf('f-mgmt')/100, perfP=gi('f-perf')/100;
+    var aimC=gi('f-aimcut')/100, ownAum=gi('f-own')*1000;
+    var nAims=gi('f-naims'), newCli=gi('f-newcli');
+    var capI=gi('f-capinit')*1000, capG=gi('f-capgrow')/100, capM=gi('f-capmax')*1000;
+    var MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var clients=[],rows=[];
+    for(var m=0;m<12;m++){
+      for(var a=0;a<nAims;a++) for(var c=0;c<newCli;c++) clients.push({cap:capI,aim:a});
+      clients=clients.map(function(cl){return{cap:Math.min(cl.cap*(1+capG),capM),aim:cl.aim};});
+      var aimA=[]; for(var i=0;i<nAims;i++) aimA.push(0);
+      clients.forEach(function(cl){aimA[cl.aim]+=cl.cap;});
+      var aimAum=aimA.reduce(function(a,b){return a+b;},0), totAum=ownAum+aimAum;
+      var gainT=totAum*ret*22, gainAim=aimAum*ret*22;
+      var mgmt=totAum*mgmtA/12, perfT=gainT*perfP, perfAim=gainAim*perfP;
+      var aimComm=perfAim*aimC, perAim=nAims>0?aimComm/nAims:0;
+      var net=mgmt+perfT-aimComm;
+      rows.push({mo:MO[m],n:clients.length,aum:totAum,gainT:gainT,mgmt:mgmt,perf:perfT,aimC:aimComm,perAim:perAim,net:net});
+    }
+    return rows;
+  }
+
+  function buildFChart(rows){
+    var box=v('f-chart-box'),canvas=v('f-ch');
+    var dpr=window.devicePixelRatio||1, w=box.offsetWidth||320;
+    var h=Math.max(180,Math.min(250,Math.round(w*.38)));
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+    if(FC){FC.destroy();FC=null;}
+    var ctx=canvas.getContext('2d'); if(!ctx) return;
+    FC=new Chart(ctx,{data:{labels:rows.map(function(r){return r.mo;}),datasets:[
+      {type:'bar',label:'AUM',data:rows.map(function(r){return Math.round(r.aum/1000);}),backgroundColor:'rgba(175,169,236,0.25)',borderColor:'#AFA9EC',borderWidth:1,borderRadius:3,yAxisID:'y2'},
+      {type:'line',label:'Net',data:rows.map(function(r){return Math.round(r.net);}),borderColor:'#7F77DD',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#7F77DD',tension:.3,yAxisID:'y1'},
+      {type:'line',label:'Per AIM',data:rows.map(function(r){return Math.round(r.perAim);}),borderColor:'#EF9F27',backgroundColor:'transparent',borderWidth:2,borderDash:[5,4],pointRadius:3,pointBackgroundColor:'#EF9F27',tension:.3,yAxisID:'y1'}
+    ]},options:{responsive:false,maintainAspectRatio:false,devicePixelRatio:dpr,animation:{duration:200},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return' '+c.dataset.label+': $'+c.parsed.y.toLocaleString('en-US');}}}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},maxRotation:0}},
+        y1:{position:'left',grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},callback:function(val){return'$'+(val>=1000?Math.round(val/1000)+'k':val);}}},
+        y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#666',font:{size:10},callback:function(val){return'$'+val+'k';}}}}}});
+  }
+
+  function updateFund(){
+    fSliders.forEach(function(s){var el=v(s.id);if(el) v(s.out).textContent=s.fn(el.value);});
+    var rows=computeFund(), last=rows[11], cum=rows.reduce(function(a,r){return a+r.net;},0);
+    var nAims=gi('f-naims')||1;
+    v('f-kpis').innerHTML=[
+      {l:'AUM month 12',v:fmtK(last.aum),s:'total managed'},
+      {l:'Clients in fund',v:Math.round(last.n)+'',s:'month 12'},
+      {l:'Your annual revenue',v:fmtK(cum),s:'12 months net'},
+      {l:'Revenue / AIM mo.12',v:fmt(last.perAim),s:'passive commission'}
+    ].map(function(k){return'<div class="metric"><div class="m-l">'+k.l+'</div><div class="m-v">'+k.v+'</div><div class="m-s">'+k.s+'</div></div>';}).join('');
+    v('fv-net12').textContent=fmt(last.net);
+    v('fv-aims12').textContent=fmt(last.aimC)+' ('+fmt(last.aimC/nAims)+'/AIM)';
+    buildFChart(rows);
+    var th='<thead><tr><th>Month</th><th>Clients</th><th>AUM</th><th>Mgmt fee</th><th>Perf. fee</th><th>AIMs paid</th><th>Per AIM</th><th>Your net</th></tr></thead>';
+    var tb='<tbody>'+rows.map(function(r,i){return'<tr'+(i===11?' class="last last-fund"':'')+'>'+
+      '<td>'+r.mo+'</td><td>'+Math.round(r.n)+'</td><td>'+fmtK(r.aum)+'</td>'+
+      '<td>'+fmt(r.mgmt)+'</td><td>'+fmt(r.perf)+'</td>'+
+      '<td>'+fmt(r.aimC)+'</td><td>'+fmt(r.perAim)+'</td><td>'+fmt(r.net)+'</td></tr>';}).join('')+'</tbody>';
+    v('f-tbl').innerHTML=th+tb;
+    if(currentTab==='combined') updateCombined();
+  }
+
+  /* ──────────── SAAS ──────────── */
+  var sSliders=[
+    {id:'s-start',  out:'o-sstart',  fn:function(x){return x;}},
+    {id:'s-naims',  out:'o-snaims',  fn:function(x){return x;}},
+    {id:'s-cliAim', out:'o-scliAim', fn:function(x){return x;}},
+    {id:'s-churn',  out:'o-schurn',  fn:function(x){return x+'%';}},
+    {id:'s-aimcom', out:'o-saimcom', fn:function(x){return x+'%';}},
+    {id:'t-starter',out:'o-tstarter',fn:function(x){return x+'%';}},
+    {id:'t-pro',    out:'o-tpro',    fn:function(x){return x+'%';}},
+    {id:'t-elite',  out:'o-telite',  fn:function(x){return x+'%';}}
+  ];
+
+  function getArpu(){
+    var s=gi('t-starter')/100, p=gi('t-pro')/100, e=gi('t-elite')/100, tot=s+p+e;
+    if(tot===0) return 0;
+    return (s*49+p*147+e*297)/tot;
+  }
+
+  function computeSaas(){
+    var start=gi('s-start'), nAims=gi('s-naims'), cliAim=gi('s-cliAim');
+    var churn=gi('s-churn')/100, aimCom=gi('s-aimcom')/100, avg=getArpu();
+    var MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var subs=start,rows=[];
+    for(var m=0;m<12;m++){
+      var newS=nAims*cliAim;
+      if(m>0) subs=Math.max(0,Math.round(subs*(1-churn)+newS));
+      var gross=subs*avg, aimPay=gross*aimCom, net=gross-aimPay;
+      rows.push({mo:MO[m],subs:Math.round(subs),gross:gross,aimPay:aimPay,net:net});
+    }
+    return rows;
+  }
+
+  function buildSChart(rows){
+    var box=v('s-chart-box'),canvas=v('s-ch');
+    var dpr=window.devicePixelRatio||1, w=box.offsetWidth||320;
+    var h=Math.max(180,Math.min(250,Math.round(w*.38)));
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+    if(SC){SC.destroy();SC=null;}
+    var ctx=canvas.getContext('2d'); if(!ctx) return;
+    SC=new Chart(ctx,{data:{labels:rows.map(function(r){return r.mo;}),datasets:[
+      {type:'bar',label:'Subs',data:rows.map(function(r){return r.subs;}),backgroundColor:'rgba(93,202,165,0.22)',borderColor:'rgba(93,202,165,0.6)',borderWidth:1,borderRadius:3,yAxisID:'y2'},
+      {type:'line',label:'Gross',data:rows.map(function(r){return Math.round(r.gross);}),borderColor:'#7F77DD',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#7F77DD',tension:.3,yAxisID:'y1'},
+      {type:'line',label:'Net',data:rows.map(function(r){return Math.round(r.net);}),borderColor:'#5DCAA5',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#5DCAA5',tension:.3,yAxisID:'y1'}
+    ]},options:{responsive:false,maintainAspectRatio:false,devicePixelRatio:dpr,animation:{duration:200},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return' '+c.dataset.label+': '+(c.dataset.yAxisID==='y2'?c.parsed.y+' subs':'$'+c.parsed.y.toLocaleString('en-US'));}}}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},maxRotation:0}},
+        y1:{position:'left',grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},callback:function(val){return'$'+(val>=1000?Math.round(val/1000)+'k':val);}}},
+        y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#666',font:{size:10}}}}}});
+  }
+
+  function updateSaas(){
+    sSliders.forEach(function(s){var el=v(s.id);if(el) v(s.out).textContent=s.fn(el.value);});
+    var avg=getArpu();
+    var s=gi('t-starter'),p=gi('t-pro'),e=gi('t-elite'),tot=s+p+e;
+    var mixEl=v('s-mix-total');
+    mixEl.textContent=tot+'%';
+    mixEl.style.color=tot===100?'var(--teal-l)':'var(--red)';
+    v('s-arpu').textContent='$'+Math.round(avg)+'/mo';
+    var rows=computeSaas(), last=rows[11], cum=rows.reduce(function(a,r){return a+r.net;},0);
+    var nAims=gi('s-naims')||1;
+    v('s-kpis').innerHTML=[
+      {l:'Subscribers month 12',v:last.subs.toLocaleString('en-US'),s:'active base'},
+      {l:'Gross revenue mo. 12',v:fmtK(last.gross),s:'before commissions'},
+      {l:'Your annual revenue',v:fmtK(cum),s:'12 months net'},
+      {l:'Avg. ARPU',v:'$'+Math.round(avg)+'/mo',s:'weighted by tiers'}
+    ].map(function(k){return'<div class="metric"><div class="m-l">'+k.l+'</div><div class="m-v">'+k.v+'</div><div class="m-s">'+k.s+'</div></div>';}).join('');
+    v('sv-net12').textContent=fmt(last.net);
+    v('sv-aims12').textContent=fmt(last.aimPay)+' ('+fmt(last.aimPay/nAims)+'/AIM)';
+    buildSChart(rows);
+    var th='<thead><tr><th>Month</th><th>Subscribers</th><th>Gross</th><th>AIM commission</th><th>Your net</th><th>Cumulative</th></tr></thead>';
+    var acc=0;
+    var tb='<tbody>'+rows.map(function(r,i){acc+=r.net;return'<tr'+(i===11?' class="last last-saas"':'')+'>'+
+      '<td>'+r.mo+'</td><td>'+r.subs.toLocaleString('en-US')+'</td>'+
+      '<td>'+fmt(r.gross)+'</td><td>'+fmt(r.aimPay)+'</td>'+
+      '<td>'+fmt(r.net)+'</td><td>'+fmtK(acc)+'</td></tr>';}).join('')+'</tbody>';
+    v('s-tbl').innerHTML=th+tb;
+    if(currentTab==='combined') updateCombined();
+  }
+
+  /* ──────────── COMBINED ──────────── */
+  function buildCChart(fRows,sRows){
+    var box=v('c-chart-box'),canvas=v('c-ch');
+    var dpr=window.devicePixelRatio||1, w=box.offsetWidth||320;
+    var h=Math.max(180,Math.min(250,Math.round(w*.38)));
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+    if(CC){CC.destroy();CC=null;}
+    var ctx=canvas.getContext('2d'); if(!ctx) return;
+    CC=new Chart(ctx,{data:{labels:fRows.map(function(r){return r.mo;}),datasets:[
+      {type:'bar',label:'Fund',data:fRows.map(function(r){return Math.round(r.net);}),backgroundColor:'rgba(127,119,221,0.4)',borderColor:'#7F77DD',borderWidth:1,borderRadius:3,stack:'a'},
+      {type:'bar',label:'SaaS',data:sRows.map(function(r){return Math.round(r.net);}),backgroundColor:'rgba(93,202,165,0.4)',borderColor:'#5DCAA5',borderWidth:1,borderRadius:3,stack:'a'},
+      {type:'line',label:'Total',data:fRows.map(function(r,i){return Math.round(r.net+sRows[i].net);}),borderColor:'#FAC775',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#FAC775',tension:.3}
+    ]},options:{responsive:false,maintainAspectRatio:false,devicePixelRatio:dpr,animation:{duration:200},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return' '+c.dataset.label+': $'+c.parsed.y.toLocaleString('en-US');}}}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},maxRotation:0}},
+        y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666',font:{size:10},callback:function(val){return'$'+(val>=1000?Math.round(val/1000)+'k':val);}}}}}});
+  }
+
+  function updateCombined(){
+    var fRows=computeFund(), sRows=computeSaas();
+    var fLast=fRows[11], sLast=sRows[11];
+    var fCum=fRows.reduce(function(a,r){return a+r.net;},0);
+    var sCum=sRows.reduce(function(a,r){return a+r.net;},0);
+    var total12=fLast.net+sLast.net, totalAnnual=fCum+sCum;
+    v('c-total12').textContent=fmt(total12);
+    v('c-total-sub').textContent='Fund '+fmt(fLast.net)+' + SaaS '+fmt(sLast.net)+' — Annual: '+fmtK(totalAnnual);
+    v('c-faum').textContent=fmtK(fLast.aum);
+    v('c-fgain').textContent=fmt(fLast.gainT);
+    v('c-fmgmt').textContent=fmt(fLast.mgmt);
+    v('c-fperf').textContent=fmt(fLast.perf);
+    v('c-faim').textContent=fmt(fLast.aimC);
+    v('c-fnet').textContent=fmt(fLast.net);
+    v('c-ssubs').textContent=sLast.subs.toLocaleString('en-US');
+    v('c-sarpu').textContent='$'+Math.round(getArpu())+'/mo';
+    v('c-sgross').textContent=fmt(sLast.gross);
+    v('c-saim').textContent=fmt(sLast.aimPay);
+    v('c-snet').textContent=fmt(sLast.net);
+    v('c-fannual').textContent=fmtK(fCum);
+    v('c-sannual').textContent=fmtK(sCum);
+    v('c-annual').textContent=fmtK(totalAnnual);
+    buildCChart(fRows,sRows);
+  }
+
+  /* ──────────── INIT ──────────── */
+  function attachAll(){
+    fSliders.forEach(function(s){var el=v(s.id);if(!el)return;el.addEventListener('input',updateFund);el.addEventListener('change',updateFund);});
+    sSliders.forEach(function(s){var el=v(s.id);if(!el)return;el.addEventListener('input',updateSaas);el.addEventListener('change',updateSaas);});
+  }
+
+  function init(){
+    if(typeof Chart==='undefined'){setTimeout(init,100);return;}
+    attachAll();
+    updateFund();
+    updateSaas();
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else setTimeout(init,0);
+
+  var rt;
+  window.addEventListener('resize',function(){
+    clearTimeout(rt);
+    rt=setTimeout(function(){
+      if(currentTab==='fund') buildFChart(computeFund());
+      else if(currentTab==='saas') buildSChart(computeSaas());
+      else buildCChart(computeFund(),computeSaas());
+    },150);
+  });
+
+  window.switchTab=switchTab;
+})();
+</script>
+</body>
+</html>
