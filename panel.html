@@ -10122,7 +10122,7 @@ body.aaron-terminal-shell .top-right .kv .v{
           <strong id="lfv44-zone">—</strong>
         </div>
         <div class="lfv44-cell">
-          <span>Flip em</span>
+          <span>Flip dispara</span>
           <strong id="lfv44-trigger">—</strong>
         </div>
         <div class="lfv44-cell">
@@ -29698,6 +29698,12 @@ renderOptions("");
         ? `acima ${lfMoney(lfInvalidation)}`
         : lfSide === "LONG" ? `abaixo ${lfMoney(lfInvalidation)}` : lfMoney(lfInvalidation);
     })();
+    const lfFlipTriggerText = (() => {
+      if (lfTrigger == null) return "—";
+      return lfSide === "SHORT"
+        ? `SHORT abaixo ${lfMoney(lfTrigger)}`
+        : lfSide === "LONG" ? `LONG acima ${lfMoney(lfTrigger)}` : lfMoney(lfTrigger);
+    })();
     const lfClamp = (n, min, max) => Math.max(min, Math.min(max, n));
     const lfLiveMeter = (() => {
       if (!lfActive || !lfSide || current == null || lfTrigger == null || lfReversalLevel == null) {
@@ -29746,7 +29752,7 @@ renderOptions("");
       const sideRead = lfSide === "SHORT"
         ? "Para SHORT, cair aproxima do trigger; subir aproxima da reversao."
         : "Para LONG, subir aproxima do trigger; cair aproxima da reversao.";
-      const note = `px ${lfMoney(current)} | flip em ${lfMoney(lfTrigger)} (${lfMoney(distTrigger)}) | falha ${lfFailText} (${lfMoney(distReversal)}). ${sideRead}`;
+      const note = `px ${lfMoney(current)} | ${lfFlipTriggerText} (${lfMoney(distTrigger)}) | falha ${lfFailText} (${lfMoney(distReversal)}). ${sideRead}`;
       return { pct, idx, label, tone, note };
     })();
     const lfPickPct = (...vals) => {
@@ -29949,7 +29955,7 @@ renderOptions("");
         ? `px ${lfMoney(current)} / reversao ${lfMoney(lfReversalLevel)}`
         : lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `px ${lfMoney(current)} / cancela ${lfMoney(lfInvalidation)}`
     };
-    const lfOperationLine = `Flip em ${lfMoney(lfTrigger)}. Pode reverter em ${lfPredictedReversal.text}. Falha ${lfFailText}.`;
+    const lfOperationLine = `${lfFlipTriggerText}. Pode reverter em ${lfPredictedReversal.text}. Falha ${lfFailText}.`;
 
     const lfCard = el("level-flip-card");
     if (lfCard) {
@@ -29996,7 +30002,7 @@ renderOptions("");
     }
     if (el("lfv44-status")) el("lfv44-status").textContent = lfActive ? `${lfSide || "—"} ${lfStatusRaw}` : "—";
     if (el("lfv44-zone")) el("lfv44-zone").textContent = lfZoneText;
-    if (el("lfv44-trigger")) el("lfv44-trigger").textContent = lfMoney(lfTrigger);
+    if (el("lfv44-trigger")) el("lfv44-trigger").textContent = lfFlipTriggerText;
     if (el("lfv44-inval")) el("lfv44-inval").textContent = lfFailText;
     if (el("lfv44-reversal")) el("lfv44-reversal").textContent = lfPredictedReversal.text;
     if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
