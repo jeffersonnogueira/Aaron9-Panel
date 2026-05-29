@@ -29555,7 +29555,15 @@ renderOptions("");
     const lfConfidence = numPick(levelFlipV44?.confidence_pct);
     const lfTouches = numPick(levelFlipV44?.touch_count, levelFlipV44?.pivot_touch_count);
     const lfRetestHeld = String(levelFlipV44?.retest_held ?? "").trim().toLowerCase() === "true" || levelFlipV44?.retest_held === true;
-    const lfTriggerCrossed = lfStatusRaw === "TRIGGERED" || levelFlipV44?.trigger_crossed === true || String(levelFlipV44?.trigger_crossed ?? "").trim().toLowerCase() === "true";
+    const lfTriggerCrossedByPrice = (() => {
+      if (!lfSide || current == null || lfTrigger == null) return false;
+      return lfSide === "LONG" ? current >= lfTrigger : current <= lfTrigger;
+    })();
+    const lfTriggerCrossed =
+      lfStatusRaw === "TRIGGERED" ||
+      levelFlipV44?.trigger_crossed === true ||
+      String(levelFlipV44?.trigger_crossed ?? "").trim().toLowerCase() === "true" ||
+      lfTriggerCrossedByPrice;
     const lfBarsSinceRetest = numPick(levelFlipV44?.bars_since_retest);
     const lfBreakoutIdx = numPick(levelFlipV44?.breakout_idx);
     const lfRetestIdx = numPick(levelFlipV44?.retest_idx);
@@ -29599,7 +29607,9 @@ renderOptions("");
       retest: lfRetestOk
         ? (lfBarsSinceRetest != null ? `segurou ha ${Math.round(lfBarsSinceRetest)} barras` : "reteste segurou")
         : "esperar voltar no nivel",
-      trigger: lfTriggerCrossed ? "preco cruzou trigger" : `entrada so em ${lfMoney(lfTrigger)}`,
+      trigger: lfTriggerCrossed
+        ? (lfTriggerCrossedByPrice ? "preco atual cruzou trigger" : "matcher marcou trigger")
+        : `entrada so em ${lfMoney(lfTrigger)}`,
       stop: lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `cancela em ${lfMoney(lfInvalidation)}`
     };
 
