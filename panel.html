@@ -8109,99 +8109,6 @@
   min-width: 0;
 }
 
-#level-flip-card .lfv44-thermo-head{
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-#level-flip-card .lfv44-thermo-head span{
-  font-size: 12px;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  font-weight: 950;
-  color: rgba(203,213,225,.72);
-}
-
-#level-flip-card .lfv44-thermo-head strong{
-  font-size: 20px;
-  line-height: 1;
-  font-weight: 950;
-  color: #ffcc66;
-  text-align: right;
-}
-
-#level-flip-card .lfv44-steps{
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-}
-
-#level-flip-card .lfv44-step{
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 8px;
-  background: rgba(15,23,42,.76);
-  padding: 10px;
-  min-height: 104px;
-  display: grid;
-  gap: 6px;
-  align-content: start;
-}
-
-#level-flip-card .lfv44-step span{
-  width: 24px;
-  height: 24px;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 999px;
-  background: rgba(148,163,184,.16);
-  color: rgba(226,232,240,.78);
-  font-size: 13px;
-  line-height: 1;
-  font-weight: 950;
-}
-
-#level-flip-card .lfv44-step strong{
-  font-size: 15px;
-  line-height: 1.05;
-  font-weight: 950;
-  color: rgba(226,232,240,.9);
-}
-
-#level-flip-card .lfv44-step em{
-  font-style: normal;
-  font-size: 12px;
-  line-height: 1.15;
-  color: rgba(203,213,225,.72);
-}
-
-#level-flip-card .lfv44-step.is-on{
-  border-color: rgba(34,211,238,.34);
-  background: rgba(8,47,73,.52);
-}
-
-#level-flip-card .lfv44-step.is-on span{
-  background: rgba(34,211,238,.22);
-  color: #67e8f9;
-}
-
-#level-flip-card .lfv44-step.is-now{
-  border-color: rgba(255,204,102,.52);
-  box-shadow: inset 0 0 0 1px rgba(255,204,102,.16);
-}
-
-#level-flip-card .lfv44-step.is-danger{
-  border-color: rgba(248,113,113,.56);
-  background: rgba(127,29,29,.28);
-}
-
-#level-flip-card .lfv44-step.is-danger span{
-  background: rgba(248,113,113,.22);
-  color: #fecaca;
-}
-
 #level-flip-card .lfv44-live{
   margin-top: 12px;
   border: 1px solid rgba(255,255,255,.12);
@@ -8371,7 +8278,6 @@
 }
 
 @media (max-width: 900px){
-  #level-flip-card .lfv44-steps,
   #level-flip-card .lfv44-live-segments,
   #level-flip-card .lfv44-grid{
     grid-template-columns: 1fr;
@@ -10140,38 +10046,6 @@ body.aaron-terminal-shell .top-right .kv .v{
     </div>
     <div>
       <div class="lfv44-thermo">
-        <div class="lfv44-thermo-head">
-          <span>Continuacao x Exaustao</span>
-          <strong id="lfv44-stage">—</strong>
-        </div>
-        <div class="lfv44-steps">
-          <div class="lfv44-step" id="lfv44-step-test">
-            <span>1</span>
-            <strong>Continua</strong>
-            <em id="lfv44-step-test-note">—</em>
-          </div>
-          <div class="lfv44-step" id="lfv44-step-break">
-            <span>2</span>
-            <strong>Esticando</strong>
-            <em id="lfv44-step-break-note">—</em>
-          </div>
-          <div class="lfv44-step" id="lfv44-step-retest">
-            <span>3</span>
-            <strong>Elastico</strong>
-            <em id="lfv44-step-retest-note">—</em>
-          </div>
-          <div class="lfv44-step" id="lfv44-step-trigger">
-            <span>4</span>
-            <strong>Exaustao</strong>
-            <em id="lfv44-step-trigger-note">—</em>
-          </div>
-          <div class="lfv44-step" id="lfv44-step-stop">
-            <span>5</span>
-            <strong>Reversao</strong>
-            <em id="lfv44-step-stop-note">—</em>
-          </div>
-        </div>
-
         <div class="lfv44-live">
           <div class="lfv44-live-head">
             <span>Termometro vivo</span>
@@ -30021,29 +29895,6 @@ renderOptions("");
       el("lfv44-decision").textContent = lfDecision.text;
       el("lfv44-decision").className = `lfv44-decision ${lfDecision.cls}`;
     }
-    if (el("lfv44-stage")) el("lfv44-stage").textContent = lfElastic.label;
-    const lfSetStep = (id, on, now, danger, note) => {
-      const node = el(id);
-      if (node) {
-        node.classList.toggle("is-on", !!on);
-        node.classList.toggle("is-now", !!now);
-        node.classList.toggle("is-danger", !!danger);
-      }
-      const noteNode = el(`${id}-note`);
-      if (noteNode) noteNode.textContent = note || "—";
-    };
-    const lfElasticStepNotes = [
-      `continua ${fmtPct(lfElastic.continuation)}`,
-      `elastico ${Math.round(lfElastic.pct)}%`,
-      "nao perseguir no meio",
-      `exaustao ${fmtPct(lfElastic.exhaustion)}`,
-      `reversao ${lfMoney(lfReversalLevel)}`
-    ];
-    lfSetStep("lfv44-step-test", lfElastic.idx >= 0, lfElastic.idx === 0, lfElastic.idx === 0 && lfElastic.tone === "is-danger", lfElasticStepNotes[0]);
-    lfSetStep("lfv44-step-break", lfElastic.idx >= 1, lfElastic.idx === 1, lfElastic.idx === 1 && lfElastic.tone === "is-danger", lfElasticStepNotes[1]);
-    lfSetStep("lfv44-step-retest", lfElastic.idx >= 2, lfElastic.idx === 2, lfElastic.idx === 2 && lfElastic.tone === "is-danger", lfElasticStepNotes[2]);
-    lfSetStep("lfv44-step-trigger", lfElastic.idx >= 3, lfElastic.idx === 3, lfElastic.idx === 3, lfElasticStepNotes[3]);
-    lfSetStep("lfv44-step-stop", lfElastic.idx >= 4 || lfReversalRisk || lfStopTouched, lfElastic.idx === 4 || lfReversalRisk || lfStopTouched, lfElastic.idx >= 4 || lfReversalRisk || lfStopTouched, lfElasticStepNotes[4]);
     if (el("lfv44-live-label")) el("lfv44-live-label").textContent = lfLiveMeter.label;
     if (el("lfv44-live-note")) el("lfv44-live-note").textContent = lfLiveMeter.note;
     if (el("lfv44-live-fill")) el("lfv44-live-fill").style.width = `${Math.round(lfLiveMeter.pct)}%`;
