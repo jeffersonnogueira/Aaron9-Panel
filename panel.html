@@ -10092,6 +10092,14 @@ body.aaron-terminal-shell .top-right .kv .v{
           <strong id="lfv44-retest">—</strong>
         </div>
         <div class="lfv44-cell">
+          <span>Barras Reteste</span>
+          <strong id="lfv44-bars-retest">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Continuacao</span>
+          <strong id="lfv44-continuation">—</strong>
+        </div>
+        <div class="lfv44-cell">
           <span>Agora</span>
           <strong id="lfv44-action">—</strong>
         </div>
@@ -29436,6 +29444,12 @@ renderOptions("");
       payload?.live?.level_flip_v1 ||
       (typeof deepFind === "function" ? deepFind(payload, "level_flip_v1") : null) ||
       {};
+    const lfCanonicalRead =
+      exec1x1?.canonical_read_v1 ||
+      panel?.canonical_read_v1 ||
+      digest?.canonical_read_v1 ||
+      payload?.canonical_read_v1 ||
+      {};
 
     const lfPickText = (...vals) => {
       for (const v of vals) {
@@ -29443,6 +29457,29 @@ renderOptions("");
         const s = v.trim();
         if (s) return s;
       }
+      return "";
+    };
+    const lfNormToken = (v) =>
+      String(v ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toUpperCase();
+    const lfBool = (v) => {
+      if (v === null || v === undefined || v === "") return null;
+      if (typeof v === "boolean") return v;
+      if (typeof v === "number") return v !== 0;
+      const s = lfNormToken(v);
+      if (!s) return null;
+      if (["NO","NAO","FALSE","0","N"].includes(s) || /\b(NAO|NO|FALSE|SEM CONTINUACAO|REVERSAO)\b/.test(s)) return false;
+      if (["YES","SIM","TRUE","1","Y","S"].includes(s) || /(CONTINUA|MANTEM|SEGURA|HOLD)/.test(s)) return true;
+      return null;
+    };
+    const lfNormSide = (v) => {
+      const s = lfNormToken(v);
+      if (!s) return "";
+      if (/(LONG|BUY|COMPRA|COMPRADO|ALTA|UP)/.test(s)) return "LONG";
+      if (/(SHORT|SELL|VENDA|VENDIDO|BAIXA|DOWN)/.test(s)) return "SHORT";
       return "";
     };
 
@@ -29467,6 +29504,45 @@ renderOptions("");
       lfStateRaw === "RESISTANCE_BECAME_SUPPORT" ? "LONG" :
       lfStateRaw === "SUPPORT_BECAME_RESISTANCE" ? "SHORT" :
       "";
+    const lfContRaw =
+      lfCanonicalRead?.continuacao_ativa ??
+      lfCanonicalRead?.continuacao ??
+      lfCanonicalRead?.continuation ??
+      lfCanonicalRead?.continuation_active ??
+      panel?.continuacao_ui ??
+      digest?.continuacao_ui ??
+      payload?.continuacao_ui ??
+      panel?.continuation_ui ??
+      digest?.continuation_ui ??
+      payload?.continuation_ui ??
+      panel?.continuation ??
+      digest?.continuation ??
+      payload?.continuation;
+    const lfContBool = lfBool(lfContRaw);
+    const lfContinuationSide = lfNormSide(lfContRaw);
+    const lfCanonicalSide = lfNormSide(
+      lfCanonicalRead?.direcao_oficial ??
+      lfCanonicalRead?.direcao ??
+      lfCanonicalRead?.official_direction ??
+      lfCanonicalRead?.direction_official ??
+      lfCanonicalRead?.side ??
+      lfCanonicalRead?.direction ??
+      lfCanonicalRead?.trade_side ??
+      panel?.direcao_oficial ??
+      digest?.direcao_oficial ??
+      payload?.direcao_oficial ??
+      panel?.direction ??
+      digest?.direction ??
+      payload?.direction
+    );
+    const lfContinuationAligned =
+      lfContBool === true &&
+      (!lfSide || !lfContinuationSide || lfContinuationSide === lfSide) &&
+      (!lfSide || !lfCanonicalSide || lfCanonicalSide === lfSide);
+    const lfContinuationText =
+      lfContBool === true
+        ? (lfContinuationAligned ? "SIM ALINHADA" : "SIM CONTRA")
+        : lfContBool === false ? "NAO" : "—";
     const lfZoneLow = numPick(levelFlipV44?.zone_low);
     const lfZoneHigh = numPick(levelFlipV44?.zone_high);
     const lfZoneMid = numPick(levelFlipV44?.zone_mid);
@@ -29500,6 +29576,7 @@ renderOptions("");
     const lfStageLabel = (() => {
       if (!lfActive) return "SEM V44 AGORA";
       if (lfStopTouched) return "INVALIDACAO TOCADA";
+      if (lfRetestOk && !lfContinuationAligned) return "FALTA CONTINUACAO";
       if (lfTriggerCrossed) return "TRIGGER CRUZADO";
       if (lfRetestOk) return "RETESTE SEGURO";
       if (lfBreakoutOk) return "ROMPEU - ESPERAR RETESTE";
@@ -29512,6 +29589,7 @@ renderOptions("");
       if (!lfTouchesOk) return { text: "NAO ENTRA - FALTA TESTE", cls: "is-wait", action: "Esperar nivel" };
       if (!lfRetestOk) return { text: "NAO ENTRA - FALTA RETESTE", cls: "is-wait", action: "Esperar reteste" };
       if (!lfConfidenceOk) return { text: "NAO ENTRA - QUALIDADE BAIXA", cls: "is-block", action: "Esperar novo V44" };
+      if (!lfContinuationAligned) return { text: "NAO ENTRA - CONT NAO ALINHADA", cls: "is-block", action: "Esperar continuacao" };
       if (lfTriggerCrossed) return { text: "ENTRADA TATICA V44", cls: "is-enter", action: "Pode executar pequeno" };
       return { text: "ARMAR NO TRIGGER", cls: "is-wait", action: "Sem antecipar" };
     })();
@@ -29569,6 +29647,8 @@ renderOptions("");
     if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
     if (el("lfv44-touches")) el("lfv44-touches").textContent = lfTouches != null ? String(Math.round(lfTouches)) : "—";
     if (el("lfv44-retest")) el("lfv44-retest").textContent = lfRetestOk ? "SEGUROU" : "NAO";
+    if (el("lfv44-bars-retest")) el("lfv44-bars-retest").textContent = lfBarsSinceRetest != null ? String(Math.round(lfBarsSinceRetest)) : "—";
+    if (el("lfv44-continuation")) el("lfv44-continuation").textContent = lfContinuationText;
     if (el("lfv44-action")) el("lfv44-action").textContent = lfDecision.action;
     if (el("tc-action-level")) el("tc-action-level").textContent = lfActive ? `${lfSide || "V44"} ${lfStatusRaw}` : "—";
 
@@ -30311,6 +30391,7 @@ const tcLevelFlipReady =
   lfTouchesOk &&
   lfRetestOk &&
   lfConfidenceOk &&
+  lfContinuationAligned &&
   !lfStopTouched;
 const tcLevelFlipTriggered = tcLevelFlipReady && lfTriggerCrossed;
 
@@ -30322,6 +30403,7 @@ if (tcLevelFlipActive && !tcLateActive && !tcPositionAction) {
       lfStopTouched ? "V44 DEAD" :
       (!lfTouchesOk || !lfRetestOk) ? "V44 WAIT" :
       !lfConfidenceOk ? "V44 WEAK" :
+      !lfContinuationAligned ? "V44 WAIT" :
       "V44 LEVEL";
   } else {
     tcZoneLabel = "V44 WAIT";
@@ -30593,9 +30675,11 @@ const tcOperatorLevelFlipLine = (() => {
   const triggerTxt = lfTrigger != null ? `trigger ${tcLateMoney(lfTrigger)}` : "";
   const invalTxt = lfInvalidation != null ? `invalida ${tcLateMoney(lfInvalidation)}` : "";
   const zoneTxt = lfZoneText && lfZoneText !== "—" ? `zona ${lfZoneText}` : "";
+  const retestBarsTxt = lfBarsSinceRetest != null ? `reteste ${Math.round(lfBarsSinceRetest)} barras` : "";
+  const continuationTxt = `continuacao ${lfContinuationText}`;
   const conflictTxt = tcLevelFlipContra ? " CONTRA direcao canonica; nao executar sem novo matcher." : "";
   const headerTxt = [lfDecision?.text || "V44", `V44 ${sideTxt} ${statusTxt}`, lfStageLabel].filter(Boolean).join(" | ");
-  const detailTxt = [zoneTxt, triggerTxt, invalTxt].filter(Boolean).join(" | ");
+  const detailTxt = [zoneTxt, triggerTxt, invalTxt, retestBarsTxt, continuationTxt].filter(Boolean).join(" | ");
   return `${headerTxt}${detailTxt ? `: ${detailTxt}` : ""}.${conflictTxt}`.replace(/\s+\./g, ".");
 })();
 const tcOperatorVwapLine = (() => {
@@ -30743,6 +30827,17 @@ const tcBuildOperatorDecisionV1 = () => {
           zone: "V44 WEAK",
           next: "Nao usar esse V44 como gatilho. Esperar novo V44 com qualidade >=75 ou novo matcher canonico.",
           reason: "v44_level_flip_low_confidence"
+        });
+      }
+
+      if (!lfContinuationAligned) {
+        return withBase({
+          main: "AGUARDAR CONTINUACAO",
+          sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine} Continuacao nao esta alinhada com o V44.`,
+          mode: "is-wait",
+          zone: "V44 WAIT",
+          next: "Esperar Continuacao=SIM no mesmo lado do V44 antes de liberar entrada tatica.",
+          reason: "v44_level_flip_wait_continuation"
         });
       }
 
