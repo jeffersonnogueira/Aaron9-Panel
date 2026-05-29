@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AARON — Fund Calculator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
+  --text:#f0f0f5;--text2:#888899;--text3:#505060;
+  --purple:#7F77DD;--purple-light:#AFA9EC;
+  --teal:#1D9E75;--teal-light:#5DCAA5;
+  --amber:#EF9F27;
+  --green-bg:rgba(29,158,117,0.13);--green-text:#5DCAA5;
+  --blue-bg:rgba(127,119,221,0.13);--blue-text:#AFA9EC;
+  --r:12px;--rs:8px;
+}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;font-size:14px;line-height:1.6;padding:1.25rem 1rem;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;}
+h1{font-size:20px;font-weight:500;letter-spacing:-0.3px;margin-bottom:4px;}
+.sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;}
+.sec{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;}
+.card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:12px;}
+.card-title{font-size:13px;font-weight:500;margin-bottom:12px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+@media(max-width:600px){.g2{grid-template-columns:1fr;}.g4{grid-template-columns:repeat(2,1fr);}body{padding:1rem .75rem;}}
+.sl{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sl label{font-size:12px;color:var(--text2);flex:2;min-width:0;line-height:1.4;}
+.sl-val{font-size:13px;font-weight:500;color:var(--text);min-width:52px;text-align:right;}
+input[type=range]{
+  flex:2;min-width:80px;height:28px;
+  -webkit-appearance:none;appearance:none;
+  background:transparent;cursor:pointer;padding:0;
+}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--bg3);border-radius:2px;border:.5px solid var(--border);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--purple);margin-top:-11px;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--purple);}
+input[type=range]::-moz-range-track{height:4px;background:var(--bg3);border-radius:2px;}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--purple);border:2px solid var(--bg);}
+.metric{background:var(--bg3);border-radius:var(--rs);padding:.85rem .9rem;}
+.m-l{font-size:11px;color:var(--text2);margin-bottom:3px;}
+.m-v{font-size:18px;font-weight:500;}
+.m-s{font-size:11px;color:var(--text3);margin-top:3px;}
+.hl{border-radius:var(--rs);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.hl-g{background:var(--green-bg);}
+.hl-b{background:var(--blue-bg);}
+.hl-l{font-size:13px;font-weight:500;}
+.hl-v{font-size:17px;font-weight:500;}
+.hl-g .hl-l,.hl-g .hl-v{color:var(--green-text);}
+.hl-b .hl-l,.hl-b .hl-v{color:var(--blue-text);}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-bottom:10px;}
+.leg span{display:flex;align-items:center;gap:5px;}
+.dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+#chart-box{width:100%;margin-bottom:18px;}
+#chart-box canvas{display:block;width:100% !important;}
+.tbl-box{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;font-size:12px;border-collapse:collapse;min-width:520px;}
+th{font-size:11px;font-weight:500;color:var(--text3);text-align:right;padding:5px 7px;border-bottom:.5px solid var(--border);white-space:nowrap;}
+th:first-child{text-align:left;}
+td{text-align:right;padding:5px 7px;white-space:nowrap;}
+td:first-child{text-align:left;color:var(--text2);}
+tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+tr.last td{font-weight:500;border-top:.5px solid var(--border2);color:var(--purple-light);}
+.note{font-size:12px;color:var(--text3);background:var(--bg3);border-radius:var(--rs);padding:10px 12px;margin-top:16px;line-height:1.7;}
+.note b{color:var(--text2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AARON — Fund Revenue Calculator</h1>
+  <p class="sub">Real cycle: client starts small, sees results, scales up capital.</p>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Fund structure</div>
+      <div class="sl"><label for="f-ret">Daily return</label><input type="range" id="f-ret" min="0.1" max="1.0" step="0.05" value="0.5"><span class="sl-val" id="o-ret">0.50%</span></div>
+      <div class="sl"><label for="f-mgmt">Management fee (annual)</label><input type="range" id="f-mgmt" min="0.5" max="3" step="0.5" value="2"><span class="sl-val" id="o-mgmt">2.0%</span></div>
+      <div class="sl"><label for="f-perf">Performance fee</label><input type="range" id="f-perf" min="10" max="30" step="5" value="20"><span class="sl-val" id="o-perf">20%</span></div>
+      <div class="sl"><label for="aim-cut">AIM commission (% of perf. fee)</label><input type="range" id="aim-cut" min="5" max="30" step="5" value="20"><span class="sl-val" id="o-aimcut">20%</span></div>
+      <div class="sl"><label for="own-cap">Your own capital ($k)</label><input type="range" id="own-cap" min="0" max="500" step="10" value="100"><span class="sl-val" id="o-own">$100k</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Client lifecycle</div>
+      <div class="sl"><label for="n-aims">Active AIMs</label><input type="range" id="n-aims" min="1" max="12" step="1" value="3"><span class="sl-val" id="o-naims">3</span></div>
+      <div class="sl"><label for="new-cli">New clients per AIM / month</label><input type="range" id="new-cli" min="0" max="5" step="1" value="1"><span class="sl-val" id="o-newcli">1</span></div>
+      <div class="sl"><label for="cap-init">Starting capital / client ($k)</label><input type="range" id="cap-init" min="5" max="100" step="5" value="15"><span class="sl-val" id="o-capinit">$15k</span></div>
+      <div class="sl"><label for="cap-grow">Client capital growth / month</label><input type="range" id="cap-grow" min="0" max="30" step="5" value="15"><span class="sl-val" id="o-capgrow">15%</span></div>
+      <div class="sl"><label for="cap-max">Max capital / client ($k)</label><input type="range" id="cap-max" min="20" max="300" step="10" value="100"><span class="sl-val" id="o-capmax">$100k</span></div>
+    </div>
+  </div>
+
+  <p class="sec">Summary — month 12</p>
+  <div class="g4" id="kpis"></div>
+  <div class="hl hl-g"><span class="hl-l">Your net monthly revenue — month 12</span><span class="hl-v" id="v-net12">—</span></div>
+  <div class="hl hl-b" style="margin-bottom:18px;"><span class="hl-l">Total paid to AIMs — month 12</span><span class="hl-v" id="v-aims12">—</span></div>
+
+  <p class="sec">Monthly evolution</p>
+  <div class="leg">
+    <span><span class="dot" style="background:rgba(175,169,236,0.55);"></span>AUM ($k)</span>
+    <span><span class="dot" style="background:#1D9E75;"></span>Your net revenue</span>
+    <span><span class="dot" style="background:#EF9F27;"></span>Revenue per AIM</span>
+  </div>
+  <div id="chart-box"><canvas id="ch"></canvas></div>
+
+  <p class="sec">Monthly breakdown</p>
+  <div class="card tbl-box"><table id="tbl"></table></div>
+  <p class="note"><b>Model logic:</b> Each month (AIMs × new clients) join with starting capital. Each client grows monthly up to the cap. AIM commission applies only to the perf. fee from capital they brought. You keep 100% of fees from your own capital.</p>
+</div>
+
+<script>
+(function(){
+  var CH = null;
+
+  function v(id){ return document.getElementById(id); }
+  function fmt(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+  function fmtK(n){ return '$' + Math.round(n/1000) + 'k'; }
+
+  var sliders = [
+    {id:'f-ret',   out:'o-ret',   fn:function(x){ return parseFloat(x).toFixed(2)+'%'; }},
+    {id:'f-mgmt',  out:'o-mgmt',  fn:function(x){ return parseFloat(x).toFixed(1)+'%'; }},
+    {id:'f-perf',  out:'o-perf',  fn:function(x){ return x+'%'; }},
+    {id:'aim-cut', out:'o-aimcut',fn:function(x){ return x+'%'; }},
+    {id:'own-cap', out:'o-own',   fn:function(x){ return '$'+x+'k'; }},
+    {id:'n-aims',  out:'o-naims', fn:function(x){ return x; }},
+    {id:'new-cli', out:'o-newcli',fn:function(x){ return x; }},
+    {id:'cap-init',out:'o-capinit',fn:function(x){ return '$'+x+'k'; }},
+    {id:'cap-grow',out:'o-capgrow',fn:function(x){ return x+'%'; }},
+    {id:'cap-max', out:'o-capmax', fn:function(x){ return '$'+x+'k'; }}
+  ];
+
+  function attachSliders(){
+    sliders.forEach(function(s){
+      var el = v(s.id);
+      if(!el) return;
+      function handler(){ v(s.out).textContent = s.fn(el.value); update(); }
+      el.addEventListener('input', handler);
+      el.addEventListener('change', handler);
+    });
+  }
+
+  function compute(){
+    var ret      = parseFloat(v('f-ret').value)/100;
+    var mgmtAnn  = parseFloat(v('f-mgmt').value)/100;
+    var perfPct  = parseFloat(v('f-perf').value)/100;
+    var aimCut   = parseFloat(v('aim-cut').value)/100;
+    var ownAum   = parseInt(v('own-cap').value)*1000;
+    var nAims    = parseInt(v('n-aims').value);
+    var newCli   = parseInt(v('new-cli').value);
+    var capInit  = parseInt(v('cap-init').value)*1000;
+    var capGrow  = parseFloat(v('cap-grow').value)/100;
+    var capMax   = parseInt(v('cap-max').value)*1000;
+
+    var MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var clients = [], rows = [];
+
+    for(var m=0;m<12;m++){
+      for(var a=0;a<nAims;a++) for(var c=0;c<newCli;c++) clients.push({cap:capInit,aim:a});
+      clients = clients.map(function(cl){ return {cap:Math.min(cl.cap*(1+capGrow),capMax),aim:cl.aim}; });
+
+      var aimA = []; for(var i=0;i<nAims;i++) aimA.push(0);
+      clients.forEach(function(cl){ aimA[cl.aim]+=cl.cap; });
+      var aimAum   = aimA.reduce(function(a,b){return a+b;},0);
+      var totAum   = ownAum + aimAum;
+      var gainTot  = totAum*ret*22;
+      var gainAim  = aimAum*ret*22;
+      var mgmt     = totAum*mgmtAnn/12;
+      var perfTot  = gainTot*perfPct;
+      var perfAim  = gainAim*perfPct;
+      var aimComm  = perfAim*aimCut;
+      var perAim   = nAims>0 ? aimComm/nAims : 0;
+      var net      = mgmt+perfTot-aimComm;
+      rows.push({mo:MO[m],n:clients.length,aum:totAum,mgmt:mgmt,perf:perfTot,aimC:aimComm,perAim:perAim,net:net});
+    }
+    return rows;
+  }
+
+  function buildChart(rows){
+    var box = v('chart-box');
+    var canvas = v('ch');
+    var dpr = window.devicePixelRatio || 1;
+    var w = box.offsetWidth || 320;
+    var h = Math.round(w * 0.40);
+    h = Math.max(180, Math.min(260, h));
+
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.width  = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+
+    if(CH){ CH.destroy(); CH=null; }
+
+    var ctx = canvas.getContext('2d');
+    if(!ctx) return;
+
+    CH = new Chart(ctx, {
+      data:{
+        labels: rows.map(function(r){return r.mo;}),
+        datasets:[
+          {type:'bar',   label:'AUM ($k)',        data:rows.map(function(r){return Math.round(r.aum/1000);}),    backgroundColor:'rgba(175,169,236,0.3)', borderColor:'#AFA9EC', borderWidth:1, borderRadius:3, yAxisID:'y2'},
+          {type:'line',  label:'Your revenue',    data:rows.map(function(r){return Math.round(r.net);}),         borderColor:'#1D9E75', backgroundColor:'transparent', borderWidth:2, pointRadius:3, pointBackgroundColor:'#1D9E75', tension:0.3, yAxisID:'y1'},
+          {type:'line',  label:'Revenue per AIM', data:rows.map(function(r){return Math.round(r.perAim);}),      borderColor:'#EF9F27', backgroundColor:'transparent', borderWidth:2, borderDash:[5,4], pointRadius:3, pointBackgroundColor:'#EF9F27', tension:0.3, yAxisID:'y1'}
+        ]
+      },
+      options:{
+        responsive:false,
+        maintainAspectRatio:false,
+        devicePixelRatio: dpr,
+        animation:{duration:200},
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return ' '+c.dataset.label+': $'+c.parsed.y.toLocaleString('en-US');}}}},
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#666',font:{size:10},maxRotation:0}},
+          y1:{position:'left', grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#666',font:{size:10},callback:function(v){return '$'+(v>=1000?Math.round(v/1000)+'k':v);}}},
+          y2:{position:'right', grid:{drawOnChartArea:false}, ticks:{color:'#666',font:{size:10},callback:function(v){return '$'+v+'k';}}}
+        }
+      }
+    });
+  }
+
+  function update(){
+    var rows = compute();
+    var last = rows[11];
+    var cum  = rows.reduce(function(a,r){return a+r.net;},0);
+
+    var kdata = [
+      {l:'AUM month 12',      v:fmtK(last.aum),    s:'total managed'},
+      {l:'Clients in fund',   v:Math.round(last.n), s:'month 12'},
+      {l:'Your annual revenue',v:fmtK(cum),         s:'12 months total'},
+      {l:'Revenue / AIM mo.12',v:fmt(last.perAim),  s:'passive commission'}
+    ];
+    v('kpis').innerHTML = kdata.map(function(k){
+      return '<div class="metric"><div class="m-l">'+k.l+'</div><div class="m-v">'+k.v+'</div><div class="m-s">'+k.s+'</div></div>';
+    }).join('');
+
+    v('v-net12').textContent  = fmt(last.net);
+    v('v-aims12').textContent = fmt(last.aimC)+' ('+fmt(last.perAim)+'/AIM)';
+
+    buildChart(rows);
+
+    var th = '<thead><tr><th>Month</th><th>Clients</th><th>AUM</th><th>Mgmt fee</th><th>Perf. fee</th><th>AIMs paid</th><th>Per AIM</th><th>Your net</th></tr></thead>';
+    var tb = '<tbody>'+rows.map(function(r,i){
+      return '<tr'+(i===11?' class="last"':'')+'>'+
+        '<td>'+r.mo+'</td><td>'+Math.round(r.n)+'</td><td>'+fmtK(r.aum)+'</td>'+
+        '<td>'+fmt(r.mgmt)+'</td><td>'+fmt(r.perf)+'</td>'+
+        '<td>'+fmt(r.aimC)+'</td><td>'+fmt(r.perAim)+'</td><td>'+fmt(r.net)+'</td></tr>';
+    }).join('')+'</tbody>';
+    v('tbl').innerHTML = th+tb;
+  }
+
+  function initLabels(){
+    sliders.forEach(function(s){
+      var el = v(s.id);
+      if(el) v(s.out).textContent = s.fn(el.value);
+    });
+  }
+
+  function loadChart(){
+    if(typeof Chart === 'undefined'){
+      setTimeout(loadChart, 100);
+      return;
+    }
+    initLabels();
+    attachSliders();
+    update();
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', loadChart);
+  } else {
+    loadChart();
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){ buildChart(compute()); }, 150);
+  });
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</body>
+</html>
