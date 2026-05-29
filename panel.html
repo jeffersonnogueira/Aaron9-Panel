@@ -8026,23 +8026,26 @@
 
 #level-flip-card .lfv44-shell{
   border: 1px solid rgba(34,211,238,.32);
-  border-radius: 10px;
+  border-radius: 8px;
   background:
-    radial-gradient(circle at 96% 0%, rgba(34,211,238,.16), transparent 32%),
-    linear-gradient(180deg, rgba(10,28,42,.94) 0%, rgba(5,12,22,.99) 100%);
+    linear-gradient(180deg, rgba(16,22,34,.98) 0%, rgba(6,10,18,.99) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.06),
     0 18px 42px rgba(2,6,23,.34);
   padding: 18px 20px;
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(520px, 1fr);
+  grid-template-columns: minmax(360px, .9fr) minmax(620px, 1.35fr);
   gap: 18px;
+}
+
+#level-flip-card .lfv44-left{
+  min-width: 0;
 }
 
 #level-flip-card .lfv44-k{
   font-size: 14px;
   line-height: 1;
-  letter-spacing: .16em;
+  letter-spacing: 0;
   text-transform: uppercase;
   font-weight: 950;
   color: rgba(203,213,225,.78);
@@ -8050,7 +8053,7 @@
 
 #level-flip-card .lfv44-main{
   margin-top: 8px;
-  font-size: 44px;
+  font-size: 38px;
   line-height: 1;
   font-weight: 950;
   color: #67e8f9;
@@ -8060,14 +8063,149 @@
 
 #level-flip-card .lfv44-sub{
   margin-top: 10px;
-  font-size: 20px;
+  font-size: 17px;
   line-height: 1.25;
   color: rgba(226,232,240,.92);
 }
 
-#level-flip-card .lfv44-grid{
+#level-flip-card .lfv44-decision{
+  margin-top: 14px;
+  border: 1px solid rgba(255,204,102,.32);
+  border-radius: 8px;
+  background: rgba(255,204,102,.08);
+  padding: 14px 16px;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #ffcc66;
+}
+
+#level-flip-card .lfv44-decision.is-enter{
+  border-color: rgba(74,222,128,.44);
+  background: rgba(34,197,94,.12);
+  color: var(--success);
+}
+
+#level-flip-card .lfv44-decision.is-block,
+#level-flip-card .lfv44-decision.is-stop{
+  border-color: rgba(248,113,113,.46);
+  background: rgba(248,113,113,.12);
+  color: var(--danger);
+}
+
+#level-flip-card .lfv44-decision.is-wait{
+  border-color: rgba(255,204,102,.34);
+  background: rgba(255,204,102,.08);
+  color: #ffcc66;
+}
+
+#level-flip-card .lfv44-thermo{
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+  padding: 14px;
+  min-width: 0;
+}
+
+#level-flip-card .lfv44-thermo-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+#level-flip-card .lfv44-thermo-head span{
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.72);
+}
+
+#level-flip-card .lfv44-thermo-head strong{
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 950;
+  color: #ffcc66;
+  text-align: right;
+}
+
+#level-flip-card .lfv44-steps{
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+#level-flip-card .lfv44-step{
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(15,23,42,.76);
+  padding: 10px;
+  min-height: 104px;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+#level-flip-card .lfv44-step span{
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(148,163,184,.16);
+  color: rgba(226,232,240,.78);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+#level-flip-card .lfv44-step strong{
+  font-size: 15px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: rgba(226,232,240,.9);
+}
+
+#level-flip-card .lfv44-step em{
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1.15;
+  color: rgba(203,213,225,.72);
+}
+
+#level-flip-card .lfv44-step.is-on{
+  border-color: rgba(34,211,238,.34);
+  background: rgba(8,47,73,.52);
+}
+
+#level-flip-card .lfv44-step.is-on span{
+  background: rgba(34,211,238,.22);
+  color: #67e8f9;
+}
+
+#level-flip-card .lfv44-step.is-now{
+  border-color: rgba(255,204,102,.52);
+  box-shadow: inset 0 0 0 1px rgba(255,204,102,.16);
+}
+
+#level-flip-card .lfv44-step.is-danger{
+  border-color: rgba(248,113,113,.56);
+  background: rgba(127,29,29,.28);
+}
+
+#level-flip-card .lfv44-step.is-danger span{
+  background: rgba(248,113,113,.22);
+  color: #fecaca;
+}
+
+#level-flip-card .lfv44-grid{
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -8082,7 +8220,7 @@
   display: block;
   font-size: 12px;
   line-height: 1;
-  letter-spacing: .14em;
+  letter-spacing: 0;
   text-transform: uppercase;
   font-weight: 950;
   opacity: .72;
@@ -8091,7 +8229,7 @@
 #level-flip-card .lfv44-cell strong{
   display: block;
   margin-top: 8px;
-  font-size: 25px;
+  font-size: 22px;
   line-height: 1.04;
   font-weight: 950;
   color: #ffcc66;
@@ -8116,6 +8254,16 @@
 
 @media (max-width: 1300px){
   #level-flip-card .lfv44-shell{
+    grid-template-columns: 1fr;
+  }
+  #level-flip-card .lfv44-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px){
+  #level-flip-card .lfv44-steps,
+  #level-flip-card .lfv44-grid{
     grid-template-columns: 1fr;
   }
 }
@@ -9874,35 +10022,79 @@ body.aaron-terminal-shell .top-right .kv .v{
 <!-- ===== LEVEL FLIP V44 — REAL LEVEL WATCH ===== -->
 <div class="prem-breakout-wrap" id="level-flip-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div class="lfv44-shell">
-    <div>
-      <div class="lfv44-k">V44 REAL LEVEL WATCH</div>
+    <div class="lfv44-left">
+      <div class="lfv44-k">V44 LEVEL FLIP</div>
       <div class="lfv44-main" id="lfv44-main">—</div>
       <div class="lfv44-sub" id="lfv44-sub">—</div>
+      <div class="lfv44-decision is-wait" id="lfv44-decision">—</div>
     </div>
-    <div class="lfv44-grid">
-      <div class="lfv44-cell">
-        <span>Status</span>
-        <strong class="is-side" id="lfv44-status">—</strong>
+    <div>
+      <div class="lfv44-thermo">
+        <div class="lfv44-thermo-head">
+          <span>Leitura do setup</span>
+          <strong id="lfv44-stage">—</strong>
+        </div>
+        <div class="lfv44-steps">
+          <div class="lfv44-step" id="lfv44-step-test">
+            <span>1</span>
+            <strong>Testou nível</strong>
+            <em id="lfv44-step-test-note">—</em>
+          </div>
+          <div class="lfv44-step" id="lfv44-step-break">
+            <span>2</span>
+            <strong>Rompeu</strong>
+            <em id="lfv44-step-break-note">—</em>
+          </div>
+          <div class="lfv44-step" id="lfv44-step-retest">
+            <span>3</span>
+            <strong>Reteste segurou</strong>
+            <em id="lfv44-step-retest-note">—</em>
+          </div>
+          <div class="lfv44-step" id="lfv44-step-trigger">
+            <span>4</span>
+            <strong>Trigger</strong>
+            <em id="lfv44-step-trigger-note">—</em>
+          </div>
+          <div class="lfv44-step" id="lfv44-step-stop">
+            <span>5</span>
+            <strong>Stop / cancel</strong>
+            <em id="lfv44-step-stop-note">—</em>
+          </div>
+        </div>
       </div>
-      <div class="lfv44-cell">
-        <span>Zone</span>
-        <strong id="lfv44-zone">—</strong>
-      </div>
-      <div class="lfv44-cell">
-        <span>Trigger</span>
-        <strong id="lfv44-trigger">—</strong>
-      </div>
-      <div class="lfv44-cell">
-        <span>Invalidation</span>
-        <strong id="lfv44-inval">—</strong>
-      </div>
-      <div class="lfv44-cell">
-        <span>Confidence</span>
-        <strong id="lfv44-conf">—</strong>
-      </div>
-      <div class="lfv44-cell">
-        <span>Touches</span>
-        <strong id="lfv44-touches">—</strong>
+      <div class="lfv44-grid">
+        <div class="lfv44-cell">
+          <span>Status</span>
+          <strong class="is-side" id="lfv44-status">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Zona</span>
+          <strong id="lfv44-zone">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Entrada</span>
+          <strong id="lfv44-trigger">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Cancelamento</span>
+          <strong id="lfv44-inval">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Qualidade</span>
+          <strong id="lfv44-conf">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Toques</span>
+          <strong id="lfv44-touches">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Reteste</span>
+          <strong id="lfv44-retest">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Agora</span>
+          <strong id="lfv44-action">—</strong>
+        </div>
       </div>
     </div>
   </div>
@@ -29286,35 +29478,98 @@ renderOptions("");
     const lfInvalidation = numPick(levelFlipV44?.invalidation);
     const lfConfidence = numPick(levelFlipV44?.confidence_pct);
     const lfTouches = numPick(levelFlipV44?.touch_count, levelFlipV44?.pivot_touch_count);
+    const lfRetestHeld = String(levelFlipV44?.retest_held ?? "").trim().toLowerCase() === "true" || levelFlipV44?.retest_held === true;
+    const lfTriggerCrossed = lfStatusRaw === "TRIGGERED" || levelFlipV44?.trigger_crossed === true || String(levelFlipV44?.trigger_crossed ?? "").trim().toLowerCase() === "true";
+    const lfBarsSinceRetest = numPick(levelFlipV44?.bars_since_retest);
+    const lfBreakoutIdx = numPick(levelFlipV44?.breakout_idx);
+    const lfRetestIdx = numPick(levelFlipV44?.retest_idx);
+    const lfTouchesOk = lfTouches != null && lfTouches >= 2;
+    const lfBreakoutOk = lfActive && (lfBreakoutIdx != null || lfStatusRaw === "ACTIVE" || lfStatusRaw === "TRIGGERED");
+    const lfRetestOk = lfRetestHeld || (lfRetestIdx != null && (lfStatusRaw === "ACTIVE" || lfStatusRaw === "TRIGGERED"));
+    const lfConfidenceOk = lfConfidence != null && lfConfidence >= 75;
+    const lfStopTouched = (() => {
+      if (!lfSide || current == null || lfInvalidation == null) return false;
+      return lfSide === "LONG" ? current <= lfInvalidation : current >= lfInvalidation;
+    })();
     const lfReadText = lfPickText(
       levelFlipV44?.tactical_read_pt,
       levelFlipV44?.message_pt,
       levelFlipV44?.tactical_read_en,
       levelFlipV44?.message_en
     );
+    const lfStageLabel = (() => {
+      if (!lfActive) return "SEM V44 AGORA";
+      if (lfStopTouched) return "INVALIDACAO TOCADA";
+      if (lfTriggerCrossed) return "TRIGGER CRUZADO";
+      if (lfRetestOk) return "RETESTE SEGURO";
+      if (lfBreakoutOk) return "ROMPEU - ESPERAR RETESTE";
+      if (lfTouchesOk) return "NIVEL TESTADO";
+      return "AGUARDANDO NIVEL";
+    })();
+    const lfDecision = (() => {
+      if (!lfActive) return { text: "SEM SETUP V44", cls: "is-wait", action: "Ignorar V44" };
+      if (lfStopTouched) return { text: "CANCELA V44", cls: "is-stop", action: "Nao operar" };
+      if (!lfTouchesOk) return { text: "NAO ENTRA - FALTA TESTE", cls: "is-wait", action: "Esperar nivel" };
+      if (!lfRetestOk) return { text: "NAO ENTRA - FALTA RETESTE", cls: "is-wait", action: "Esperar reteste" };
+      if (!lfConfidenceOk) return { text: "NAO ENTRA - QUALIDADE BAIXA", cls: "is-block", action: "Esperar novo V44" };
+      if (lfTriggerCrossed) return { text: "ENTRADA TATICA V44", cls: "is-enter", action: "Pode executar pequeno" };
+      return { text: "ARMAR NO TRIGGER", cls: "is-wait", action: "Sem antecipar" };
+    })();
+    const lfStepNote = {
+      test: lfTouches != null ? `${Math.round(lfTouches)} toques no nivel` : "precisa 2+ toques",
+      break: lfBreakoutOk ? "rompimento registrado" : "ainda nao rompeu",
+      retest: lfRetestOk
+        ? (lfBarsSinceRetest != null ? `segurou ha ${Math.round(lfBarsSinceRetest)} barras` : "reteste segurou")
+        : "esperar voltar no nivel",
+      trigger: lfTriggerCrossed ? "preco cruzou trigger" : `entrada so em ${lfMoney(lfTrigger)}`,
+      stop: lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `cancela em ${lfMoney(lfInvalidation)}`
+    };
 
     const lfCard = el("level-flip-card");
     if (lfCard) {
       lfCard.style.display = lfActive ? "" : "none";
-      lfCard.classList.remove("is-long", "is-short", "is-triggered", "is-active", "is-armed");
+      lfCard.classList.remove("is-long", "is-short", "is-triggered", "is-active", "is-armed", "is-stop");
       if (lfSide === "LONG") lfCard.classList.add("is-long");
       if (lfSide === "SHORT") lfCard.classList.add("is-short");
       if (lfStatusRaw === "TRIGGERED") lfCard.classList.add("is-triggered");
       if (lfStatusRaw === "ACTIVE") lfCard.classList.add("is-active");
       if (lfStatusRaw === "ARMED") lfCard.classList.add("is-armed");
+      if (lfStopTouched) lfCard.classList.add("is-stop");
     }
     if (el("lfv44-main")) el("lfv44-main").textContent = lfStateLabel;
     if (el("lfv44-sub")) {
       el("lfv44-sub").textContent = lfActive
-        ? `${lfReadText || "Level flip ativo."} Sinal de contexto operacional; o Operador Final ainda manda na execução.`
+        ? `${lfReadText || "Level flip ativo."} ${lfDecision.text}.`
         : "Nenhum level flip ativo agora.";
     }
+    if (el("lfv44-decision")) {
+      el("lfv44-decision").textContent = lfDecision.text;
+      el("lfv44-decision").className = `lfv44-decision ${lfDecision.cls}`;
+    }
+    if (el("lfv44-stage")) el("lfv44-stage").textContent = lfStageLabel;
+    const lfSetStep = (id, on, now, danger, note) => {
+      const node = el(id);
+      if (node) {
+        node.classList.toggle("is-on", !!on);
+        node.classList.toggle("is-now", !!now);
+        node.classList.toggle("is-danger", !!danger);
+      }
+      const noteNode = el(`${id}-note`);
+      if (noteNode) noteNode.textContent = note || "—";
+    };
+    lfSetStep("lfv44-step-test", lfTouchesOk, lfActive && !lfBreakoutOk, false, lfStepNote.test);
+    lfSetStep("lfv44-step-break", lfBreakoutOk, lfBreakoutOk && !lfRetestOk, false, lfStepNote.break);
+    lfSetStep("lfv44-step-retest", lfRetestOk, lfRetestOk && !lfTriggerCrossed, false, lfStepNote.retest);
+    lfSetStep("lfv44-step-trigger", lfTriggerCrossed, lfTriggerCrossed && !lfStopTouched, false, lfStepNote.trigger);
+    lfSetStep("lfv44-step-stop", lfStopTouched, false, lfStopTouched, lfStepNote.stop);
     if (el("lfv44-status")) el("lfv44-status").textContent = lfActive ? `${lfSide || "—"} ${lfStatusRaw}` : "—";
     if (el("lfv44-zone")) el("lfv44-zone").textContent = lfZoneText;
     if (el("lfv44-trigger")) el("lfv44-trigger").textContent = lfMoney(lfTrigger);
     if (el("lfv44-inval")) el("lfv44-inval").textContent = lfMoney(lfInvalidation);
     if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
     if (el("lfv44-touches")) el("lfv44-touches").textContent = lfTouches != null ? String(Math.round(lfTouches)) : "—";
+    if (el("lfv44-retest")) el("lfv44-retest").textContent = lfRetestOk ? "SEGUROU" : "NAO";
+    if (el("lfv44-action")) el("lfv44-action").textContent = lfDecision.action;
     if (el("tc-action-level")) el("tc-action-level").textContent = lfActive ? `${lfSide || "V44"} ${lfStatusRaw}` : "—";
 
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
@@ -30051,9 +30306,26 @@ const tcLevelFlipContra =
   tcOperatorDir &&
   tcOperatorDir !== "—" &&
   tcLevelFlipSide !== tcOperatorDir;
+const tcLevelFlipReady =
+  tcLevelFlipAligned &&
+  lfTouchesOk &&
+  lfRetestOk &&
+  lfConfidenceOk &&
+  !lfStopTouched;
+const tcLevelFlipTriggered = tcLevelFlipReady && lfTriggerCrossed;
 
 if (tcLevelFlipActive && !tcLateActive && !tcPositionAction) {
-  tcZoneLabel = tcLevelFlipAligned ? "V44 LEVEL" : "V44 CONTRA";
+  if (tcLevelFlipContra) {
+    tcZoneLabel = "V44 CONTRA";
+  } else if (tcLevelFlipAligned) {
+    tcZoneLabel =
+      lfStopTouched ? "V44 DEAD" :
+      (!lfTouchesOk || !lfRetestOk) ? "V44 WAIT" :
+      !lfConfidenceOk ? "V44 WEAK" :
+      "V44 LEVEL";
+  } else {
+    tcZoneLabel = "V44 WAIT";
+  }
 }
 
 const tcTargetDeskLine = (() => {
@@ -30322,7 +30594,9 @@ const tcOperatorLevelFlipLine = (() => {
   const invalTxt = lfInvalidation != null ? `invalida ${tcLateMoney(lfInvalidation)}` : "";
   const zoneTxt = lfZoneText && lfZoneText !== "—" ? `zona ${lfZoneText}` : "";
   const conflictTxt = tcLevelFlipContra ? " CONTRA direcao canonica; nao executar sem novo matcher." : "";
-  return `V44 Level Flip ${sideTxt} ${statusTxt}: ${[zoneTxt, triggerTxt, invalTxt].filter(Boolean).join(" | ")}.${conflictTxt}`.replace(/\s+\./g, ".");
+  const headerTxt = [lfDecision?.text || "V44", `V44 ${sideTxt} ${statusTxt}`, lfStageLabel].filter(Boolean).join(" | ");
+  const detailTxt = [zoneTxt, triggerTxt, invalTxt].filter(Boolean).join(" | ");
+  return `${headerTxt}${detailTxt ? `: ${detailTxt}` : ""}.${conflictTxt}`.replace(/\s+\./g, ".");
 })();
 const tcOperatorVwapLine = (() => {
   if (!tcA10VwapHasData) return "";
@@ -30436,9 +30710,45 @@ const tcBuildOperatorDecisionV1 = () => {
     }
 
     if (tcLevelFlipAligned) {
-      const triggered = lfStatusRaw === "TRIGGERED";
+      if (lfStopTouched) {
+        return withBase({
+          main: "CANCELA V44",
+          sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine}`,
+          mode: "is-no-trade",
+          zone: "V44 DEAD",
+          next: "Invalidacao tocada. Zerar a ideia V44 e esperar novo matcher/novo level flip.",
+          reason: "v44_level_flip_invalidated"
+        });
+      }
+
+      if (!lfTouchesOk || !lfRetestOk) {
+        const missingTxt = !lfTouchesOk
+          ? "ainda falta o nivel ser testado pelo menos 2 vezes"
+          : "rompeu, mas ainda falta o reteste segurar";
+        return withBase({
+          main: "AGUARDAR V44",
+          sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine} ${missingTxt}.`,
+          mode: "is-wait",
+          zone: "V44 WAIT",
+          next: "Esperar TESTE + ROMPIMENTO + RETESTE SEGURO. Sem antecipar primeiro rompimento.",
+          reason: "v44_level_flip_wait_structure"
+        });
+      }
+
+      if (!lfConfidenceOk) {
+        return withBase({
+          main: "V44 QUALIDADE BAIXA",
+          sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine} Qualidade ${lfConfidence != null ? fmtPct(lfConfidence) : "—"} abaixo de 75%.`,
+          mode: "is-wait",
+          zone: "V44 WEAK",
+          next: "Nao usar esse V44 como gatilho. Esperar novo V44 com qualidade >=75 ou novo matcher canonico.",
+          reason: "v44_level_flip_low_confidence"
+        });
+      }
+
+      const triggered = tcLevelFlipTriggered;
       return withBase({
-        main: triggered ? "ENTRADA TÁTICA V44" : "ARMAR LEVEL FLIP",
+        main: triggered ? "ENTRADA TATICA V44" : "ARMAR LEVEL FLIP",
         sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine}`,
         mode: triggered ? "is-acceptable" : "is-wait",
         zone: "V44 LEVEL",
@@ -30854,6 +31164,12 @@ const tcActionNote = (() => {
       return "V43 Dead = invalidação tocada; setup morto.";
     case "V44 LEVEL":
       return "V44 Level = resistencia virou suporte ou suporte virou resistencia; usar como gatilho tatico, nao como chase.";
+    case "V44 WAIT":
+      return "V44 Wait = ainda falta teste/reteste; primeiro rompimento sem reteste vira zona de armadilha.";
+    case "V44 WEAK":
+      return "V44 Weak = level flip existe, mas qualidade menor que 75; nao usar como gatilho.";
+    case "V44 DEAD":
+      return "V44 Dead = invalidação tocada; cancelar a ideia V44.";
     case "V44 CONTRA":
       return "V44 Contra = level flip apareceu contra a direcao canonica; alerta de virada, nao ordem.";
     case "POS HOLD":
