@@ -10141,33 +10141,33 @@ body.aaron-terminal-shell .top-right .kv .v{
     <div>
       <div class="lfv44-thermo">
         <div class="lfv44-thermo-head">
-          <span>Leitura do setup</span>
+          <span>Continuacao x Exaustao</span>
           <strong id="lfv44-stage">—</strong>
         </div>
         <div class="lfv44-steps">
           <div class="lfv44-step" id="lfv44-step-test">
             <span>1</span>
-            <strong>Testou nível</strong>
+            <strong>Continua</strong>
             <em id="lfv44-step-test-note">—</em>
           </div>
           <div class="lfv44-step" id="lfv44-step-break">
             <span>2</span>
-            <strong>Rompeu</strong>
+            <strong>Esticando</strong>
             <em id="lfv44-step-break-note">—</em>
           </div>
           <div class="lfv44-step" id="lfv44-step-retest">
             <span>3</span>
-            <strong>Reteste segurou</strong>
+            <strong>Elastico</strong>
             <em id="lfv44-step-retest-note">—</em>
           </div>
           <div class="lfv44-step" id="lfv44-step-trigger">
             <span>4</span>
-            <strong>Trigger</strong>
+            <strong>Exaustao</strong>
             <em id="lfv44-step-trigger-note">—</em>
           </div>
           <div class="lfv44-step" id="lfv44-step-stop">
             <span>5</span>
-            <strong>Stop / cancel</strong>
+            <strong>Reversao</strong>
             <em id="lfv44-step-stop-note">—</em>
           </div>
         </div>
@@ -30021,7 +30021,7 @@ renderOptions("");
       el("lfv44-decision").textContent = lfDecision.text;
       el("lfv44-decision").className = `lfv44-decision ${lfDecision.cls}`;
     }
-    if (el("lfv44-stage")) el("lfv44-stage").textContent = lfStageLabel;
+    if (el("lfv44-stage")) el("lfv44-stage").textContent = lfElastic.label;
     const lfSetStep = (id, on, now, danger, note) => {
       const node = el(id);
       if (node) {
@@ -30032,11 +30032,18 @@ renderOptions("");
       const noteNode = el(`${id}-note`);
       if (noteNode) noteNode.textContent = note || "—";
     };
-    lfSetStep("lfv44-step-test", lfTouchesOk, lfActive && !lfBreakoutOk, false, lfStepNote.test);
-    lfSetStep("lfv44-step-break", lfBreakoutOk, lfBreakoutOk && !lfRetestOk, false, lfStepNote.break);
-    lfSetStep("lfv44-step-retest", lfRetestOk, lfRetestOk && !lfTriggerCrossed, false, lfStepNote.retest);
-    lfSetStep("lfv44-step-trigger", lfTriggerCrossed, lfTriggerCrossed && !lfStopTouched, false, lfStepNote.trigger);
-    lfSetStep("lfv44-step-stop", lfStopTouched || lfReversalRisk, false, lfStopTouched || lfReversalRisk, lfStepNote.stop);
+    const lfElasticStepNotes = [
+      `continua ${fmtPct(lfElastic.continuation)}`,
+      `elastico ${Math.round(lfElastic.pct)}%`,
+      "nao perseguir no meio",
+      `exaustao ${fmtPct(lfElastic.exhaustion)}`,
+      `reversao ${lfMoney(lfReversalLevel)}`
+    ];
+    lfSetStep("lfv44-step-test", lfElastic.idx >= 0, lfElastic.idx === 0, lfElastic.idx === 0 && lfElastic.tone === "is-danger", lfElasticStepNotes[0]);
+    lfSetStep("lfv44-step-break", lfElastic.idx >= 1, lfElastic.idx === 1, lfElastic.idx === 1 && lfElastic.tone === "is-danger", lfElasticStepNotes[1]);
+    lfSetStep("lfv44-step-retest", lfElastic.idx >= 2, lfElastic.idx === 2, lfElastic.idx === 2 && lfElastic.tone === "is-danger", lfElasticStepNotes[2]);
+    lfSetStep("lfv44-step-trigger", lfElastic.idx >= 3, lfElastic.idx === 3, lfElastic.idx === 3, lfElasticStepNotes[3]);
+    lfSetStep("lfv44-step-stop", lfElastic.idx >= 4 || lfReversalRisk || lfStopTouched, lfElastic.idx === 4 || lfReversalRisk || lfStopTouched, lfElastic.idx >= 4 || lfReversalRisk || lfStopTouched, lfElasticStepNotes[4]);
     if (el("lfv44-live-label")) el("lfv44-live-label").textContent = lfLiveMeter.label;
     if (el("lfv44-live-note")) el("lfv44-live-note").textContent = lfLiveMeter.note;
     if (el("lfv44-live-fill")) el("lfv44-live-fill").style.width = `${Math.round(lfLiveMeter.pct)}%`;
