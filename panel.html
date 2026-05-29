@@ -10039,7 +10039,7 @@ body.aaron-terminal-shell .top-right .kv .v{
 <div class="prem-breakout-wrap" id="level-flip-card" style="display:none; margin-top:10px; grid-column: 1 / -1;">
   <div class="lfv44-shell">
     <div class="lfv44-left">
-      <div class="lfv44-k">V44 LEVEL FLIP</div>
+      <div class="lfv44-k">V44 FLIP / REVERSAO</div>
       <div class="lfv44-main" id="lfv44-main">—</div>
       <div class="lfv44-sub" id="lfv44-sub">—</div>
       <div class="lfv44-decision is-wait" id="lfv44-decision">—</div>
@@ -10048,7 +10048,7 @@ body.aaron-terminal-shell .top-right .kv .v{
       <div class="lfv44-thermo">
         <div class="lfv44-live">
           <div class="lfv44-live-head">
-            <span>Termometro vivo</span>
+            <span>Flip x Reversao</span>
             <strong id="lfv44-live-label">—</strong>
           </div>
           <div class="lfv44-live-track">
@@ -10057,23 +10057,23 @@ body.aaron-terminal-shell .top-right .kv .v{
           <div class="lfv44-live-segments">
             <div class="lfv44-live-seg" id="lfv44-live-seg-0">
               <strong>Reversao</strong>
-              <em>contra o V44</em>
+              <em>pode virar</em>
             </div>
             <div class="lfv44-live-seg" id="lfv44-live-seg-1">
               <strong>Falhando</strong>
-              <em>perto da reversao</em>
+              <em>contra o flip</em>
             </div>
             <div class="lfv44-live-seg" id="lfv44-live-seg-2">
               <strong>Meio</strong>
-              <em>briga sem gatilho</em>
+              <em>sem decisao</em>
             </div>
             <div class="lfv44-live-seg" id="lfv44-live-seg-3">
               <strong>Pressao</strong>
-              <em>indo ao trigger</em>
+              <em>indo ao flip</em>
             </div>
             <div class="lfv44-live-seg" id="lfv44-live-seg-4">
               <strong>Disparou</strong>
-              <em>trigger cruzado</em>
+              <em>flip ativado</em>
             </div>
           </div>
           <div class="lfv44-live-note" id="lfv44-live-note">—</div>
@@ -10114,23 +10114,23 @@ body.aaron-terminal-shell .top-right .kv .v{
       </div>
       <div class="lfv44-grid">
         <div class="lfv44-cell">
-          <span>Status</span>
+          <span>Flip</span>
           <strong class="is-side" id="lfv44-status">—</strong>
         </div>
         <div class="lfv44-cell">
-          <span>Zona</span>
+          <span>Nivel</span>
           <strong id="lfv44-zone">—</strong>
         </div>
         <div class="lfv44-cell">
-          <span>Entrada</span>
+          <span>Flip em</span>
           <strong id="lfv44-trigger">—</strong>
         </div>
         <div class="lfv44-cell">
-          <span>Cancelamento</span>
+          <span>Falha se</span>
           <strong id="lfv44-inval">—</strong>
         </div>
         <div class="lfv44-cell">
-          <span>Reversao</span>
+          <span>Pode reverter em</span>
           <strong id="lfv44-reversal">—</strong>
         </div>
         <div class="lfv44-cell">
@@ -10156,6 +10156,10 @@ body.aaron-terminal-shell .top-right .kv .v{
         <div class="lfv44-cell">
           <span>Agora</span>
           <strong id="lfv44-action">—</strong>
+        </div>
+        <div class="lfv44-cell">
+          <span>Fonte</span>
+          <strong id="lfv44-source">—</strong>
         </div>
       </div>
     </div>
@@ -29536,6 +29540,15 @@ renderOptions("");
       digest?.canonical_read_v1 ||
       payload?.canonical_read_v1 ||
       {};
+    const lfPivotBlock =
+      exec1x1?.pivot_premonition_v1 ||
+      panel?.pivot_premonition_v1 ||
+      digest?.pivot_premonition_v1 ||
+      payload?.pivot_premonition_v1 ||
+      payload?.ui?.pivot_premonition_v1 ||
+      payload?.live?.pivot_premonition_v1 ||
+      (typeof deepFind === "function" ? deepFind(root, "pivot_premonition_v1") : null) ||
+      {};
 
     const lfPickText = (...vals) => {
       for (const v of vals) {
@@ -29636,6 +29649,23 @@ renderOptions("");
       lfZoneLow != null && lfZoneHigh != null
         ? `${lfMoney(lfZoneLow)}-${lfMoney(lfZoneHigh)}`
         : lfZoneMid != null ? lfMoney(lfZoneMid) : "—";
+    const lfPivotKind = String(lfPivotBlock?.next_pivot_kind || lfPivotBlock?.pivot1?.kind || "").trim().toUpperCase();
+    const lfPivotLow = numPick(lfPivotBlock?.next_pivot_zone_low, lfPivotBlock?.pivot1?.zone_low);
+    const lfPivotHigh = numPick(lfPivotBlock?.next_pivot_zone_high, lfPivotBlock?.pivot1?.zone_high);
+    const lfPivotProb = numPick(lfPivotBlock?.next_pivot_prob_pct, lfPivotBlock?.pivot1?.prob_pct);
+    const lfPivotEtaMin = numPick(lfPivotBlock?.next_pivot_eta_p50_min, lfPivotBlock?.pivot1?.eta_p50_min);
+    const lfPivotText =
+      lfPivotLow != null && lfPivotHigh != null
+        ? `${lfMoney(lfPivotLow)}-${lfMoney(lfPivotHigh)}`
+        : lfPivotLow != null ? lfMoney(lfPivotLow) : lfPivotHigh != null ? lfMoney(lfPivotHigh) : "";
+    const lfPivotMatchesFlip =
+      !!lfPivotText &&
+      (
+        !lfSide ||
+        !lfPivotKind ||
+        (lfSide === "SHORT" && lfPivotKind === "LOW") ||
+        (lfSide === "LONG" && lfPivotKind === "HIGH")
+      );
     const lfTrigger = numPick(levelFlipV44?.trigger_price);
     const lfInvalidation = numPick(levelFlipV44?.invalidation);
     const lfCanonicalReversal = numPick(
@@ -29661,6 +29691,12 @@ renderOptions("");
       return lfSide === "SHORT"
         ? `acima ${lfMoney(lfReversalLevel)}`
         : `abaixo ${lfMoney(lfReversalLevel)}`;
+    })();
+    const lfFailText = (() => {
+      if (lfInvalidation == null) return "—";
+      return lfSide === "SHORT"
+        ? `acima ${lfMoney(lfInvalidation)}`
+        : lfSide === "LONG" ? `abaixo ${lfMoney(lfInvalidation)}` : lfMoney(lfInvalidation);
     })();
     const lfClamp = (n, min, max) => Math.max(min, Math.min(max, n));
     const lfLiveMeter = (() => {
@@ -29710,7 +29746,7 @@ renderOptions("");
       const sideRead = lfSide === "SHORT"
         ? "Para SHORT, cair aproxima do trigger; subir aproxima da reversao."
         : "Para LONG, subir aproxima do trigger; cair aproxima da reversao.";
-      const note = `px ${lfMoney(current)} | trigger ${lfMoney(lfTrigger)} (${lfMoney(distTrigger)}) | reversao ${lfMoney(lfReversalLevel)} (${lfMoney(distReversal)}). ${sideRead}`;
+      const note = `px ${lfMoney(current)} | flip em ${lfMoney(lfTrigger)} (${lfMoney(distTrigger)}) | falha ${lfFailText} (${lfMoney(distReversal)}). ${sideRead}`;
       return { pct, idx, label, tone, note };
     })();
     const lfPickPct = (...vals) => {
@@ -29750,6 +29786,46 @@ renderOptions("");
       lfEmaBlock?.cve ||
       lfEmaBlock?.probabilities ||
       {};
+    const lfEmaReversalTarget = numPick(
+      lfEmaBlock?.reversal_target_price_p50,
+      lfEmaBlock?.highlight?.reversal_target_price_p50,
+      lfEmaBlock?.turn_target_price_p50,
+      lfEmaBlock?.highlight?.turn_target_price_p50,
+      lfEmaBlock?.exhaustion_target_price_p50,
+      lfEmaBlock?.highlight?.exhaustion_target_price_p50,
+      panel?.reversal_target_price_p50,
+      digest?.reversal_target_price_p50,
+      payload?.reversal_target_price_p50
+    );
+    const lfEmaReversalEta = numPick(
+      lfEmaBlock?.reversal_eta_p50_min,
+      lfEmaBlock?.highlight?.reversal_eta_p50_min,
+      lfEmaBlock?.turn_eta_p50_min,
+      lfEmaBlock?.highlight?.turn_eta_p50_min,
+      lfEmaBlock?.exhaustion_eta_p50_min,
+      lfEmaBlock?.highlight?.exhaustion_eta_p50_min
+    );
+    const lfPredictedReversal = (() => {
+      if (lfPivotMatchesFlip) {
+        const parts = [];
+        if (lfPivotProb != null) parts.push(fmtPct(lfPivotProb));
+        if (lfPivotEtaMin != null) parts.push(`~${Math.round(lfPivotEtaMin)}m`);
+        return {
+          text: `${lfPivotText}${parts.length ? ` (${parts.join(" / ")})` : ""}`,
+          source: "MATCHER pivot"
+        };
+      }
+      if (lfEmaReversalTarget != null) {
+        return {
+          text: `${lfMoney(lfEmaReversalTarget)}${lfEmaReversalEta != null ? ` (~${Math.round(lfEmaReversalEta)}m)` : ""}`,
+          source: "MATCHER EMA/VOL"
+        };
+      }
+      return {
+        text: lfFailText !== "—" ? `falha ${lfFailText}` : "—",
+        source: "MATCHER level_flip"
+      };
+    })();
     const lfVolBlock =
       exec1x1?.volume_premonition_v1 ||
       panel?.volume_premonition_v1 ||
@@ -29801,7 +29877,7 @@ renderOptions("");
         label = "ESTICANDO";
         tone = "";
       }
-      const note = `continua ${fmtPct(lfContScore)} | exaustao ${fmtPct(lfExhaustScore)} | contra-preco ${fmtPct(lfPriceAgainstPct)}. Quanto mais perto de 100, mais elastico/reversao.`;
+      const note = `continua ${fmtPct(lfContScore)} | exaustao ${fmtPct(lfExhaustScore)} | contra-preco ${fmtPct(lfPriceAgainstPct)} | pode reverter em ${lfPredictedReversal.text}. Fonte ${lfPredictedReversal.source}.`;
       return { pct, idx, label, tone, note, continuation: lfContScore, exhaustion: lfExhaustScore };
     })();
     const lfConfidence = numPick(levelFlipV44?.confidence_pct);
@@ -29873,6 +29949,7 @@ renderOptions("");
         ? `px ${lfMoney(current)} / reversao ${lfMoney(lfReversalLevel)}`
         : lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `px ${lfMoney(current)} / cancela ${lfMoney(lfInvalidation)}`
     };
+    const lfOperationLine = `Flip em ${lfMoney(lfTrigger)}. Pode reverter em ${lfPredictedReversal.text}. Falha ${lfFailText}.`;
 
     const lfCard = el("level-flip-card");
     if (lfCard) {
@@ -29888,7 +29965,7 @@ renderOptions("");
     if (el("lfv44-main")) el("lfv44-main").textContent = lfStateLabel;
     if (el("lfv44-sub")) {
       el("lfv44-sub").textContent = lfActive
-        ? `${lfReadText || "Level flip ativo."} ${lfDecision.text}.`
+        ? `${lfReadText || "Level flip ativo."} ${lfOperationLine}`
         : "Nenhum level flip ativo agora.";
     }
     if (el("lfv44-decision")) {
@@ -29920,14 +29997,15 @@ renderOptions("");
     if (el("lfv44-status")) el("lfv44-status").textContent = lfActive ? `${lfSide || "—"} ${lfStatusRaw}` : "—";
     if (el("lfv44-zone")) el("lfv44-zone").textContent = lfZoneText;
     if (el("lfv44-trigger")) el("lfv44-trigger").textContent = lfMoney(lfTrigger);
-    if (el("lfv44-inval")) el("lfv44-inval").textContent = lfMoney(lfInvalidation);
-    if (el("lfv44-reversal")) el("lfv44-reversal").textContent = lfReversalText;
+    if (el("lfv44-inval")) el("lfv44-inval").textContent = lfFailText;
+    if (el("lfv44-reversal")) el("lfv44-reversal").textContent = lfPredictedReversal.text;
     if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
     if (el("lfv44-touches")) el("lfv44-touches").textContent = lfTouches != null ? String(Math.round(lfTouches)) : "—";
     if (el("lfv44-retest")) el("lfv44-retest").textContent = lfRetestOk ? "SEGUROU" : "NAO";
     if (el("lfv44-bars-retest")) el("lfv44-bars-retest").textContent = lfBarsSinceRetest != null ? String(Math.round(lfBarsSinceRetest)) : "—";
     if (el("lfv44-continuation")) el("lfv44-continuation").textContent = lfContinuationText;
     if (el("lfv44-action")) el("lfv44-action").textContent = `${lfDecision.action} | px ${lfMoney(current)}`;
+    if (el("lfv44-source")) el("lfv44-source").textContent = lfPredictedReversal.source;
     if (el("tc-action-level")) el("tc-action-level").textContent = lfActive ? `${lfSide || "V44"} ${lfStatusRaw}` : "—";
 
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
