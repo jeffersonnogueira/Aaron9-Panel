@@ -2,11 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>AARON 10 – Painel Institucional em Tempo Real </title>
+  <title>AARON 9 – Painel Institucional em Tempo Real </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 
   <style>
@@ -392,19 +389,6 @@
 
 .pill-small strong{
   font-size: 14px !important;
-}
-
-.top-digest-time{
-  border-color:rgba(61,165,255,.34) !important;
-  background:rgba(3,12,24,.34) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.05),
-    0 0 18px rgba(61,165,255,.12) !important;
-}
-
-.top-digest-time strong{
-  color:#f8fafc !important;
-  text-shadow:0 0 14px rgba(61,165,255,.34);
 }
 
 .tf-picker{
@@ -1058,7 +1042,7 @@
     .text-soft {
       color: var(--text-soft);
     }
-    /* ====== AARON 10 – COLUNA DIREITA (DECISION PANEL) ====== */
+    /* ====== AARON 9 – COLUNA DIREITA (DECISION PANEL) ====== */
 
 .decision-column {
   display: flex;
@@ -7710,36 +7694,11 @@
     0 0 0 1px rgba(74,222,128,.10);
 }
 
-#tc-action-bar.is-trend-now .tc-action-shell{
-  border-color: rgba(52,211,153,.72);
-  background:
-    radial-gradient(circle at 8% 0%, rgba(52,211,153,.30), transparent 36%),
-    linear-gradient(90deg, rgba(16,185,129,.20) 0%, rgba(16,185,129,.055) 30%, rgba(15,23,42,.98) 100%),
-    linear-gradient(180deg, rgba(16,24,39,.98) 0%, rgba(5,10,20,.995) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    inset 6px 0 0 rgba(52,211,153,.96),
-    0 24px 70px rgba(0,0,0,.48),
-    0 0 0 1px rgba(52,211,153,.14);
-}
-
-#tc-action-bar.is-trend-now .tc-action-main,
-#tc-action-bar.is-trend-now .tc-action-box-v.is-t2,
-#tc-action-bar.is-trend-now .tc-action-box-v.is-trend{
-  color: #34d399;
-}
-
-#tc-action-bar.is-trend-now .tc-action-live-pill{
-  border-color: rgba(52,211,153,.72);
-  background: #34d399;
-  box-shadow: 0 10px 24px rgba(52,211,153,.20);
-}
-
-#tc-action-bar.is-good:not(.is-trend-now) .tc-action-main{
+#tc-action-bar.is-good .tc-action-main{
   color: #ffcc66;
 }
 
-#tc-action-bar.is-good:not(.is-trend-now) .tc-action-shell{
+#tc-action-bar.is-good .tc-action-shell{
   border-color: rgba(255,204,102,.58);
 }
 
@@ -7775,359 +7734,6 @@
     inset 6px 0 0 rgba(203,213,225,.52),
     0 24px 70px rgba(0,0,0,.40),
     0 0 0 1px rgba(255,255,255,.04);
-}
-
-/* ===== TREND T2 COMMAND — NEW TOP BLOCK ===== */
-#trend-t2-command-card{
-  display: block;
-  margin: 18px 0 18px !important;
-  position: sticky;
-  top: 10px;
-  z-index: 10005;
-  border: 0 !important;
-  background: transparent !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-}
-
-body.aaron-terminal-shell #trend-t2-command-card{
-  top: 124px;
-}
-
-#trend-t2-command-card .tt2-stage{
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-#trend-t2-command-card .tt2-shell{
-  width: 100%;
-  min-height: 340px;
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 18px;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(251,191,36,.15) 0%, transparent 62%),
-    linear-gradient(135deg, #1a160a 0%, #0a1020 58%, #050914 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    0 28px 70px rgba(0,0,0,.48),
-    0 0 0 1px rgba(255,255,255,.035);
-  padding: 34px 40px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(520px, .72fr);
-  gap: 30px;
-  align-items: center;
-  position: relative;
-}
-
-#trend-t2-command-card .tt2-shell::before{
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #fbbf24, transparent 72%);
-  opacity: .95;
-}
-
-#trend-t2-command-card .tt2-left{
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0;
-}
-
-#trend-t2-command-card .tt2-k{
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: .24em;
-  text-transform: uppercase;
-  font-weight: 900;
-  color: rgba(148,163,184,.70);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-#trend-t2-command-card .tt2-k::after{
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(255,255,255,.13), transparent);
-}
-
-#trend-t2-command-card .tt2-main{
-  font-family: "Syne", "Arial Black", Impact, sans-serif;
-  font-size: 86px;
-  line-height: .90;
-  font-weight: 950;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: #fbbf24;
-  overflow-wrap: anywhere;
-  text-shadow: 0 0 54px rgba(251,191,36,.22);
-}
-
-#trend-t2-command-card .tt2-state{
-  font-family: "Syne", system-ui, sans-serif;
-  margin-top: 14px;
-  font-size: 28px;
-  line-height: 1.05;
-  font-weight: 850;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.70);
-}
-
-#trend-t2-command-card .tt2-sub{
-  margin-top: 18px;
-  max-width: 1120px;
-  font-size: 15px;
-  line-height: 1.55;
-  color: rgba(226,232,240,.58);
-  overflow-wrap: anywhere;
-}
-
-#trend-t2-command-card .tt2-pills{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-top: 22px;
-}
-
-#trend-t2-command-card .tt2-pill{
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 999px;
-  background: rgba(255,255,255,.045);
-  padding: 9px 13px;
-  font-size: 12px;
-  line-height: 1;
-  font-weight: 950;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: rgba(226,232,240,.86);
-}
-
-#trend-t2-command-card .tt2-metrics{
-  min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  align-items: stretch;
-}
-
-#trend-t2-command-card .tt2-box{
-  min-width: 0;
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 12px;
-  background: rgba(255,255,255,.045);
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  min-height: 98px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-}
-
-#trend-t2-command-card .tt2-box span{
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  font-weight: 950;
-  color: rgba(148,163,184,.76);
-}
-
-#trend-t2-command-card .tt2-box strong{
-  font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
-  font-size: 28px;
-  line-height: 1.05;
-  font-weight: 950;
-  color: rgba(255,255,255,.92);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#trend-t2-command-card .tt2-strip{
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 10px;
-}
-
-#trend-t2-command-card .tt2-mcard{
-  min-width: 0;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 12px;
-  background: rgba(4,9,20,.92);
-  padding: 15px 17px;
-  min-height: 102px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.04),
-    0 16px 34px rgba(0,0,0,.28);
-}
-
-#trend-t2-command-card .tt2-mcard::before{
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  opacity: .82;
-}
-
-#trend-t2-command-card .tt2-mcard.c-cyan::before{ background: #22d3ee; }
-#trend-t2-command-card .tt2-mcard.c-green::before{ background: #34d399; }
-#trend-t2-command-card .tt2-mcard.c-blue::before{ background: #60a5fa; }
-#trend-t2-command-card .tt2-mcard.c-amber::before{ background: #fbbf24; }
-#trend-t2-command-card .tt2-mcard.c-violet::before{ background: #a78bfa; }
-#trend-t2-command-card .tt2-mcard.c-red::before{ background: #f87171; }
-
-#trend-t2-command-card .tt2-mk{
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(148,163,184,.82);
-  font-weight: 950;
-}
-
-#trend-t2-command-card .tt2-mv{
-  margin-top: 9px;
-  font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
-  font-size: 28px;
-  line-height: 1;
-  font-weight: 950;
-  color: rgba(255,255,255,.92);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#trend-t2-command-card .tt2-ms{
-  margin-top: 7px;
-  font-size: 12px;
-  line-height: 1.25;
-  color: rgba(148,163,184,.72);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#trend-t2-command-card .tt2-mv.cy{ color: #22d3ee; }
-#trend-t2-command-card .tt2-mv.up{ color: #34d399; }
-#trend-t2-command-card .tt2-mv.am{ color: #fbbf24; }
-#trend-t2-command-card .tt2-mv.dn{ color: #f87171; }
-#trend-t2-command-card .tt2-mv.vi{ color: #a78bfa; }
-
-#trend-t2-command-card.is-entry .tt2-shell{
-  border-color: rgba(52,211,153,.34);
-  background:
-    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(52,211,153,.21) 0%, transparent 62%),
-    linear-gradient(135deg, #0b1e18 0%, #0a1020 58%, #050914 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    0 28px 70px rgba(0,0,0,.48),
-    0 0 0 1px rgba(52,211,153,.08);
-}
-
-#trend-t2-command-card.is-entry .tt2-shell::before{
-  background: linear-gradient(90deg, #34d399, transparent 72%);
-}
-
-#trend-t2-command-card.is-entry .tt2-main,
-#trend-t2-command-card.is-entry #tt2-t2,
-#trend-t2-command-card.is-entry #tt2-trend{
-  color: #34d399;
-  text-shadow: 0 0 60px rgba(52,211,153,.26);
-}
-
-#trend-t2-command-card.is-entry.is-short-side .tt2-shell{
-  border-color: rgba(248,113,113,.34);
-  background:
-    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(248,113,113,.18) 0%, transparent 62%),
-    linear-gradient(135deg, #1e0b0b 0%, #180a14 58%, #050914 100%);
-}
-
-#trend-t2-command-card.is-entry.is-short-side .tt2-shell::before{
-  background: linear-gradient(90deg, #f87171, transparent 72%);
-}
-
-#trend-t2-command-card.is-entry.is-short-side .tt2-main,
-#trend-t2-command-card.is-entry.is-short-side #tt2-t2,
-#trend-t2-command-card.is-entry.is-short-side #tt2-trend{
-  color: #f87171;
-  text-shadow: 0 0 60px rgba(248,113,113,.24);
-}
-
-#trend-t2-command-card.is-wait-t2 .tt2-main{
-  color: #ffcc66;
-}
-
-#trend-t2-command-card.is-wait-t2 .tt2-shell::before{
-  background: linear-gradient(90deg, #ffcc66, transparent 72%);
-}
-
-#trend-t2-command-card.is-block .tt2-shell{
-  border-color: rgba(248,113,113,.34);
-  background:
-    radial-gradient(ellipse 62% 125% at 0% 50%, rgba(248,113,113,.18) 0%, transparent 62%),
-    linear-gradient(135deg, #1e0b0b 0%, #180a14 58%, #050914 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    0 28px 70px rgba(0,0,0,.48),
-    0 0 0 1px rgba(248,113,113,.08);
-}
-
-#trend-t2-command-card.is-block .tt2-shell::before{
-  background: linear-gradient(90deg, #f87171, transparent 72%);
-}
-
-#trend-t2-command-card.is-block .tt2-main{
-  color: #f97373;
-  text-shadow: 0 0 60px rgba(248,113,113,.24);
-}
-
-@media (max-width: 1100px){
-  #trend-t2-command-card .tt2-shell{
-    grid-template-columns: 1fr;
-    min-height: 0;
-    padding: 28px 28px;
-  }
-
-  #trend-t2-command-card .tt2-main{
-    font-size: 64px;
-  }
-
-  #trend-t2-command-card .tt2-metrics{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  #trend-t2-command-card .tt2-strip{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 680px){
-  #trend-t2-command-card .tt2-main{
-    font-size: 44px;
-  }
-
-  #trend-t2-command-card .tt2-metrics{
-    grid-template-columns: 1fr;
-  }
-
-  #trend-t2-command-card .tt2-strip{
-    grid-template-columns: 1fr;
-  }
 }
 
 #mc-card .mc-shell{
@@ -8418,20 +8024,6 @@ body.aaron-terminal-shell #trend-t2-command-card{
   color: #f87171;
 }
 
-#route-watch-dock{
-  grid-column: 1 / -1 !important;
-  width: 100%;
-  display: flex !important;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-#route-watch-dock #pattern-route-card,
-#route-watch-dock #vwap-route-card{
-  margin-top: 0 !important;
-}
-
 #level-flip-card .lfv44-shell{
   border: 1px solid rgba(34,211,238,.32);
   border-radius: 10px;
@@ -8522,230 +8114,9 @@ body.aaron-terminal-shell #trend-t2-command-card{
   border-color: rgba(255,204,102,.55);
 }
 
-#pattern-route-card .prw46-shell{
-  border: 1px solid rgba(255,204,102,.34);
-  border-radius: 10px;
-  background:
-    radial-gradient(circle at 96% 0%, rgba(255,204,102,.16), transparent 32%),
-    linear-gradient(180deg, rgba(42,31,12,.94) 0%, rgba(5,12,22,.99) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    0 18px 42px rgba(2,6,23,.34);
-  padding: 18px 20px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(560px, 1fr);
-  gap: 18px;
-}
-
-#pattern-route-card .prw46-k{
-  font-size: 14px;
-  line-height: 1;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  font-weight: 950;
-  color: rgba(203,213,225,.78);
-}
-
-#pattern-route-card .prw46-main{
-  margin-top: 8px;
-  font-size: 44px;
-  line-height: 1;
-  font-weight: 950;
-  color: #ffcc66;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-
-#pattern-route-card .prw46-sub{
-  margin-top: 10px;
-  font-size: 20px;
-  line-height: 1.25;
-  color: rgba(226,232,240,.92);
-}
-
-#pattern-route-card .prw46-grid{
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-#pattern-route-card .prw46-cell{
-  min-width: 0;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 8px;
-  background: rgba(255,255,255,.04);
-  padding: 12px 14px;
-}
-
-#pattern-route-card .prw46-cell span{
-  display: block;
-  font-size: 12px;
-  line-height: 1;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  font-weight: 950;
-  opacity: .72;
-}
-
-#pattern-route-card .prw46-cell strong{
-  display: block;
-  margin-top: 8px;
-  font-size: 24px;
-  line-height: 1.04;
-  font-weight: 950;
-  color: #f8fafc;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#pattern-route-card .prw46-cell strong.is-side{
-  color: #ffcc66;
-}
-
-#pattern-route-card.is-long .prw46-main,
-#pattern-route-card.is-long .prw46-cell strong.is-side{
-  color: var(--success);
-}
-
-#pattern-route-card.is-short .prw46-main,
-#pattern-route-card.is-short .prw46-cell strong.is-side{
-  color: var(--danger);
-}
-
-#pattern-route-card.is-inactive{
-  opacity: .82;
-}
-
-#vwap-route-card .vrw47-shell{
-  border: 1px solid rgba(96,165,250,.36);
-  border-radius: 10px;
-  background:
-    radial-gradient(circle at 96% 0%, rgba(96,165,250,.18), transparent 34%),
-    linear-gradient(180deg, rgba(13,32,58,.94) 0%, rgba(5,12,22,.99) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    0 18px 42px rgba(2,6,23,.34);
-  padding: 18px 20px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(560px, 1fr);
-  gap: 18px;
-}
-
-#vwap-route-card .vrw47-k{
-  font-size: 14px;
-  line-height: 1;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  font-weight: 950;
-  color: rgba(203,213,225,.78);
-}
-
-#vwap-route-card .vrw47-main{
-  margin-top: 8px;
-  font-size: 44px;
-  line-height: 1;
-  font-weight: 950;
-  color: #93c5fd;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-
-#vwap-route-card .vrw47-sub{
-  margin-top: 10px;
-  font-size: 20px;
-  line-height: 1.25;
-  color: rgba(226,232,240,.92);
-}
-
-#vwap-route-card .vrw47-grid{
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-#vwap-route-card .vrw47-cell{
-  min-width: 0;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 8px;
-  background: rgba(255,255,255,.04);
-  padding: 12px 14px;
-}
-
-#vwap-route-card .vrw47-cell span{
-  display: block;
-  font-size: 12px;
-  line-height: 1;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  font-weight: 950;
-  opacity: .72;
-}
-
-#vwap-route-card .vrw47-cell strong{
-  display: block;
-  margin-top: 8px;
-  font-size: 24px;
-  line-height: 1.04;
-  font-weight: 950;
-  color: #f8fafc;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-#vwap-route-card .vrw47-cell strong.is-side{
-  color: #93c5fd;
-}
-
-#vwap-route-card.is-long .vrw47-main,
-#vwap-route-card.is-long .vrw47-cell strong.is-side{
-  color: var(--success);
-}
-
-#vwap-route-card.is-short .vrw47-main,
-#vwap-route-card.is-short .vrw47-cell strong.is-side{
-  color: var(--danger);
-}
-
-#vwap-route-card.is-wait .vrw47-main,
-#vwap-route-card.is-wait .vrw47-cell strong.is-side{
-  color: #ffcc66;
-}
-
-#vwap-route-card.is-chase .vrw47-shell{
-  border-color: rgba(248,113,113,.50);
-  background:
-    radial-gradient(circle at 96% 0%, rgba(248,113,113,.18), transparent 34%),
-    linear-gradient(180deg, rgba(58,18,24,.94) 0%, rgba(5,12,22,.99) 100%);
-}
-
-#vwap-route-card.is-confirm .vrw47-shell{
-  border-color: rgba(34,197,94,.48);
-}
-
-#vwap-route-card.is-inactive{
-  opacity: .82;
-}
-
 @media (max-width: 1300px){
   #level-flip-card .lfv44-shell{
     grid-template-columns: 1fr;
-  }
-
-  #pattern-route-card .prw46-shell{
-    grid-template-columns: 1fr;
-  }
-
-  #pattern-route-card .prw46-grid{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  #vwap-route-card .vrw47-shell{
-    grid-template-columns: 1fr;
-  }
-
-  #vwap-route-card .vrw47-grid{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -9819,13 +9190,6 @@ body.aaron-terminal-shell .pill-small strong{
   font-size:52px !important;
 }
 
-body.aaron-terminal-shell .top-digest-time strong{
-  color:#f8fafc !important;
-  text-shadow:
-    0 0 18px rgba(61,165,255,.45),
-    0 0 28px rgba(255,204,102,.16) !important;
-}
-
 body.aaron-terminal-shell .tf-picker{
   padding:14px 22px !important;
   gap:22px !important;
@@ -9949,9 +9313,9 @@ body.aaron-terminal-shell .top-right .kv .v{
           </div>
         </div>
 
-        <!-- Título do painel AARON 10 -->
+        <!-- Título do painel AARON 9 -->
         <div class="brand-title">
-          <span>AARON 10</span>&nbsp;INSTITUTIONAL PANEL
+          <span>AARON 9</span>&nbsp;INSTITUTIONAL PANEL
         </div>
 
 
@@ -9976,11 +9340,6 @@ body.aaron-terminal-shell .top-right .kv .v{
   <button class="tf-btn" type="button" data-tf="4h">4h</button>
   <button class="tf-btn" type="button" data-tf="1d">1D</button>
 </div>
-
-    <div class="pill-small top-digest-time">
-      <span data-i18n="top.digest_time">Tempo</span>
-      <strong id="top-digest-time">—</strong>
-    </div>
 
     <div class="pill-small" style="display:none;">
       <span data-i18n="top.session">Sessão</span>
@@ -10020,86 +9379,6 @@ body.aaron-terminal-shell .top-right .kv .v{
     </button>
   </div>
 </header>
-
-<!-- ===== TREND T2 COMMAND — ABSOLUTE TOP BLOCK ===== -->
-<div class="prem-breakout-wrap" id="trend-t2-command-card" style="grid-column: 1 / -1;">
-  <div class="tt2-stage">
-    <div class="tt2-shell">
-      <div class="tt2-left">
-        <div class="tt2-k">NOVO BLOCO · ENTRA AGORA QUANDO TREND + T2 &gt; T1</div>
-        <div class="tt2-main" id="tt2-main">AGUARDANDO TREND</div>
-        <div class="tt2-state" id="tt2-state">TREND T2 WATCH</div>
-        <div class="tt2-sub" id="tt2-sub">Esperando tendência ativar e T2 expandir além do T1.</div>
-        <div class="tt2-pills">
-          <span class="tt2-pill" id="tt2-pill-trend">TREND —</span>
-          <span class="tt2-pill" id="tt2-pill-t2">T2 —</span>
-          <span class="tt2-pill" id="tt2-pill-risk">RISK —</span>
-        </div>
-      </div>
-
-      <div class="tt2-metrics">
-        <div class="tt2-box">
-          <span>Direção</span>
-          <strong id="tt2-dir">—</strong>
-        </div>
-        <div class="tt2-box">
-          <span>Gatilho</span>
-          <strong id="tt2-trigger">—</strong>
-        </div>
-        <div class="tt2-box">
-          <span>Stop</span>
-          <strong id="tt2-stop">—</strong>
-        </div>
-        <div class="tt2-box">
-          <span>Target 1</span>
-          <strong id="tt2-t1">—</strong>
-        </div>
-        <div class="tt2-box">
-          <span>Target 2</span>
-          <strong id="tt2-t2">—</strong>
-        </div>
-        <div class="tt2-box">
-          <span>Tendência</span>
-          <strong id="tt2-trend">—</strong>
-        </div>
-      </div>
-    </div>
-
-    <div class="tt2-strip">
-      <div class="tt2-mcard c-cyan">
-        <div class="tt2-mk">Price Now</div>
-        <div class="tt2-mv cy" id="tt2-met-price">—</div>
-        <div class="tt2-ms" id="tt2-met-price-sub">1-minute</div>
-      </div>
-      <div class="tt2-mcard c-green">
-        <div class="tt2-mk">Trend Phase</div>
-        <div class="tt2-mv up" id="tt2-met-trend">—</div>
-        <div class="tt2-ms" id="tt2-met-trend-sub">A10 trend</div>
-      </div>
-      <div class="tt2-mcard c-blue">
-        <div class="tt2-mk">Entry Trigger</div>
-        <div class="tt2-mv cy" id="tt2-met-trigger">—</div>
-        <div class="tt2-ms" id="tt2-met-trigger-sub">gatilho operacional</div>
-      </div>
-      <div class="tt2-mcard c-amber">
-        <div class="tt2-mk">VWAP</div>
-        <div class="tt2-mv am" id="tt2-met-vwap">—</div>
-        <div class="tt2-ms" id="tt2-met-vwap-sub">route watch</div>
-      </div>
-      <div class="tt2-mcard c-violet">
-        <div class="tt2-mk">T2 Edge</div>
-        <div class="tt2-mv vi" id="tt2-met-edge">—</div>
-        <div class="tt2-ms" id="tt2-met-edge-sub">T2 vs T1</div>
-      </div>
-      <div class="tt2-mcard c-red">
-        <div class="tt2-mk">Risk</div>
-        <div class="tt2-mv dn" id="tt2-met-risk">—</div>
-        <div class="tt2-ms" id="tt2-met-risk-sub">stop / RR</div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- ===== /TREND T2 COMMAND ===== -->
 
     <!-- ================== GARIMPO DE HOJE / BEST STOCK TO TRADE ================== -->
 <section id="garimpo-today" class="garimpo-banner" style="display:none;">
@@ -10459,7 +9738,7 @@ body.aaron-terminal-shell .top-right .kv .v{
   <div class="tc-action-shell">
     <div class="tc-action-left">
       <div class="tc-action-command-row">
-        <div class="tc-action-k">COMANDO FINAL | TREND + T1/T2</div>
+        <div class="tc-action-k">OPERADOR FINAL | AARON EXECUTION</div>
         <div class="tc-action-live-pill">SIGA ESTE BLOCO</div>
       </div>
       <div class="tc-action-main" id="tc-action-main">AGUARDANDO</div>
@@ -10489,33 +9768,33 @@ body.aaron-terminal-shell .top-right .kv .v{
 
     <div class="tc-action-right">
       <div class="tc-action-box">
-        <div class="tc-action-box-k">DIREÇÃO</div>
-        <div class="tc-action-box-v is-dir" id="tc-action-dir">—</div>
+        <div class="tc-action-box-k">DIRECTION</div>
+        <div class="tc-action-box-v" id="tc-action-dir">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">GATILHO</div>
+        <div class="tc-action-box-k">ZONE</div>
         <div class="tc-action-box-v" id="tc-action-gate">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">STOP</div>
+        <div class="tc-action-box-k">LEVEL V44</div>
         <div class="tc-action-box-v" id="tc-action-level">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">TARGET 1</div>
+        <div class="tc-action-box-k">CLAUDE</div>
         <div class="tc-action-box-v" id="tc-action-claude">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">TARGET 2</div>
-        <div class="tc-action-box-v is-t2" id="tc-action-spread">—</div>
+        <div class="tc-action-box-k">SPREAD</div>
+        <div class="tc-action-box-v" id="tc-action-spread">—</div>
       </div>
 
       <div class="tc-action-box">
-        <div class="tc-action-box-k">TENDÊNCIA</div>
-        <div class="tc-action-box-v is-trend" id="tc-action-consensus">—</div>
+        <div class="tc-action-box-k">CONSENSUS</div>
+        <div class="tc-action-box-v" id="tc-action-consensus">—</div>
       </div>
     </div>
   </div>
@@ -10626,98 +9905,6 @@ body.aaron-terminal-shell .top-right .kv .v{
         <strong id="lfv44-touches">—</strong>
       </div>
     </div>
-  </div>
-  <div id="route-watch-dock">
-<!-- ===== PATTERN ROUTE V46 — ROUTE WATCH ===== -->
-<div class="prem-breakout-wrap" id="pattern-route-card" style="display:none; margin-top:0; grid-column: 1 / -1;">
-  <div class="prw46-shell">
-    <div>
-      <div class="prw46-k">V46 PATTERN ROUTE WATCH</div>
-      <div class="prw46-main" id="prw46-main">—</div>
-      <div class="prw46-sub" id="prw46-sub">—</div>
-    </div>
-    <div class="prw46-grid">
-      <div class="prw46-cell">
-        <span>Bias</span>
-        <strong class="is-side" id="prw46-bias">—</strong>
-      </div>
-      <div class="prw46-cell">
-        <span>Next Move</span>
-        <strong id="prw46-next">—</strong>
-      </div>
-      <div class="prw46-cell">
-        <span>Pivot / Zone</span>
-        <strong id="prw46-pivot">—</strong>
-      </div>
-      <div class="prw46-cell">
-        <span>Max Allowed</span>
-        <strong id="prw46-max">—</strong>
-      </div>
-      <div class="prw46-cell">
-        <span>Trigger</span>
-        <strong id="prw46-trigger">—</strong>
-      </div>
-      <div class="prw46-cell">
-        <span>Target 1</span>
-        <strong id="prw46-target">—</strong>
-      </div>
-      <div class="prw46-cell">
-        <span>Invalidation</span>
-        <strong id="prw46-inval">—</strong>
-      </div>
-      <div class="prw46-cell">
-        <span>Mode</span>
-        <strong id="prw46-mode">—</strong>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- ===== /PATTERN ROUTE V46 ===== -->
-<!-- ===== VWAP ROUTE V47 — LOWER / MIDDLE / TOP ===== -->
-<div class="prem-breakout-wrap" id="vwap-route-card" style="display:none; margin-top:0; grid-column: 1 / -1;">
-  <div class="vrw47-shell">
-    <div>
-      <div class="vrw47-k">V48 VWAP SESSION · BAND #1</div>
-      <div class="vrw47-main" id="vrw47-main">—</div>
-      <div class="vrw47-sub" id="vrw47-sub">—</div>
-    </div>
-    <div class="vrw47-grid">
-      <div class="vrw47-cell">
-        <span>Lado</span>
-        <strong class="is-side" id="vrw47-line">—</strong>
-      </div>
-      <div class="vrw47-cell">
-        <span>Entrada</span>
-        <strong id="vrw47-state">—</strong>
-      </div>
-      <div class="vrw47-cell">
-        <span>Alvo</span>
-        <strong id="vrw47-top">—</strong>
-      </div>
-      <div class="vrw47-cell">
-        <span>Cancela</span>
-        <strong id="vrw47-middle">—</strong>
-      </div>
-      <div class="vrw47-cell">
-        <span>Linha Real</span>
-        <strong id="vrw47-lower">—</strong>
-      </div>
-      <div class="vrw47-cell">
-        <span>Se Voltar</span>
-        <strong id="vrw47-trigger">—</strong>
-      </div>
-      <div class="vrw47-cell">
-        <span>Próxima Linha</span>
-        <strong id="vrw47-target">—</strong>
-      </div>
-      <div class="vrw47-cell">
-        <span>Técnico</span>
-        <strong id="vrw47-inval">—</strong>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- ===== /VWAP ROUTE V47 ===== -->
   </div>
 </div>
 <!-- ===== /LEVEL FLIP V44 ===== -->
@@ -13240,7 +12427,7 @@ main.layout,
   <div class="card-header">
     <div>
       <div class="card-title" data-i18n="summary.title">Resumo institucional</div>
-      <div class="card-subtitle" data-i18n="summary.subtitle">Leitura consolidada do AARON 10</div>
+      <div class="card-subtitle" data-i18n="summary.subtitle">Leitura consolidada do AARON 9</div>
     </div>
     <div class="badge-outline">
       <span class="dot"></span>
@@ -13248,7 +12435,7 @@ main.layout,
     </div>
   </div>
 
-<!-- ====== AARON 10 – COLUNA DIREITA (DECISION PANEL) ====== -->
+<!-- ====== AARON 9 – COLUNA DIREITA (DECISION PANEL) ====== -->
 <div class="decision-column">
 
     <!-- AUTO PILOT (fora do Citadel, dentro do Resumo Institucional) -->
@@ -23469,30 +22656,11 @@ function updateCoPilotBlock(data){
     const textEl        = document.getElementById("copilot-text");
     const badgeEl       = document.getElementById("copilot-badge");
     const updatedEl     = document.getElementById("copilot-updated");
-    const topDigestTimeEl = document.getElementById("top-digest-time");
 
     if (!blockEl || !heroTitleEl || !sectionsEl || !textEl || !badgeEl) return;
 
-    const extractDigestClock = (...vals) => {
-      for (const val of vals) {
-        const src = cleanLine(val == null ? "" : String(val));
-        if (!src) continue;
-        const matches = Array.from(src.matchAll(/\b([01]?\d|2[0-3]):([0-5]\d)\b/g));
-        if (!matches.length) continue;
-        const last = matches[matches.length - 1];
-        return `${String(last[1]).padStart(2, "0")}:${last[2]}`;
-      }
-      return "";
-    };
-
-    const syncTopDigestTime = (...vals) => {
-      if (!topDigestTimeEl) return;
-      topDigestTimeEl.textContent = extractDigestClock(...vals) || "—";
-    };
-
     const resetCopilotView = () => {
       heroTitleEl.textContent = "—";
-      syncTopDigestTime("");
 
       if (heroSubEl){
         heroSubEl.style.display = "none";
@@ -23541,7 +22709,6 @@ function updateCoPilotBlock(data){
       ? (lines[firstNonEmpty]?.trim() || "COPILOT DIGEST")
       : (aaron10Readout?.heroTitle || "AARON 10 — LEITURA DO MERCADO");
     heroTitleEl.textContent = heroTitle;
-    syncTopDigestTime(heroTitle, panel.time, digest.time, ui.time, data.time, updated);
 
     let cursor = firstNonEmpty + 1;
     while (cursor < lines.length && !cleanLine(lines[cursor])) cursor++;
@@ -26186,8 +25353,8 @@ v = Math.max(0, Math.min(100, v));
       ? (data.text_en || data.text)
       : (data.text_pt || data.text)) ||
     (currentLang === 'en'
-      ? 'AARON 10 sees this pullback as aligned with the main direction. Focus on trades with the trend and avoid fighting the move.'
-      : 'O AARON 10 vê este pullback como alinhado com a direção principal. Foque em operações a favor e evite brigar com o movimento.');
+      ? 'AARON 9 sees this pullback as aligned with the main direction. Focus on trades with the trend and avoid fighting the move.'
+      : 'O AARON 9 vê este pullback como alinhado com a direção principal. Foque em operações a favor e evite brigar com o movimento.');
 
   if (els.pullbackHeadline) els.pullbackHeadline.textContent = headline;
   if (els.pullbackText) els.pullbackText.textContent = body;
@@ -28790,7 +27957,7 @@ function a10BindStudiesUI() {
 }
 
 // ====== INICIALIZAÇÃO ======
-function initAaron10() {
+function initAaron9() {
   // liga chart + estudos
   a10InitChart();
   a10BindStudiesUI();
@@ -28954,7 +28121,6 @@ const I18N = {
     'top.live_feed': 'FEED AO VIVO',
     'top.symbol': 'Símbolo',
     'top.timeframe': 'Timeframe',
-    'top.digest_time': 'Tempo',
     'top.session': 'Sessão',
     'top.last_update': 'Última atualização:',
     'top.refresh': 'ATUALIZAR',
@@ -28984,7 +28150,7 @@ const I18N = {
 
     // RESUMO INSTITUCIONAL
     'summary.title': 'Resumo institucional',
-    'summary.subtitle': 'Leitura consolidada do AARON 10',
+    'summary.subtitle': 'Leitura consolidada do AARON 9',
     'summary.risk_mgmt': 'Gestão de risco',
 
     // RADAR
@@ -29036,7 +28202,6 @@ const I18N = {
     'top.live_feed': 'LIVE FEED',
     'top.symbol': 'Symbol',
     'top.timeframe': 'Timeframe',
-    'top.digest_time': 'Time',
     'top.session': 'Session',
     'top.last_update': 'Last update:',
     'top.refresh': 'REFRESH',
@@ -29065,7 +28230,7 @@ const I18N = {
 
     // SUMMARY
     'summary.title': 'Institutional summary',
-    'summary.subtitle': 'Consolidated reading from AARON 10',
+    'summary.subtitle': 'Consolidated reading from AARON 9',
     'summary.risk_mgmt': 'Risk management',
 
     // RADAR
@@ -29350,9 +28515,9 @@ applyLang(currentLang);
 
 // garante que roda depois que o DOM existe
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAaron10);
+  document.addEventListener('DOMContentLoaded', initAaron9);
 } else {
-  initAaron10();
+  initAaron9();
 }
 
    // ================== GARIMPO DE HOJE - DADOS EXEMPLO ==================
@@ -30000,28 +29165,6 @@ renderOptions("");
     const card = document.getElementById("slflex-card");
     if (dock && card && card.parentElement !== dock) dock.appendChild(card);
   }
-  function dockRouteCardsBelowLevelFlip(){
-    const level = document.getElementById("level-flip-card");
-    const pattern = document.getElementById("pattern-route-card");
-    const vwap = document.getElementById("vwap-route-card");
-    const dock = document.getElementById("route-watch-dock");
-    const shell = level?.querySelector(".lfv44-shell");
-    const parent = shell?.parentElement || level;
-    if (!parent || !level || !pattern || !vwap || !dock) return;
-
-    if (dock.parentElement !== parent || dock.previousElementSibling !== shell) {
-      parent.insertBefore(dock, shell ? shell.nextSibling : parent.firstChild);
-    }
-    if (pattern.parentElement !== dock) dock.appendChild(pattern);
-    if (vwap.parentElement !== dock) dock.appendChild(vwap);
-  }
-  function keepRouteCardsBelowLevelFlip(){
-    dockRouteCardsBelowLevelFlip();
-    setTimeout(dockRouteCardsBelowLevelFlip, 50);
-    setTimeout(dockRouteCardsBelowLevelFlip, 200);
-    setTimeout(dockRouteCardsBelowLevelFlip, 600);
-    setTimeout(dockRouteCardsBelowLevelFlip, 1400);
-  }
     // MICRO/MACRO dock: coloca os 3 blocos reais do MICRO na coluna MICRO (sem alterar nada do micro)
   function dockMicroMacro(){
     const microCol = document.getElementById("mm-col-micro");
@@ -30038,9 +29181,6 @@ renderOptions("");
   }
   window.addEventListener("DOMContentLoaded", dockMicroMacro);
   window.addEventListener("DOMContentLoaded", dockSLFlex);
-  window.addEventListener("DOMContentLoaded", keepRouteCardsBelowLevelFlip);
-  window.addEventListener("load", keepRouteCardsBelowLevelFlip);
-  setInterval(dockRouteCardsBelowLevelFlip, 1000);
 
   function t(id){ return (el(id)?.textContent || "").trim(); }
   function numFrom(s){
@@ -30176,243 +29316,6 @@ renderOptions("");
     if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
     if (el("lfv44-touches")) el("lfv44-touches").textContent = lfTouches != null ? String(Math.round(lfTouches)) : "—";
     if (el("tc-action-level")) el("tc-action-level").textContent = lfActive ? `${lfSide || "V44"} ${lfStatusRaw}` : "—";
-
-    const patternRouteV46 =
-      exec1x1?.pattern_route_watch_v1 ||
-      panel?.pattern_route_watch_v1 ||
-      digest?.pattern_route_watch_v1 ||
-      payload?.pattern_route_watch_v1 ||
-      payload?.ui?.pattern_route_watch_v1 ||
-      payload?.live?.pattern_route_watch_v1 ||
-      ui?.pattern_route_watch_v1 ||
-      (typeof deepFind === "function" ? deepFind(payload, "pattern_route_watch_v1") : null) ||
-      {};
-
-    const prwPickText = (...vals) => {
-      for (const v of vals) {
-        if (typeof v !== "string") continue;
-        const s = v.trim();
-        if (s) return s;
-      }
-      return "";
-    };
-
-    const prwStateRaw = String(patternRouteV46?.state || "").trim().toUpperCase();
-    const prwBiasRaw = String(patternRouteV46?.main_bias || patternRouteV46?.bias || "").trim().toUpperCase();
-    const prwNextRaw = String(patternRouteV46?.next_move || "").trim().toUpperCase();
-    const prwAfterRaw = String(patternRouteV46?.after_retrace || "").trim().toUpperCase();
-    const prwModeRaw = String(patternRouteV46?.execution_mode || "").trim().toUpperCase();
-    const prwPatternName = prwPickText(
-      patternRouteV46?.pattern_name,
-      patternRouteV46?.name_pt,
-      patternRouteV46?.name_en,
-      patternRouteV46?.pattern_key
-    );
-    const prwHasBlock = !!(
-      patternRouteV46 &&
-      typeof patternRouteV46 === "object" &&
-      (
-        patternRouteV46?.schema === "pattern_route_watch_v1" ||
-        patternRouteV46?.version ||
-        prwPatternName ||
-        prwStateRaw
-      )
-    );
-    const prwEnabled =
-      patternRouteV46?.enabled === true ||
-      !!(prwBiasRaw && prwNextRaw && !["NO_PATTERN_ROUTE", "ERROR"].includes(prwStateRaw));
-    const prwSide =
-      prwBiasRaw.includes("SHORT") ? "SHORT" :
-      prwBiasRaw.includes("LONG") ? "LONG" :
-      "";
-    const prwPivot = numPick(patternRouteV46?.pivot_return_price);
-    const prwZoneLow = numPick(patternRouteV46?.pivot_return_zone_low);
-    const prwZoneHigh = numPick(patternRouteV46?.pivot_return_zone_high);
-    const prwMaxAllowed = numPick(patternRouteV46?.max_allowed_price);
-    const prwTrigger = numPick(patternRouteV46?.continuation_trigger);
-    const prwTarget = numPick(patternRouteV46?.continuation_target_1);
-    const prwInvalidation = numPick(patternRouteV46?.invalidation);
-    const prwPivotText =
-      prwZoneLow != null && prwZoneHigh != null
-        ? `${lfMoney(prwZoneLow)}-${lfMoney(prwZoneHigh)}`
-        : prwPivot != null ? lfMoney(prwPivot) : "—";
-    const prwMessage = prwPickText(
-      patternRouteV46?.message_pt,
-      patternRouteV46?.message_en
-    );
-    const prwCard = el("pattern-route-card");
-    if (prwCard) {
-      prwCard.style.display = prwHasBlock ? "" : "none";
-      prwCard.classList.remove("is-long", "is-short", "is-active", "is-inactive");
-      if (prwSide === "LONG") prwCard.classList.add("is-long");
-      if (prwSide === "SHORT") prwCard.classList.add("is-short");
-      prwCard.classList.add(prwEnabled ? "is-active" : "is-inactive");
-    }
-    if (el("prw46-main")) {
-      el("prw46-main").textContent = prwHasBlock
-        ? `${prwPatternName || "PATTERN"} — ${prwStateRaw || (prwEnabled ? "ACTIVE" : "WATCH")}`
-        : "—";
-    }
-    if (el("prw46-sub")) {
-      el("prw46-sub").textContent = prwHasBlock
-        ? (prwMessage || (prwEnabled
-            ? `${prwSide || "BIAS"}: rota ${prwNextRaw || "—"} antes de ${prwAfterRaw || "continuação"}.`
-            : "Sem rota ativa agora; o bloco mostra o ultimo estado estrutural recebido."))
-        : "—";
-    }
-    if (el("prw46-bias")) el("prw46-bias").textContent = prwSide || prwBiasRaw || "—";
-    if (el("prw46-next")) el("prw46-next").textContent = prwNextRaw || "—";
-    if (el("prw46-pivot")) el("prw46-pivot").textContent = prwPivotText;
-    if (el("prw46-max")) el("prw46-max").textContent = lfMoney(prwMaxAllowed);
-    if (el("prw46-trigger")) el("prw46-trigger").textContent = lfMoney(prwTrigger);
-    if (el("prw46-target")) el("prw46-target").textContent = lfMoney(prwTarget);
-    if (el("prw46-inval")) el("prw46-inval").textContent = lfMoney(prwInvalidation);
-    if (el("prw46-mode")) el("prw46-mode").textContent = prwModeRaw || (prwEnabled ? "WATCH" : "NO ROUTE");
-
-    const vwapRouteV47 =
-      exec1x1?.vwap_route_watch_v1 ||
-      panel?.vwap_route_watch_v1 ||
-      digest?.vwap_route_watch_v1 ||
-      payload?.vwap_route_watch_v1 ||
-      payload?.ui?.vwap_route_watch_v1 ||
-      payload?.live?.vwap_route_watch_v1 ||
-      ui?.vwap_route_watch_v1 ||
-      (typeof deepFind === "function" ? deepFind(payload, "vwap_route_watch_v1") : null) ||
-      {};
-
-    const vrwStateRaw = String(vwapRouteV47?.state || "").trim().toUpperCase();
-    const vrwLineRaw = String(vwapRouteV47?.line_label || vwapRouteV47?.line || "").trim().toUpperCase();
-    const vrwSideRaw = String(vwapRouteV47?.suggested_side || vwapRouteV47?.canonical_side || "").trim().toUpperCase();
-    const vrwExpectedRaw = String(vwapRouteV47?.expected_reaction || "").trim().toUpperCase();
-    const vrwAlternativeRaw = String(vwapRouteV47?.alternative || "").trim().toUpperCase();
-    const vrwHasBlock = !!(
-      vwapRouteV47 &&
-      typeof vwapRouteV47 === "object" &&
-      (
-        vwapRouteV47?.schema === "vwap_route_watch_v1" ||
-        vwapRouteV47?.version ||
-        vrwStateRaw ||
-        vrwLineRaw
-      )
-    );
-    const vrwEnabled =
-      vwapRouteV47?.enabled === true ||
-      !!(vrwStateRaw && !["NO_VWAP_DATA", "ERROR"].includes(vrwStateRaw));
-    const vrwChase = vwapRouteV47?.chase_risk === true || vrwStateRaw.includes("CHASE_RISK");
-    const vrwConfirmed = vwapRouteV47?.confirmed === true || vrwStateRaw.includes("REJECTED") || vrwStateRaw.includes("RECLAIMED") || vrwStateRaw.includes("BROKEN") || vrwStateRaw.includes("LOST");
-    const vrwSide =
-      vrwSideRaw.includes("SHORT") ? "SHORT" :
-      vrwSideRaw.includes("LONG") ? "LONG" :
-      vrwChase ? "WAIT" :
-      "";
-    const vrwLevels = (vwapRouteV47?.levels && typeof vwapRouteV47.levels === "object") ? vwapRouteV47.levels : {};
-    const vrwTop = numPick(vrwLevels?.top_base, vrwLevels?.top, vwapRouteV47?.top_base);
-    const vrwMiddle = numPick(vrwLevels?.middle, vrwLevels?.vwap, vwapRouteV47?.middle);
-    const vrwLower = numPick(vrwLevels?.lower_base, vrwLevels?.lower, vwapRouteV47?.lower_base);
-    const vrwTrigger = numPick(vwapRouteV47?.continuation_trigger, vwapRouteV47?.trigger);
-    const vrwTarget = numPick(vwapRouteV47?.target_1, vwapRouteV47?.continuation_target_1);
-    const vrwInvalidation = numPick(vwapRouteV47?.invalidation, vwapRouteV47?.max_allowed_price);
-    const vrwMessage = prwPickText(
-      vwapRouteV47?.message_pt,
-      vwapRouteV47?.message_en
-    );
-    const vrwClean = (value) => String(value || "")
-      .replace(/_/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    const vrwLineText = vrwClean(vrwLineRaw || "VWAP");
-    const vrwStateText = vrwClean(vrwStateRaw || "WATCH");
-    const vrwExpectedText = vrwClean(vrwExpectedRaw);
-    const vrwAlternativeText = vrwClean(vrwAlternativeRaw);
-    const vrwLineName = (() => {
-      if (vrwLineRaw.includes("TOP") || vrwLineRaw.includes("UPPER")) return "Upper Band #1";
-      if (vrwLineRaw.includes("LOWER")) return "Lower Band #1";
-      if (vrwLineRaw.includes("MIDDLE") || vrwLineRaw.includes("VWAP")) return "VWAP";
-      return vrwLineText || "VWAP";
-    })();
-    const vrwStateLooksShort =
-      /DOWN|LOST|REJECTED DOWN|BROKEN DOWN|BREAK LOWER/.test(vrwStateText) ||
-      /SHORT/.test(vrwExpectedText);
-    const vrwStateLooksLong =
-      /UP|RECLAIMED|REJECTED UP|BROKEN UP|BOUNCE/.test(vrwStateText) ||
-      /LONG/.test(vrwExpectedText);
-    const vrwActionSide =
-      vrwSideRaw.includes("SHORT") || vrwStateLooksShort ? "SHORT" :
-      vrwSideRaw.includes("LONG") || vrwStateLooksLong ? "LONG" :
-      "";
-    const vrwLineLevel = (() => {
-      if (vrwLineRaw.includes("TOP")) return vrwTop;
-      if (vrwLineRaw.includes("MIDDLE")) return vrwMiddle;
-      if (vrwLineRaw.includes("LOWER")) return vrwLower;
-      return numPick(vrwTrigger, vrwMiddle, vrwLower, vrwTop);
-    })();
-    const vrwEntryWord = vrwActionSide === "SHORT" ? "abaixo de" : vrwActionSide === "LONG" ? "acima de" : "em";
-    const vrwEntryWordCaps = vrwActionSide === "SHORT" ? "ABAIXO DE" : vrwActionSide === "LONG" ? "ACIMA DE" : "EM";
-    const vrwCancelWord = vrwActionSide === "SHORT" ? "acima de" : vrwActionSide === "LONG" ? "abaixo de" : "em";
-    const vrwCancelWordCaps = vrwActionSide === "SHORT" ? "ACIMA DE" : vrwActionSide === "LONG" ? "ABAIXO DE" : "EM";
-    const vrwEntryText =
-      vrwTrigger != null && vrwActionSide
-        ? `${vrwEntryWordCaps} ${lfMoney(vrwTrigger)}`
-        : vrwChase
-          ? "ESPERAR RESPIRO"
-          : "AGUARDAR FECHAMENTO";
-    const vrwCancelText =
-      vrwInvalidation != null && vrwActionSide
-        ? `${vrwCancelWordCaps} ${lfMoney(vrwInvalidation)}`
-        : "—";
-    const vrwLineCellText =
-      `${vrwLineName}${vrwLineLevel != null ? ` ${lfMoney(vrwLineLevel)}` : ""}`;
-    const vrwReturnText =
-      vrwActionSide === "SHORT"
-        ? `Se voltar acima de ${lfMoney(vrwInvalidation)}, para de vender`
-        : vrwActionSide === "LONG"
-          ? `Se voltar abaixo de ${lfMoney(vrwInvalidation)}, para de comprar`
-          : vrwAlternativeText || "Esperar novo fechamento";
-    const vrwMapText =
-      vrwActionSide === "SHORT"
-        ? `VWAP ${lfMoney(vrwMiddle)}`
-        : vrwActionSide === "LONG"
-          ? `Upper Band #1 ${lfMoney(vrwTop)}`
-          : `VWAP ${lfMoney(vrwMiddle)}`;
-    const vrwMainLabel =
-      vrwChase
-        ? "NÃO ENTRAR AGORA"
-        : vrwActionSide && vrwTrigger != null
-          ? `${vrwActionSide} ${vrwEntryWordCaps} ${lfMoney(vrwTrigger)}`
-          : vrwConfirmed
-            ? `${vrwLineText} CONFIRMADO`
-            : "AGUARDAR VWAP";
-    const vrwSimpleLine =
-      vrwActionSide && vrwTrigger != null
-        ? `${vrwActionSide}: entra/continua ${vrwEntryWord} ${lfMoney(vrwTrigger)}. Alvo ${lfMoney(vrwTarget)}. Cancela ${vrwCancelWord} ${lfMoney(vrwInvalidation)}.`
-        : vrwChase
-          ? `Preço esticado. Não perseguir. Esperar voltar para ${vrwLineCellText} ou novo fechamento confirmando.`
-          : `Aguardar fechamento confirmando ${vrwLineCellText}.`;
-    const vrwSubFallback = vrwHasBlock
-      ? vrwSimpleLine
-      : "—";
-
-    const vrwCard = el("vwap-route-card");
-    if (vrwCard) {
-      vrwCard.style.display = vrwHasBlock ? "" : "none";
-      vrwCard.classList.remove("is-long", "is-short", "is-wait", "is-chase", "is-confirm", "is-active", "is-inactive");
-      if (!vrwChase && vrwActionSide === "LONG") vrwCard.classList.add("is-long");
-      else if (!vrwChase && vrwActionSide === "SHORT") vrwCard.classList.add("is-short");
-      else vrwCard.classList.add("is-wait");
-      if (vrwChase) vrwCard.classList.add("is-chase");
-      if (vrwConfirmed) vrwCard.classList.add("is-confirm");
-      vrwCard.classList.add(vrwEnabled ? "is-active" : "is-inactive");
-    }
-    if (el("vrw47-main")) el("vrw47-main").textContent = vrwHasBlock ? vrwMainLabel : "—";
-    if (el("vrw47-sub")) el("vrw47-sub").textContent = vrwHasBlock ? vrwSubFallback : "—";
-    if (el("vrw47-line")) el("vrw47-line").textContent = vrwActionSide || (vrwChase ? "WAIT" : "—");
-    if (el("vrw47-state")) el("vrw47-state").textContent = vrwEntryText;
-    if (el("vrw47-top")) el("vrw47-top").textContent = lfMoney(vrwTarget);
-    if (el("vrw47-middle")) el("vrw47-middle").textContent = vrwCancelText;
-    if (el("vrw47-lower")) el("vrw47-lower").textContent = vrwLineCellText || "—";
-    if (el("vrw47-trigger")) el("vrw47-trigger").textContent = vrwReturnText;
-    if (el("vrw47-target")) el("vrw47-target").textContent = vrwMapText;
-    if (el("vrw47-inval")) el("vrw47-inval").textContent = vrwStateText || "—";
 
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
     const atr14     = numPick(ctx.atr14, digest.atr14, panel.atr14, digest.indicators?.atr14, panel.indicators?.atr14, exec1x1?.atr14);
@@ -31402,37 +30305,6 @@ const tcA10VwapAlignedConfirmed =
   tcA10VwapConfirmed &&
   (!tcA10VwapSide || !tcOperatorDir || tcOperatorDir === "—" || tcA10VwapSide === tcOperatorDir);
 
-const tcTarget2ExtendsTarget1 =
-  tcTarget1 != null &&
-  tcTarget2 != null &&
-  !!tcSideSign &&
-  (
-    tcSideSign === 1
-      ? tcTarget2 > tcTarget1
-      : tcTarget2 < tcTarget1
-  );
-const tcTrendPhaseText =
-  tcA10TrendConfirmed
-    ? `${tcA10TrendMax ? "TEND 5+" : `TEND ${tcA10TrendStreak}`} | ${tcA10TrendTargetLabel}${tcTarget2ExtendsTarget1 ? " EXP" : ""}`
-    : "—";
-const tcTrendEntryReady =
-  tcA10TrendAligned &&
-  tcTarget2ExtendsTarget1 &&
-  !tcPositionAction &&
-  !tcLateActive &&
-  !tcIsInvalidated &&
-  !tcIsChasing &&
-  !tcIsBelowTrigger &&
-  !tcA10VwapAgainst &&
-  !tcA10VwapChaseRisk &&
-  !(tcA10VwapTouched && tcA10VwapNeedsConfirm && !tcA10VwapConfirmed) &&
-  !tcLevelFlipContra &&
-  (!tcLevelFlipAligned || lfStatusRaw === "TRIGGERED");
-const tcTrendEntryLine =
-  tcTarget2ExtendsTarget1
-    ? `T2 expandiu alem de T1 (${tcLateMoney(tcTarget1)} -> ${tcLateMoney(tcTarget2)}).`
-    : "T2 ainda nao expandiu alem de T1.";
-
 if (
   tcA10TrendRiskActive &&
   !tcLateActive &&
@@ -31548,23 +30420,6 @@ const tcBuildOperatorDecisionV1 = () => {
       mode: "is-no-trade",
       next: "Zerar ideia. Nao reabrir nesse mesmo setup; esperar novo matcher.",
       reason: "operator_invalidated"
-    });
-  }
-
-  if (tcTrendEntryReady) {
-    const tcTrendSize =
-      tcA10SizingPct != null && tcA10SizingPct > 0
-        ? `${Math.round(tcA10SizingPct)}%`
-        : tcA10TrendMax
-          ? "100%"
-          : "75%";
-    return withBase({
-      main: "ENTRA AGORA",
-      sub: `${tcOperatorDir}: tendencia A10 ativa ${tcA10TrendStreak}${tcA10TrendMax ? "+" : ""}; ${tcTrendEntryLine} ${tcOperatorLiveLine()}.`,
-      mode: tcA10TrendMax ? "is-perfect" : "is-good",
-      zone: tcA10TrendMax ? "TREND 5+" : "TREND ACTIVE",
-      next: `Executar no gatilho ${tcLateMoney(tcPlanAnchor)} com tamanho ${tcTrendSize}. T1 ${tcLateMoney(tcTarget1)} | T2 ${tcLateMoney(tcTarget2)} | stop ${tcLateMoney(tcStopPrice)}.`,
-      reason: "trend_t2_expansion_entry"
     });
   }
 
@@ -31944,9 +30799,6 @@ let tcActionSub = [
   tcOperatorDecisionV1.direction,
   tcA10VwapHasData ? (tcA10VwapLabel || "VWAP") : ""
 ].filter(Boolean).join(" • ") || tcActionReasonText;
-if (tcOperatorDecisionV1.reason === "trend_t2_expansion_entry") {
-  tcActionSub = tcActionReasonText;
-}
 let tcActionMode = tcOperatorDecisionV1.mode;
 
 try {
@@ -31990,10 +30842,6 @@ const tcActionNote = (() => {
       return "Early Momentum = 07:30–08:30 MT; EMA 80–85 vira cautela e EMA 85–90 depende do AARON 10 confirmar T1/T2.";
     case "TREND RISK":
       return "Trend Risk = A10 confirmou tendencia, mas EMA esta extrema; manejar se ja entrou, ou esperar respiro/novo gatilho se esta fora.";
-    case "TREND ACTIVE":
-      return "Trend Active = A10 confirmou tendencia e T2 expandiu alem do T1; entrada liberada se nao houver chase, VWAP contra ou invalidacao.";
-    case "TREND 5+":
-      return "Trend 5+ = tendencia forte com expansao de T2; segue o quadro final e respeita stop/T1/T2.";
     case "V43 MARKET":
       return "V43 Market = missed ainda valido; a entrada vira execução a mercado.";
     case "V43 REDUCED":
@@ -32029,11 +30877,8 @@ const tcActionNote = (() => {
 const tcDisplayDirection = tcPositionAction?.displayDirection || tcDirection;
 const tcActionBar = el("tc-action-bar");
 if (tcActionBar) {
-  tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait", "is-trend-now");
+  tcActionBar.classList.remove("is-long", "is-short", "is-perfect", "is-good", "is-acceptable", "is-no-trade", "is-wait");
   tcActionBar.classList.add(tcActionMode);
-  if (tcOperatorDecisionV1.reason === "trend_t2_expansion_entry") {
-    tcActionBar.classList.add("is-trend-now");
-  }
 
   if (String(tcDisplayDirection || "").includes("LONG")) tcActionBar.classList.add("is-long");
   if (String(tcDisplayDirection || "").includes("SHORT")) tcActionBar.classList.add("is-short");
@@ -32047,128 +30892,18 @@ if (el("tc-action-vwap"))      el("tc-action-vwap").textContent      = tcActionV
 if (el("tc-action-v43v44"))    el("tc-action-v43v44").textContent    = tcActionV43V44Text;
 if (el("tc-action-note"))      el("tc-action-note").textContent      = tcActionNote;
 if (el("tc-action-dir"))       el("tc-action-dir").textContent       = tcDisplayDirection || "—";
-if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcPlanAnchor != null ? `$${fmt2(tcPlanAnchor)}` : tcZoneLabel;
+if (el("tc-action-gate"))      el("tc-action-gate").textContent      = tcZoneLabel;
 if (el("tc-action-level")) {
-  el("tc-action-level").textContent = tcStopPrice != null ? `$${fmt2(tcStopPrice)}` : "—";
-  el("tc-action-level").style.color = tcStopPrice != null ? "var(--danger)" : "";
+  el("tc-action-level").textContent = tcLevelFlipActive ? `${tcLevelFlipSide || "V44"} ${lfStatusRaw}` : "—";
+  el("tc-action-level").style.color = tcLevelFlipSide === "LONG"
+    ? "var(--success)"
+    : tcLevelFlipSide === "SHORT"
+      ? "var(--danger)"
+      : "";
 }
-if (el("tc-action-claude")) {
-  el("tc-action-claude").textContent = tcTarget1 != null ? `$${fmt2(tcTarget1)}` : "—";
-  el("tc-action-claude").style.color = "";
-}
-if (el("tc-action-spread")) {
-  el("tc-action-spread").textContent = tcTarget2 != null ? `$${fmt2(tcTarget2)}` : "—";
-  el("tc-action-spread").style.color = tcTarget2ExtendsTarget1 ? "#34d399" : "";
-}
-if (el("tc-action-consensus")) {
-  el("tc-action-consensus").textContent = tcTrendPhaseText && tcTrendPhaseText !== "—" ? tcTrendPhaseText : tcZoneLabel;
-  el("tc-action-consensus").style.color = tcA10TrendConfirmed ? "#67e8f9" : "";
-}
-
-const tt2Card = el("trend-t2-command-card");
-if (tt2Card) {
-  const tt2Set = (id, value) => {
-    const node = el(id);
-    if (node) node.textContent = value == null || value === "" ? "—" : String(value);
-  };
-  const tt2Money = (v) => v != null && Number.isFinite(Number(v)) ? `$${fmt2(Number(v))}` : "—";
-  const tt2TrendOn = tcA10TrendAligned;
-  const tt2RiskBlocked =
-    tcA10HardBlocked ||
-    tcIsInvalidated ||
-    tcIsChasing ||
-    tcIsBelowTrigger ||
-    tcA10VwapAgainst ||
-    tcA10VwapChaseRisk ||
-    (tcA10VwapTouched && tcA10VwapNeedsConfirm && !tcA10VwapConfirmed) ||
-    tcLevelFlipContra;
-
-  let tt2Mode = "is-wait";
-  let tt2Main = "AGUARDANDO TREND";
-  let tt2State = "TREND T2 WATCH";
-  let tt2Sub = "Esperando tendencia A10 alinhar e T2 expandir alem do T1.";
-  let tt2RiskText = "RISK OK";
-
-  if (tcTrendEntryReady) {
-    tt2Mode = "is-entry";
-    tt2Main = "ENTRA AGORA";
-    tt2State = `${tcOperatorDir} ENTRY READY`;
-    tt2Sub = `${tcOperatorDir}: tendencia ativa + ${tcTrendEntryLine} Gatilho ${tt2Money(tcPlanAnchor)} | stop ${tt2Money(tcStopPrice)}.`;
-  } else if (tt2RiskBlocked) {
-    tt2Mode = "is-block";
-    tt2Main = tcA10HardBlocked || tcIsInvalidated ? "BLOQUEADO" : "NÃO PERSEGUIR";
-    tt2State = tcOperatorDir && tcOperatorDir !== "—" ? `${tcOperatorDir} RISK BLOCK` : "RISK BLOCK";
-    tt2RiskText = tcA10VwapAgainst || tcA10VwapChaseRisk ? "VWAP BLOQUEIA" : tcIsChasing ? "CHASE" : "RISK BLOQUEIA";
-    tt2Sub = tcOperatorDecisionV1?.sub || "Existe bloqueio antes da entrada. Nao abrir ate liberar risco.";
-  } else if (tt2TrendOn && !tcTarget2ExtendsTarget1) {
-    tt2Mode = "is-wait-t2";
-    tt2Main = "AGUARDAR T2";
-    tt2State = `${tcOperatorDir} TREND ACTIVE`;
-    tt2Sub = `${tcOperatorDir}: tendencia alinhada, mas o T2 ainda nao expandiu alem do T1.`;
-  } else if (tcA10TrendConfirmed && !tt2TrendOn) {
-    tt2Mode = "is-block";
-    tt2Main = "TREND CONTRA";
-    tt2State = "SEM ALINHAMENTO";
-    tt2RiskText = "DIREÇÃO NÃO BATE";
-    tt2Sub = "A10 tem tendencia, mas ela nao esta alinhada com a direcao canonica do operador.";
-  } else if (tcOperatorDecisionV1?.main && tcOperatorDecisionV1.reason !== "payload_incomplete") {
-    tt2Main = tcOperatorDecisionV1.main;
-    tt2State = tcOperatorDecisionV1.zone || "OPERADOR FINAL";
-    tt2Sub = tcOperatorDecisionV1.sub || tt2Sub;
-  }
-
-  tt2Card.classList.remove("is-entry", "is-wait", "is-wait-t2", "is-block", "is-long-side", "is-short-side");
-  tt2Card.classList.add(tt2Mode);
-  if (String(tcDisplayDirection || "").includes("LONG")) tt2Card.classList.add("is-long-side");
-  if (String(tcDisplayDirection || "").includes("SHORT")) tt2Card.classList.add("is-short-side");
-
-  tt2Set("tt2-main", tt2Main);
-  tt2Set("tt2-state", tt2State);
-  tt2Set("tt2-sub", tt2Sub);
-  tt2Set("tt2-pill-trend", tt2TrendOn ? `TREND ON ${tcA10TrendStreak}${tcA10TrendMax ? "+" : ""}` : "TREND WAIT");
-  tt2Set("tt2-pill-t2", tcTarget2ExtendsTarget1 ? "T2 > T1 OK" : "T2 WAIT");
-  tt2Set("tt2-pill-risk", tt2RiskText);
-  tt2Set("tt2-dir", tcDisplayDirection || "—");
-  tt2Set("tt2-trigger", tt2Money(tcPlanAnchor));
-  tt2Set("tt2-stop", tt2Money(tcStopPrice));
-  tt2Set("tt2-t1", tt2Money(tcTarget1));
-  tt2Set("tt2-t2", tt2Money(tcTarget2));
-  tt2Set("tt2-trend", tcTrendPhaseText && tcTrendPhaseText !== "—" ? tcTrendPhaseText : tcZoneLabel);
-
-  const tt2Symbol = String(root?.symbol || panel?.symbol || payload?.symbol || "AARON").toUpperCase();
-  const tt2VwapLevel = tcPickNum(tcA10Vwap?.level, tcA10Vwap?.vwap);
-  const tt2Edge =
-    tcTarget1 != null && tcTarget2 != null
-      ? Math.abs(tcTarget2 - tcTarget1)
-      : null;
-  const tt2TrendMetric =
-    tcA10TrendConfirmed
-      ? tcA10TrendMax
-        ? "Phase 5+"
-        : `Phase ${tcA10TrendStreak}`
-      : "WAIT";
-  const tt2RiskMetric =
-    tt2RiskBlocked
-      ? "BLOCK"
-      : tcRr2 != null
-        ? `${Number(tcRr2).toFixed(2)}R`
-        : tcRr1 != null
-          ? `${Number(tcRr1).toFixed(2)}R`
-          : "OK";
-
-  tt2Set("tt2-met-price", tt2Money(tcLivePrice));
-  tt2Set("tt2-met-price-sub", `${tt2Symbol} 1-min`);
-  tt2Set("tt2-met-trend", tt2TrendMetric);
-  tt2Set("tt2-met-trend-sub", tcA10TrendConfirmed ? `${tcA10TrendTargetLabel} expand watch` : "A10 trend wait");
-  tt2Set("tt2-met-trigger", tt2Money(tcPlanAnchor));
-  tt2Set("tt2-met-trigger-sub", tcIsBelowTrigger ? "ainda nao tocou" : "gatilho operacional");
-  tt2Set("tt2-met-vwap", tt2VwapLevel != null ? tt2Money(tt2VwapLevel) : (tcA10VwapLabel || "—"));
-  tt2Set("tt2-met-vwap-sub", tcA10VwapHasData ? (tcA10VwapStatus || tcA10VwapLabel || "route watch") : "sem vwap route");
-  tt2Set("tt2-met-edge", tt2Edge != null ? `+$${fmt2(tt2Edge)}` : "—");
-  tt2Set("tt2-met-edge-sub", tcTarget2ExtendsTarget1 ? "T2 expandiu" : "esperando T2");
-  tt2Set("tt2-met-risk", tt2RiskMetric);
-  tt2Set("tt2-met-risk-sub", tcStopPrice != null ? `stop ${tt2Money(tcStopPrice)}` : tt2RiskText);
-}
+if (el("tc-action-claude"))    el("tc-action-claude").textContent    = tcClaudeSide ? tcClaudeSide.toUpperCase() : "AUX";
+if (el("tc-action-spread"))    el("tc-action-spread").textContent    = tcSpread != null ? `$${fmt2(tcSpread)}` : "—";
+if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsensus != null ? `$${fmt2(tcConsensus)}` : "—";
 
 // ===== MONTE CARLO — T2 PLAN + BREAKOUT WATCH =====
 {
@@ -35034,7 +33769,7 @@ const tpTxt = (() => {
 
     const logo = document.createElement("div");
     logo.className = "aaron-side-logo";
-    logo.textContent = "A10";
+    logo.textContent = "A9";
     nav.appendChild(logo);
 
     const inner = document.createElement("div");
