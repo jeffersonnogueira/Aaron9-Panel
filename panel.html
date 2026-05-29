@@ -8252,6 +8252,10 @@
   transition: width .22s ease;
 }
 
+#level-flip-card #lfv44-elastic-fill{
+  background: linear-gradient(90deg, rgba(74,222,128,.82), rgba(255,204,102,.86), rgba(248,113,113,.9));
+}
+
 #level-flip-card .lfv44-live-segments{
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -10199,6 +10203,39 @@ body.aaron-terminal-shell .top-right .kv .v{
             </div>
           </div>
           <div class="lfv44-live-note" id="lfv44-live-note">—</div>
+        </div>
+
+        <div class="lfv44-live">
+          <div class="lfv44-live-head">
+            <span>Continuacao x Exaustao</span>
+            <strong id="lfv44-elastic-label">—</strong>
+          </div>
+          <div class="lfv44-live-track">
+            <div class="lfv44-live-fill" id="lfv44-elastic-fill"></div>
+          </div>
+          <div class="lfv44-live-segments">
+            <div class="lfv44-live-seg" id="lfv44-elastic-seg-0">
+              <strong>Continua</strong>
+              <em>limpo</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-elastic-seg-1">
+              <strong>Esticando</strong>
+              <em>ainda serve</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-elastic-seg-2">
+              <strong>Elastico</strong>
+              <em>nao perseguir</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-elastic-seg-3">
+              <strong>Exaustao</strong>
+              <em>perigo</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-elastic-seg-4">
+              <strong>Reversao</strong>
+              <em>quase virou</em>
+            </div>
+          </div>
+          <div class="lfv44-live-note" id="lfv44-elastic-note">—</div>
         </div>
       </div>
       <div class="lfv44-grid">
@@ -29802,6 +29839,97 @@ renderOptions("");
       const note = `px ${lfMoney(current)} | trigger ${lfMoney(lfTrigger)} (${lfMoney(distTrigger)}) | reversao ${lfMoney(lfReversalLevel)} (${lfMoney(distReversal)}). ${sideRead}`;
       return { pct, idx, label, tone, note };
     })();
+    const lfPickPct = (...vals) => {
+      for (const v of vals) {
+        if (v === null || v === undefined || v === "") continue;
+        const n =
+          typeof v === "number" && Number.isFinite(v)
+            ? v
+            : numFrom(String(v));
+        if (!Number.isFinite(n)) continue;
+        return lfClamp(n <= 1 && n >= 0 ? n * 100 : n, 0, 100);
+      }
+      return null;
+    };
+    const lfAvgPct = (...vals) => {
+      const nums = vals.filter(v => v != null && Number.isFinite(Number(v))).map(Number);
+      return nums.length ? lfClamp(nums.reduce((a, b) => a + b, 0) / nums.length, 0, 100) : null;
+    };
+    const lfEmaBlock =
+      exec1x1?.ema_volume_exhaustion_premonition_v1 ||
+      exec1x1?.ema_exhaustion_premonition_v1 ||
+      exec1x1?.ema_exhaustion_premonition ||
+      panel?.ema_volume_exhaustion_premonition_v1 ||
+      panel?.ema_exhaustion_premonition_v1 ||
+      panel?.ema_exhaustion_premonition ||
+      digest?.ema_volume_exhaustion_premonition_v1 ||
+      digest?.ema_exhaustion_premonition_v1 ||
+      digest?.ema_exhaustion_premonition ||
+      payload?.ema_volume_exhaustion_premonition_v1 ||
+      payload?.ema_exhaustion_premonition_v1 ||
+      payload?.ema_exhaustion_premonition ||
+      (typeof deepFind === "function" ? deepFind(root, "ema_exhaustion_premonition_v1") : null) ||
+      (typeof deepFind === "function" ? deepFind(root, "ema_exhaustion_premonition") : null) ||
+      {};
+    const lfEmaCve =
+      lfEmaBlock?.continuation_vs_exhaustion ||
+      lfEmaBlock?.cve ||
+      lfEmaBlock?.probabilities ||
+      {};
+    const lfVolBlock =
+      exec1x1?.volume_premonition_v1 ||
+      panel?.volume_premonition_v1 ||
+      digest?.volume_premonition_v1 ||
+      payload?.volume_premonition_v1 ||
+      {};
+    const lfVolByH = lfVolBlock?.by_horizon || {};
+    const lfVolNow =
+      lfVolBlock?.highlight ||
+      lfVolByH?.["1m"] ||
+      lfVolByH?.["1"] ||
+      lfVolByH?.["5m"] ||
+      lfVolByH?.["5"] ||
+      {};
+    const lfContScore = lfAvgPct(
+      lfPickPct(lfEmaCve?.continue_now_pct, lfEmaCve?.continuation_now_pct, lfEmaBlock?.continuation_pct, lfEmaBlock?.continuation_premonition_pct, panel?.ema_exhaustion_continuation_pct, digest?.ema_exhaustion_continuation_pct),
+      lfPickPct(lfVolNow?.live_continuation_score_pct, panel?.volume_premonition_now_continuation_pct, digest?.volume_premonition_now_continuation_pct, panel?.volume_premonition_continuation_pct, digest?.volume_premonition_continuation_pct, lfVolBlock?.continuation_premonition_pct, lfVolBlock?.continuation_pct),
+      lfContBool === true ? 75 : lfContBool === false ? 25 : null,
+      lfActive && lfLiveMeter?.pct != null ? lfLiveMeter.pct : null
+    );
+    const lfPriceAgainstPct = lfActive && lfLiveMeter?.pct != null ? lfClamp(100 - lfLiveMeter.pct, 0, 100) : null;
+    const lfExhaustScore = lfAvgPct(
+      lfPickPct(lfEmaCve?.exhaustion_now_pct, lfEmaBlock?.exhaust_now_pct, lfEmaBlock?.exhaustion_pct, panel?.ema_exhaustion_pct, digest?.ema_exhaustion_pct),
+      lfPickPct(lfEmaCve?.weaken_now_pct, lfEmaBlock?.weaken_now_pct, lfEmaBlock?.weakening_pct),
+      lfPickPct(lfEmaCve?.reversal_risk_pct, lfEmaBlock?.reversal_risk_pct),
+      lfPickPct(lfVolNow?.live_exhaustion_score_pct, panel?.volume_premonition_exhaustion_pct, digest?.volume_premonition_exhaustion_pct, lfVolBlock?.exhaustion_premonition_pct, lfVolBlock?.exhaustion_pct),
+      lfPriceAgainstPct
+    );
+    const lfElastic = (() => {
+      const exhaustion = lfExhaustScore ?? (lfContScore != null ? 100 - lfContScore : lfPriceAgainstPct ?? 50);
+      const pct = lfClamp(exhaustion, 0, 100);
+      let idx = 0;
+      let label = "CONTINUA LIMPO";
+      let tone = "is-good";
+      if (pct >= 85) {
+        idx = 4;
+        label = "REVERSAO PERTO";
+        tone = "is-danger";
+      } else if (pct >= 68) {
+        idx = 3;
+        label = "EXAUSTAO";
+        tone = "is-danger";
+      } else if (pct >= 48) {
+        idx = 2;
+        label = "ELASTICO";
+        tone = "";
+      } else if (pct >= 28) {
+        idx = 1;
+        label = "ESTICANDO";
+        tone = "";
+      }
+      const note = `continua ${fmtPct(lfContScore)} | exaustao ${fmtPct(lfExhaustScore)} | contra-preco ${fmtPct(lfPriceAgainstPct)}. Quanto mais perto de 100, mais elastico/reversao.`;
+      return { pct, idx, label, tone, note, continuation: lfContScore, exhaustion: lfExhaustScore };
+    })();
     const lfConfidence = numPick(levelFlipV44?.confidence_pct);
     const lfTouches = numPick(levelFlipV44?.touch_count, levelFlipV44?.pivot_touch_count);
     const lfRetestHeld = String(levelFlipV44?.retest_held ?? "").trim().toLowerCase() === "true" || levelFlipV44?.retest_held === true;
@@ -29850,6 +29978,8 @@ renderOptions("");
       if (!lfRetestOk) return { text: "NAO ENTRA - FALTA RETESTE", cls: "is-wait", action: "Esperar reteste" };
       if (!lfConfidenceOk) return { text: "NAO ENTRA - QUALIDADE BAIXA", cls: "is-block", action: "Esperar novo V44" };
       if (!lfContinuationAligned) return { text: "NAO ENTRA - CONT NAO ALINHADA", cls: "is-block", action: "Esperar continuacao" };
+      if (lfElastic.idx >= 4) return { text: "NAO ENTRA - REVERSAO PERTO", cls: "is-block", action: "Esperar virar/limpar" };
+      if (lfElastic.idx === 3) return { text: "EXAUSTAO - NAO PERSEGUIR", cls: "is-block", action: "Esperar respiro" };
       if (lfTriggerCrossed) return { text: "ENTRADA TATICA V44", cls: "is-enter", action: "Pode executar pequeno" };
       if (lfLiveMeter.idx <= 1) return { text: "NAO ENTRA - V44 FALHANDO", cls: "is-block", action: "Cuidado reversao" };
       if (lfLiveMeter.idx === 2) return { text: "NO MEIO - SEM ENTRADA", cls: "is-wait", action: "Esperar sair do meio" };
@@ -29917,6 +30047,17 @@ renderOptions("");
       seg.classList.toggle("is-now", isNow);
       seg.classList.toggle("is-danger", isNow && lfLiveMeter.tone === "is-danger");
       seg.classList.toggle("is-good", isNow && lfLiveMeter.tone === "is-good");
+    }
+    if (el("lfv44-elastic-label")) el("lfv44-elastic-label").textContent = lfElastic.label;
+    if (el("lfv44-elastic-note")) el("lfv44-elastic-note").textContent = lfElastic.note;
+    if (el("lfv44-elastic-fill")) el("lfv44-elastic-fill").style.width = `${Math.round(lfElastic.pct)}%`;
+    for (let i = 0; i < 5; i += 1) {
+      const seg = el(`lfv44-elastic-seg-${i}`);
+      if (!seg) continue;
+      const isNow = i === lfElastic.idx;
+      seg.classList.toggle("is-now", isNow);
+      seg.classList.toggle("is-danger", isNow && lfElastic.tone === "is-danger");
+      seg.classList.toggle("is-good", isNow && lfElastic.tone === "is-good");
     }
     if (el("lfv44-status")) el("lfv44-status").textContent = lfActive ? `${lfSide || "—"} ${lfStatusRaw}` : "—";
     if (el("lfv44-zone")) el("lfv44-zone").textContent = lfZoneText;
@@ -30671,6 +30812,7 @@ const tcLevelFlipReady =
   lfRetestOk &&
   lfConfidenceOk &&
   lfContinuationAligned &&
+  lfElastic.idx < 3 &&
   !lfReversalRisk &&
   !lfStopTouched;
 const tcLevelFlipTriggered = tcLevelFlipReady && lfTriggerCrossed;
@@ -30685,6 +30827,7 @@ if (tcLevelFlipActive && !tcLateActive && !tcPositionAction) {
       (!lfTouchesOk || !lfRetestOk) ? "V44 WAIT" :
       !lfConfidenceOk ? "V44 WEAK" :
       !lfContinuationAligned ? "V44 WAIT" :
+      lfElastic.idx >= 3 ? "V44 EXAUSTAO" :
       "V44 LEVEL";
   } else {
     tcZoneLabel = "V44 WAIT";
@@ -30959,9 +31102,10 @@ const tcOperatorLevelFlipLine = (() => {
   const zoneTxt = lfZoneText && lfZoneText !== "—" ? `zona ${lfZoneText}` : "";
   const retestBarsTxt = lfBarsSinceRetest != null ? `reteste ${Math.round(lfBarsSinceRetest)} barras` : "";
   const continuationTxt = `continuacao ${lfContinuationText}`;
+  const elasticTxt = `elastico ${lfElastic.label} ${fmtPct(lfElastic.pct)}`;
   const conflictTxt = tcLevelFlipContra ? " CONTRA direcao canonica; nao executar sem novo matcher." : "";
   const headerTxt = [lfDecision?.text || "V44", `V44 ${sideTxt} ${statusTxt}`, lfStageLabel].filter(Boolean).join(" | ");
-  const detailTxt = [zoneTxt, triggerTxt, reversalTxt, invalTxt, retestBarsTxt, continuationTxt].filter(Boolean).join(" | ");
+  const detailTxt = [zoneTxt, triggerTxt, reversalTxt, invalTxt, retestBarsTxt, continuationTxt, elasticTxt].filter(Boolean).join(" | ");
   return `${headerTxt}${detailTxt ? `: ${detailTxt}` : ""}.${conflictTxt}`.replace(/\s+\./g, ".");
 })();
 const tcOperatorVwapLine = (() => {
@@ -31139,7 +31283,7 @@ const tcBuildOperatorDecisionV1 = () => {
         main: triggered ? "ENTRADA TATICA V44" : (lfDecision?.text || "ARMAR LEVEL FLIP"),
         sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine}`,
         mode: triggered ? "is-acceptable" : (lfDecision?.cls === "is-block" ? "is-no-trade" : "is-wait"),
-        zone: "V44 LEVEL",
+        zone: lfElastic.idx >= 3 ? "V44 EXAUSTAO" : "V44 LEVEL",
         next: triggered
           ? "Executar apenas pequeno/tatico se spread e candle nao estiverem esticados; cancelar se perder a invalidação."
           : "Ler o termometro vivo: se estiver no meio ou falhando, nao antecipar; so executar no trigger.",
@@ -31560,6 +31704,8 @@ const tcActionNote = (() => {
       return "V44 Dead = invalidação tocada; cancelar a ideia V44.";
     case "V44 REVERSAO":
       return "V44 Reversao = o preço cruzou o nivel de reversao contra o level flip; a continuação falhou.";
+    case "V44 EXAUSTAO":
+      return "V44 Exaustao = continuacao esticou demais; risco de elastico/reversao, nao perseguir.";
     case "V44 CONTRA":
       return "V44 Contra = level flip apareceu contra a direcao canonica; alerta de virada, nao ordem.";
     case "POS HOLD":
