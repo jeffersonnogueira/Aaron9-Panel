@@ -10080,6 +10080,10 @@ body.aaron-terminal-shell .top-right .kv .v{
           <strong id="lfv44-inval">—</strong>
         </div>
         <div class="lfv44-cell">
+          <span>Reversao</span>
+          <strong id="lfv44-reversal">—</strong>
+        </div>
+        <div class="lfv44-cell">
           <span>Qualidade</span>
           <strong id="lfv44-conf">—</strong>
         </div>
@@ -29552,6 +29556,30 @@ renderOptions("");
         : lfZoneMid != null ? lfMoney(lfZoneMid) : "—";
     const lfTrigger = numPick(levelFlipV44?.trigger_price);
     const lfInvalidation = numPick(levelFlipV44?.invalidation);
+    const lfCanonicalReversal = numPick(
+      lfCanonicalRead?.reversao_em,
+      lfCanonicalRead?.reversal_at,
+      lfCanonicalRead?.reversal_price,
+      lfCanonicalRead?.invalidation,
+      panel?.reversao_em,
+      digest?.reversao_em,
+      payload?.reversao_em,
+      panel?.reversal_at,
+      digest?.reversal_at,
+      payload?.reversal_at
+    );
+    const lfReversalLevel = lfCanonicalReversal ?? lfInvalidation;
+    const lfReversalRisk = (() => {
+      if (!lfSide || current == null || lfReversalLevel == null) return false;
+      return lfSide === "LONG" ? current <= lfReversalLevel : current >= lfReversalLevel;
+    })();
+    const lfReversalText = (() => {
+      if (lfReversalRisk) return lfSide === "SHORT" ? "SHORT FALHANDO" : "LONG FALHANDO";
+      if (lfReversalLevel == null) return "—";
+      return lfSide === "SHORT"
+        ? `acima ${lfMoney(lfReversalLevel)}`
+        : `abaixo ${lfMoney(lfReversalLevel)}`;
+    })();
     const lfConfidence = numPick(levelFlipV44?.confidence_pct);
     const lfTouches = numPick(levelFlipV44?.touch_count, levelFlipV44?.pivot_touch_count);
     const lfRetestHeld = String(levelFlipV44?.retest_held ?? "").trim().toLowerCase() === "true" || levelFlipV44?.retest_held === true;
@@ -29583,6 +29611,7 @@ renderOptions("");
     );
     const lfStageLabel = (() => {
       if (!lfActive) return "SEM V44 AGORA";
+      if (lfReversalRisk) return "REVERSAO ACIONADA";
       if (lfStopTouched) return "INVALIDACAO TOCADA";
       if (lfRetestOk && !lfContinuationAligned) return "FALTA CONTINUACAO";
       if (lfTriggerCrossed) return "TRIGGER CRUZADO";
@@ -29593,6 +29622,7 @@ renderOptions("");
     })();
     const lfDecision = (() => {
       if (!lfActive) return { text: "SEM SETUP V44", cls: "is-wait", action: "Ignorar V44" };
+      if (lfReversalRisk) return { text: "REVERSAO CONTRA V44", cls: "is-stop", action: `Cancelar ${lfSide || "V44"}` };
       if (lfStopTouched) return { text: "CANCELA V44", cls: "is-stop", action: "Nao operar" };
       if (!lfTouchesOk) return { text: "NAO ENTRA - FALTA TESTE", cls: "is-wait", action: "Esperar nivel" };
       if (!lfRetestOk) return { text: "NAO ENTRA - FALTA RETESTE", cls: "is-wait", action: "Esperar reteste" };
@@ -29610,7 +29640,9 @@ renderOptions("");
       trigger: lfTriggerCrossed
         ? (lfTriggerCrossedByPrice ? "preco atual cruzou trigger" : "matcher marcou trigger")
         : `entrada so em ${lfMoney(lfTrigger)}`,
-      stop: lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `cancela em ${lfMoney(lfInvalidation)}`
+      stop: lfReversalRisk
+        ? `reversao em ${lfMoney(lfReversalLevel)}`
+        : lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `cancela em ${lfMoney(lfInvalidation)}`
     };
 
     const lfCard = el("level-flip-card");
@@ -29622,7 +29654,7 @@ renderOptions("");
       if (lfStatusRaw === "TRIGGERED") lfCard.classList.add("is-triggered");
       if (lfStatusRaw === "ACTIVE") lfCard.classList.add("is-active");
       if (lfStatusRaw === "ARMED") lfCard.classList.add("is-armed");
-      if (lfStopTouched) lfCard.classList.add("is-stop");
+      if (lfStopTouched || lfReversalRisk) lfCard.classList.add("is-stop");
     }
     if (el("lfv44-main")) el("lfv44-main").textContent = lfStateLabel;
     if (el("lfv44-sub")) {
@@ -29649,11 +29681,12 @@ renderOptions("");
     lfSetStep("lfv44-step-break", lfBreakoutOk, lfBreakoutOk && !lfRetestOk, false, lfStepNote.break);
     lfSetStep("lfv44-step-retest", lfRetestOk, lfRetestOk && !lfTriggerCrossed, false, lfStepNote.retest);
     lfSetStep("lfv44-step-trigger", lfTriggerCrossed, lfTriggerCrossed && !lfStopTouched, false, lfStepNote.trigger);
-    lfSetStep("lfv44-step-stop", lfStopTouched, false, lfStopTouched, lfStepNote.stop);
+    lfSetStep("lfv44-step-stop", lfStopTouched || lfReversalRisk, false, lfStopTouched || lfReversalRisk, lfStepNote.stop);
     if (el("lfv44-status")) el("lfv44-status").textContent = lfActive ? `${lfSide || "—"} ${lfStatusRaw}` : "—";
     if (el("lfv44-zone")) el("lfv44-zone").textContent = lfZoneText;
     if (el("lfv44-trigger")) el("lfv44-trigger").textContent = lfMoney(lfTrigger);
     if (el("lfv44-inval")) el("lfv44-inval").textContent = lfMoney(lfInvalidation);
+    if (el("lfv44-reversal")) el("lfv44-reversal").textContent = lfReversalText;
     if (el("lfv44-conf")) el("lfv44-conf").textContent = lfConfidence != null ? fmtPct(lfConfidence) : "—";
     if (el("lfv44-touches")) el("lfv44-touches").textContent = lfTouches != null ? String(Math.round(lfTouches)) : "—";
     if (el("lfv44-retest")) el("lfv44-retest").textContent = lfRetestOk ? "SEGUROU" : "NAO";
@@ -30402,6 +30435,7 @@ const tcLevelFlipReady =
   lfRetestOk &&
   lfConfidenceOk &&
   lfContinuationAligned &&
+  !lfReversalRisk &&
   !lfStopTouched;
 const tcLevelFlipTriggered = tcLevelFlipReady && lfTriggerCrossed;
 
@@ -30410,6 +30444,7 @@ if (tcLevelFlipActive && !tcLateActive && !tcPositionAction) {
     tcZoneLabel = "V44 CONTRA";
   } else if (tcLevelFlipAligned) {
     tcZoneLabel =
+      lfReversalRisk ? "V44 REVERSAO" :
       lfStopTouched ? "V44 DEAD" :
       (!lfTouchesOk || !lfRetestOk) ? "V44 WAIT" :
       !lfConfidenceOk ? "V44 WEAK" :
@@ -30684,12 +30719,13 @@ const tcOperatorLevelFlipLine = (() => {
   const statusTxt = lfStatusRaw || "ACTIVE";
   const triggerTxt = lfTrigger != null ? `trigger ${tcLateMoney(lfTrigger)}` : "";
   const invalTxt = lfInvalidation != null ? `invalida ${tcLateMoney(lfInvalidation)}` : "";
+  const reversalTxt = lfReversalLevel != null ? `reversao ${tcLateMoney(lfReversalLevel)}` : "";
   const zoneTxt = lfZoneText && lfZoneText !== "—" ? `zona ${lfZoneText}` : "";
   const retestBarsTxt = lfBarsSinceRetest != null ? `reteste ${Math.round(lfBarsSinceRetest)} barras` : "";
   const continuationTxt = `continuacao ${lfContinuationText}`;
   const conflictTxt = tcLevelFlipContra ? " CONTRA direcao canonica; nao executar sem novo matcher." : "";
   const headerTxt = [lfDecision?.text || "V44", `V44 ${sideTxt} ${statusTxt}`, lfStageLabel].filter(Boolean).join(" | ");
-  const detailTxt = [zoneTxt, triggerTxt, invalTxt, retestBarsTxt, continuationTxt].filter(Boolean).join(" | ");
+  const detailTxt = [zoneTxt, triggerTxt, reversalTxt, invalTxt, retestBarsTxt, continuationTxt].filter(Boolean).join(" | ");
   return `${headerTxt}${detailTxt ? `: ${detailTxt}` : ""}.${conflictTxt}`.replace(/\s+\./g, ".");
 })();
 const tcOperatorVwapLine = (() => {
@@ -30804,6 +30840,17 @@ const tcBuildOperatorDecisionV1 = () => {
     }
 
     if (tcLevelFlipAligned) {
+      if (lfReversalRisk) {
+        return withBase({
+          main: "REVERSAO CONTRA V44",
+          sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine} O nivel de reversao ja foi tocado contra o trade.`,
+          mode: "is-no-trade",
+          zone: "V44 REVERSAO",
+          next: "Cancelar a ideia de continuacao. Esperar novo matcher confirmar reversao antes de virar a mao.",
+          reason: "v44_level_flip_reversal_risk"
+        });
+      }
+
       if (lfStopTouched) {
         return withBase({
           main: "CANCELA V44",
@@ -31275,6 +31322,8 @@ const tcActionNote = (() => {
       return "V44 Weak = level flip existe, mas qualidade menor que 75; nao usar como gatilho.";
     case "V44 DEAD":
       return "V44 Dead = invalidação tocada; cancelar a ideia V44.";
+    case "V44 REVERSAO":
+      return "V44 Reversao = o preço cruzou o nivel de reversao contra o level flip; a continuação falhou.";
     case "V44 CONTRA":
       return "V44 Contra = level flip apareceu contra a direcao canonica; alerta de virada, nao ordem.";
     case "POS HOLD":
