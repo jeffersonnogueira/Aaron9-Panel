@@ -29411,7 +29411,7 @@ renderOptions("");
 
   function updateExecMicroBox(){
     // Current (pega do KPI da direita ou do header)
-    const current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
+    let current = numFrom(t("prem-right-current-price") || t("prem-head-current-price"));
 
     // Payload & ctx (não depende do bloco do retângulo amarelo)
     const rawPayload = window.__AARON_LAST_PAYLOAD__ || {};
@@ -29430,6 +29430,38 @@ renderOptions("");
       }
       return null;
     };
+
+    current = numPick(
+      window.__AARON_LAST_PANEL_JSON__?.price,
+      window.__AARON_LAST_PANEL_JSON__?.last_price,
+      window.__AARON_LAST_PANEL_JSON__?.price_now,
+      panel?.price_now,
+      digest?.price_now,
+      payload?.price_now,
+      root?.price_now,
+      ui?.price_now,
+      panel?.last_price,
+      digest?.last_price,
+      payload?.last_price,
+      root?.last_price,
+      ui?.last_price,
+      panel?.current_price,
+      digest?.current_price,
+      payload?.current_price,
+      root?.current_price,
+      panel?.current,
+      digest?.current,
+      payload?.current,
+      root?.current,
+      panel?.close,
+      digest?.close,
+      payload?.close,
+      root?.close,
+      root?.vwap_digest_v1?.close,
+      root?.vwap_digest_v1?.candle?.close,
+      root?.vwap_bands?.close,
+      current
+    );
 
     const exec1x1 =
       panel.exec_1x1 ||
@@ -29639,10 +29671,10 @@ renderOptions("");
         : "esperar voltar no nivel",
       trigger: lfTriggerCrossed
         ? (lfTriggerCrossedByPrice ? "preco atual cruzou trigger" : "matcher marcou trigger")
-        : `entrada so em ${lfMoney(lfTrigger)}`,
+        : `px ${lfMoney(current)} / entrada ${lfMoney(lfTrigger)}`,
       stop: lfReversalRisk
-        ? `reversao em ${lfMoney(lfReversalLevel)}`
-        : lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `cancela em ${lfMoney(lfInvalidation)}`
+        ? `px ${lfMoney(current)} / reversao ${lfMoney(lfReversalLevel)}`
+        : lfStopTouched ? `tocou ${lfMoney(lfInvalidation)}` : `px ${lfMoney(current)} / cancela ${lfMoney(lfInvalidation)}`
     };
 
     const lfCard = el("level-flip-card");
@@ -29692,7 +29724,7 @@ renderOptions("");
     if (el("lfv44-retest")) el("lfv44-retest").textContent = lfRetestOk ? "SEGUROU" : "NAO";
     if (el("lfv44-bars-retest")) el("lfv44-bars-retest").textContent = lfBarsSinceRetest != null ? String(Math.round(lfBarsSinceRetest)) : "—";
     if (el("lfv44-continuation")) el("lfv44-continuation").textContent = lfContinuationText;
-    if (el("lfv44-action")) el("lfv44-action").textContent = lfDecision.action;
+    if (el("lfv44-action")) el("lfv44-action").textContent = `${lfDecision.action} | px ${lfMoney(current)}`;
     if (el("tc-action-level")) el("tc-action-level").textContent = lfActive ? `${lfSide || "V44"} ${lfStatusRaw}` : "—";
 
     // ATR14 / Micro Take (preferindo ctx, que já é alimentado pelo updatePremonitionPanel)
