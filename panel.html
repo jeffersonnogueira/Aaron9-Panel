@@ -8202,6 +8202,111 @@
   color: #fecaca;
 }
 
+#level-flip-card .lfv44-live{
+  margin-top: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(2,6,23,.38);
+  padding: 12px;
+}
+
+#level-flip-card .lfv44-live-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+#level-flip-card .lfv44-live-head span{
+  font-size: 12px;
+  line-height: 1;
+  text-transform: uppercase;
+  font-weight: 950;
+  color: rgba(203,213,225,.72);
+}
+
+#level-flip-card .lfv44-live-head strong{
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 950;
+  color: #ffcc66;
+  text-align: right;
+}
+
+#level-flip-card .lfv44-live-track{
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(248,113,113,.28), rgba(255,204,102,.22), rgba(34,211,238,.24), rgba(74,222,128,.28));
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+#level-flip-card .lfv44-live-fill{
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.72);
+  box-shadow: 0 0 16px rgba(255,255,255,.28);
+  transition: width .22s ease;
+}
+
+#level-flip-card .lfv44-live-segments{
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#level-flip-card .lfv44-live-seg{
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(15,23,42,.7);
+  padding: 9px 8px;
+  min-height: 58px;
+}
+
+#level-flip-card .lfv44-live-seg strong{
+  display: block;
+  font-size: 13px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: rgba(226,232,240,.88);
+}
+
+#level-flip-card .lfv44-live-seg em{
+  display: block;
+  margin-top: 5px;
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1.1;
+  color: rgba(203,213,225,.7);
+}
+
+#level-flip-card .lfv44-live-seg.is-now{
+  border-color: rgba(255,204,102,.62);
+  background: rgba(255,204,102,.12);
+  box-shadow: inset 0 0 0 1px rgba(255,204,102,.16);
+}
+
+#level-flip-card .lfv44-live-seg.is-danger{
+  border-color: rgba(248,113,113,.58);
+  background: rgba(127,29,29,.28);
+}
+
+#level-flip-card .lfv44-live-seg.is-good{
+  border-color: rgba(74,222,128,.52);
+  background: rgba(20,83,45,.26);
+}
+
+#level-flip-card .lfv44-live-note{
+  margin-top: 9px;
+  font-size: 13px;
+  line-height: 1.25;
+  color: rgba(226,232,240,.86);
+}
+
 #level-flip-card .lfv44-grid{
   margin-top: 12px;
   display: grid;
@@ -8263,6 +8368,7 @@
 
 @media (max-width: 900px){
   #level-flip-card .lfv44-steps,
+  #level-flip-card .lfv44-live-segments,
   #level-flip-card .lfv44-grid{
     grid-template-columns: 1fr;
   }
@@ -10060,6 +10166,39 @@ body.aaron-terminal-shell .top-right .kv .v{
             <strong>Stop / cancel</strong>
             <em id="lfv44-step-stop-note">—</em>
           </div>
+        </div>
+
+        <div class="lfv44-live">
+          <div class="lfv44-live-head">
+            <span>Termometro vivo</span>
+            <strong id="lfv44-live-label">—</strong>
+          </div>
+          <div class="lfv44-live-track">
+            <div class="lfv44-live-fill" id="lfv44-live-fill"></div>
+          </div>
+          <div class="lfv44-live-segments">
+            <div class="lfv44-live-seg" id="lfv44-live-seg-0">
+              <strong>Reversao</strong>
+              <em>contra o V44</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-live-seg-1">
+              <strong>Falhando</strong>
+              <em>perto da reversao</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-live-seg-2">
+              <strong>Meio</strong>
+              <em>briga sem gatilho</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-live-seg-3">
+              <strong>Pressao</strong>
+              <em>indo ao trigger</em>
+            </div>
+            <div class="lfv44-live-seg" id="lfv44-live-seg-4">
+              <strong>Disparou</strong>
+              <em>trigger cruzado</em>
+            </div>
+          </div>
+          <div class="lfv44-live-note" id="lfv44-live-note">—</div>
         </div>
       </div>
       <div class="lfv44-grid">
@@ -29612,6 +29751,57 @@ renderOptions("");
         ? `acima ${lfMoney(lfReversalLevel)}`
         : `abaixo ${lfMoney(lfReversalLevel)}`;
     })();
+    const lfClamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const lfLiveMeter = (() => {
+      if (!lfActive || !lfSide || current == null || lfTrigger == null || lfReversalLevel == null) {
+        return {
+          pct: 0,
+          idx: 2,
+          label: "SEM PRECO VIVO",
+          tone: "",
+          note: "Sem preco/trigger/reversao suficiente para mover o termometro."
+        };
+      }
+
+      const span = Math.max(Math.abs(lfReversalLevel - lfTrigger), 0.01);
+      const rawPct = lfSide === "SHORT"
+        ? ((lfReversalLevel - current) / span) * 100
+        : ((current - lfReversalLevel) / span) * 100;
+      const pct = lfClamp(rawPct, 0, 100);
+      const distTrigger = Math.abs(current - lfTrigger);
+      const distReversal = Math.abs(current - lfReversalLevel);
+
+      let idx = 2;
+      let label = "BRIGA NO MEIO";
+      let tone = "";
+
+      if (pct >= 95) {
+        idx = 4;
+        label = `DISPAROU ${lfSide}`;
+        tone = "is-good";
+      } else if (pct >= 70) {
+        idx = 3;
+        label = `PRESSAO ${lfSide}`;
+        tone = "is-good";
+      } else if (pct >= 40) {
+        idx = 2;
+        label = "BRIGA NO MEIO";
+      } else if (pct >= 15) {
+        idx = 1;
+        label = `${lfSide} FALHANDO`;
+        tone = "is-danger";
+      } else {
+        idx = 0;
+        label = "REVERSAO ACIONANDO";
+        tone = "is-danger";
+      }
+
+      const sideRead = lfSide === "SHORT"
+        ? "Para SHORT, cair aproxima do trigger; subir aproxima da reversao."
+        : "Para LONG, subir aproxima do trigger; cair aproxima da reversao.";
+      const note = `px ${lfMoney(current)} | trigger ${lfMoney(lfTrigger)} (${lfMoney(distTrigger)}) | reversao ${lfMoney(lfReversalLevel)} (${lfMoney(distReversal)}). ${sideRead}`;
+      return { pct, idx, label, tone, note };
+    })();
     const lfConfidence = numPick(levelFlipV44?.confidence_pct);
     const lfTouches = numPick(levelFlipV44?.touch_count, levelFlipV44?.pivot_touch_count);
     const lfRetestHeld = String(levelFlipV44?.retest_held ?? "").trim().toLowerCase() === "true" || levelFlipV44?.retest_held === true;
@@ -29661,6 +29851,9 @@ renderOptions("");
       if (!lfConfidenceOk) return { text: "NAO ENTRA - QUALIDADE BAIXA", cls: "is-block", action: "Esperar novo V44" };
       if (!lfContinuationAligned) return { text: "NAO ENTRA - CONT NAO ALINHADA", cls: "is-block", action: "Esperar continuacao" };
       if (lfTriggerCrossed) return { text: "ENTRADA TATICA V44", cls: "is-enter", action: "Pode executar pequeno" };
+      if (lfLiveMeter.idx <= 1) return { text: "NAO ENTRA - V44 FALHANDO", cls: "is-block", action: "Cuidado reversao" };
+      if (lfLiveMeter.idx === 2) return { text: "NO MEIO - SEM ENTRADA", cls: "is-wait", action: "Esperar sair do meio" };
+      if (lfLiveMeter.idx === 3) return { text: "PRESSAO NO TRIGGER", cls: "is-wait", action: "Preparar trigger" };
       return { text: "ARMAR NO TRIGGER", cls: "is-wait", action: "Sem antecipar" };
     })();
     const lfStepNote = {
@@ -29714,6 +29907,17 @@ renderOptions("");
     lfSetStep("lfv44-step-retest", lfRetestOk, lfRetestOk && !lfTriggerCrossed, false, lfStepNote.retest);
     lfSetStep("lfv44-step-trigger", lfTriggerCrossed, lfTriggerCrossed && !lfStopTouched, false, lfStepNote.trigger);
     lfSetStep("lfv44-step-stop", lfStopTouched || lfReversalRisk, false, lfStopTouched || lfReversalRisk, lfStepNote.stop);
+    if (el("lfv44-live-label")) el("lfv44-live-label").textContent = lfLiveMeter.label;
+    if (el("lfv44-live-note")) el("lfv44-live-note").textContent = lfLiveMeter.note;
+    if (el("lfv44-live-fill")) el("lfv44-live-fill").style.width = `${Math.round(lfLiveMeter.pct)}%`;
+    for (let i = 0; i < 5; i += 1) {
+      const seg = el(`lfv44-live-seg-${i}`);
+      if (!seg) continue;
+      const isNow = i === lfLiveMeter.idx;
+      seg.classList.toggle("is-now", isNow);
+      seg.classList.toggle("is-danger", isNow && lfLiveMeter.tone === "is-danger");
+      seg.classList.toggle("is-good", isNow && lfLiveMeter.tone === "is-good");
+    }
     if (el("lfv44-status")) el("lfv44-status").textContent = lfActive ? `${lfSide || "—"} ${lfStatusRaw}` : "—";
     if (el("lfv44-zone")) el("lfv44-zone").textContent = lfZoneText;
     if (el("lfv44-trigger")) el("lfv44-trigger").textContent = lfMoney(lfTrigger);
@@ -30932,13 +31136,13 @@ const tcBuildOperatorDecisionV1 = () => {
 
       const triggered = tcLevelFlipTriggered;
       return withBase({
-        main: triggered ? "ENTRADA TATICA V44" : "ARMAR LEVEL FLIP",
+        main: triggered ? "ENTRADA TATICA V44" : (lfDecision?.text || "ARMAR LEVEL FLIP"),
         sub: `${tcOperatorDir}: ${tcOperatorLevelFlipLine}`,
-        mode: triggered ? "is-acceptable" : "is-wait",
+        mode: triggered ? "is-acceptable" : (lfDecision?.cls === "is-block" ? "is-no-trade" : "is-wait"),
         zone: "V44 LEVEL",
         next: triggered
           ? "Executar apenas pequeno/tatico se spread e candle nao estiverem esticados; cancelar se perder a invalidação."
-          : "Ficar armado no trigger V44. Sem trigger cruzado, nao antecipar.",
+          : "Ler o termometro vivo: se estiver no meio ou falhando, nao antecipar; so executar no trigger.",
         reason: triggered ? "v44_level_flip_triggered" : "v44_level_flip_armed"
       });
     }
