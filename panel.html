@@ -5841,6 +5841,49 @@
 #copilot-block .stats-brain-lane-title{font-size:14px;}
 #copilot-block .stats-brain-pill{font-size:15px;padding:8px 12px;}
 #copilot-block .stats-brain-map-text{font-size:16px;line-height:1.5;}
+/* Stats Brain journal polish */
+#copilot-block .stats-brain-journal{position:relative;overflow:hidden;border-radius:18px;padding:24px;border-color:rgba(34,211,238,.34);background:linear-gradient(135deg,rgba(5,13,24,.98),rgba(4,10,19,.96) 46%,rgba(9,17,30,.98));box-shadow:0 18px 46px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06);}
+#copilot-block .stats-brain-journal::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#22d3ee,#14f1a8,#f4b83f,#ff4869);opacity:.9;}
+#copilot-block .stats-brain-journal::after{content:"";position:absolute;left:2px;right:2px;top:2px;height:86px;background:linear-gradient(180deg,rgba(34,211,238,.10),rgba(34,211,238,0));pointer-events:none;}
+#copilot-block .stats-brain-journal-head,#copilot-block .stats-brain-journal-grid,#copilot-block .stats-brain-journal-levels,#copilot-block .stats-brain-journal-table{position:relative;z-index:1;}
+#copilot-block .stats-brain-journal-head{align-items:center;padding-bottom:17px;border-bottom:1px solid rgba(148,163,184,.13);}
+#copilot-block .stats-brain-journal-title{display:flex;align-items:center;gap:11px;color:#f8fafc;text-shadow:0 0 18px rgba(34,211,238,.18);}
+#copilot-block .stats-brain-journal-title::before{content:"";width:9px;height:9px;border-radius:50%;background:#22d3ee;box-shadow:0 0 18px rgba(34,211,238,.75);}
+#copilot-block .stats-brain-journal-sub{max-width:900px;color:#9fb4c9;}
+#copilot-block .stats-brain-journal-tools{align-items:stretch;}
+#copilot-block .stats-brain-journal-actions{align-self:flex-start;padding:6px;border:1px solid rgba(148,163,184,.12);border-radius:999px;background:rgba(5,10,19,.55);}
+#copilot-block .stats-brain-journal-btn{transition:transform .16s ease,border-color .16s ease,color .16s ease;background .16s ease;background:linear-gradient(180deg,rgba(34,211,238,.18),rgba(34,211,238,.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+#copilot-block .stats-brain-journal-btn:hover{border-color:rgba(34,211,238,.62);color:#e0fbff;transform:translateY(-1px);}
+#copilot-block .stats-brain-journal-btn.is-reset{background:linear-gradient(180deg,rgba(255,72,105,.18),rgba(255,72,105,.08));}
+#copilot-block .stats-brain-capital-box{border-radius:15px;border-color:rgba(244,184,63,.48);background:linear-gradient(180deg,rgba(244,184,63,.16),rgba(5,10,19,.78));box-shadow:0 12px 30px rgba(244,184,63,.08),inset 0 1px 0 rgba(255,255,255,.06);}
+#copilot-block .stats-brain-capital-input{border-radius:10px;background:rgba(2,6,13,.92);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+#copilot-block .stats-brain-journal-grid{gap:12px;margin-top:16px;}
+#copilot-block .stats-brain-journal-card{position:relative;overflow:hidden;border-radius:14px;padding:18px 18px 17px;border-color:rgba(34,211,238,.16);background:linear-gradient(180deg,rgba(13,23,40,.90),rgba(5,10,19,.72));box-shadow:0 12px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.045);}
+#copilot-block .stats-brain-journal-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#22d3ee;opacity:.62;}
+#copilot-block .stats-brain-journal-card span,#copilot-block .stats-brain-journal-card strong,#copilot-block .stats-brain-journal-card small{position:relative;z-index:1;}
+#copilot-block .stats-brain-journal-card span{color:#8194aa;}
+#copilot-block .stats-brain-journal-card strong{margin-top:6px;text-shadow:0 0 18px rgba(248,250,252,.08);}
+#copilot-block .stats-brain-journal-card small{margin-top:6px;color:#9fb4c9;}
+#copilot-block .stats-brain-journal-card.is-good{border-color:rgba(20,241,168,.26);background:linear-gradient(180deg,rgba(8,32,32,.90),rgba(5,10,19,.72));}
+#copilot-block .stats-brain-journal-card.is-good::before{background:#14f1a8;box-shadow:0 0 18px rgba(20,241,168,.62);}
+#copilot-block .stats-brain-journal-card.is-bad{border-color:rgba(255,72,105,.28);background:linear-gradient(180deg,rgba(38,12,22,.84),rgba(5,10,19,.72));}
+#copilot-block .stats-brain-journal-card.is-bad::before{background:#ff4869;box-shadow:0 0 18px rgba(255,72,105,.58);}
+#copilot-block .stats-brain-journal-levels{gap:10px;margin-top:14px;}
+#copilot-block .stats-brain-journal-level{position:relative;overflow:hidden;border-radius:12px;padding:13px 14px;border-color:rgba(148,163,184,.16);background:linear-gradient(180deg,rgba(12,20,34,.82),rgba(5,10,19,.70));box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+#copilot-block .stats-brain-journal-level::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:rgba(148,163,184,.18);}
+#copilot-block .stats-brain-journal-level span,#copilot-block .stats-brain-journal-level strong,#copilot-block .stats-brain-journal-level small{position:relative;z-index:1;}
+#copilot-block .stats-brain-journal-level.is-target{border-color:rgba(20,241,168,.24);}
+#copilot-block .stats-brain-journal-level.is-breath{border-color:rgba(34,211,238,.25);}
+#copilot-block .stats-brain-journal-level.is-risk{border-color:rgba(255,72,105,.27);}
+#copilot-block .stats-brain-journal-table{margin-top:16px;border-radius:14px;border-color:rgba(34,211,238,.16);background:rgba(5,10,19,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+#copilot-block .stats-brain-journal-row{gap:11px;padding:12px 14px;border-top-color:rgba(148,163,184,.11);}
+#copilot-block .stats-brain-journal-row:nth-child(even):not(.is-head){background:rgba(15,23,42,.24);}
+#copilot-block .stats-brain-journal-row.is-head{background:linear-gradient(90deg,rgba(15,23,42,.92),rgba(8,18,32,.78));color:#93a4b8;border-top:0;}
+#copilot-block .stats-brain-journal-row b{font-size:1.04em;color:#fff;}
+#copilot-block .stats-brain-journal-row .is-win,#copilot-block .stats-brain-journal-row .is-loss,#copilot-block .stats-brain-journal-row .is-open{display:inline-flex;align-items:center;justify-content:center;justify-self:start;min-height:26px;padding:0 10px;border-radius:999px;font-weight:950;}
+#copilot-block .stats-brain-journal-row .is-win{background:rgba(20,241,168,.12);border:1px solid rgba(20,241,168,.22);color:#14f1a8;}
+#copilot-block .stats-brain-journal-row .is-loss{background:rgba(255,72,105,.12);border:1px solid rgba(255,72,105,.24);color:#ff6f88;}
+#copilot-block .stats-brain-journal-row .is-open{background:rgba(244,184,63,.12);border:1px solid rgba(244,184,63,.24);color:#f4b83f;}
 @media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
 @media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}}
