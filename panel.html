@@ -5527,7 +5527,7 @@
 #copilot-block .stats-brain-pill.is-sell{color:#ff4869;border-color:rgba(255,72,105,.32);}
 #copilot-block .stats-brain-pill.is-wait{color:#9fb4c9;}
 #copilot-block .stats-brain-grid12{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
-#copilot-block .stats-brain-stock{position:relative;min-width:0;min-height:310px;border:1px solid rgba(35,49,72,.92);border-radius:10px;background:linear-gradient(180deg,rgba(12,19,34,.98),rgba(5,10,19,.99));padding:14px 14px 12px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-stock{position:relative;min-width:0;min-height:352px;border:1px solid rgba(35,49,72,.92);border-radius:10px;background:linear-gradient(180deg,rgba(12,19,34,.98),rgba(5,10,19,.99));padding:14px 14px 12px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
 #copilot-block .stats-brain-stock::after{content:"";position:absolute;right:13px;top:13px;width:9px;height:9px;border-radius:50%;background:#14f1a8;box-shadow:0 0 14px rgba(20,241,168,.75);}
 #copilot-block .stats-brain-stock.is-rank1{border-color:rgba(244,184,63,.62);box-shadow:0 0 0 1px rgba(244,184,63,.18),0 16px 34px rgba(244,184,63,.08);}
 #copilot-block .stats-brain-stock.is-rank1::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,rgba(244,184,63,.12),#f4b83f,rgba(244,184,63,.12));}
@@ -5575,6 +5575,15 @@
 #copilot-block .stats-brain-range-labels{display:flex;justify-content:space-between;font-size:9px;font-weight:950;letter-spacing:.11em;text-transform:uppercase;color:#65758a;}
 #copilot-block .stats-brain-range-track{position:relative;height:8px;margin-top:6px;border-radius:999px;background:linear-gradient(90deg,rgba(20,241,168,.35),rgba(20,216,226,.18),rgba(255,72,105,.38));overflow:hidden;}
 #copilot-block .stats-brain-range-dot{position:absolute;top:-3px;width:3px;height:14px;border-radius:999px;background:#f8fafc;box-shadow:0 0 12px rgba(255,255,255,.8);transform:translateX(-50%);}
+#copilot-block .stats-brain-action{margin-top:8px;border:1px solid rgba(148,163,184,.14);border-radius:8px;background:rgba(5,10,19,.68);padding:8px 9px;}
+#copilot-block .stats-brain-action b{display:block;font-size:10px;line-height:1.15;font-weight:950;letter-spacing:.09em;text-transform:uppercase;color:#e2e8f0;}
+#copilot-block .stats-brain-action span{display:block;margin-top:4px;font-size:10px;line-height:1.28;font-weight:850;color:#8fa0b8;}
+#copilot-block .stats-brain-action.is-buy{border-color:rgba(20,241,168,.28);background:rgba(20,241,168,.075);}
+#copilot-block .stats-brain-action.is-buy b{color:#14f1a8;}
+#copilot-block .stats-brain-action.is-sell{border-color:rgba(255,72,105,.30);background:rgba(255,72,105,.075);}
+#copilot-block .stats-brain-action.is-sell b{color:#ff6b83;}
+#copilot-block .stats-brain-action.is-wait{border-color:rgba(148,163,184,.16);background:rgba(51,65,85,.18);}
+#copilot-block .stats-brain-action.is-wait b{color:#cbd5e1;}
 #copilot-block .stats-brain-stock-track{margin-top:10px;font-size:12px;font-weight:900;color:#7d8da3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #copilot-block .stats-brain-levels{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:24px;}
 #copilot-block .stats-brain-level{display:inline-flex;align-items:center;gap:5px;max-width:100%;height:23px;padding:0 8px;border-radius:7px;font-size:11px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:rgba(15,23,42,.78);border:1px solid rgba(148,163,184,.14);color:#b9c7d6;}
@@ -5625,6 +5634,7 @@
 #copilot-block .stats-brain-range-caption{display:grid;grid-template-columns:1fr 1fr 1fr;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#7d8da3;}
 #copilot-block .stats-brain-range-caption span:nth-child(2){text-align:center;}
 #copilot-block .stats-brain-range-caption span:nth-child(3){text-align:right;}
+#copilot-block .stats-brain-main-action{margin-top:11px;padding:11px 12px;border-radius:9px;}
 #copilot-block .stats-brain-main-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:16px;}
 #copilot-block .stats-brain-main-sr{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px;}
 #copilot-block .stats-brain-main-box{border:1px solid rgba(35,49,72,.88);border-radius:9px;background:rgba(5,10,19,.74);padding:12px;}
@@ -23117,6 +23127,46 @@ function updateCoPilotBlock(data){
       if (pos >= 67) return { label: "topo", cls: "is-topo", pos };
       return { label: "meio", cls: "is-meio", pos };
     };
+    const brainRangeAction = (row, sideValue) => {
+      const side = normBrainSide(sideValue ?? row?.side);
+      const range = brainRangeLabel(row);
+      const accepted = row?.accepted === true;
+      const rangeLabel = String(range.label || "").toUpperCase();
+      const actionLabel =
+        accepted && side === "BUY" ? "AÇÃO: BUY" :
+        accepted && side === "SELL" ? "AÇÃO: SELL" :
+        "AÇÃO: NÃO OPERAR";
+
+      let zoneText = "Localização ainda sem borda clara.";
+      if (range.cls === "is-fundo") {
+        zoneText = "FUNDO = perto do suporte / parte baixa do range.";
+      } else if (range.cls === "is-topo") {
+        zoneText = "TOPO = perto da resistência / parte alta do range.";
+      } else if (range.cls === "is-meio") {
+        zoneText = "MEIO = sem vantagem estatística limpa no range.";
+      }
+
+      let actionText = "O Brain só está mapeando; espere um card armado ou gatilho claro.";
+      if (accepted && side === "BUY") {
+        actionText = range.cls === "is-topo"
+          ? "BUY só como rompimento confirmado; não perseguir no topo sem gatilho."
+          : range.cls === "is-fundo"
+            ? "BUY é reação a partir do suporte; entra só com gatilho do matcher."
+            : "BUY vem da continuação; se estiver no meio, só operar com confirmação forte.";
+      } else if (accepted && side === "SELL") {
+        actionText = range.cls === "is-fundo"
+          ? "SELL é rompimento/continuação através do suporte; não é compra automática."
+          : range.cls === "is-topo"
+            ? "SELL é rejeição da resistência; entra só com gatilho do matcher."
+            : "SELL vem da continuação; se estiver no meio, só operar com confirmação forte.";
+      }
+
+      return {
+        title: `${actionLabel} · ${rangeLabel || "RANGE"}`,
+        text: `${zoneText} ${actionText}`,
+        cls: accepted ? brainSideClass(side) : "is-wait",
+      };
+    };
     const brainTrend = (row) => {
       const side = normBrainSide(row?.side);
       if (side === "BUY") return { label: "BULL", cls: "is-bull" };
@@ -23293,6 +23343,7 @@ function updateCoPilotBlock(data){
       const status = brainStatus(r);
       const contActive = brainContActive(r);
       const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
+      const rangeAction = brainRangeAction(r, side);
       const wr = numBrain(r.wr_pct);
       const levelsHtml = [
         renderBrainLevel(r, "T1", "t1", "is-t1"),
@@ -23329,6 +23380,10 @@ function updateCoPilotBlock(data){
           <div class="stats-brain-range">
             <div class="stats-brain-range-labels"><span>FUNDO</span><span>${escapeHtml(fmtBrainPct(rangePos))}</span><span>TOPO</span></div>
             <div class="stats-brain-range-track"><span class="stats-brain-range-dot" style="left:${escapeHtml(rangePos)}%;"></span></div>
+          </div>
+          <div class="stats-brain-action ${escapeHtml(rangeAction.cls)}">
+            <b>${escapeHtml(rangeAction.title)}</b>
+            <span>${escapeHtml(rangeAction.text)}</span>
           </div>
           <div class="stats-brain-stock-track">${escapeHtml(brainTrackLabel(r.track, r.state))}</div>
           <div class="stats-brain-levels">${levelsHtml || '<span class="stats-brain-level"><b>alvos</b>ranking</span>'}</div>
@@ -23403,6 +23458,7 @@ function updateCoPilotBlock(data){
       const contActive = brainContActive(s);
       const status = brainStatus(s);
       const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
+      const rangeAction = brainRangeAction(s, side);
       const wr = fmtBrainPct(s.wr_pct ?? stats.selected_wr_pct);
       const chance = fmtBrainPct(s.chance_chegar_pct ?? stats.selected_chance_chegar_pct);
       const continuation = fmtBrainPct(s.continuation_pct);
@@ -23459,8 +23515,12 @@ function updateCoPilotBlock(data){
             </div>
             ${renderBrainThermo(s, "is-main")}
             <div class="stats-brain-main-range">
-              <div class="stats-brain-range-caption"><span>Fundo (compra)</span><span>posição</span><span>Topo (vende)</span></div>
+              <div class="stats-brain-range-caption"><span>Fundo / suporte</span><span>posição</span><span>Topo / resistência</span></div>
               <div class="stats-brain-range-track"><span class="stats-brain-range-dot" style="left:${escapeHtml(rangePos)}%;"></span></div>
+            </div>
+            <div class="stats-brain-action stats-brain-main-action ${escapeHtml(rangeAction.cls)}">
+              <b>${escapeHtml(rangeAction.title)}</b>
+              <span>${escapeHtml(rangeAction.text)}</span>
             </div>
             <div class="stats-brain-main-levels">
               ${renderBrainMainBox("Continuação até", continuationTo, "", "")}
