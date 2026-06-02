@@ -5486,6 +5486,63 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== STATS BRAIN RANK12 BOARD ===== */
+#copilot-block .copilot-section-card.is-stats-brain{
+  grid-column: 1 / -1;
+  padding: 0;
+  overflow: hidden;
+  border-color: rgba(34,211,238,.24);
+  background:
+    radial-gradient(900px 300px at 5% 0%, rgba(34,211,238,.08), transparent 58%),
+    linear-gradient(180deg, rgba(12,20,33,.98) 0%, rgba(6,10,18,.98) 100%);
+}
+
+#copilot-block .stats-brain-board{display:flex;flex-direction:column;gap:14px;padding:18px;}
+#copilot-block .stats-brain-head{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:16px;align-items:stretch;}
+#copilot-block .stats-brain-hero{border:1px solid rgba(148,163,184,.16);border-radius:14px;padding:16px 18px;background:linear-gradient(135deg, rgba(14,25,40,.95), rgba(7,12,22,.98));box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-board.is-buy .stats-brain-hero{border-color:rgba(52,211,153,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 0 0 1px rgba(52,211,153,.08);}
+#copilot-block .stats-brain-board.is-sell .stats-brain-hero{border-color:rgba(251,113,133,.34);box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 0 0 1px rgba(251,113,133,.08);}
+#copilot-block .stats-brain-eyebrow{font-size:12px;font-weight:950;letter-spacing:.16em;text-transform:uppercase;color:#22d3ee;margin-bottom:8px;}
+#copilot-block .stats-brain-title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;font-size:38px;line-height:1.04;font-weight:950;color:#f8fafc;letter-spacing:.02em;}
+#copilot-block .stats-brain-rank{color:#facc15;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-track{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#cbd5e1;padding:5px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.72);}
+#copilot-block .stats-brain-reason{margin-top:10px;font-size:17px;line-height:1.34;color:#cbd5e1;}
+#copilot-block .stats-brain-score{border:1px solid rgba(250,204,21,.30);border-radius:14px;background:linear-gradient(180deg, rgba(250,204,21,.12), rgba(15,23,42,.92));padding:14px 16px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;}
+#copilot-block .stats-brain-score span{font-size:11px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,204,21,.86);}
+#copilot-block .stats-brain-score strong{margin-top:4px;font-size:42px;line-height:1;font-weight:950;color:#facc15;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;}
+#copilot-block .stats-brain-metric{min-width:0;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:rgba(15,23,42,.74);padding:10px 12px;}
+#copilot-block .stats-brain-metric span{display:block;font-size:10px;font-weight:950;color:#64748b;letter-spacing:.12em;text-transform:uppercase;}
+#copilot-block .stats-brain-metric strong{display:block;margin-top:4px;font-size:19px;line-height:1.1;font-weight:950;color:#f8fafc;}
+#copilot-block .stats-brain-map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+#copilot-block .stats-brain-lane{min-width:0;border:1px solid rgba(148,163,184,.15);border-radius:12px;background:rgba(2,6,23,.36);padding:11px 12px;}
+#copilot-block .stats-brain-lane-title{font-size:11px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;}
+#copilot-block .stats-brain-pills{display:flex;flex-wrap:wrap;gap:6px;}
+#copilot-block .stats-brain-pill{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:5px 8px;border-radius:999px;background:rgba(15,23,42,.78);border:1px solid rgba(148,163,184,.18);color:#dbeafe;font-size:12px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-pill.is-buy{color:#86efac;border-color:rgba(52,211,153,.30);}
+#copilot-block .stats-brain-pill.is-sell{color:#fda4af;border-color:rgba(251,113,133,.32);}
+#copilot-block .stats-brain-pill.is-wait{color:#cbd5e1;}
+#copilot-block .stats-brain-grid12{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+#copilot-block .stats-brain-stock{position:relative;min-width:0;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:linear-gradient(180deg, rgba(15,23,42,.92), rgba(5,10,18,.98));padding:11px 12px;overflow:hidden;}
+#copilot-block .stats-brain-stock.is-rank1{border-color:rgba(250,204,21,.55);box-shadow:0 0 0 1px rgba(250,204,21,.12),0 14px 28px rgba(250,204,21,.08);}
+#copilot-block .stats-brain-stock.is-rank1::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,#facc15,transparent);}
+#copilot-block .stats-brain-stock.is-exhaustion{border-color:rgba(251,113,133,.28);}
+#copilot-block .stats-brain-stock-top,#copilot-block .stats-brain-stock-mid{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+#copilot-block .stats-brain-stock-rank{font-size:12px;font-weight:950;color:#facc15;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-stock-symbol{font-size:26px;line-height:1;font-weight:950;color:#f8fafc;letter-spacing:.02em;}
+#copilot-block .stats-brain-side{flex:0 0 auto;font-size:11px;font-weight:950;letter-spacing:.08em;padding:4px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.20);color:#cbd5e1;background:rgba(15,23,42,.72);}
+#copilot-block .stats-brain-side.is-buy{color:#34d399;border-color:rgba(52,211,153,.36);background:rgba(52,211,153,.08);}
+#copilot-block .stats-brain-side.is-sell{color:#fb7185;border-color:rgba(251,113,133,.38);background:rgba(251,113,133,.08);}
+#copilot-block .stats-brain-stock-track{margin-top:8px;font-size:12px;font-weight:900;color:#93c5fd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-stock-reason{margin-top:6px;min-height:32px;font-size:12px;line-height:1.28;color:#94a3b8;}
+#copilot-block .stats-brain-stock-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px;}
+#copilot-block .stats-brain-mini{border-radius:8px;background:rgba(2,6,23,.42);border:1px solid rgba(148,163,184,.10);padding:6px;}
+#copilot-block .stats-brain-mini span{display:block;font-size:9px;font-weight:950;color:#64748b;letter-spacing:.08em;text-transform:uppercase;}
+#copilot-block .stats-brain-mini strong{display:block;margin-top:2px;font-size:13px;line-height:1;font-weight:950;color:#e2e8f0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-map-text{border:1px solid rgba(34,211,238,.16);border-radius:12px;background:rgba(2,6,23,.42);padding:10px 12px;font-size:12px;line-height:1.38;color:#cbd5e1;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+@media (max-width:1200px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media (max-width:820px){#copilot-block .stats-brain-head,#copilot-block .stats-brain-map,#copilot-block .stats-brain-grid12{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -12011,20 +12068,24 @@ body.aaron-terminal-shell .top-right .kv .v{
 <!-- ================== FIM RESPIRO & REVERSÃO ================== -->
 <!-- ====== MINIMAL VIEW (hide abaixo do RR, manter só Matcher Symbol) ====== -->
 <style>
-  #error-banner,
-main.layout,
-#ee-brain-card,
-#stop-risk-card,
-#slflex-card,
-#rrv-card,
-#rr-section {
+body.a10-minimal-view #error-banner,
+body.a10-minimal-view main.layout,
+body.a10-minimal-view #ee-brain-card,
+body.a10-minimal-view #stop-risk-card,
+body.a10-minimal-view #slflex-card,
+body.a10-minimal-view #rrv-card,
+body.a10-minimal-view #rr-section {
   display: none !important;
 }
 
   #matcher-only-slot{
-    display:block;
+    display:none;
     width:100%;
     margin-top:12px;
+  }
+
+  body.a10-minimal-view #matcher-only-slot{
+    display:block;
   }
 
   #matcher-only-slot #matcher-picker-row{
@@ -22883,7 +22944,235 @@ function updateCoPilotBlock(data){
       };
     };
 
+    const numBrain = (v) => {
+      if (v === null || v === undefined || v === "") return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+    const fmtBrainScore = (v) => {
+      const n = numBrain(v);
+      return n === null ? "—" : n.toFixed(n >= 10 ? 1 : 2);
+    };
+    const fmtBrainPct = (v) => {
+      const n = numBrain(v);
+      if (n === null) return "—";
+      const pct = Math.abs(n) <= 1 ? n * 100 : n;
+      return `${Math.round(pct)}%`;
+    };
+    const fmtBrainText = (v, fallback = "—") => {
+      if (v === null || v === undefined) return fallback;
+      const s = String(v).trim();
+      return s ? s : fallback;
+    };
+    const normBrainSide = (v) => {
+      const s = String(v || "").trim().toUpperCase();
+      if (["BUY", "LONG", "COMPRA", "ALTA"].includes(s)) return "BUY";
+      if (["SELL", "SHORT", "VENDA", "BAIXA"].includes(s)) return "SELL";
+      if (["NONE", "NULL", "N/A", "NA", "—", "-"].includes(s)) return "WAIT";
+      if (!s) return "WAIT";
+      if (s.includes("BUY") || s.includes("LONG")) return "BUY";
+      if (s.includes("SELL") || s.includes("SHORT")) return "SELL";
+      return "WAIT";
+    };
+    const brainSideClass = (side) => {
+      const s = normBrainSide(side);
+      return s === "BUY" ? "is-buy" : s === "SELL" ? "is-sell" : "is-wait";
+    };
+    const brainTrackLabel = (track = "", state = "") => {
+      const t = String(track || "").toUpperCase();
+      const s = String(state || "").toUpperCase();
+      if (t.includes("CONT")) return "CONTINUAÇÃO";
+      if (t.includes("NEAR_LOW") || t.includes("FUNDO")) return "ZIGZAG FUNDO";
+      if (t.includes("NEAR_HIGH") || t.includes("TOPO")) return "ZIGZAG TOPO";
+      if (s.includes("EXHAUST")) return "RISCO EXAUSTÃO";
+      if (t.includes("WAIT")) return "ESPERA";
+      return fmtBrainText(track || state, "MISTO");
+    };
+    const isBrainObj = (v) => !!(v && typeof v === "object" && !Array.isArray(v));
+    const pickBrainStats = () => {
+      const candidates = [
+        panel?.stats_brain_v1,
+        data?.stats_brain_v1,
+        ui?.stats_brain_v1,
+        digest?.stats_brain_v1,
+        data?.raw?.stats_brain_v1,
+        data?.raw?.panel?.stats_brain_v1,
+        panel?.digest?.stats_brain_v1,
+      ];
+      return candidates.find(v =>
+        isBrainObj(v) && (
+          Array.isArray(v.ranking) ||
+          Array.isArray(v.rejected) ||
+          v.selected_symbol ||
+          v.market_map_text
+        )
+      ) || null;
+    };
+    const renderBrainPills = (rows = [], limit = 8) => {
+      const list = rows.slice(0, limit);
+      if (!list.length) return `<span class="stats-brain-pill is-wait">—</span>`;
+      return list.map(r => {
+        const side = normBrainSide(r.side);
+        const rank = numBrain(r.rank);
+        const label = `${rank ? `#${rank} ` : ""}${fmtBrainText(r.symbol, "?")}`;
+        return `<span class="stats-brain-pill ${brainSideClass(side)}">${escapeHtml(label)} ${escapeHtml(side)}</span>`;
+      }).join("");
+    };
+    const renderBrainLane = (title, rows) => `
+      <div class="stats-brain-lane">
+        <div class="stats-brain-lane-title">${escapeHtml(title)}</div>
+        <div class="stats-brain-pills">${renderBrainPills(rows)}</div>
+      </div>
+    `;
+    const renderStatsBrainBoardHtml = (readout) => {
+      const stats = readout?.stats || {};
+      const selected = readout?.selected || {};
+      const ranking = readout?.ranking || [];
+      const selectedSide = normBrainSide(selected.side);
+      const selectedClass = brainSideClass(selectedSide);
+      const selectedRank = numBrain(selected.rank) || numBrain(stats.selected_rank) || 1;
+      const selectedTrack = brainTrackLabel(selected.track || stats.selected_track, selected.state || stats.selected_state);
+      const score = selected.score ?? stats.selected_score;
+      const reason = fmtBrainText(selected.reason || stats.selected_reason, "Aguardando leitura do Brain.");
+      const trendRows = ranking.filter(r => String(r.track || "").toUpperCase().includes("CONT"));
+      const zigLowRows = ranking.filter(r => /NEAR_LOW|FUNDO/i.test(String(r.track || "")));
+      const zigHighRows = ranking.filter(r => /NEAR_HIGH|TOPO/i.test(String(r.track || "")));
+      const exhaustionRows = ranking.filter(r => /EXHAUST/i.test(String(r.state || "")));
+      const blockedRows = ranking.filter(r => r.accepted === false || Number(r.score || 0) <= 0);
+      const waitRows = ranking.filter(r =>
+        !trendRows.includes(r) &&
+        !zigLowRows.includes(r) &&
+        !zigHighRows.includes(r) &&
+        !exhaustionRows.includes(r)
+      );
+      const marketMapText = fmtBrainText(
+        stats.market_map_text ||
+        panel?.brain_market_map_text ||
+        data?.brain_market_map_text ||
+        digest?.brain_market_map_text ||
+        "",
+        ""
+      );
+      const rowHtml = ranking.map((r, idx) => {
+        const side = normBrainSide(r.side);
+        const rank = numBrain(r.rank) || (idx + 1);
+        const trackLabel = brainTrackLabel(r.track, r.state);
+        const accepted = r.accepted === true;
+        const exhaustion = /EXHAUST/i.test(String(r.state || ""));
+        const cls = [
+          "stats-brain-stock",
+          rank === 1 ? "is-rank1" : "",
+          accepted ? "is-accepted" : "is-rejected",
+          exhaustion ? "is-exhaustion" : "",
+        ].filter(Boolean).join(" ");
+        return `
+          <div class="${cls}">
+            <div class="stats-brain-stock-top">
+              <span class="stats-brain-stock-rank">#${escapeHtml(rank)}</span>
+              <span class="stats-brain-side ${brainSideClass(side)}">${escapeHtml(side)}</span>
+            </div>
+            <div class="stats-brain-stock-mid" style="margin-top:8px;">
+              <span class="stats-brain-stock-symbol">${escapeHtml(fmtBrainText(r.symbol, "?"))}</span>
+              <span class="stats-brain-stock-rank">${escapeHtml(fmtBrainScore(r.score))}</span>
+            </div>
+            <div class="stats-brain-stock-track">${escapeHtml(trackLabel)} · ${escapeHtml(fmtBrainText(r.state, "MIXED"))}</div>
+            <div class="stats-brain-stock-reason">${escapeHtml(fmtBrainText(r.reason, accepted ? "Setup aprovado pelo Brain." : "Não passou o gate final."))}</div>
+            <div class="stats-brain-stock-stats">
+              <div class="stats-brain-mini"><span>WR</span><strong>${escapeHtml(fmtBrainPct(r.wr_pct))}</strong></div>
+              <div class="stats-brain-mini"><span>Cont</span><strong>${escapeHtml(fmtBrainPct(r.continuation_pct))}</strong></div>
+              <div class="stats-brain-mini"><span>Range</span><strong>${escapeHtml(fmtBrainPct(r.range_pos_pct))}</strong></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+      return `
+        <div class="copilot-section-card is-stats-brain">
+          <div class="stats-brain-board ${selectedClass}">
+            <div class="stats-brain-head">
+              <div class="stats-brain-hero">
+                <div class="stats-brain-eyebrow">STATS BRAIN · RANK 12</div>
+                <div class="stats-brain-title">
+                  <span class="stats-brain-rank">#${escapeHtml(selectedRank)}</span>
+                  <span>${escapeHtml(fmtBrainText(selected.symbol || stats.selected_symbol, "—"))}</span>
+                  <span class="stats-brain-track">${escapeHtml(selectedTrack)}</span>
+                  <span class="stats-brain-side ${selectedClass}">${escapeHtml(selectedSide)}</span>
+                </div>
+                <div class="stats-brain-reason">${escapeHtml(reason)}</div>
+              </div>
+              <div class="stats-brain-score"><span>Score</span><strong>${escapeHtml(fmtBrainScore(score))}</strong></div>
+            </div>
+            <div class="stats-brain-metrics">
+              <div class="stats-brain-metric"><span>Scanned</span><strong>${escapeHtml(fmtBrainText(stats.scanned_count, ranking.length || "—"))}</strong></div>
+              <div class="stats-brain-metric"><span>Candidatos</span><strong>${escapeHtml(fmtBrainText(stats.candidate_count, "0"))}</strong></div>
+              <div class="stats-brain-metric"><span>WR</span><strong>${escapeHtml(fmtBrainPct(selected.wr_pct ?? stats.selected_wr_pct))}</strong></div>
+              <div class="stats-brain-metric"><span>Chance</span><strong>${escapeHtml(fmtBrainPct(selected.chance_chegar_pct ?? stats.selected_chance_chegar_pct))}</strong></div>
+              <div class="stats-brain-metric"><span>Estado</span><strong>${escapeHtml(fmtBrainText(selected.state || stats.selected_state, "—"))}</strong></div>
+            </div>
+            <div class="stats-brain-map">
+              ${renderBrainLane("Tendência / Continuação", trendRows)}
+              ${renderBrainLane("Zigzag perto do fundo", zigLowRows)}
+              ${renderBrainLane("Zigzag perto do topo", zigHighRows)}
+              ${renderBrainLane("Meio / Espera", waitRows)}
+              ${renderBrainLane("Risco de exaustão", exhaustionRows)}
+              ${renderBrainLane("Bloqueados", blockedRows)}
+            </div>
+            <div class="stats-brain-grid12">${rowHtml || ""}</div>
+            ${marketMapText ? `<div class="stats-brain-map-text">${escapeHtml(marketMapText)}</div>` : ""}
+          </div>
+        </div>
+      `;
+    };
+    const buildStatsBrainReadout = () => {
+      const stats = pickBrainStats();
+      if (!stats) return null;
+      const ranking = Array.isArray(stats.ranking)
+        ? stats.ranking
+            .filter(r => isBrainObj(r))
+            .map((r, idx) => ({ ...r, rank: numBrain(r.rank) || (idx + 1) }))
+            .sort((a, b) => (numBrain(a.rank) || 999) - (numBrain(b.rank) || 999))
+        : [];
+      const selectedSymbol = String(
+        stats.selected_symbol ||
+        panel?.selected_symbol ||
+        data?.selected_symbol ||
+        panel?.brain_selected_symbol ||
+        ""
+      ).trim().toUpperCase();
+      const selected =
+        ranking.find(r => String(r.symbol || "").toUpperCase() === selectedSymbol) ||
+        ranking[0] ||
+        {
+          rank: stats.selected_rank || 1,
+          symbol: selectedSymbol || stats.selected_symbol || panel?.selected_symbol || "—",
+          side: stats.selected_side,
+          state: stats.selected_state,
+          track: stats.selected_track,
+          score: stats.selected_score,
+          wr_pct: stats.selected_wr_pct,
+          chance_chegar_pct: stats.selected_chance_chegar_pct,
+          reason: stats.selected_reason,
+        };
+      const side = normBrainSide(selected.side || stats.selected_side);
+      return {
+        title: "STATS BRAIN · RANK 12",
+        heroTitle: `STATS BRAIN — #${numBrain(selected.rank) || numBrain(stats.selected_rank) || 1} ${fmtBrainText(selected.symbol || stats.selected_symbol, "—")}`,
+        selected,
+        ranking,
+        stats,
+        badgeText: side === "BUY" || side === "SELL" ? side : (stats.allowed ? "BRAIN" : "WAIT"),
+        badgeClass: side === "BUY" ? "copilot-long" : side === "SELL" ? "copilot-short" : "copilot-wait",
+      };
+    };
+
     const aaron10Readout = buildAaron10Readout();
+    const statsBrainReadout = buildStatsBrainReadout();
+    try {
+      window.__AARON_STATS_BRAIN__ = statsBrainReadout ? {
+        selected: statsBrainReadout.selected,
+        ranking: statsBrainReadout.ranking,
+        stats: statsBrainReadout.stats,
+      } : null;
+    } catch (_e) {}
     try {
       window.__AARON10_RISK_GATE__ = aaron10Readout ? {
         hard_blocked: Array.isArray(aaron10Readout.hardBlockers) && aaron10Readout.hardBlockers.length > 0,
@@ -22939,7 +23228,7 @@ function updateCoPilotBlock(data){
       badgeEl.textContent = "READING";
     };
 
-    if (!claudeText && !aaron10Readout) {
+    if (!claudeText && !aaron10Readout && !statsBrainReadout) {
       blockEl.style.display = "none";
       resetCopilotView();
       return;
@@ -22965,6 +23254,8 @@ function updateCoPilotBlock(data){
 
     const heroTitle = claudeText
       ? (lines[firstNonEmpty]?.trim() || "COPILOT DIGEST")
+      : statsBrainReadout
+        ? statsBrainReadout.heroTitle
       : (aaron10Readout?.heroTitle || "AARON 10 — LEITURA DO MERCADO");
     heroTitleEl.textContent = heroTitle;
 
@@ -23113,6 +23404,7 @@ const goldSpotRulesSection = {
 };
 
 visibleSections = [
+  ...(statsBrainReadout ? [{ type: "statsbrain", readout: statsBrainReadout }] : []),
   ...(aaron10Readout ? [{ type: "aaron10", readout: aaron10Readout }] : []),
   ...visibleSections
 ];
@@ -23131,6 +23423,10 @@ if (explainSectionEl && explainContentEl) {
 
     if (visibleSections.length > 0) {
   sectionsEl.innerHTML = visibleSections.map(section => {
+    if (section.type === "statsbrain") {
+      return renderStatsBrainBoardHtml(section.readout);
+    }
+
     if (section.type === "aaron10") {
       return renderAaron10SectionHtml(section.readout);
     }
@@ -23200,6 +23496,9 @@ if (explainSectionEl && explainContentEl) {
     if (aaron10Readout?.badgeText && ["BLOCK", "EXIT"].includes(aaron10Readout.badgeText)) {
       verdict = aaron10Readout.badgeText;
       badgeClass = aaron10Readout.badgeClass || badgeClass;
+    } else if (statsBrainReadout?.badgeText && (!claudeText || verdict === "READING")) {
+      verdict = statsBrainReadout.badgeText;
+      badgeClass = statsBrainReadout.badgeClass || badgeClass;
     } else if (!claudeText && aaron10Readout?.badgeText) {
       verdict = aaron10Readout.badgeText;
       badgeClass = aaron10Readout.badgeClass || badgeClass;
