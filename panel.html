@@ -5533,14 +5533,23 @@
 #copilot-block .stats-brain-journal-card small{display:block;margin-top:4px;font-size:10px;font-weight:850;color:#7d8da3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #copilot-block .stats-brain-journal-card.is-good strong{color:#14f1a8;}
 #copilot-block .stats-brain-journal-card.is-bad strong{color:#ff4869;}
+#copilot-block .stats-brain-journal-levels{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin-top:10px;}
+#copilot-block .stats-brain-journal-level{min-width:0;border:1px solid rgba(148,163,184,.13);border-radius:8px;background:rgba(5,10,19,.58);padding:8px 9px;}
+#copilot-block .stats-brain-journal-level span{display:block;font-size:9px;font-weight:950;letter-spacing:.11em;text-transform:uppercase;color:#65758a;}
+#copilot-block .stats-brain-journal-level strong{display:block;margin-top:4px;font-size:17px;line-height:1;font-weight:950;color:#f8fafc;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-journal-level small{display:block;margin-top:4px;font-size:9px;font-weight:850;color:#7d8da3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-journal-level.is-target strong{color:#14f1a8;}
+#copilot-block .stats-brain-journal-level.is-breath strong{color:#22d3ee;}
+#copilot-block .stats-brain-journal-level.is-risk strong{color:#ff4869;}
 #copilot-block .stats-brain-journal-table{margin-top:11px;border:1px solid rgba(148,163,184,.13);border-radius:8px;overflow:hidden;}
-#copilot-block .stats-brain-journal-row{display:grid;grid-template-columns:1.2fr .8fr .8fr .8fr .8fr .8fr;gap:7px;align-items:center;padding:7px 9px;border-top:1px solid rgba(148,163,184,.10);font-size:11px;font-weight:850;color:#b9c7d6;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-journal-row{display:grid;grid-template-columns:1.1fr .72fr .65fr .9fr .62fr .62fr .62fr .7fr;gap:7px;align-items:center;padding:7px 9px;border-top:1px solid rgba(148,163,184,.10);font-size:11px;font-weight:850;color:#b9c7d6;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 #copilot-block .stats-brain-journal-row:first-child{border-top:0;}
 #copilot-block .stats-brain-journal-row.is-head{background:rgba(15,23,42,.74);color:#7d8da3;font-size:9px;text-transform:uppercase;letter-spacing:.10em;}
 #copilot-block .stats-brain-journal-row b{color:#f8fafc;}
 #copilot-block .stats-brain-journal-row .is-win{color:#14f1a8;}
 #copilot-block .stats-brain-journal-row .is-loss{color:#ff4869;}
 #copilot-block .stats-brain-journal-row .is-open{color:#f4b83f;}
+@media (max-width:900px){#copilot-block .stats-brain-journal-levels{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-row{grid-template-columns:1fr .7fr .7fr .8fr;}#copilot-block .stats-brain-journal-row span:nth-child(n+5){display:none;}}
 #copilot-block .stats-brain-lane{min-width:0;border:1px solid rgba(148,163,184,.15);border-radius:8px;background:rgba(5,10,19,.72);padding:10px 11px;}
 #copilot-block .stats-brain-lane-title{font-size:10px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#7d8da3;margin-bottom:8px;}
 #copilot-block .stats-brain-pills{display:flex;flex-wrap:wrap;gap:6px;}
@@ -23639,6 +23648,20 @@ function updateCoPilotBlock(data){
             : "OPEN";
       return record;
     };
+    const brainJournalLevelDefs = [
+      { key: "t1", label: "T1", hitKey: "hit_t1", valueKey: "t1", cls: "is-target" },
+      { key: "t2", label: "T2", hitKey: "hit_t2", valueKey: "t2", cls: "is-target" },
+      { key: "t3", label: "T3", hitKey: "hit_t3", valueKey: "t3", cls: "is-target" },
+      { key: "respiro", label: "Respiro", hitKey: "hit_respiro", valueKey: "respiro", cls: "is-breath" },
+      { key: "reversao", label: "Reversao", hitKey: "hit_reversao", valueKey: "reversao", cls: "is-risk" },
+      { key: "stop", label: "Stop", hitKey: "hit_stop", valueKey: "stop", cls: "is-risk" },
+    ];
+    const brainJournalLevelSummary = (records = []) => brainJournalLevelDefs.map(def => {
+      const eligible = (records || []).filter(r => r?.actionable === true && numBrain(r?.[def.valueKey]) !== null);
+      const hits = eligible.filter(r => r?.[def.hitKey] === true).length;
+      const total = eligible.length;
+      return { ...def, hits, total, rate: total > 0 ? Math.round((hits / total) * 100) : null };
+    });
     const brainJournalSummarize = (records, day) => {
       const tradeSignals = records.filter(r => r.actionable === true);
       const last50 = tradeSignals.slice(-50);
@@ -23651,7 +23674,7 @@ function updateCoPilotBlock(data){
       for (const r of tradeSignals) {
         const symKey = r.symbol || "?";
         const bucketKey = r.bucket || "—";
-        if (!symbolMap.has(symKey)) symbolMap.set(symKey, { key: symKey, count: 0, wins: 0, losses: 0, t1: 0, t2: 0, t3: 0, respiro: 0, stop: 0 });
+        if (!symbolMap.has(symKey)) symbolMap.set(symKey, { key: symKey, count: 0, wins: 0, losses: 0, t1: 0, t2: 0, t3: 0, respiro: 0, reversao: 0, stop: 0 });
         if (!bucketMap.has(bucketKey)) bucketMap.set(bucketKey, { key: bucketKey, count: 0, wins: 0, losses: 0 });
         const sym = symbolMap.get(symKey);
         const bucket = bucketMap.get(bucketKey);
@@ -23663,6 +23686,7 @@ function updateCoPilotBlock(data){
         if (r.hit_t2) sym.t2 += 1;
         if (r.hit_t3) sym.t3 += 1;
         if (r.hit_respiro) sym.respiro += 1;
+        if (r.hit_reversao) sym.reversao += 1;
         if (r.hit_stop) sym.stop += 1;
       }
       const addRate = (x) => ({ ...x, win_rate: x.wins + x.losses > 0 ? Math.round((x.wins / (x.wins + x.losses)) * 100) : null });
@@ -23672,7 +23696,9 @@ function updateCoPilotBlock(data){
       const bestSymbol = eligibleSymbols[0] || symbols[0] || null;
       const worstSymbol = eligibleSymbols.slice().sort((a, b) => (a.win_rate ?? 999) - (b.win_rate ?? 999) || b.count - a.count)[0] || symbols[symbols.length - 1] || null;
       const bestBucket = buckets.find(x => x.count >= 2 && x.win_rate !== null) || buckets[0] || null;
-      return { day, records, tradeSignals, last50, wins, losses, open, obs, symbols, buckets, bestSymbol, worstSymbol, bestBucket };
+      const levelSummary = brainJournalLevelSummary(last50);
+      const levelSummaryDay = brainJournalLevelSummary(tradeSignals);
+      return { day, records, tradeSignals, last50, wins, losses, open, obs, symbols, buckets, bestSymbol, worstSymbol, bestBucket, levelSummary, levelSummaryDay };
     };
     const brainJournalUpdate = (ranking = []) => {
       const ts = brainJournalTimestamp();
@@ -23694,6 +23720,7 @@ function updateCoPilotBlock(data){
       return summary;
     };
     const brainJournalRateLabel = (obj) => obj && obj.win_rate !== null ? `${obj.win_rate}%` : "—";
+    const brainJournalLevelRateLabel = (obj) => obj && obj.rate !== null ? `${obj.rate}%` : "—";
     const brainJournalMoney = (v) => {
       const n = numBrain(v);
       return n === null ? "—" : n.toFixed(2);
@@ -23701,6 +23728,7 @@ function updateCoPilotBlock(data){
     const brainJournalBuildHtml = (summary) => {
       const rows = (summary?.records || []).slice(-180).reverse();
       const symbolRows = (summary?.symbols || []).slice(0, 12);
+      const levelRows = summary?.levelSummaryDay || summary?.levelSummary || [];
       const line = (cells, head = false) => `<tr>${cells.map(c => head ? `<th>${escapeHtml(c)}</th>` : `<td>${escapeHtml(c)}</td>`).join("")}</tr>`;
       return `<!doctype html><html><head><meta charset="utf-8"><title>AARON Brain Daily Report</title><style>
         body{font-family:Arial,sans-serif;background:#08111f;color:#e5edf7;margin:28px;}
@@ -23718,13 +23746,17 @@ function updateCoPilotBlock(data){
           <div class="card"><span>Pior simbolo</span><b>${escapeHtml(summary?.worstSymbol ? `${summary.worstSymbol.key} ${brainJournalRateLabel(summary.worstSymbol)}` : "—")}</b></div>
           <div class="card"><span>Melhor horario</span><b>${escapeHtml(summary?.bestBucket ? `${summary.bestBucket.key} ${brainJournalRateLabel(summary.bestBucket)}` : "—")}</b></div>
         </div>
+        <h2>Taxa de toque por alvo</h2>
+        <table>${line(["Nivel","Hits","Sinais elegiveis","Hit rate"], true)}
+          ${levelRows.map(r => line([r.label, r.hits, r.total, brainJournalLevelRateLabel(r)])).join("")}
+        </table>
         <h2>Win rate por simbolo</h2>
-        <table>${line(["Symbol","Sinais","Wins","Losses","WR","T1","T2","T3","Respiro","Stop"], true)}
-          ${symbolRows.map(r => line([r.key, r.count, r.wins, r.losses, brainJournalRateLabel(r), r.t1, r.t2, r.t3, r.respiro, r.stop])).join("")}
+        <table>${line(["Symbol","Sinais","Wins","Losses","WR","T1","T2","T3","Respiro","Reversao","Stop"], true)}
+          ${symbolRows.map(r => line([r.key, r.count, r.wins, r.losses, brainJournalRateLabel(r), r.t1, r.t2, r.t3, r.respiro, r.reversao, r.stop])).join("")}
         </table>
         <h2>Registros do dia</h2>
-        <table>${line(["Hora","Symbol","Rank","Side","Outcome","Entry","T1","T2","T3","Respiro","Stop","Ultimo"], true)}
-          ${rows.map(r => line([r.time, r.symbol, r.rank || "—", r.side, r.outcome, brainJournalMoney(r.entry), brainJournalMoney(r.t1), brainJournalMoney(r.t2), brainJournalMoney(r.t3), brainJournalMoney(r.respiro), brainJournalMoney(r.stop), brainJournalMoney(r.current_last)])).join("")}
+        <table>${line(["Hora","Symbol","Rank","Side","Outcome","Entry","T1","T2","T3","Respiro","Reversao","Stop","Ultimo"], true)}
+          ${rows.map(r => line([r.time, r.symbol, r.rank || "—", r.side, r.outcome, brainJournalMoney(r.entry), brainJournalMoney(r.t1), brainJournalMoney(r.t2), brainJournalMoney(r.t3), brainJournalMoney(r.respiro), brainJournalMoney(r.reversao), brainJournalMoney(r.stop), brainJournalMoney(r.current_last)])).join("")}
         </table>
       </body></html>`;
     };
@@ -23766,6 +23798,16 @@ function updateCoPilotBlock(data){
       const bestHour = summary?.bestBucket ? `${summary.bestBucket.key} · ${brainJournalRateLabel(summary.bestBucket)}` : "—";
       const lastRows = (summary?.last50 || []).slice(-4).reverse();
       const totalSignals = summary?.tradeSignals?.length || 0;
+      const levelItems = summary?.levelSummary || [];
+      const levelHtml = levelItems.length
+        ? `<div class="stats-brain-journal-levels">${levelItems.map(x => `
+            <div class="stats-brain-journal-level ${escapeHtml(x.cls || "")}">
+              <span>${escapeHtml(x.label)} hit rate</span>
+              <strong>${escapeHtml(brainJournalLevelRateLabel(x))}</strong>
+              <small>${escapeHtml(`${x.hits}/${x.total} toques`)}</small>
+            </div>
+          `).join("")}</div>`
+        : "";
       const rowsHtml = lastRows.length
         ? lastRows.map(r => `<div class="stats-brain-journal-row">
             <b>${escapeHtml(r.symbol || "—")}</b>
@@ -23774,8 +23816,10 @@ function updateCoPilotBlock(data){
             <span class="${r.outcome === "WIN" ? "is-win" : r.outcome === "LOSS" ? "is-loss" : "is-open"}">${escapeHtml(r.outcome || "OPEN")}</span>
             <span>T1 ${escapeHtml(r.hit_t1 ? "YES" : "—")}</span>
             <span>T2 ${escapeHtml(r.hit_t2 ? "YES" : "—")}</span>
+            <span>T3 ${escapeHtml(r.hit_t3 ? "YES" : "—")}</span>
+            <span class="${r.hit_stop ? "is-loss" : ""}">STOP ${escapeHtml(r.hit_stop ? "YES" : "—")}</span>
           </div>`).join("")
-        : `<div class="stats-brain-journal-row"><span>Aguardando sinais executáveis do Brain para formar o placar real.</span><span></span><span></span><span></span><span></span><span></span></div>`;
+        : `<div class="stats-brain-journal-row"><span>Aguardando sinais executáveis do Brain para formar o placar real.</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>`;
       return `
         <div class="stats-brain-journal">
           <div class="stats-brain-journal-head">
@@ -23795,8 +23839,9 @@ function updateCoPilotBlock(data){
             <div class="stats-brain-journal-card is-bad"><span>Pior simbolo</span><strong>${escapeHtml(worst)}</strong><small>por win rate observado</small></div>
             <div class="stats-brain-journal-card"><span>Melhor horario</span><strong>${escapeHtml(bestHour)}</strong><small>bucket de 30 minutos</small></div>
           </div>
+          ${levelHtml}
           <div class="stats-brain-journal-table">
-            <div class="stats-brain-journal-row is-head"><span>Symbol</span><span>Hora</span><span>Side</span><span>Resultado</span><span>T1</span><span>T2</span></div>
+            <div class="stats-brain-journal-row is-head"><span>Symbol</span><span>Hora</span><span>Side</span><span>Resultado</span><span>T1</span><span>T2</span><span>T3</span><span>Stop</span></div>
             ${rowsHtml}
           </div>
         </div>
