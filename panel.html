@@ -5561,6 +5561,8 @@
 #copilot-block .stats-brain-level.is-t3{color:#c4b5fd;background:rgba(139,92,246,.16);}
 #copilot-block .stats-brain-level.is-respiro{color:#22d3ee;background:rgba(34,211,238,.12);}
 #copilot-block .stats-brain-level.is-reversao{color:#f4b83f;background:rgba(244,184,63,.13);}
+#copilot-block .stats-brain-level.is-support{color:#14f1a8;background:rgba(20,241,168,.11);border-color:rgba(20,241,168,.24);}
+#copilot-block .stats-brain-level.is-resist{color:#ff4869;background:rgba(255,72,105,.12);border-color:rgba(255,72,105,.28);}
 #copilot-block .stats-brain-stock-reason{margin-top:9px;min-height:34px;font-size:11px;line-height:1.3;color:#7d8da3;}
 #copilot-block .stats-brain-card-foot{margin-top:12px;font-size:12px;font-weight:950;color:#7d8da3;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 #copilot-block .stats-brain-card-foot b{color:#14f1a8;}
@@ -23185,6 +23187,8 @@ function updateCoPilotBlock(data){
       if (name === "t3") return brainFirst(row?.t3, row?.target_3, row?.target3, d.t3);
       if (name === "respiro") return brainFirst(row?.respiro, row?.pullback_to, d.respiro);
       if (name === "reversao") return brainFirst(row?.reversao, row?.reversal_at, d.reversao);
+      if (name === "support") return brainFirst(row?.support, row?.suporte, row?.support_level, row?.sr_support, d.support);
+      if (name === "resist") return brainFirst(row?.resist, row?.resistance, row?.resistencia, row?.resistance_level, row?.sr_resist, d.resist);
       return null;
     };
     const renderBrainLevel = (row, label, key, cls) => {
@@ -23225,6 +23229,8 @@ function updateCoPilotBlock(data){
         renderBrainLevel(r, "T3", "t3", "is-t3"),
         renderBrainLevel(r, "respiro", "respiro", "is-respiro"),
         renderBrainLevel(r, "reversão", "reversao", "is-reversao"),
+        renderBrainLevel(r, "suporte", "support", "is-support"),
+        renderBrainLevel(r, "resistência", "resist", "is-resist"),
       ].join("");
       const cls = [
         "stats-brain-stock",
