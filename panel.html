@@ -5567,10 +5567,59 @@
 #copilot-block .stats-brain-card-foot .exh{color:#ff4869;}
 #copilot-block .stats-brain-status{display:inline-flex;align-items:center;gap:5px;height:25px;padding:0 9px;border-radius:999px;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#22d3ee;background:rgba(34,211,238,.12);}
 #copilot-block .stats-brain-status.is-block{color:#ff7a90;background:rgba(255,72,105,.14);}
+#copilot-block .stats-brain-market{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;border:1px solid rgba(255,72,105,.28);border-radius:10px;padding:13px 16px;background:linear-gradient(90deg,rgba(255,72,105,.10),rgba(8,13,24,.88));}
+#copilot-block .stats-brain-market-main{display:flex;align-items:center;gap:12px;min-width:0;}
+#copilot-block .stats-brain-market-dot{width:20px;height:20px;border-radius:50%;background:#ff4869;box-shadow:0 0 18px rgba(255,72,105,.65);}
+#copilot-block .stats-brain-market-title{font-size:15px;font-weight:950;color:#f8fafc;line-height:1.1;}
+#copilot-block .stats-brain-market-sub{margin-top:4px;font-size:12px;font-weight:800;color:#8fa0b8;}
+#copilot-block .stats-brain-market-counts{display:flex;align-items:center;gap:22px;}
+#copilot-block .stats-brain-market-count{text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-market-count strong{display:block;font-size:18px;line-height:1;color:#14f1a8;font-weight:950;}
+#copilot-block .stats-brain-market-count.is-bear strong{color:#ff4869;}
+#copilot-block .stats-brain-market-count span{display:block;margin-top:4px;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:#718096;font-weight:950;}
+#copilot-block .stats-brain-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(340px,.9fr);gap:18px;border:1px solid rgba(255,72,105,.28);border-radius:12px;background:linear-gradient(135deg,rgba(13,20,36,.98),rgba(6,11,21,.99));padding:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-main-left,#copilot-block .stats-brain-main-right{min-width:0;}
+#copilot-block .stats-brain-best{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:linear-gradient(135deg,#ffd34f,#ff8c1a);color:#211305;font-size:10px;font-weight:950;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 8px 24px rgba(255,179,31,.24);}
+#copilot-block .stats-brain-main-symbol-row{display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap;}
+#copilot-block .stats-brain-main-symbol{font-size:50px;line-height:.95;font-weight:950;color:#f8fafc;letter-spacing:-.01em;}
+#copilot-block .stats-brain-main-side{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,72,105,.42);background:rgba(255,72,105,.14);color:#ff7a90;font-size:13px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;}
+#copilot-block .stats-brain-main-side.is-buy{border-color:rgba(20,241,168,.38);background:rgba(20,241,168,.11);color:#14f1a8;}
+#copilot-block .stats-brain-main-side.is-wait{border-color:rgba(148,163,184,.25);background:rgba(51,65,85,.22);color:#9fb4c9;}
+#copilot-block .stats-brain-main-track{margin-top:10px;font-size:14px;font-weight:850;color:#91a4bd;}
+#copilot-block .stats-brain-main-track b{color:#f1f5f9;}
+#copilot-block .stats-brain-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px;}
+#copilot-block .stats-brain-trio-card{min-width:0;border:1px solid rgba(35,49,72,.9);border-radius:9px;background:rgba(5,10,19,.74);padding:12px;text-align:center;}
+#copilot-block .stats-brain-trio-card.is-bear{border-bottom-color:#ff4869;}
+#copilot-block .stats-brain-trio-card.is-buy,#copilot-block .stats-brain-trio-card.is-cont,#copilot-block .stats-brain-trio-card.is-fundo{border-bottom-color:#14f1a8;}
+#copilot-block .stats-brain-trio-card.is-topo{border-bottom-color:#ff4869;}
+#copilot-block .stats-brain-trio-card span{display:block;font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#718096;}
+#copilot-block .stats-brain-trio-card strong{display:block;margin-top:7px;font-size:17px;font-weight:950;color:#f8fafc;}
+#copilot-block .stats-brain-trio-card em{display:block;margin-top:6px;font-size:9px;font-style:normal;color:#65758a;font-weight:850;}
+#copilot-block .stats-brain-main-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
+#copilot-block .stats-brain-main-range{margin-top:15px;}
+#copilot-block .stats-brain-range-caption{display:grid;grid-template-columns:1fr 1fr 1fr;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#7d8da3;}
+#copilot-block .stats-brain-range-caption span:nth-child(2){text-align:center;}
+#copilot-block .stats-brain-range-caption span:nth-child(3){text-align:right;}
+#copilot-block .stats-brain-main-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:16px;}
+#copilot-block .stats-brain-main-sr{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px;}
+#copilot-block .stats-brain-main-box{border:1px solid rgba(35,49,72,.88);border-radius:9px;background:rgba(5,10,19,.74);padding:12px;}
+#copilot-block .stats-brain-main-box span{display:block;font-size:10px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#7d8da3;}
+#copilot-block .stats-brain-main-box strong{display:block;margin-top:7px;font-size:17px;line-height:1;font-weight:950;color:#14f1a8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-main-box.is-warn strong{color:#f4b83f;}
+#copilot-block .stats-brain-main-box.is-stop{border-left-color:#ff4869;}
+#copilot-block .stats-brain-main-box.is-stop strong,#copilot-block .stats-brain-main-box.is-resist strong{color:#ff4869;}
+#copilot-block .stats-brain-main-box small{display:block;margin-top:6px;font-size:9px;color:#65758a;font-weight:850;text-transform:uppercase;letter-spacing:.06em;}
+#copilot-block .stats-brain-right-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+#copilot-block .stats-brain-right-score{display:flex;align-items:flex-end;gap:8px;margin-bottom:10px;}
+#copilot-block .stats-brain-right-score strong{font-size:42px;line-height:.9;color:#8ef7ff;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-right-score span{font-size:10px;line-height:1.1;letter-spacing:.12em;text-transform:uppercase;color:#7d8da3;font-weight:950;}
+#copilot-block .stats-brain-manage{margin-top:10px;border:1px solid rgba(34,211,238,.24);border-radius:9px;background:rgba(34,211,238,.10);padding:12px 13px;color:#bdefff;font-size:13px;line-height:1.35;font-weight:800;}
+#copilot-block .stats-brain-manage b{color:#22d3ee;}
 #copilot-block .stats-brain-map-text{border:1px solid rgba(34,211,238,.16);border-radius:8px;background:rgba(2,6,23,.42);padding:10px 12px;font-size:12px;line-height:1.38;color:#cbd5e1;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 @media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}}
-@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}}
-@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
+@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}}
+@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -23093,15 +23142,36 @@ function updateCoPilotBlock(data){
       const emaPrem = panel?.ema_volume_exhaustion_premonition_v1 || {};
       const volumePrem = panel?.volume_premonition_v1 || {};
       const canonical = panel?.canonical_read_v1 || panel?.exec_1x1?.canonical_read_v1 || {};
+      const entryPrem = panel?.entry_premonition_v1 || panel?.exec_1x1?.entry_premonition_v1 || {};
+      const pivotPrem = panel?.pivot_premonition_v1 || panel?.exec_1x1?.pivot_premonition_v1 || {};
+      const currentState = volumePrem?.current_state || emaPrem?.current_state || {};
+      const entryLate = canonical?.entrada_atrasada || {};
+      const entryWindow = entryPrem?.window || {};
+      const pivotContext = pivotPrem?.context || {};
+      const supporting = canonical?.supporting_engines || {};
       return {
-        current: brainFirst(panel?.price_now, panel?.last_price, panel?.now?.close, panel?.live_price),
-        t1: brainFirst(canonical?.target_1, canonical?.t1, panel?.target_1, panel?.volume_premonition_target_price_p50, volumePrem?.next_impulse_target_price_p50, volumePrem?.target_continue_price_p50),
-        t2: brainFirst(canonical?.target_2, canonical?.t2, panel?.target_2, panel?.volume_premonition_target_price_p75, volumePrem?.next_impulse_target_price_p75, volumePrem?.target_continue_price_p75),
+        current: brainFirst(canonical?.current, entryPrem?.current, pivotPrem?.current, currentState?.close, panel?.price_now, panel?.last_price, panel?.now?.close, panel?.live_price),
+        entry: brainFirst(canonical?.entrada_market_price, entryLate?.market_price, entryWindow?.ideal_touch, canonical?.entry, panel?.entry_price),
+        entryLow: brainFirst(canonical?.entrada_zona?.low, canonical?.entry_zone?.low, entryWindow?.entry_zone_low),
+        entryHigh: brainFirst(canonical?.entrada_zona?.high, canonical?.entry_zone?.high, entryWindow?.entry_zone_high),
+        stop: brainFirst(canonical?.stop, canonical?.stop_loss, panel?.stop, panel?.stop_price),
+        t1: brainFirst(canonical?.target_1, canonical?.t1, entryLate?.target_1, panel?.target_1, panel?.volume_premonition_target_price_p50, volumePrem?.next_impulse_target_price_p50, volumePrem?.target_continue_price_p50),
+        t2: brainFirst(canonical?.target_2, canonical?.t2, entryLate?.target_2, panel?.target_2, panel?.volume_premonition_target_price_p75, volumePrem?.next_impulse_target_price_p75, volumePrem?.target_continue_price_p75),
         t3: brainFirst(canonical?.target_3, canonical?.t3, panel?.target_3, panel?.pivot2_price_p50),
-        respiro: brainFirst(canonical?.pullback_to, canonical?.respiro_ate, panel?.entry_premonition_mae_p50, panel?.pivot_next_zone_low),
-        reversao: brainFirst(canonical?.reversal_at, canonical?.reversao_em, emaPrem?.reversal_target_price_p50, emaPrem?.turn_target_price_p50, panel?.pivot_next_zone_high),
-        support: brainFirst(panel?.support, panel?.pivot_next_zone_low, panel?.pivot1_zone_low),
-        resist: brainFirst(panel?.resistance, panel?.pivot_next_zone_high, panel?.pivot1_zone_high),
+        continuationTo: brainFirst(canonical?.continuacao_ate, canonical?.continuation_to, volumePrem?.next_impulse_target_price_p50),
+        respiro: brainFirst(canonical?.pullback_to, canonical?.respiro_ate, entryWindow?.ideal_touch, entryWindow?.entry_zone_low, panel?.pivot_next_zone_low),
+        reversao: brainFirst(canonical?.reversal_at, canonical?.reversao_em, entryWindow?.cancel_close, emaPrem?.reversal_target_price_p50, emaPrem?.turn_target_price_p50, panel?.pivot_next_zone_high),
+        support: brainFirst(panel?.support, pivotPrem?.pivot2?.zone_low, panel?.pivot2_zone_low, panel?.pivot_next_zone_low, pivotPrem?.pivot1?.zone_low),
+        resist: brainFirst(panel?.resistance, pivotPrem?.pivot1?.zone_high, panel?.pivot1_zone_high, panel?.pivot_next_zone_high, pivotPrem?.pivot2?.zone_high),
+        ema20: brainFirst(currentState?.ema20, pivotContext?.ema20, panel?.live_ema_fast),
+        ema50: brainFirst(currentState?.ema50, pivotContext?.ema50, panel?.live_ema_slow),
+        status: fmtBrainText(entryPrem?.status || canonical?.entrada_status_effective || canonical?.entrada_status || panel?.entry_premonition_status, ""),
+        entryMode: fmtBrainText(entryPrem?.entry_mode || entryPrem?.best_entry_style || "", ""),
+        conflict: fmtBrainText(canonical?.conflict_state || panel?.conflict_state || "", ""),
+        management: fmtBrainText(canonical?.manejo || canonical?.management || entryPrem?.tactical_read_pt || "", ""),
+        trendContext: fmtBrainText(pivotContext?.trend || "", ""),
+        rangeLocation: fmtBrainText(pivotContext?.range_location || "", ""),
+        shapeDirection: fmtBrainText(supporting?.shape_direction || "", ""),
       };
     };
     const enrichBrainRow = (row, stats = {}) => {
@@ -23191,6 +23261,151 @@ function updateCoPilotBlock(data){
         </div>
       `;
     };
+    const brainMarketSummary = (ranking = []) => {
+      const bearish = ranking.filter(r => normBrainSide(r.side) === "SELL").length;
+      const bullish = ranking.filter(r => normBrainSide(r.side) === "BUY").length;
+      const tradable = ranking.filter(r => r.accepted === true).length;
+      if (bearish > bullish) {
+        return {
+          title: "Mercado em queda — continuação dominante",
+          sub: `${bearish} dos ${ranking.length} em viés de baixa. O cérebro favorece shorts a favor da tendência.`,
+          bearish, bullish, tradable,
+          cls: "is-bear"
+        };
+      }
+      if (bullish > bearish) {
+        return {
+          title: "Mercado em alta — continuação dominante",
+          sub: `${bullish} dos ${ranking.length} em viés de alta. O cérebro favorece longs a favor da tendência.`,
+          bearish, bullish, tradable,
+          cls: "is-bull"
+        };
+      }
+      return {
+        title: "Mercado misto — seletividade alta",
+        sub: `${tradable} dos ${ranking.length} tradáveis. O cérebro está separando continuação, zigzag e bloqueios.`,
+        bearish, bullish, tradable,
+        cls: "is-mixed"
+      };
+    };
+    const renderBrainMarketStrip = (ranking = []) => {
+      const m = brainMarketSummary(ranking);
+      return `
+        <div class="stats-brain-market">
+          <div class="stats-brain-market-main">
+            <span class="stats-brain-market-dot"></span>
+            <div>
+              <div class="stats-brain-market-title">${escapeHtml(m.title)}</div>
+              <div class="stats-brain-market-sub">${escapeHtml(m.sub)}</div>
+            </div>
+          </div>
+          <div class="stats-brain-market-counts">
+            <div class="stats-brain-market-count is-bear"><strong>${escapeHtml(m.bearish)}</strong><span>Bearish</span></div>
+            <div class="stats-brain-market-count"><strong>${escapeHtml(m.bullish)}</strong><span>Bullish</span></div>
+            <div class="stats-brain-market-count"><strong>${escapeHtml(m.tradable)}</strong><span>Tradáveis</span></div>
+          </div>
+        </div>
+      `;
+    };
+    const renderBrainMainBox = (label, value, sub = "", cls = "") => `
+      <div class="stats-brain-main-box ${cls}">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(value || "—")}</strong>
+        ${sub ? `<small>${escapeHtml(sub)}</small>` : ""}
+      </div>
+    `;
+    const renderBrainMainPanel = (selected = {}, stats = {}, ranking = []) => {
+      const s = enrichBrainRow(selected, stats);
+      const d = s.__detail || {};
+      const side = normBrainSide(s.side || stats.selected_side);
+      const sideLabel = side === "BUY" ? "LONG" : side === "SELL" ? "SHORT" : "NONE";
+      const range = brainRangeLabel(s);
+      const trend = brainTrend(s);
+      const contActive = brainContActive(s);
+      const status = brainStatus(s);
+      const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
+      const wr = fmtBrainPct(s.wr_pct ?? stats.selected_wr_pct);
+      const chance = fmtBrainPct(s.chance_chegar_pct ?? stats.selected_chance_chegar_pct);
+      const continuation = fmtBrainPct(s.continuation_pct);
+      const exhaustion = fmtBrainPct(s.exhaustion_pct);
+      const entry = fmtBrainPrice(d.entry || d.current);
+      const entrySub = d.entryMode || d.status || "";
+      const stop = fmtBrainPrice(d.stop);
+      const t1 = fmtBrainPrice(brainLevelValue(s, "t1"));
+      const t2 = fmtBrainPrice(brainLevelValue(s, "t2"));
+      const t3 = fmtBrainPrice(brainLevelValue(s, "t3"));
+      const continuationTo = fmtBrainPrice(d.continuationTo || brainLevelValue(s, "t1"));
+      const respiro = fmtBrainPrice(brainLevelValue(s, "respiro"));
+      const reversao = fmtBrainPrice(brainLevelValue(s, "reversao"));
+      const support = fmtBrainPrice(d.support);
+      const resist = fmtBrainPrice(d.resist);
+      const emaLine = d.ema20 && d.ema50 ? `EMA20 ${fmtBrainPrice(d.ema20)} vs EMA50 ${fmtBrainPrice(d.ema50)}` : "EMA contexto";
+      const conflict = fmtBrainText(d.conflict, "ALIGNED");
+      const management = fmtBrainText(d.management, "Manejo depende do gatilho do matcher.");
+      const trackRaw = fmtBrainText(s.track || stats.selected_track, "—").toLowerCase();
+      const rank = numBrain(s.rank) || numBrain(stats.selected_rank) || 1;
+      return `
+        <div class="stats-brain-main ${brainSideClass(side)}">
+          <div class="stats-brain-main-left">
+            <div class="stats-brain-best">#${escapeHtml(rank)} · melhor trade agora</div>
+            <div class="stats-brain-main-symbol-row">
+              <div class="stats-brain-main-symbol">${escapeHtml(fmtBrainText(s.symbol || stats.selected_symbol, "—"))}</div>
+              <div class="stats-brain-main-side ${brainSideClass(side)}">${escapeHtml(sideLabel)}</div>
+            </div>
+            <div class="stats-brain-main-track">Trilho <b>${escapeHtml(brainTrackLabel(s.track, s.state))}</b> · ${escapeHtml(trackRaw)}</div>
+            <div class="stats-brain-trio">
+              <div class="stats-brain-trio-card ${trend.cls}">
+                <span>Tendência</span>
+                <strong>${escapeHtml(trend.label)}</strong>
+                <em>${escapeHtml(emaLine)}</em>
+              </div>
+              <div class="stats-brain-trio-card ${contActive ? "is-cont" : ""}">
+                <span>Continuação</span>
+                <strong>${escapeHtml(contActive ? "SIM" : "NÃO")}</strong>
+                <em>segue tendência?</em>
+              </div>
+              <div class="stats-brain-trio-card ${range.cls}">
+                <span>Zigzag</span>
+                <strong>${escapeHtml(range.label.toUpperCase())}</strong>
+                <em>pos ${escapeHtml(fmtBrainPct(rangePos))}</em>
+              </div>
+            </div>
+            <div class="stats-brain-main-chips">
+              <span class="stats-brain-chip is-cont">${escapeHtml(fmtBrainText(s.state, "MIXED"))}</span>
+              <span class="stats-brain-chip">cont ${escapeHtml(continuation)}</span>
+              <span class="stats-brain-chip">exh ${escapeHtml(exhaustion)}</span>
+              <span class="stats-brain-chip ${status.cls ? "is-topo" : "is-cont"}">${escapeHtml(status.label)}</span>
+              <span class="stats-brain-chip">chance ${escapeHtml(chance)}</span>
+              <span class="stats-brain-chip">conflito ${escapeHtml(conflict)}</span>
+            </div>
+            <div class="stats-brain-main-range">
+              <div class="stats-brain-range-caption"><span>Fundo (compra)</span><span>posição</span><span>Topo (vende)</span></div>
+              <div class="stats-brain-range-track"><span class="stats-brain-range-dot" style="left:${escapeHtml(rangePos)}%;"></span></div>
+            </div>
+            <div class="stats-brain-main-levels">
+              ${renderBrainMainBox("Continuação até", continuationTo, "", "")}
+              ${renderBrainMainBox("Respiro até", respiro, "", "")}
+              ${renderBrainMainBox("Reversão em", reversao, "", "is-warn")}
+            </div>
+            <div class="stats-brain-main-sr">
+              ${renderBrainMainBox("Suporte", support, "", "")}
+              ${renderBrainMainBox("Resistência", resist, "", "is-resist")}
+            </div>
+          </div>
+          <div class="stats-brain-main-right">
+            <div class="stats-brain-right-score"><strong>${escapeHtml(wr)}</strong><span>WIN · 5 ANOS</span></div>
+            <div class="stats-brain-right-grid">
+              ${renderBrainMainBox("Entrada", entry, entrySub, "")}
+              ${renderBrainMainBox("Stop", stop, "estrutural", "is-stop")}
+              ${renderBrainMainBox("T1", t1, "0.5 ATR · parcial", "")}
+              ${renderBrainMainBox("T2 principal", t2, "alvo operacional", "")}
+              ${renderBrainMainBox("T3 runner", t3, "só se healthy", "is-warn")}
+            </div>
+            <div class="stats-brain-manage"><b>Manejo:</b> ${escapeHtml(management)}</div>
+          </div>
+        </div>
+      `;
+    };
     const renderStatsBrainBoardHtml = (readout) => {
       const stats = readout?.stats || {};
       const ranking = (readout?.ranking || []).map(r => enrichBrainRow(r, stats));
@@ -23224,19 +23439,8 @@ function updateCoPilotBlock(data){
       return `
         <div class="copilot-section-card is-stats-brain">
           <div class="stats-brain-board ${selectedClass}">
-            <div class="stats-brain-head">
-              <div class="stats-brain-hero">
-                <div class="stats-brain-eyebrow">STATS BRAIN · RANK 12</div>
-                <div class="stats-brain-title">
-                  <span class="stats-brain-rank">#${escapeHtml(selectedRank)}</span>
-                  <span>${escapeHtml(fmtBrainText(selected.symbol || stats.selected_symbol, "—"))}</span>
-                  <span class="stats-brain-track">${escapeHtml(selectedTrack)}</span>
-                  <span class="stats-brain-side ${selectedClass}">${escapeHtml(selectedSide === "WAIT" ? "NONE" : selectedSide)}</span>
-                </div>
-                <div class="stats-brain-reason">${escapeHtml(reason)}</div>
-              </div>
-              <div class="stats-brain-score"><span>Score</span><strong>${escapeHtml(fmtBrainScore(score))}</strong></div>
-            </div>
+            ${renderBrainMarketStrip(ranking)}
+            ${renderBrainMainPanel(selected, stats, ranking)}
             <div class="stats-brain-metrics">
               <div class="stats-brain-metric"><span>Scanned</span><strong>${escapeHtml(fmtBrainText(stats.scanned_count, ranking.length || "—"))}</strong></div>
               <div class="stats-brain-metric"><span>Candidatos</span><strong>${escapeHtml(fmtBrainText(stats.candidate_count, "0"))}</strong></div>
