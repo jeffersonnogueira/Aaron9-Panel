@@ -26678,7 +26678,8 @@ async function loadPanel(showSpinner) {
     if (els.errorBanner) els.errorBanner.style.display = 'none';
     if (els.btnRefresh && showSpinner) els.btnRefresh.disabled = true;
 
-            const sym = (localStorage.getItem('aaron_selected_symbol') || '').trim() || 'NVDA';
+    const uiSelectedSymbol = (localStorage.getItem('aaron_selected_symbol') || '').trim().toUpperCase() || 'NVDA';
+    const sym = 'BRAIN12';
     const tf  = (typeof getSelectedTimeframe === "function") ? getSelectedTimeframe() : "1m";
 
     const replayApi =
@@ -26760,6 +26761,21 @@ const stage2 =
 // 3) normaliza panel/raw
 const panel = stage2.panel || stage2;
 const raw = stage2.raw || stage2.raw_eye || {};
+const statsBrainForDisplay =
+  panel?.stats_brain_v1 ||
+  stage2?.stats_brain_v1 ||
+  raw?.stats_brain_v1 ||
+  {};
+const displaySymbol =
+  panel?.selected_symbol ||
+  stage2?.selected_symbol ||
+  statsBrainForDisplay?.selected_symbol ||
+  panel?.brain_selected_symbol ||
+  raw?.selected_symbol ||
+  raw?.symbol ||
+  (panel?.symbol && panel.symbol !== 'BRAIN12' ? panel.symbol : null) ||
+  uiSelectedSymbol ||
+  sym;
 
 // 4) payload normalizado para TODAS as funções
 const payload = {
@@ -27082,7 +27098,7 @@ try {
   const pxNum = (pxNow != null && isFinite(Number(pxNow))) ? Number(pxNow) : null;
 
   window.__AARON_LAST_PANEL_JSON__ = {
-    symbol: panel?.symbol || raw?.symbol || sym,
+    symbol: displaySymbol || panel?.symbol || raw?.symbol || sym,
     price: pxNum,
     last_price: pxNum,
   };
@@ -27099,7 +27115,7 @@ const patternShort = patterns.short || {};
 const meta = panel.meta || {};
 
 // ===== HEADER FIRST =====
-safeText(els.symbol, panel.symbol || raw.symbol || sym || '—');
+safeText(els.symbol, displaySymbol || panel.symbol || raw.symbol || sym || '—');
 safeText(
   els.timeframe,
   panel.timeframe ||
