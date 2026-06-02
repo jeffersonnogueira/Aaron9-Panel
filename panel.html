@@ -13463,6 +13463,8 @@ body.a10-minimal-view #rr-section {
   <script>
 // ======= CONFIG PAINEL (JSON) =======
 const PANEL_URL = 'https://aaron-panel-api-5ymguanypq-uc.a.run.app/panel';
+const BRAIN_REPORT_API_URL = PANEL_URL.replace(/\/panel$/, "/brain-report");
+const BRAIN_REPORT_DOWNLOAD_URL = PANEL_URL.replace(/\/panel$/, "/brain-report/download");
 
 
 function getPanelUrl() {
@@ -23828,28 +23830,100 @@ function updateCoPilotBlock(data){
         </table>
       </body></html>`;
     };
+    const brainJournalBuildCsv = (report) => {
+      const rows = report?.records || [];
+      const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop"];
+      return [headers.join(",")].concat(rows.map(r => headers.map(h => `"${String(r[h] ?? "").replace(/"/g, '""')}"`).join(","))).join("\n");
+    };
+    const brainJournalRemoteSummary = (report) => ({
+      wins: report?.wins || 0,
+      losses: report?.losses || 0,
+      open: report?.open || 0,
+      signals: report?.tradeSignals?.length || 0,
+      bestSymbol: report?.bestSymbol?.key || null,
+      worstSymbol: report?.worstSymbol?.key || null,
+      bestBucket: report?.bestBucket?.key || null,
+    });
+    const brainJournalResolveDownloadUrl = (saved, day, type) => {
+      const fallback = `${BRAIN_REPORT_DOWNLOAD_URL}?day=${encodeURIComponent(day || "today")}&type=${encodeURIComponent(type || "csv")}`;
+      try {
+        return saved?.downloadUrl ? new URL(saved.downloadUrl, BRAIN_REPORT_API_URL).toString() : fallback;
+      } catch (_e) {
+        return fallback;
+      }
+    };
+    const brainJournalSaveRemote = async (report, type, content, contentType, filename) => {
+      const res = await fetch(BRAIN_REPORT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          day: report?.day || brainJournalDateKey(brainJournalTimestamp()),
+          type,
+          filename,
+          contentType,
+          content,
+          summary: brainJournalRemoteSummary(report),
+        }),
+      });
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(`Firebase report save failed: HTTP ${res.status}${txt ? ` ${txt.slice(0, 160)}` : ""}`);
+      }
+      return await res.json();
+    };
+    const brainJournalDownloadLocal = (content, filename, contentType) => {
+      const blob = new Blob([content], { type: contentType });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    };
     const brainJournalInstallDownloads = (summary) => {
-      window.aaronDownloadBrainDailyReportPdf = () => {
+      window.aaronDownloadBrainDailyReportPdf = async () => {
         const report = window.__AARON_STATS_BRAIN_JOURNAL__ || summary;
+        const html = brainJournalBuildHtml(report);
+        const filename = `aaron-brain-daily-${report?.day || "today"}.html`;
         const w = window.open("", "_blank");
-        if (!w) return;
-        w.document.open();
-        w.document.write(brainJournalBuildHtml(report));
-        w.document.close();
-        setTimeout(() => { try { w.focus(); w.print(); } catch (_e) {} }, 250);
+        if (w) {
+          w.document.open();
+          w.document.write("<!doctype html><title>AARON Report</title><body style='font-family:Arial,sans-serif;background:#08111f;color:#e5edf7;padding:24px'>Salvando relatorio no Firebase...</body>");
+          w.document.close();
+        }
+        try {
+          const saved = await brainJournalSaveRemote(report, "html", html, "text/html;charset=utf-8", filename);
+          const url = brainJournalResolveDownloadUrl(saved, report?.day, "html");
+          if (w) w.location.href = url;
+          else window.open(url, "_blank");
+        } catch (err) {
+          console.warn(err);
+          if (w) {
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
+            setTimeout(() => { try { w.focus(); w.print(); } catch (_e) {} }, 250);
+          } else {
+            brainJournalDownloadLocal(html, filename, "text/html;charset=utf-8");
+          }
+        }
       };
-      window.aaronDownloadBrainDailyReportCsv = () => {
+      window.aaronDownloadBrainDailyReportCsv = async () => {
         const report = window.__AARON_STATS_BRAIN_JOURNAL__ || summary;
-        const rows = report?.records || [];
-        const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop"];
-        const csv = [headers.join(",")].concat(rows.map(r => headers.map(h => `"${String(r[h] ?? "").replace(/"/g, '""')}"`).join(","))).join("\n");
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `aaron-brain-daily-${report?.day || "today"}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+        const csv = brainJournalBuildCsv(report);
+        const filename = `aaron-brain-daily-${report?.day || "today"}.csv`;
+        try {
+          const saved = await brainJournalSaveRemote(report, "csv", csv, "text/csv;charset=utf-8", filename);
+          const a = document.createElement("a");
+          a.href = brainJournalResolveDownloadUrl(saved, report?.day, "csv");
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => a.remove(), 1000);
+        } catch (err) {
+          console.warn(err);
+          brainJournalDownloadLocal(csv, filename, "text/csv;charset=utf-8");
+        }
       };
       window.aaronResetBrainDailyJournal = () => {
         const report = window.__AARON_STATS_BRAIN_JOURNAL__ || summary;
