@@ -23669,6 +23669,34 @@ function updateCoPilotBlock(data){
         )
       ) || null;
     };
+    const pickBrainActiveTrade = (stats = {}) => {
+      const candidates = [
+        stats?.active_trade_v1,
+        stats?.active_trade,
+        panel?.active_trade_v1,
+        panel?.active_trade,
+        data?.active_trade_v1,
+        data?.active_trade,
+        ui?.active_trade_v1,
+        ui?.active_trade,
+        digest?.active_trade_v1,
+        digest?.active_trade,
+        data?.raw?.active_trade_v1,
+        data?.raw?.active_trade,
+        data?.raw?.panel?.active_trade_v1,
+        data?.raw?.panel?.active_trade,
+        panel?.digest?.active_trade_v1,
+        panel?.digest?.active_trade,
+      ];
+      return candidates.find(v => isBrainObj(v) && (
+        v.symbol ||
+        v.status ||
+        v.entry ||
+        v.entry_price ||
+        v.current ||
+        v.current_price
+      )) || null;
+    };
     const brainDetailForSymbol = (symbol, stats = {}) => {
       const sym = String(symbol || "").trim().toUpperCase();
       const selectedSym = String(
@@ -24322,68 +24350,126 @@ function updateCoPilotBlock(data){
       </div>
     `;
     const renderBrainTradeManager = (row, ctx = {}) => {
-      const side = normBrainSide(ctx.side || row?.side);
+      const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
+      const workflowMode = !!activeTrade;
+      const side = normBrainSide(activeTrade?.side || activeTrade?.direction || ctx.side || row?.side);
       const sideLabel = side === "BUY" ? "LONG" : side === "SELL" ? "SHORT" : "NONE";
-      const symbol = fmtBrainText(row?.symbol || ctx.symbol, "—");
-      const accepted = row?.accepted === true && ["BUY", "SELL"].includes(side);
-      const currentRaw = numBrain(ctx.currentRaw);
-      const entryRaw = numBrain(ctx.entryRaw);
-      const entryDisplayRaw = brainFirst(ctx.entryDisplayRaw, ctx.entryRaw, ctx.currentRaw);
-      const stopRaw = numBrain(ctx.stopRaw);
-      const t1Raw = numBrain(ctx.t1Raw);
-      const t2Raw = numBrain(ctx.t2Raw);
-      const t3Raw = numBrain(ctx.t3Raw);
-      const respiroRaw = numBrain(ctx.respiroRaw);
-      const reversaoRaw = numBrain(ctx.reversaoRaw);
-      const entryStatusRaw = String(row?.entry_status || ctx.entryStatus || "").toUpperCase();
+      const symbol = fmtBrainText(activeTrade?.symbol || row?.symbol || ctx.symbol, "—");
+      const workflowStatus = String(activeTrade?.status || activeTrade?.state || "").trim().toUpperCase();
+      const accepted = workflowMode
+        ? !/NO_TRADE|CANCELLED|CANCELED|STOP_HIT|INVALID|STALE/.test(workflowStatus) && ["BUY", "SELL"].includes(side)
+        : row?.accepted === true && ["BUY", "SELL"].includes(side);
+      const currentRaw = numBrain(brainFirst(activeTrade?.current, activeTrade?.current_price, activeTrade?.last_price, ctx.currentRaw));
+      const entryRaw = numBrain(brainFirst(activeTrade?.entry, activeTrade?.entry_price, ctx.entryRaw));
+      const entryDisplayRaw = brainFirst(activeTrade?.entry, activeTrade?.entry_price, ctx.entryDisplayRaw, ctx.entryRaw, ctx.currentRaw);
+      const stopRaw = numBrain(brainFirst(activeTrade?.stop, activeTrade?.stop_price, activeTrade?.stop_loss, ctx.stopRaw));
+      const t1Raw = numBrain(brainFirst(activeTrade?.t1, activeTrade?.target_1, activeTrade?.target1, ctx.t1Raw));
+      const t2Raw = numBrain(brainFirst(activeTrade?.t2, activeTrade?.target_2, activeTrade?.target2, ctx.t2Raw));
+      const t3Raw = numBrain(brainFirst(activeTrade?.t3, activeTrade?.target_3, activeTrade?.target3, ctx.t3Raw));
+      const respiroRaw = numBrain(brainFirst(activeTrade?.respiro, activeTrade?.pullback_to, activeTrade?.breath_to, ctx.respiroRaw));
+      const reversaoRaw = numBrain(brainFirst(activeTrade?.reversao, activeTrade?.reversal_at, activeTrade?.invalid_at, ctx.reversaoRaw));
+      const entryStatusRaw = String(activeTrade?.entry_status || row?.entry_status || ctx.entryStatus || "").toUpperCase();
       const missed = /MISSED|PERDIDA|CHASE|LATE|ATRAS/.test(entryStatusRaw);
-      const entered = accepted && entryRaw !== null && brainManagerHit(side, currentRaw, entryRaw);
-      const t1Hit = entered && brainManagerHit(side, currentRaw, t1Raw);
-      const t2Hit = entered && brainManagerHit(side, currentRaw, t2Raw);
-      const t3Hit = entered && brainManagerHit(side, currentRaw, t3Raw);
-      const stopHit = accepted && brainManagerInvalid(side, currentRaw, stopRaw);
-      const reversalHit = accepted && brainManagerInvalid(side, currentRaw, reversaoRaw);
+      const entered = workflowMode
+        ? activeTrade?.entered === true || /ACTIVE|T1_HIT|T2_HIT|T3_HIT/.test(workflowStatus)
+        : accepted && entryRaw !== null && brainManagerHit(side, currentRaw, entryRaw);
+      const t1Hit = workflowMode ? activeTrade?.hit_t1 === true || /T1_HIT|T2_HIT|T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t1Raw);
+      const t2Hit = workflowMode ? activeTrade?.hit_t2 === true || /T2_HIT|T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t2Raw);
+      const t3Hit = workflowMode ? activeTrade?.hit_t3 === true || /T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t3Raw);
+      const stopHit = workflowMode ? activeTrade?.hit_stop === true || /STOP_HIT/.test(workflowStatus) : accepted && brainManagerInvalid(side, currentRaw, stopRaw);
+      const reversalHit = workflowMode ? activeTrade?.hit_reversao === true || activeTrade?.hit_reversal === true || /INVALID|CANCELLED|CANCELED/.test(workflowStatus) : accepted && brainManagerInvalid(side, currentRaw, reversaoRaw);
       let state = { label: "SCANNING", decision: "AGUARDAR", cls: "is-wait" };
       let next = "Sem trade ativo nesta fase. O Brain esta apenas escolhendo o melhor setup do ranking.";
-      if (accepted) {
-        state = { label: "ARMED", decision: "AGUARDAR GATILHO", cls: "is-wait" };
-        next = `Aguardar gatilho do matcher em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}. Nao perseguir fora da zona.`;
-      }
-      if (accepted && entered) {
-        state = { label: "SHADOW LIVE", decision: "CONTINUAR", cls: "is-live" };
-        next = `Trade em acompanhamento visual. Continua enquanto respeitar respiro/reversao e nao tocar o stop.`;
-      }
-      if (accepted && missed && !entered) {
-        state = { label: "CANCEL", decision: "NAO PERSEGUIR", cls: "is-danger" };
-        next = "Entrada marcada como atrasada/perdida. Melhor esperar novo gatilho em vez de fazer chase.";
-      }
-      if (t1Hit) {
-        state = { label: "T1 HIT", decision: "PARCIAL + PROTEGER", cls: "is-protect" };
-        next = `T1 ja foi alcançado no shadow. Proteger perto do breakeven ${fmtBrainPrice(entryDisplayRaw) || "entrada"} e deixar T2 respirar.`;
-      }
-      if (t2Hit) {
-        state = { label: "T2 HIT", decision: "PROTEGER RUNNER", cls: "is-protect" };
-        next = "T2 principal ja foi alcançado no shadow. Se continuar, somente runner pequeno e stop protegido.";
-      }
-      if (t3Hit) {
-        state = { label: "T3 HIT", decision: "ENCERRAR / RUNNER", cls: "is-protect" };
-        next = "T3 runner ja foi alcançado no shadow. O trade estatistico principal esta completo.";
-      }
-      if (stopHit || reversalHit) {
-        state = { label: "INVALIDADO", decision: "SAIR / CANCELAR", cls: "is-danger" };
-        next = "O preço cruzou stop ou reversao contra o setup. Na Fase 2 isso vira encerramento do active_trade.";
+      if (workflowMode) {
+        if (/NO_TRADE/.test(workflowStatus)) {
+          state = { label: "NO TRADE", decision: "AGUARDAR", cls: "is-wait" };
+          next = "Nenhum active_trade aberto pelo workflow. O Brain esta apenas ranqueando oportunidades.";
+        } else if (/WAIT_ENTRY/.test(workflowStatus)) {
+          state = { label: "ARMED", decision: "AGUARDAR GATILHO", cls: "is-wait" };
+          next = activeTrade?.next_action || `Workflow armou ${symbol}. Aguardar gatilho em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}.`;
+        } else if (/ACTIVE/.test(workflowStatus)) {
+          state = { label: "LIVE", decision: "CONTINUAR", cls: "is-live" };
+          next = activeTrade?.next_action || "Trade ativo no workflow. Continuar enquanto nao tocar stop, reversao ou perda de setup.";
+        } else if (/T1_HIT/.test(workflowStatus)) {
+          state = { label: "T1 HIT", decision: "PARCIAL + PROTEGER", cls: "is-protect" };
+          next = activeTrade?.next_action || "T1 batido. Fazer parcial e proteger perto do breakeven.";
+        } else if (/T2_HIT/.test(workflowStatus)) {
+          state = { label: "T2 HIT", decision: "PROTEGER RUNNER", cls: "is-protect" };
+          next = activeTrade?.next_action || "T2 batido. Trade principal pago; manter apenas runner protegido.";
+        } else if (/T3_HIT/.test(workflowStatus)) {
+          state = { label: "T3 HIT", decision: "ENCERRAR / RUNNER", cls: "is-protect" };
+          next = activeTrade?.next_action || "T3 batido. Encerrar ou deixar runner minimo.";
+        } else if (/STOP_HIT|INVALID|CANCELLED|CANCELED/.test(workflowStatus)) {
+          state = { label: "ENCERRADO", decision: "SAIR / CANCELAR", cls: "is-danger" };
+          next = activeTrade?.next_action || "Workflow marcou invalidacao. Nao insistir no trade.";
+        } else if (/STALE/.test(workflowStatus)) {
+          state = { label: "STALE", decision: "REAVALIAR", cls: "is-danger" };
+          next = activeTrade?.next_action || "O simbolo ativo nao veio no scan atual. Reavaliar antes de continuar.";
+        } else {
+          state = { label: workflowStatus || "ACTIVE", decision: activeTrade?.decision || "ACOMPANHAR", cls: entered ? "is-live" : "is-wait" };
+          next = activeTrade?.next_action || "Active_trade recebido do workflow; acompanhar os niveis travados.";
+        }
+      } else {
+        if (accepted) {
+          state = { label: "ARMED", decision: "AGUARDAR GATILHO", cls: "is-wait" };
+          next = `Aguardar gatilho do matcher em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}. Nao perseguir fora da zona.`;
+        }
+        if (accepted && entered) {
+          state = { label: "SHADOW LIVE", decision: "CONTINUAR", cls: "is-live" };
+          next = `Trade em acompanhamento visual. Continua enquanto respeitar respiro/reversao e nao tocar o stop.`;
+        }
+        if (accepted && missed && !entered) {
+          state = { label: "CANCEL", decision: "NAO PERSEGUIR", cls: "is-danger" };
+          next = "Entrada marcada como atrasada/perdida. Melhor esperar novo gatilho em vez de fazer chase.";
+        }
+        if (t1Hit) {
+          state = { label: "T1 HIT", decision: "PARCIAL + PROTEGER", cls: "is-protect" };
+          next = `T1 ja foi alcançado no shadow. Proteger perto do breakeven ${fmtBrainPrice(entryDisplayRaw) || "entrada"} e deixar T2 respirar.`;
+        }
+        if (t2Hit) {
+          state = { label: "T2 HIT", decision: "PROTEGER RUNNER", cls: "is-protect" };
+          next = "T2 principal ja foi alcançado no shadow. Se continuar, somente runner pequeno e stop protegido.";
+        }
+        if (t3Hit) {
+          state = { label: "T3 HIT", decision: "ENCERRAR / RUNNER", cls: "is-protect" };
+          next = "T3 runner ja foi alcançado no shadow. O trade estatistico principal esta completo.";
+        }
+        if (stopHit || reversalHit) {
+          state = { label: "INVALIDADO", decision: "SAIR / CANCELAR", cls: "is-danger" };
+          next = "O preço cruzou stop ou reversao contra o setup. Na Fase 2 isso vira encerramento do active_trade.";
+        }
       }
       const riskLevel = fmtBrainPrice(brainFirst(stopRaw, reversaoRaw, respiroRaw));
-      const killText = accepted
+      const killText = activeTrade?.kill_switch || (accepted
         ? `${sideLabel} perde validade se o preço cruzar contra ${riskLevel || "stop/reversao"} ou se o Brain virar NO TRADE.`
-        : "Sem setup operacional ativo. Nao entrar enquanto o Brain nao armar um candidato.";
+        : "Sem setup operacional ativo. Nao entrar enquanto o Brain nao armar um candidato.");
+      const pnlRow = {
+        ...(row || {}),
+        symbol,
+        side,
+        entry: entryDisplayRaw,
+        current: currentRaw,
+        t1: t1Raw,
+        t2: t2Raw,
+        t3: t3Raw,
+        stop: stopRaw,
+        __detail: {
+          ...(row?.__detail || {}),
+          entry: entryDisplayRaw,
+          current: currentRaw,
+          t1: t1Raw,
+          t2: t2Raw,
+          t3: t3Raw,
+          stop: stopRaw,
+        },
+      };
       return `
         <div class="stats-brain-manager ${brainSideClass(side)} ${state.cls}">
           <div class="stats-brain-manager-top">
             <div>
               <span class="stats-brain-manager-kicker">Active Trade Manager</span>
               <strong class="stats-brain-manager-title">${escapeHtml(symbol)} ${escapeHtml(sideLabel)}</strong>
-              <small class="stats-brain-manager-sub">Fase 1 · shadow manager · UI somente</small>
+              <small class="stats-brain-manager-sub">${workflowMode ? "Fase 2 · active_trade real · workflow" : "Fase 1 · shadow manager · UI somente"}</small>
             </div>
             <div class="stats-brain-manager-state ${state.cls}">
               <span>Status</span>
@@ -24413,20 +24499,21 @@ function updateCoPilotBlock(data){
             ${renderBrainMainBox("T3 runner", fmtBrainPrice(t3Raw), "só se healthy", "is-warn")}
             ${renderBrainMainBox("Respiro", fmtBrainPrice(respiroRaw), "continua acima/abaixo", "")}
             ${renderBrainMainBox("Reversão", fmtBrainPrice(reversaoRaw), "cancelamento", "is-warn")}
-            ${renderBrainMainBox("Conflito", ctx.conflict || "ALIGNED", "módulos", "")}
+            ${renderBrainMainBox("Conflito", activeTrade?.conflict || activeTrade?.conflict_state || ctx.conflict || "ALIGNED", "módulos", "")}
           </div>
-          ${renderBrainPnlBox(row, "is-main is-manager")}
+          ${renderBrainPnlBox(pnlRow, "is-main is-manager")}
           <div class="stats-brain-manager-kill">
             <b>Kill switch</b>
             <span>${escapeHtml(killText)}</span>
           </div>
-          <div class="stats-brain-manage"><b>Manejo:</b> ${escapeHtml(ctx.management || "Aguardar leitura do matcher.")}</div>
+          <div class="stats-brain-manage"><b>Manejo:</b> ${escapeHtml(activeTrade?.management || activeTrade?.manejo || ctx.management || "Aguardar leitura do matcher.")}</div>
         </div>
       `;
     };
     const renderBrainMainPanel = (selected = {}, stats = {}, ranking = []) => {
       const s = enrichBrainRow(selected, stats);
       const d = s.__detail || {};
+      const activeTrade = pickBrainActiveTrade(stats);
       const side = normBrainSide(s.side || stats.selected_side);
       const sideLabel = side === "BUY" ? "LONG" : side === "SELL" ? "SHORT" : "NONE";
       const range = brainRangeLabel(s);
@@ -24522,6 +24609,7 @@ function updateCoPilotBlock(data){
           </div>
           <div class="stats-brain-main-right">
             ${renderBrainTradeManager(s, {
+              activeTrade,
               side,
               sideLabel,
               symbol: s.symbol || stats.selected_symbol,
@@ -24634,12 +24722,14 @@ function updateCoPilotBlock(data){
           reason: stats.selected_reason,
         };
       const side = normBrainSide(selected.side || stats.selected_side);
+      const activeTrade = pickBrainActiveTrade(stats);
       return {
         title: "STATS BRAIN · RANK 12",
         heroTitle: `STATS BRAIN — #${numBrain(selected.rank) || numBrain(stats.selected_rank) || 1} ${fmtBrainText(selected.symbol || stats.selected_symbol, "—")}`,
         selected,
         ranking,
         stats,
+        activeTrade,
         badgeText: side === "BUY" || side === "SELL" ? side : (stats.allowed ? "BRAIN" : "WAIT"),
         badgeClass: side === "BUY" ? "copilot-long" : side === "SELL" ? "copilot-short" : "copilot-wait",
       };
@@ -24652,6 +24742,7 @@ function updateCoPilotBlock(data){
         selected: statsBrainReadout.selected,
         ranking: statsBrainReadout.ranking,
         stats: statsBrainReadout.stats,
+        activeTrade: statsBrainReadout.activeTrade,
       } : null;
     } catch (_e) {}
     try {
