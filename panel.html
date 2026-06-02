@@ -191,6 +191,11 @@
       font-weight: 500;
       margin-left: 3px;
     }
+
+    .pill-small-time strong {
+      color: #67e8f9;
+      font-weight: 700;
+    }
 /* === TIMEFRAME PICKER (AARON10) === */
 .tf-picker{
   display:inline-flex;
@@ -9649,6 +9654,10 @@ body.aaron-terminal-shell .top-right .kv .v{
     <div class="pill-small">
       <span data-i18n="top.timeframe">Timeframe</span>
       <strong id="timeframe-label">—</strong>
+    </div>
+    <div class="pill-small pill-small-time">
+      <span>Horário</span>
+      <strong id="top-updated-label">—</strong>
     </div>
 <div class="tf-picker" id="tf-picker" title="Timeframe">
   <button class="tf-btn" type="button" data-tf="1m">1m</button>
@@ -24060,6 +24069,7 @@ const els = {
   state: document.getElementById('state-pill'),
   symbol: document.getElementById('symbol-label'),
   timeframe: document.getElementById('timeframe-label'),
+  topUpdated: document.getElementById('top-updated-label'),
   pulseLine: document.getElementById('pulseLine'),
     // AUTOPILOT
   apToggle: document.getElementById('ap-toggle'),
@@ -27823,6 +27833,23 @@ const patterns = panel.patterns || {};
 const patternDay = patterns.day || {};
 const patternShort = patterns.short || {};
 const meta = panel.meta || {};
+const formatHeaderClock = (value) => {
+  if (value === null || value === undefined || value === '') return '—';
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return new Date(value).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }
+  const rawValue = String(value).trim();
+  if (!rawValue) return '—';
+  const direct = rawValue.match(/^(\d{1,2}:\d{2})(?::\d{2})?(?:\s*([AP]M))?$/i);
+  if (direct) return `${direct[1]}${direct[2] ? ` ${direct[2].toUpperCase()}` : ''}`;
+  const embedded = rawValue.match(/(?:T|\s|,\s*)(\d{1,2}:\d{2})(?::\d{2})?(?:\s*([AP]M))?/i);
+  if (embedded) return `${embedded[1]}${embedded[2] ? ` ${embedded[2].toUpperCase()}` : ''}`;
+  const parsed = new Date(rawValue);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }
+  return rawValue;
+};
 
 // ===== HEADER FIRST =====
 safeText(els.symbol, displaySymbol || panel.symbol || raw.symbol || sym || '—');
@@ -27837,6 +27864,20 @@ safeText(
 safeText(
   els.session,
   panel.session || raw.session || panel.session_label || '—'
+);
+safeText(
+  els.topUpdated,
+  formatHeaderClock(
+    panel.updated_at ||
+    panel.updatedAt ||
+    panel.updated_at_ms ||
+    meta.panel_ts ||
+    meta.timestamp ||
+    stage2.updated_at ||
+    root.updated_at ||
+    data.updated_at ||
+    raw.time
+  )
 );
 
 const micro = panel.microcontexto || {};
