@@ -5523,9 +5523,29 @@
 #copilot-block .stats-brain-journal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
 #copilot-block .stats-brain-journal-title{font-size:13px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#e2e8f0;}
 #copilot-block .stats-brain-journal-sub{margin-top:4px;font-size:11px;font-weight:800;color:#7d8da3;}
+#copilot-block .stats-brain-journal-tools{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
 #copilot-block .stats-brain-journal-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end;}
 #copilot-block .stats-brain-journal-btn{height:27px;padding:0 10px;border-radius:999px;border:1px solid rgba(34,211,238,.32);background:rgba(34,211,238,.10);color:#67e8f9;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;}
 #copilot-block .stats-brain-journal-btn.is-reset{border-color:rgba(255,72,105,.28);background:rgba(255,72,105,.10);color:#ff7a90;}
+#copilot-block .stats-brain-capital-box{width:170px;min-height:86px;border:1px solid rgba(244,184,63,.35);border-radius:10px;background:linear-gradient(180deg,rgba(244,184,63,.12),rgba(5,10,19,.82));padding:10px 11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-capital-box span{display:block;font-size:9px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#f4b83f;}
+#copilot-block .stats-brain-capital-input{display:block;width:100%;height:34px;margin-top:6px;border:1px solid rgba(244,184,63,.28);border-radius:7px;background:rgba(2,6,13,.86);color:#f8fafc;font-size:18px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:0 9px;outline:none;}
+#copilot-block .stats-brain-capital-input:focus{border-color:#f4b83f;box-shadow:0 0 0 2px rgba(244,184,63,.16);}
+#copilot-block .stats-brain-capital-box small{display:block;margin-top:5px;font-size:9px;font-weight:850;color:#8fa0b8;}
+#copilot-block .stats-brain-pnl{margin-top:10px;border:1px solid rgba(244,184,63,.20);border-radius:9px;background:rgba(244,184,63,.055);padding:9px 10px;}
+#copilot-block .stats-brain-pnl-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-pnl-head b{font-size:10px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#f4b83f;}
+#copilot-block .stats-brain-pnl-head span{font-size:10px;font-weight:900;color:#7d8da3;}
+#copilot-block .stats-brain-pnl-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}
+#copilot-block .stats-brain-pnl-cell{min-width:0;border:1px solid rgba(148,163,184,.12);border-radius:7px;background:rgba(5,10,19,.62);padding:7px 8px;}
+#copilot-block .stats-brain-pnl-cell span{display:block;font-size:8px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#65758a;}
+#copilot-block .stats-brain-pnl-cell strong{display:block;margin-top:4px;font-size:12px;line-height:1;font-weight:950;color:#14f1a8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-pnl-cell.is-loss strong{color:#ff4869;}
+#copilot-block .stats-brain-pnl.is-main{margin-top:12px;padding:12px;}
+#copilot-block .stats-brain-pnl.is-main .stats-brain-pnl-head b{font-size:12px;}
+#copilot-block .stats-brain-pnl.is-main .stats-brain-pnl-head span{font-size:12px;}
+#copilot-block .stats-brain-pnl.is-main .stats-brain-pnl-cell span{font-size:10px;}
+#copilot-block .stats-brain-pnl.is-main .stats-brain-pnl-cell strong{font-size:18px;}
 #copilot-block .stats-brain-journal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:11px;}
 #copilot-block .stats-brain-journal-card{min-width:0;border:1px solid rgba(148,163,184,.14);border-radius:8px;background:rgba(5,10,19,.66);padding:9px 10px;}
 #copilot-block .stats-brain-journal-card span{display:block;font-size:9px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#65758a;}
@@ -5695,6 +5715,14 @@
 #copilot-block .stats-brain-journal-title{font-size:17px;letter-spacing:.12em;}
 #copilot-block .stats-brain-journal-sub{font-size:13px;line-height:1.35;}
 #copilot-block .stats-brain-journal-btn{height:32px;padding:0 13px;font-size:12px;}
+#copilot-block .stats-brain-capital-box{width:210px;min-height:104px;padding:13px 14px;}
+#copilot-block .stats-brain-capital-box span{font-size:11px;}
+#copilot-block .stats-brain-capital-input{height:42px;font-size:23px;}
+#copilot-block .stats-brain-capital-box small{font-size:11px;}
+#copilot-block .stats-brain-pnl{padding:11px 12px;}
+#copilot-block .stats-brain-pnl-cell strong{font-size:15px;}
+#copilot-block .stats-brain-pnl-cell span{font-size:9.5px;}
+#copilot-block .stats-brain-pnl.is-main .stats-brain-pnl-cell strong{font-size:22px;}
 #copilot-block .stats-brain-journal-card{padding:12px 13px;}
 #copilot-block .stats-brain-journal-card span{font-size:11px;}
 #copilot-block .stats-brain-journal-card strong{font-size:24px;}
@@ -5729,7 +5757,7 @@
 #copilot-block .stats-brain-action b{font-size:13px;}
 #copilot-block .stats-brain-action span{font-size:13px;line-height:1.38;}
 #copilot-block .stats-brain-level{height:27px;padding:0 10px;font-size:13px;}
-#copilot-block .stats-brain-stock{min-height:400px;padding:17px 17px 15px;border-radius:12px;}
+#copilot-block .stats-brain-stock{min-height:470px;padding:17px 17px 15px;border-radius:12px;}
 #copilot-block .stats-brain-stock-rank{font-size:15px;}
 #copilot-block .stats-brain-stock-symbol{font-size:38px;}
 #copilot-block .stats-brain-side{font-size:12px;padding:6px 11px;}
@@ -23233,6 +23261,112 @@ function updateCoPilotBlock(data){
       const n = numBrain(v);
       return n === null ? null : n.toFixed(2);
     };
+    const BRAIN_CAPITAL_KEY = "AARON_STATS_BRAIN_CAPITAL_USD";
+    const brainCapitalNumber = (v) => {
+      if (v === null || v === undefined) return null;
+      const cleaned = String(v).replace(/[^0-9.]/g, "");
+      const n = Number(cleaned);
+      return Number.isFinite(n) && n > 0 ? n : null;
+    };
+    const brainGetCapital = () => {
+      try { return brainCapitalNumber(localStorage.getItem(BRAIN_CAPITAL_KEY)); }
+      catch (_e) { return null; }
+    };
+    const brainCapitalInputValue = () => {
+      const n = brainGetCapital();
+      return n === null ? "" : String(Math.round(n));
+    };
+    const fmtBrainUsd = (v) => {
+      const n = numBrain(v);
+      if (n === null) return "—";
+      const sign = n < 0 ? "-" : "";
+      return `${sign}$${Math.abs(n).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+    };
+    const brainPnlTargets = [
+      { key: "t1", label: "T1" },
+      { key: "t2", label: "T2" },
+      { key: "t3", label: "T3" },
+      { key: "stop", label: "STOP" },
+    ];
+    const brainPnlValue = (side, entry, level, shares) => {
+      const e = numBrain(entry);
+      const l = numBrain(level);
+      const sh = numBrain(shares);
+      const s = normBrainSide(side);
+      if (e === null || l === null || sh === null || sh <= 0 || !["BUY", "SELL"].includes(s)) return null;
+      return (s === "SELL" ? (e - l) : (l - e)) * sh;
+    };
+    const brainPnlShares = (capital, entry) => {
+      const cap = brainCapitalNumber(capital);
+      const e = numBrain(entry);
+      if (cap === null || e === null || e <= 0) return null;
+      return Math.floor(cap / e);
+    };
+    const brainPnlAttrs = (row) => {
+      const d = row?.__detail || {};
+      const entry = brainFirst(row?.entry, d.entry, d.current, row?.current);
+      const side = normBrainSide(row?.side);
+      return {
+        side,
+        entry,
+        t1: brainLevelValue(row, "t1"),
+        t2: brainLevelValue(row, "t2"),
+        t3: brainLevelValue(row, "t3"),
+        stop: brainLevelValue(row, "stop"),
+      };
+    };
+    const renderBrainPnlBox = (row, variant = "") => {
+      const data = brainPnlAttrs(row);
+      const capital = brainGetCapital();
+      const shares = brainPnlShares(capital, data.entry);
+      const attrs = [
+        `data-brain-pnl="1"`,
+        `data-side="${escapeHtml(data.side)}"`,
+        `data-entry="${escapeHtml(data.entry ?? "")}"`,
+        `data-t1="${escapeHtml(data.t1 ?? "")}"`,
+        `data-t2="${escapeHtml(data.t2 ?? "")}"`,
+        `data-t3="${escapeHtml(data.t3 ?? "")}"`,
+        `data-stop="${escapeHtml(data.stop ?? "")}"`,
+      ].join(" ");
+      const shareText = shares ? `${shares.toLocaleString("en-US")} sh @ ${fmtBrainUsd(data.entry)}` : "digite capital";
+      const cells = brainPnlTargets.map(t => {
+        const pnl = brainPnlValue(data.side, data.entry, data[t.key], shares);
+        const cls = pnl !== null && pnl < 0 ? "is-loss" : "";
+        return `<div class="stats-brain-pnl-cell ${cls}" data-pnl-cell="${escapeHtml(t.key)}"><span>${escapeHtml(t.label)}</span><strong data-pnl-value="${escapeHtml(t.key)}">${escapeHtml(fmtBrainUsd(pnl))}</strong></div>`;
+      }).join("");
+      return `
+        <div class="stats-brain-pnl ${variant}" ${attrs}>
+          <div class="stats-brain-pnl-head"><b>P/L no capital</b><span data-pnl-shares>${escapeHtml(shareText)}</span></div>
+          <div class="stats-brain-pnl-grid">${cells}</div>
+        </div>
+      `;
+    };
+    window.aaronUpdateBrainPnlFromCapital = (value) => {
+      const raw = String(value ?? "").trim();
+      const capital = brainCapitalNumber(raw);
+      try {
+        if (capital === null) localStorage.removeItem(BRAIN_CAPITAL_KEY);
+        else localStorage.setItem(BRAIN_CAPITAL_KEY, String(Math.round(capital)));
+      } catch (_e) {}
+      document.querySelectorAll(".stats-brain-capital-input").forEach(input => {
+        if (document.activeElement !== input) input.value = capital === null ? "" : String(Math.round(capital));
+      });
+      document.querySelectorAll("[data-brain-pnl]").forEach(box => {
+        const side = box.getAttribute("data-side") || "WAIT";
+        const entry = numBrain(box.getAttribute("data-entry"));
+        const shares = brainPnlShares(capital, entry);
+        const shareEl = box.querySelector("[data-pnl-shares]");
+        if (shareEl) shareEl.textContent = shares ? `${shares.toLocaleString("en-US")} sh @ ${fmtBrainUsd(entry)}` : "digite capital";
+        brainPnlTargets.forEach(t => {
+          const level = numBrain(box.getAttribute(`data-${t.key}`));
+          const pnl = brainPnlValue(side, entry, level, shares);
+          const valueEl = box.querySelector(`[data-pnl-value="${t.key}"]`);
+          const cellEl = box.querySelector(`[data-pnl-cell="${t.key}"]`);
+          if (valueEl) valueEl.textContent = fmtBrainUsd(pnl);
+          if (cellEl) cellEl.classList.toggle("is-loss", pnl !== null && pnl < 0);
+        });
+      });
+    };
     const brainClamp = (n, min = 0, max = 100) => {
       const x = numBrain(n);
       if (x === null) return null;
@@ -23515,6 +23649,7 @@ function updateCoPilotBlock(data){
           </div>
           <div class="stats-brain-stock-track">${escapeHtml(brainTrackLabel(r.track, r.state))}</div>
           <div class="stats-brain-levels">${levelsHtml || '<span class="stats-brain-level"><b>alvos</b>ranking</span>'}</div>
+          ${renderBrainPnlBox(r)}
           <div class="stats-brain-stock-reason">${escapeHtml(fmtBrainText(r.reason, accepted ? "Setup aprovado pelo Brain." : "Não passou o gate final."))}</div>
           <div class="stats-brain-card-foot">
             <span>cont <b>${escapeHtml(fmtBrainPct(r.continuation_pct))}</b> · exh <span class="exh">${escapeHtml(fmtBrainPct(r.exhaustion_pct))}</span></span>
@@ -23969,10 +24104,17 @@ function updateCoPilotBlock(data){
               <div class="stats-brain-journal-title">Placar real do dia</div>
               <div class="stats-brain-journal-sub">Journal local: mede se os sinais observados bateram T1/T2/T3, respiro, reversão ou stop enquanto o painel está aberto.</div>
             </div>
-            <div class="stats-brain-journal-actions">
-              <button type="button" class="stats-brain-journal-btn" onclick="window.aaronDownloadBrainDailyReportPdf && window.aaronDownloadBrainDailyReportPdf()">PDF</button>
-              <button type="button" class="stats-brain-journal-btn" onclick="window.aaronDownloadBrainDailyReportCsv && window.aaronDownloadBrainDailyReportCsv()">CSV</button>
-              <button type="button" class="stats-brain-journal-btn is-reset" onclick="window.aaronResetBrainDailyJournal && window.aaronResetBrainDailyJournal()">Reset</button>
+            <div class="stats-brain-journal-tools">
+              <label class="stats-brain-capital-box">
+                <span>Capital base</span>
+                <input class="stats-brain-capital-input" type="number" min="0" step="100" inputmode="decimal" placeholder="100000" value="${escapeHtml(brainCapitalInputValue())}" oninput="window.aaronUpdateBrainPnlFromCapital && window.aaronUpdateBrainPnlFromCapital(this.value)" />
+                <small>calcula P/L dos cards</small>
+              </label>
+              <div class="stats-brain-journal-actions">
+                <button type="button" class="stats-brain-journal-btn" onclick="window.aaronDownloadBrainDailyReportPdf && window.aaronDownloadBrainDailyReportPdf()">PDF</button>
+                <button type="button" class="stats-brain-journal-btn" onclick="window.aaronDownloadBrainDailyReportCsv && window.aaronDownloadBrainDailyReportCsv()">CSV</button>
+                <button type="button" class="stats-brain-journal-btn is-reset" onclick="window.aaronResetBrainDailyJournal && window.aaronResetBrainDailyJournal()">Reset</button>
+              </div>
             </div>
           </div>
           <div class="stats-brain-journal-grid">
@@ -24089,6 +24231,7 @@ function updateCoPilotBlock(data){
               ${renderBrainMainBox("T2 principal", t2, "alvo operacional", "")}
               ${renderBrainMainBox("T3 runner", t3, "só se healthy", "is-warn")}
             </div>
+            ${renderBrainPnlBox(s, "is-main")}
             <div class="stats-brain-manage"><b>Manejo:</b> ${escapeHtml(management)}</div>
           </div>
         </div>
