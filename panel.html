@@ -5841,6 +5841,53 @@
 #copilot-block .stats-brain-lane-title{font-size:14px;}
 #copilot-block .stats-brain-pill{font-size:15px;padding:8px 12px;}
 #copilot-block .stats-brain-map-text{font-size:16px;line-height:1.5;}
+/* Stats Brain active trade manager */
+#copilot-block .stats-brain-main{grid-template-columns:minmax(0,1.03fr) minmax(500px,.97fr);}
+#copilot-block .stats-brain-manager{position:relative;overflow:hidden;min-height:100%;border:1px solid rgba(34,211,238,.32);border-radius:18px;background:linear-gradient(145deg,rgba(7,17,31,.98),rgba(3,8,17,.99) 54%,rgba(9,18,31,.98));padding:22px;box-shadow:0 22px 50px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.06);}
+#copilot-block .stats-brain-manager::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#22d3ee,#14f1a8,#f4b83f);opacity:.95;}
+#copilot-block .stats-brain-manager::after{content:"";position:absolute;left:0;right:0;top:3px;height:120px;background:linear-gradient(180deg,rgba(34,211,238,.12),rgba(34,211,238,0));pointer-events:none;}
+#copilot-block .stats-brain-manager.is-sell{border-color:rgba(255,72,105,.38);}
+#copilot-block .stats-brain-manager.is-sell::before{background:linear-gradient(90deg,#ff4869,#f4b83f,#22d3ee);}
+#copilot-block .stats-brain-manager.is-buy{border-color:rgba(20,241,168,.38);}
+#copilot-block .stats-brain-manager.is-buy::before{background:linear-gradient(90deg,#14f1a8,#22d3ee,#f4b83f);}
+#copilot-block .stats-brain-manager>*{position:relative;z-index:1;}
+#copilot-block .stats-brain-manager-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;}
+#copilot-block .stats-brain-manager-kicker{display:block;font-size:13px;font-weight:950;text-transform:uppercase;color:#67e8f9;}
+#copilot-block .stats-brain-manager-title{display:block;margin-top:8px;font-size:34px;line-height:1;font-weight:950;color:#f8fafc;}
+#copilot-block .stats-brain-manager-sub{display:block;margin-top:8px;font-size:13px;font-weight:900;color:#93a4b8;text-transform:uppercase;}
+#copilot-block .stats-brain-manager-state{min-width:190px;border:1px solid rgba(34,211,238,.24);border-radius:14px;background:rgba(2,6,13,.72);padding:13px 14px;text-align:right;}
+#copilot-block .stats-brain-manager-state span{display:block;font-size:11px;font-weight:950;text-transform:uppercase;color:#8194aa;}
+#copilot-block .stats-brain-manager-state b{display:block;margin-top:6px;font-size:22px;line-height:1.05;font-weight:950;color:#67e8f9;}
+#copilot-block .stats-brain-manager-state.is-live b,#copilot-block .stats-brain-manager-state.is-protect b{color:#14f1a8;}
+#copilot-block .stats-brain-manager-state.is-danger b{color:#ff4869;}
+#copilot-block .stats-brain-manager-state.is-wait b{color:#f4b83f;}
+#copilot-block .stats-brain-manager-command{margin-top:18px;border:1px solid rgba(34,211,238,.28);border-radius:16px;background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(2,6,13,.72));padding:18px 18px 17px;}
+#copilot-block .stats-brain-manager-command span{display:block;font-size:12px;font-weight:950;text-transform:uppercase;color:#9fb4c9;}
+#copilot-block .stats-brain-manager-command strong{display:block;margin-top:7px;font-size:34px;line-height:1;font-weight:950;color:#f8fafc;}
+#copilot-block .stats-brain-manager-command p{margin:10px 0 0;font-size:17px;line-height:1.45;font-weight:850;color:#c7e7f3;}
+#copilot-block .stats-brain-manager-live{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px;}
+#copilot-block .stats-brain-manager-metric{min-width:0;border:1px solid rgba(148,163,184,.15);border-radius:12px;background:rgba(5,10,19,.72);padding:12px 13px;}
+#copilot-block .stats-brain-manager-metric span{display:block;font-size:11px;font-weight:950;text-transform:uppercase;color:#8194aa;}
+#copilot-block .stats-brain-manager-metric strong{display:block;margin-top:6px;font-size:25px;line-height:1;font-weight:950;color:#f8fafc;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-manager-metric small{display:block;margin-top:6px;font-size:11px;font-weight:850;color:#718096;text-transform:uppercase;}
+#copilot-block .stats-brain-manager-metric.is-entry{border-left-color:#14f1a8;}
+#copilot-block .stats-brain-manager-metric.is-stop{border-left-color:#ff4869;}
+#copilot-block .stats-brain-manager-metric.is-live strong{color:#8ef7ff;}
+#copilot-block .stats-brain-manager-route{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px;}
+#copilot-block .stats-brain-manager-step{position:relative;min-width:0;border:1px solid rgba(148,163,184,.15);border-radius:12px;background:rgba(15,23,42,.50);padding:11px 12px;}
+#copilot-block .stats-brain-manager-step span{display:block;font-size:10px;font-weight:950;text-transform:uppercase;color:#718096;}
+#copilot-block .stats-brain-manager-step strong{display:block;margin-top:5px;font-size:19px;line-height:1;font-weight:950;color:#cbd5e1;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-manager-step.is-done{border-color:rgba(20,241,168,.32);background:rgba(20,241,168,.09);}
+#copilot-block .stats-brain-manager-step.is-done strong{color:#14f1a8;}
+#copilot-block .stats-brain-manager-step.is-danger{border-color:rgba(255,72,105,.32);background:rgba(255,72,105,.09);}
+#copilot-block .stats-brain-manager-step.is-danger strong{color:#ff4869;}
+#copilot-block .stats-brain-manager-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px;}
+#copilot-block .stats-brain-manager-grid .stats-brain-main-box{background:rgba(5,10,19,.68);}
+#copilot-block .stats-brain-pnl.is-manager{margin-top:14px;border-radius:14px;background:rgba(2,6,13,.66);}
+#copilot-block .stats-brain-manager-kill{margin-top:14px;border:1px solid rgba(255,72,105,.24);border-radius:14px;background:linear-gradient(135deg,rgba(255,72,105,.11),rgba(5,10,19,.72));padding:14px 15px;}
+#copilot-block .stats-brain-manager-kill b{display:block;font-size:13px;font-weight:950;text-transform:uppercase;color:#ff7a90;}
+#copilot-block .stats-brain-manager-kill span{display:block;margin-top:6px;font-size:15px;line-height:1.42;font-weight:850;color:#fbd0d8;}
+#copilot-block .stats-brain-manager .stats-brain-manage{margin-top:14px;border-radius:14px;background:rgba(34,211,238,.09);}
 /* Stats Brain journal polish */
 #copilot-block .stats-brain-journal{position:relative;overflow:hidden;border-radius:18px;padding:24px;border-color:rgba(34,211,238,.34);background:linear-gradient(135deg,rgba(5,13,24,.98),rgba(4,10,19,.96) 46%,rgba(9,17,30,.98));box-shadow:0 18px 46px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06);}
 #copilot-block .stats-brain-journal::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#22d3ee,#14f1a8,#f4b83f,#ff4869);opacity:.9;}
@@ -5886,8 +5933,8 @@
 #copilot-block .stats-brain-journal-row .is-open{background:rgba(244,184,63,.12);border:1px solid rgba(244,184,63,.24);color:#f4b83f;}
 @media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
-@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}}
-@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -24244,6 +24291,136 @@ function updateCoPilotBlock(data){
         ${sub ? `<small>${escapeHtml(sub)}</small>` : ""}
       </div>
     `;
+    const brainManagerHit = (side, current, level) => {
+      const s = normBrainSide(side);
+      const c = numBrain(current);
+      const l = numBrain(level);
+      if (c === null || l === null || !["BUY", "SELL"].includes(s)) return false;
+      return s === "BUY" ? c >= l : c <= l;
+    };
+    const brainManagerInvalid = (side, current, level) => {
+      const s = normBrainSide(side);
+      const c = numBrain(current);
+      const l = numBrain(level);
+      if (c === null || l === null || !["BUY", "SELL"].includes(s)) return false;
+      return s === "BUY" ? c <= l : c >= l;
+    };
+    const renderBrainManagerMetric = (label, value, sub = "", cls = "") => `
+      <div class="stats-brain-manager-metric ${cls}">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(value || "—")}</strong>
+        ${sub ? `<small>${escapeHtml(sub)}</small>` : ""}
+      </div>
+    `;
+    const renderBrainManagerStep = (label, value, active, cls = "") => `
+      <div class="stats-brain-manager-step ${active ? "is-done" : ""} ${cls}">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(value || "—")}</strong>
+      </div>
+    `;
+    const renderBrainTradeManager = (row, ctx = {}) => {
+      const side = normBrainSide(ctx.side || row?.side);
+      const sideLabel = side === "BUY" ? "LONG" : side === "SELL" ? "SHORT" : "NONE";
+      const symbol = fmtBrainText(row?.symbol || ctx.symbol, "—");
+      const accepted = row?.accepted === true && ["BUY", "SELL"].includes(side);
+      const currentRaw = numBrain(ctx.currentRaw);
+      const entryRaw = numBrain(ctx.entryRaw);
+      const entryDisplayRaw = brainFirst(ctx.entryDisplayRaw, ctx.entryRaw, ctx.currentRaw);
+      const stopRaw = numBrain(ctx.stopRaw);
+      const t1Raw = numBrain(ctx.t1Raw);
+      const t2Raw = numBrain(ctx.t2Raw);
+      const t3Raw = numBrain(ctx.t3Raw);
+      const respiroRaw = numBrain(ctx.respiroRaw);
+      const reversaoRaw = numBrain(ctx.reversaoRaw);
+      const entryStatusRaw = String(row?.entry_status || ctx.entryStatus || "").toUpperCase();
+      const missed = /MISSED|PERDIDA|CHASE|LATE|ATRAS/.test(entryStatusRaw);
+      const entered = accepted && entryRaw !== null && brainManagerHit(side, currentRaw, entryRaw);
+      const t1Hit = entered && brainManagerHit(side, currentRaw, t1Raw);
+      const t2Hit = entered && brainManagerHit(side, currentRaw, t2Raw);
+      const t3Hit = entered && brainManagerHit(side, currentRaw, t3Raw);
+      const stopHit = accepted && brainManagerInvalid(side, currentRaw, stopRaw);
+      const reversalHit = accepted && brainManagerInvalid(side, currentRaw, reversaoRaw);
+      let state = { label: "SCANNING", decision: "AGUARDAR", cls: "is-wait" };
+      let next = "Sem trade ativo nesta fase. O Brain esta apenas escolhendo o melhor setup do ranking.";
+      if (accepted) {
+        state = { label: "ARMED", decision: "AGUARDAR GATILHO", cls: "is-wait" };
+        next = `Aguardar gatilho do matcher em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}. Nao perseguir fora da zona.`;
+      }
+      if (accepted && entered) {
+        state = { label: "SHADOW LIVE", decision: "CONTINUAR", cls: "is-live" };
+        next = `Trade em acompanhamento visual. Continua enquanto respeitar respiro/reversao e nao tocar o stop.`;
+      }
+      if (accepted && missed && !entered) {
+        state = { label: "CANCEL", decision: "NAO PERSEGUIR", cls: "is-danger" };
+        next = "Entrada marcada como atrasada/perdida. Melhor esperar novo gatilho em vez de fazer chase.";
+      }
+      if (t1Hit) {
+        state = { label: "T1 HIT", decision: "PARCIAL + PROTEGER", cls: "is-protect" };
+        next = `T1 ja foi alcançado no shadow. Proteger perto do breakeven ${fmtBrainPrice(entryDisplayRaw) || "entrada"} e deixar T2 respirar.`;
+      }
+      if (t2Hit) {
+        state = { label: "T2 HIT", decision: "PROTEGER RUNNER", cls: "is-protect" };
+        next = "T2 principal ja foi alcançado no shadow. Se continuar, somente runner pequeno e stop protegido.";
+      }
+      if (t3Hit) {
+        state = { label: "T3 HIT", decision: "ENCERRAR / RUNNER", cls: "is-protect" };
+        next = "T3 runner ja foi alcançado no shadow. O trade estatistico principal esta completo.";
+      }
+      if (stopHit || reversalHit) {
+        state = { label: "INVALIDADO", decision: "SAIR / CANCELAR", cls: "is-danger" };
+        next = "O preço cruzou stop ou reversao contra o setup. Na Fase 2 isso vira encerramento do active_trade.";
+      }
+      const riskLevel = fmtBrainPrice(brainFirst(stopRaw, reversaoRaw, respiroRaw));
+      const killText = accepted
+        ? `${sideLabel} perde validade se o preço cruzar contra ${riskLevel || "stop/reversao"} ou se o Brain virar NO TRADE.`
+        : "Sem setup operacional ativo. Nao entrar enquanto o Brain nao armar um candidato.";
+      return `
+        <div class="stats-brain-manager ${brainSideClass(side)} ${state.cls}">
+          <div class="stats-brain-manager-top">
+            <div>
+              <span class="stats-brain-manager-kicker">Active Trade Manager</span>
+              <strong class="stats-brain-manager-title">${escapeHtml(symbol)} ${escapeHtml(sideLabel)}</strong>
+              <small class="stats-brain-manager-sub">Fase 1 · shadow manager · UI somente</small>
+            </div>
+            <div class="stats-brain-manager-state ${state.cls}">
+              <span>Status</span>
+              <b>${escapeHtml(state.label)}</b>
+            </div>
+          </div>
+          <div class="stats-brain-manager-command">
+            <span>Decisão agora</span>
+            <strong>${escapeHtml(state.decision)}</strong>
+            <p>${escapeHtml(next)}</p>
+          </div>
+          <div class="stats-brain-manager-live">
+            ${renderBrainManagerMetric("Preço agora", fmtBrainPrice(currentRaw), "referencia", "is-live")}
+            ${renderBrainManagerMetric("Entrada", fmtBrainPrice(entryDisplayRaw), ctx.entrySub || "gatilho", "is-entry")}
+            ${renderBrainManagerMetric("Stop", fmtBrainPrice(stopRaw), "invalidação", "is-stop")}
+            ${renderBrainManagerMetric("WR", ctx.wr || "—", `chance ${ctx.chance || "—"}`, "")}
+          </div>
+          <div class="stats-brain-manager-route">
+            ${renderBrainManagerStep("Entrada", fmtBrainPrice(entryDisplayRaw), entered)}
+            ${renderBrainManagerStep("T1", fmtBrainPrice(t1Raw), t1Hit)}
+            ${renderBrainManagerStep("T2", fmtBrainPrice(t2Raw), t2Hit)}
+            ${renderBrainManagerStep("Stop", fmtBrainPrice(stopRaw), stopHit || reversalHit, stopHit || reversalHit ? "is-danger" : "")}
+          </div>
+          <div class="stats-brain-manager-grid">
+            ${renderBrainMainBox("T1 parcial", fmtBrainPrice(t1Raw), "primeiro alvo", "")}
+            ${renderBrainMainBox("T2 principal", fmtBrainPrice(t2Raw), "alvo operacional", "")}
+            ${renderBrainMainBox("T3 runner", fmtBrainPrice(t3Raw), "só se healthy", "is-warn")}
+            ${renderBrainMainBox("Respiro", fmtBrainPrice(respiroRaw), "continua acima/abaixo", "")}
+            ${renderBrainMainBox("Reversão", fmtBrainPrice(reversaoRaw), "cancelamento", "is-warn")}
+            ${renderBrainMainBox("Conflito", ctx.conflict || "ALIGNED", "módulos", "")}
+          </div>
+          ${renderBrainPnlBox(row, "is-main is-manager")}
+          <div class="stats-brain-manager-kill">
+            <b>Kill switch</b>
+            <span>${escapeHtml(killText)}</span>
+          </div>
+          <div class="stats-brain-manage"><b>Manejo:</b> ${escapeHtml(ctx.management || "Aguardar leitura do matcher.")}</div>
+        </div>
+      `;
+    };
     const renderBrainMainPanel = (selected = {}, stats = {}, ranking = []) => {
       const s = enrichBrainRow(selected, stats);
       const d = s.__detail || {};
@@ -24259,17 +24436,29 @@ function updateCoPilotBlock(data){
       const chance = fmtBrainPct(s.chance_chegar_pct ?? stats.selected_chance_chegar_pct);
       const continuation = fmtBrainPct(s.continuation_pct);
       const exhaustion = fmtBrainPct(s.exhaustion_pct);
-      const entry = fmtBrainPrice(d.entry || d.current);
+      const currentRaw = brainFirst(d.current);
+      const entryRaw = brainFirst(d.entry);
+      const entryDisplayRaw = brainFirst(entryRaw, currentRaw);
+      const stopRaw = brainLevelValue(s, "stop");
+      const t1Raw = brainLevelValue(s, "t1");
+      const t2Raw = brainLevelValue(s, "t2");
+      const t3Raw = brainLevelValue(s, "t3");
+      const continuationToRaw = brainFirst(d.continuationTo, t1Raw);
+      const respiroRaw = brainLevelValue(s, "respiro");
+      const reversaoRaw = brainLevelValue(s, "reversao");
+      const supportRaw = brainFirst(d.support);
+      const resistRaw = brainFirst(d.resist);
+      const entry = fmtBrainPrice(entryDisplayRaw);
       const entrySub = d.entryMode || d.status || "";
-      const stop = fmtBrainPrice(d.stop);
-      const t1 = fmtBrainPrice(brainLevelValue(s, "t1"));
-      const t2 = fmtBrainPrice(brainLevelValue(s, "t2"));
-      const t3 = fmtBrainPrice(brainLevelValue(s, "t3"));
-      const continuationTo = fmtBrainPrice(d.continuationTo || brainLevelValue(s, "t1"));
-      const respiro = fmtBrainPrice(brainLevelValue(s, "respiro"));
-      const reversao = fmtBrainPrice(brainLevelValue(s, "reversao"));
-      const support = fmtBrainPrice(d.support);
-      const resist = fmtBrainPrice(d.resist);
+      const stop = fmtBrainPrice(stopRaw);
+      const t1 = fmtBrainPrice(t1Raw);
+      const t2 = fmtBrainPrice(t2Raw);
+      const t3 = fmtBrainPrice(t3Raw);
+      const continuationTo = fmtBrainPrice(continuationToRaw);
+      const respiro = fmtBrainPrice(respiroRaw);
+      const reversao = fmtBrainPrice(reversaoRaw);
+      const support = fmtBrainPrice(supportRaw);
+      const resist = fmtBrainPrice(resistRaw);
       const emaLine = d.ema20 && d.ema50 ? `EMA20 ${fmtBrainPrice(d.ema20)} vs EMA50 ${fmtBrainPrice(d.ema50)}` : "EMA contexto";
       const conflict = fmtBrainText(d.conflict, "ALIGNED");
       const management = fmtBrainText(d.management, "Manejo depende do gatilho do matcher.");
@@ -24329,16 +24518,26 @@ function updateCoPilotBlock(data){
             </div>
           </div>
           <div class="stats-brain-main-right">
-            <div class="stats-brain-right-score"><strong>${escapeHtml(wr)}</strong><span>WIN · 5 ANOS</span></div>
-            <div class="stats-brain-right-grid">
-              ${renderBrainMainBox("Entrada", entry, entrySub, "")}
-              ${renderBrainMainBox("Stop", stop, "estrutural", "is-stop")}
-              ${renderBrainMainBox("T1", t1, "0.5 ATR · parcial", "")}
-              ${renderBrainMainBox("T2 principal", t2, "alvo operacional", "")}
-              ${renderBrainMainBox("T3 runner", t3, "só se healthy", "is-warn")}
-            </div>
-            ${renderBrainPnlBox(s, "is-main")}
-            <div class="stats-brain-manage"><b>Manejo:</b> ${escapeHtml(management)}</div>
+            ${renderBrainTradeManager(s, {
+              side,
+              sideLabel,
+              symbol: s.symbol || stats.selected_symbol,
+              wr,
+              chance,
+              currentRaw,
+              entryRaw,
+              entryDisplayRaw,
+              entrySub,
+              entryStatus: d.status,
+              stopRaw,
+              t1Raw,
+              t2Raw,
+              t3Raw,
+              respiroRaw,
+              reversaoRaw,
+              conflict,
+              management,
+            })}
           </div>
         </div>
       `;
