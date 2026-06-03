@@ -24512,20 +24512,67 @@ function updateCoPilotBlock(data){
       const entry = numBrain(brainFirst(trade.entry, trade.entry_price, d.entry, row?.entry, d.current, row?.current));
       const current = numBrain(brainFirst(trade.current, trade.current_price, trade.last_price, d.current, row?.current, entry));
       if (!symbol || !["BUY", "SELL"].includes(side) || entry === null || current === null) return null;
+      const statusText = String(brainFirst(trade.status, trade.state, trade.workflow_status, row?.entry_status, "") || "").toUpperCase();
+      const t1 = numBrain(brainFirst(trade.t1, trade.target_1, trade.target1, brainLevelValue(row, "t1")));
+      const t2 = numBrain(brainFirst(trade.t2, trade.target_2, trade.target2, brainLevelValue(row, "t2")));
+      const t3 = numBrain(brainFirst(trade.t3, trade.target_3, trade.target3, brainLevelValue(row, "t3")));
+      const respiro = numBrain(brainFirst(trade.respiro, trade.pullback_to, trade.breath_to, brainLevelValue(row, "respiro")));
+      const reversao = numBrain(brainFirst(trade.reversao, trade.reversal_at, trade.invalid_at, brainLevelValue(row, "reversao")));
+      const stop = numBrain(brainFirst(trade.stop, trade.stop_price, trade.stop_loss, brainLevelValue(row, "stop")));
+      const support = numBrain(brainFirst(trade.support, trade.suporte, brainLevelValue(row, "support")));
+      const resist = numBrain(brainFirst(trade.resist, trade.resistance, trade.resistencia, brainLevelValue(row, "resist")));
+      const hitT3 = trade.hit_t3 === true || /T3_HIT/.test(statusText) || brainJournalLevelCrossed(side, entry, t3, Math.max(entry, current), Math.min(entry, current));
+      const hitT2 = trade.hit_t2 === true || /T2_HIT|T3_HIT/.test(statusText) || brainJournalLevelCrossed(side, entry, t2, Math.max(entry, current), Math.min(entry, current));
+      const hitT1 = trade.hit_t1 === true || /T1_HIT|T2_HIT|T3_HIT/.test(statusText) || brainJournalLevelCrossed(side, entry, t1, Math.max(entry, current), Math.min(entry, current));
+      const hitStop = trade.hit_stop === true || /STOP_HIT/.test(statusText) || brainJournalAnyCrossed(entry, stop, Math.max(entry, current), Math.min(entry, current));
+      const hitReversao = trade.hit_reversao === true || trade.hit_reversal === true || /INVALID|CANCELLED|CANCELED/.test(statusText) || brainJournalAnyCrossed(entry, reversao, Math.max(entry, current), Math.min(entry, current));
+      const outcome = (hitT1 || hitT2 || hitT3)
+        ? "WIN"
+        : (hitStop || hitReversao)
+          ? "LOSS"
+          : "OPEN";
+      const tradeId = fmtBrainText(
+        trade.id ||
+        trade.trade_id ||
+        trade.active_trade_id ||
+        trade.opened_at ||
+        trade.created_at ||
+        `${symbol}|${side}|${entry.toFixed(4)}`,
+        `${symbol}|${side}|${entry.toFixed(4)}`
+      );
+      const ts = brainJournalTimestamp();
       return {
-        id: `ACTIVE_TRADE|${symbol}|${side}`,
-        day: brainJournalDateKey(brainJournalTimestamp()),
-        time: brainJournalClock(brainJournalTimestamp()),
+        id: `ACTIVE_TRADE|${tradeId}`,
+        day: brainJournalDateKey(ts),
+        first_seen: String(ts),
+        last_seen: String(ts),
+        time: brainJournalClock(ts),
+        bucket: brainJournalBucket(ts),
         symbol,
+        rank: numBrain(row?.rank),
         side,
         actionable: true,
         accepted: true,
-        outcome: "OPEN",
+        outcome,
         entry,
         current_start: entry,
         current_last: current,
         high_seen: Math.max(entry, current),
         low_seen: Math.min(entry, current),
+        t1,
+        t2,
+        t3,
+        respiro,
+        reversao,
+        stop,
+        support,
+        resist,
+        hit_t1: hitT1,
+        hit_t2: hitT2,
+        hit_t3: hitT3,
+        hit_respiro: brainJournalAnyCrossed(entry, respiro, Math.max(entry, current), Math.min(entry, current)),
+        hit_reversao: hitReversao,
+        hit_stop: hitStop,
         active_trade: isBrainObj(activeTrade),
         shadow_trade: !isBrainObj(activeTrade),
       };
@@ -24548,11 +24595,13 @@ function updateCoPilotBlock(data){
         .filter(Boolean);
       const activePnl = activeRecord ? brainJournalRecordPnl(activeRecord, capital) : null;
       if (activePnl) {
-        rows = rows.filter(r => !(r.outcome === "OPEN" && r.symbol === activePnl.symbol && r.side === activePnl.side));
+        rows = rows.filter(r => r.id !== activePnl.id && !(r.outcome === "OPEN" && r.symbol === activePnl.symbol && r.side === activePnl.side));
         rows.push({
           ...activePnl,
-          outcome: "OPEN",
-          exit_label: activeRecord.active_trade ? "ACTIVE" : "MANAGER",
+          outcome: activeRecord.outcome || "OPEN",
+          exit_label: activeRecord.outcome === "OPEN"
+            ? (activeRecord.active_trade ? "ACTIVE" : "MANAGER")
+            : activePnl.exit_label,
           active_trade: activeRecord.active_trade === true,
           shadow_trade: activeRecord.shadow_trade === true,
         });
@@ -25552,6 +25601,20 @@ function updateCoPilotBlock(data){
       const dailyJournal = brainJournalUpdate(ranking);
       const activeTradeForPnl = readout?.activeTrade || pickBrainActiveTrade(stats);
       const activePnlRecord = brainActiveTradePnlRecord(activeTradeForPnl, selected);
+      if (activePnlRecord && /WIN|LOSS/.test(String(activePnlRecord.outcome || "").toUpperCase())) {
+        const records = Array.isArray(dailyJournal.records) ? dailyJournal.records.slice() : [];
+        const existingIndex = records.findIndex(r => r.id === activePnlRecord.id);
+        if (existingIndex >= 0) {
+          records[existingIndex] = { ...records[existingIndex], ...activePnlRecord, first_seen: records[existingIndex].first_seen || activePnlRecord.first_seen };
+        } else {
+          records.push(activePnlRecord);
+        }
+        const closedRecords = records
+          .sort((a, b) => String(a.first_seen || "").localeCompare(String(b.first_seen || "")))
+          .slice(-900);
+        brainJournalSave(dailyJournal.day, closedRecords);
+        Object.assign(dailyJournal, brainJournalSummarize(closedRecords, dailyJournal.day));
+      }
       dailyJournal.activePnlRecord = activePnlRecord;
       dailyJournal.pnl = brainJournalPnlSummary(dailyJournal.records, activePnlRecord);
       const dayPnlSlot = document.getElementById("brain-day-pnl-above-copilot");
