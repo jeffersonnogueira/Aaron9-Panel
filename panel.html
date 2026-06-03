@@ -5646,6 +5646,21 @@
 #copilot-block .stats-brain-action.is-sell b{color:#ff6b83;}
 #copilot-block .stats-brain-action.is-wait{border-color:rgba(148,163,184,.16);background:rgba(51,65,85,.18);}
 #copilot-block .stats-brain-action.is-wait b{color:#cbd5e1;}
+#copilot-block .stats-brain-respiro-map{margin-top:9px;border:1px solid rgba(34,211,238,.24);border-radius:9px;background:linear-gradient(135deg,rgba(34,211,238,.075),rgba(5,10,19,.76));padding:9px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-respiro-map.is-ready{border-color:rgba(20,241,168,.34);background:linear-gradient(135deg,rgba(20,241,168,.10),rgba(5,10,19,.78));}
+#copilot-block .stats-brain-respiro-map.is-warn{border-color:rgba(244,184,63,.36);background:linear-gradient(135deg,rgba(244,184,63,.10),rgba(5,10,19,.78));}
+#copilot-block .stats-brain-respiro-map.is-danger{border-color:rgba(255,72,105,.34);background:linear-gradient(135deg,rgba(255,72,105,.10),rgba(5,10,19,.78));}
+#copilot-block .stats-brain-respiro-map-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-respiro-map-head b{font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#22d3ee;}
+#copilot-block .stats-brain-respiro-map-head span{font-size:10px;font-weight:950;color:#f8fafc;white-space:nowrap;}
+#copilot-block .stats-brain-respiro-map-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;}
+#copilot-block .stats-brain-respiro-map-grid div{min-width:0;border:1px solid rgba(148,163,184,.12);border-radius:7px;background:rgba(2,6,13,.45);padding:6px 7px;}
+#copilot-block .stats-brain-respiro-map-grid span{display:block;font-size:8px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#718096;}
+#copilot-block .stats-brain-respiro-map-grid strong{display:block;margin-top:4px;font-size:12px;line-height:1;font-weight:950;color:#14f1a8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-respiro-map-grid strong.is-warn{color:#f4b83f;}
+#copilot-block .stats-brain-respiro-map-grid strong.is-danger{color:#ff6b83;}
+#copilot-block .stats-brain-respiro-map-action{margin-top:7px;font-size:10px;line-height:1.25;font-weight:900;color:#a9bdd4;}
+#copilot-block .stats-brain-respiro-map-action b{color:#f8fafc;}
 #copilot-block .stats-brain-stock-track{margin-top:10px;font-size:12px;font-weight:900;color:#7d8da3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #copilot-block .stats-brain-levels{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:24px;}
 #copilot-block .stats-brain-level{display:inline-flex;align-items:center;gap:5px;max-width:100%;height:23px;padding:0 8px;border-radius:7px;font-size:11px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:rgba(15,23,42,.78);border:1px solid rgba(148,163,184,.14);color:#b9c7d6;}
@@ -24244,6 +24259,71 @@ function updateCoPilotBlock(data){
         <div class="stats-brain-pills">${renderBrainPills(rows)}</div>
       </div>
     `;
+    const renderBrainRespiroMap = (row, sideValue) => {
+      const side = normBrainSide(sideValue ?? row?.side);
+      const d = row?.__detail || {};
+      const current = numBrain(brainFirst(row?.current, d.current, row?.entry, d.entry));
+      const entry = numBrain(brainLevelValue(row, "entry"));
+      const respiro = numBrain(brainLevelValue(row, "respiro"));
+      const reversao = numBrain(brainLevelValue(row, "reversao"));
+      const stop = numBrain(brainLevelValue(row, "stop"));
+      if (!["BUY", "SELL"].includes(side) || current === null || respiro === null) return "";
+      const dist = Math.abs(current - respiro);
+      const distPct = current ? (dist / Math.abs(current)) * 100 : null;
+      const tolerance = Math.max(0.01, Math.abs(current) * 0.0015);
+      const touched = dist <= tolerance;
+      const invalidLevel = stop ?? reversao;
+      const invalid = invalidLevel !== null && brainManagerInvalid(side, current, invalidLevel);
+      const respiroBehind = side === "BUY" ? respiro <= current : respiro >= current;
+      let state = "ESPERANDO";
+      let cls = "is-warn";
+      let action = side === "BUY"
+        ? "BUY só no toque/reação do respiro; não perseguir candle esticado."
+        : "SELL só no toque/rejeição do respiro; não perseguir candle esticado.";
+      if (invalid) {
+        state = "CANCELAR";
+        cls = "is-danger";
+        action = "Respiro perdeu validade: preço cruzou stop/reversão contra o setup.";
+      } else if (touched) {
+        state = "TOCOU";
+        cls = "is-ready";
+        action = side === "BUY"
+          ? "Tocou o respiro: procurar candle de reação/confirm do matcher para BUY."
+          : "Tocou o respiro: procurar rejeição/confirm do matcher para SELL.";
+      } else if (!respiroBehind) {
+        state = "ATRÁS";
+        cls = "is-danger";
+        action = "Respiro está do lado errado do preço; tratar como mapa fraco até novo matcher.";
+      } else if (distPct !== null && distPct <= 0.35) {
+        state = "PERTO";
+        cls = "is-ready";
+        action = side === "BUY"
+          ? "Preço perto do respiro: preparar BUY se segurar e confirmar."
+          : "Preço perto do respiro: preparar SELL se rejeitar e confirmar.";
+      } else {
+        state = "LONGE";
+        cls = "is-warn";
+      }
+      const distText = distPct === null ? "—" : `${distPct.toFixed(2)}%`;
+      const invalidText = fmtBrainPrice(invalidLevel) || "—";
+      return `
+        <div class="stats-brain-respiro-map ${cls}">
+          <div class="stats-brain-respiro-map-head">
+            <b>Respiro Map #1</b>
+            <span>${escapeHtml(state)}</span>
+          </div>
+          <div class="stats-brain-respiro-map-grid">
+            <div><span>agora</span><strong>${escapeHtml(fmtBrainPrice(current) || "—")}</strong></div>
+            <div><span>respiro</span><strong>${escapeHtml(fmtBrainPrice(respiro) || "—")}</strong></div>
+            <div><span>distância</span><strong class="${cls === "is-danger" ? "is-danger" : cls === "is-warn" ? "is-warn" : ""}">${escapeHtml(distText)}</strong></div>
+            <div><span>entrada</span><strong>${escapeHtml(fmtBrainPrice(entry) || "—")}</strong></div>
+            <div><span>invalida</span><strong class="is-danger">${escapeHtml(invalidText)}</strong></div>
+            <div><span>side</span><strong>${escapeHtml(side)}</strong></div>
+          </div>
+          <div class="stats-brain-respiro-map-action"><b>Ação:</b> ${escapeHtml(action)}</div>
+        </div>
+      `;
+    };
     const renderBrainStockCard = (row, idx) => {
       const r = row || {};
       const side = normBrainSide(r.side);
@@ -24257,6 +24337,7 @@ function updateCoPilotBlock(data){
       const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
       const rangeAction = brainRangeAction(r, side);
       const biasCue = brainBiasCue(r, side);
+      const respiroMapHtml = rank === 1 ? renderBrainRespiroMap(r, side) : "";
       const wr = numBrain(r.wr_pct);
       const levelsHtml = [
         renderBrainLevel(r, "entry", "entry", "is-entry"),
@@ -24302,6 +24383,7 @@ function updateCoPilotBlock(data){
             <b>${escapeHtml(rangeAction.title)}</b>
             <span>${escapeHtml(rangeAction.text)}</span>
           </div>
+          ${respiroMapHtml}
           <div class="stats-brain-stock-track">${escapeHtml(brainTrackLabel(r.track, r.state))}</div>
           <div class="stats-brain-levels">${levelsHtml || '<span class="stats-brain-level"><b>alvos</b>ranking</span>'}</div>
           ${renderBrainPnlBox(r)}
