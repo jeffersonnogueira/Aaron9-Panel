@@ -5589,10 +5589,21 @@
 #copilot-block .stats-brain-stock-rank{font-size:13px;font-weight:950;color:#7d8da3;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 #copilot-block .stats-brain-medal{color:#f4b83f;margin-right:4px;}
 #copilot-block .stats-brain-stock-symbol{margin-top:12px;font-size:30px;line-height:1;font-weight:950;color:#f1f5f9;letter-spacing:.01em;}
+#copilot-block .stats-brain-sidebox{display:flex;flex-direction:column;align-items:flex-end;gap:5px;max-width:54%;}
 #copilot-block .stats-brain-side{flex:0 0 auto;font-size:10px;font-weight:950;letter-spacing:.08em;padding:5px 9px;border-radius:999px;border:1px solid rgba(148,163,184,.16);color:#9fb4c9;background:rgba(15,23,42,.72);}
 #copilot-block .stats-brain-side.is-buy{color:#14f1a8;border-color:rgba(20,241,168,.28);background:rgba(20,241,168,.10);}
 #copilot-block .stats-brain-side.is-sell{color:#ff6b83;border-color:rgba(255,72,105,.30);background:rgba(255,72,105,.12);}
 #copilot-block .stats-brain-side.is-wait{color:#94a3b8;background:rgba(51,65,85,.30);}
+#copilot-block .stats-brain-bias-cue{display:block;max-width:100%;padding:5px 7px;border-radius:7px;border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.68);text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;box-shadow:inset 0 1px 0 rgba(255,255,255,.025);}
+#copilot-block .stats-brain-bias-cue b{display:block;font-size:9px;line-height:1;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#dbeafe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-bias-cue span{display:block;margin-top:3px;font-size:8px;line-height:1.05;font-weight:950;letter-spacing:.06em;text-transform:uppercase;color:#7d8da3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-bias-cue.is-good{border-color:rgba(20,241,168,.30);background:rgba(20,241,168,.08);}
+#copilot-block .stats-brain-bias-cue.is-good b{color:#14f1a8;}
+#copilot-block .stats-brain-bias-cue.is-warn{border-color:rgba(244,184,63,.34);background:rgba(244,184,63,.09);}
+#copilot-block .stats-brain-bias-cue.is-warn b{color:#f4b83f;}
+#copilot-block .stats-brain-bias-cue.is-danger{border-color:rgba(255,72,105,.34);background:rgba(255,72,105,.10);}
+#copilot-block .stats-brain-bias-cue.is-danger b{color:#ff6b83;}
+#copilot-block .stats-brain-bias-cue.is-neutral b{color:#c4b5fd;}
 #copilot-block .stats-brain-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
 #copilot-block .stats-brain-chip{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:100%;height:22px;padding:0 8px;border-radius:7px;font-size:10px;font-weight:950;letter-spacing:.04em;text-transform:uppercase;color:#94a3b8;background:rgba(51,65,85,.35);}
 #copilot-block .stats-brain-chip.is-bull{color:#14f1a8;background:rgba(20,241,168,.12);}
@@ -23748,6 +23759,42 @@ function updateCoPilotBlock(data){
         cls: accepted ? brainSideClass(side) : "is-wait",
       };
     };
+    const brainBiasCue = (row, sideValue) => {
+      const side = normBrainSide(sideValue ?? row?.side);
+      const range = brainRangeLabel(row);
+      const pos = brainClamp(range.pos, 0, 100) ?? 50;
+      const accepted = row?.accepted === true;
+      const location =
+        range.cls === "is-fundo" ? "FUNDO" :
+        range.cls === "is-topo" ? "TOPO" :
+        "MEIO";
+      const locPct = fmtBrainPct(pos);
+      if (!["BUY", "SELL"].includes(side)) {
+        return { title: "SEM BIAS", sub: "AGUARDAR", cls: "is-neutral" };
+      }
+      if (!accepted) {
+        if ((side === "BUY" && range.cls === "is-topo") || (side === "SELL" && range.cls === "is-fundo")) {
+          return { title: "BIAS ONLY", sub: `${location} ${locPct} · NO TRADE`, cls: "is-danger" };
+        }
+        return { title: "BLOQUEADO", sub: `${location} ${locPct} · SEM GATILHO`, cls: "is-neutral" };
+      }
+      if (side === "BUY") {
+        if (range.cls === "is-fundo") {
+          return { title: pos <= 15 ? "ZONA BOA" : "BUY SUPORTE", sub: `${location} ${locPct} · BUSCAR GATILHO`, cls: "is-good" };
+        }
+        if (range.cls === "is-topo") {
+          return { title: pos >= 85 ? "CHASE RISK" : "ESTICADO", sub: `${location} ${locPct} · WAIT RETEST`, cls: pos >= 85 ? "is-danger" : "is-warn" };
+        }
+        return { title: "NEUTRO", sub: `${location} ${locPct} · CONFIRMAÇÃO`, cls: "is-neutral" };
+      }
+      if (range.cls === "is-topo") {
+        return { title: pos >= 85 ? "ZONA BOA" : "SELL RESIST", sub: `${location} ${locPct} · BUSCAR GATILHO`, cls: "is-good" };
+      }
+      if (range.cls === "is-fundo") {
+        return { title: pos <= 15 ? "CHASE RISK" : "ESTICADO", sub: `${location} ${locPct} · WAIT RETEST`, cls: pos <= 15 ? "is-danger" : "is-warn" };
+      }
+      return { title: "NEUTRO", sub: `${location} ${locPct} · CONFIRMAÇÃO`, cls: "is-neutral" };
+    };
     const brainTrend = (row) => {
       const side = normBrainSide(row?.side);
       if (side === "BUY") return { label: "BULL", cls: "is-bull" };
@@ -24209,6 +24256,7 @@ function updateCoPilotBlock(data){
       const contActive = brainContActive(r);
       const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
       const rangeAction = brainRangeAction(r, side);
+      const biasCue = brainBiasCue(r, side);
       const wr = numBrain(r.wr_pct);
       const levelsHtml = [
         renderBrainLevel(r, "entry", "entry", "is-entry"),
@@ -24231,7 +24279,10 @@ function updateCoPilotBlock(data){
         <div class="${cls}">
           <div class="stats-brain-stock-top">
             <span class="stats-brain-stock-rank">${rank === 1 ? '<span class="stats-brain-medal">#1</span>' : `#${escapeHtml(rank)}`}</span>
-            <span class="stats-brain-side ${brainSideClass(side)}">${escapeHtml(side === "WAIT" ? "NONE" : side)}</span>
+            <div class="stats-brain-sidebox">
+              <span class="stats-brain-side ${brainSideClass(side)}">${escapeHtml(side === "WAIT" ? "NONE" : side)}</span>
+              <span class="stats-brain-bias-cue ${escapeHtml(biasCue.cls)}"><b>${escapeHtml(biasCue.title)}</b><span>${escapeHtml(biasCue.sub)}</span></span>
+            </div>
           </div>
           <div class="stats-brain-stock-symbol">${escapeHtml(fmtBrainText(r.symbol, "?"))}</div>
           <div class="stats-brain-chip-row">
