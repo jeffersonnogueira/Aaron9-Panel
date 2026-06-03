@@ -5890,6 +5890,14 @@
 #copilot-block .stats-brain-manager-grid .stats-brain-main-box strong{font-size:20px;}
 #copilot-block .stats-brain-manager-grid .stats-brain-main-box small{font-size:9px;}
 #copilot-block .stats-brain-pnl.is-manager{margin-top:14px;border-radius:14px;background:rgba(2,6,13,.66);}
+#copilot-block .stats-brain-pnl-now{margin:10px 0 11px;border:1px solid rgba(244,184,63,.36);border-radius:16px;background:linear-gradient(135deg,rgba(244,184,63,.18),rgba(5,10,19,.78));padding:16px 18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+#copilot-block .stats-brain-pnl-now span{display:block;font-size:13px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#f7d889;}
+#copilot-block .stats-brain-pnl-now strong{display:block;margin-top:8px;font-size:52px;line-height:.95;font-weight:950;color:#ffe58a;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-shadow:0 0 24px rgba(244,184,63,.22);}
+#copilot-block .stats-brain-pnl-now small{display:block;margin-top:8px;font-size:14px;font-weight:900;color:#d6c28b;text-transform:uppercase;}
+#copilot-block .stats-brain-pnl-now.is-profit{border-color:rgba(20,241,168,.42);background:linear-gradient(135deg,rgba(20,241,168,.18),rgba(5,10,19,.78));}
+#copilot-block .stats-brain-pnl-now.is-profit strong{color:#14f1a8;text-shadow:0 0 24px rgba(20,241,168,.24);}
+#copilot-block .stats-brain-pnl-now.is-loss{border-color:rgba(255,72,105,.44);background:linear-gradient(135deg,rgba(255,72,105,.17),rgba(5,10,19,.78));}
+#copilot-block .stats-brain-pnl-now.is-loss strong{color:#ff4869;text-shadow:0 0 24px rgba(255,72,105,.24);}
 #copilot-block .stats-brain-manager-kill{margin-top:14px;border:1px solid rgba(255,72,105,.24);border-radius:14px;background:linear-gradient(135deg,rgba(255,72,105,.11),rgba(5,10,19,.72));padding:14px 15px;}
 #copilot-block .stats-brain-manager-kill b{display:block;font-size:13px;font-weight:950;text-transform:uppercase;color:#ff7a90;}
 #copilot-block .stats-brain-manager-kill span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;font-size:14px;line-height:1.35;font-weight:850;color:#fbd0d8;}
@@ -23455,6 +23463,21 @@ function updateCoPilotBlock(data){
       if (e === null || l === null || sh === null || sh <= 0 || !["BUY", "SELL"].includes(s)) return null;
       return (s === "SELL" ? (e - l) : (l - e)) * sh;
     };
+    const brainPnlNowValue = (side, entry, current, shares) => brainPnlValue(side, entry, current, shares);
+    const brainPnlNowPct = (side, entry, current) => {
+      const e = numBrain(entry);
+      const c = numBrain(current);
+      const s = normBrainSide(side);
+      if (e === null || c === null || e <= 0 || !["BUY", "SELL"].includes(s)) return null;
+      return ((s === "SELL" ? (e - c) : (c - e)) / e) * 100;
+    };
+    const brainPnlMood = (v) => {
+      const n = numBrain(v);
+      if (n === null) return "is-flat";
+      if (n > 0) return "is-profit";
+      if (n < 0) return "is-loss";
+      return "is-flat";
+    };
     const brainPnlShares = (capital, entry) => {
       const cap = brainCapitalNumber(capital);
       const e = numBrain(entry);
@@ -23464,10 +23487,12 @@ function updateCoPilotBlock(data){
     const brainPnlAttrs = (row) => {
       const d = row?.__detail || {};
       const entry = brainFirst(row?.entry, d.entry, d.current, row?.current);
+      const current = brainFirst(row?.current, d.current, row?.last_price, d.last_price, entry);
       const side = normBrainSide(row?.side);
       return {
         side,
         entry,
+        current,
         t1: brainLevelValue(row, "t1"),
         t2: brainLevelValue(row, "t2"),
         t3: brainLevelValue(row, "t3"),
@@ -23482,12 +23507,16 @@ function updateCoPilotBlock(data){
         `data-brain-pnl="1"`,
         `data-side="${escapeHtml(data.side)}"`,
         `data-entry="${escapeHtml(data.entry ?? "")}"`,
+        `data-current="${escapeHtml(data.current ?? "")}"`,
         `data-t1="${escapeHtml(data.t1 ?? "")}"`,
         `data-t2="${escapeHtml(data.t2 ?? "")}"`,
         `data-t3="${escapeHtml(data.t3 ?? "")}"`,
         `data-stop="${escapeHtml(data.stop ?? "")}"`,
       ].join(" ");
       const shareText = shares ? `${shares.toLocaleString("en-US")} sh @ ${fmtBrainUsd(data.entry)}` : "digite capital";
+      const pnlNow = brainPnlNowValue(data.side, data.entry, data.current, shares);
+      const pnlNowPct = brainPnlNowPct(data.side, data.entry, data.current);
+      const nowCls = brainPnlMood(pnlNow);
       const cells = brainPnlTargets.map(t => {
         const pnl = brainPnlValue(data.side, data.entry, data[t.key], shares);
         const cls = pnl !== null && pnl < 0 ? "is-loss" : "";
@@ -23496,6 +23525,13 @@ function updateCoPilotBlock(data){
       return `
         <div class="stats-brain-pnl ${variant}" ${attrs}>
           <div class="stats-brain-pnl-head"><b>P/L no capital</b><span data-pnl-shares>${escapeHtml(shareText)}</span></div>
+          ${variant.includes("is-manager") ? `
+            <div class="stats-brain-pnl-now ${nowCls}">
+              <span>P/L AGORA</span>
+              <strong data-pnl-now>${escapeHtml(fmtBrainUsd(pnlNow))}</strong>
+              <small data-pnl-now-sub>${escapeHtml(pnlNowPct === null ? `preço atual ${fmtBrainPrice(data.current) || "—"}` : `${pnlNowPct >= 0 ? "+" : ""}${pnlNowPct.toFixed(2)}% · preço atual ${fmtBrainPrice(data.current) || "—"}`)}</small>
+            </div>
+          ` : ""}
           <div class="stats-brain-pnl-grid">${cells}</div>
         </div>
       `;
@@ -23513,9 +23549,24 @@ function updateCoPilotBlock(data){
       document.querySelectorAll("[data-brain-pnl]").forEach(box => {
         const side = box.getAttribute("data-side") || "WAIT";
         const entry = numBrain(box.getAttribute("data-entry"));
+        const current = numBrain(box.getAttribute("data-current"));
         const shares = brainPnlShares(capital, entry);
         const shareEl = box.querySelector("[data-pnl-shares]");
         if (shareEl) shareEl.textContent = shares ? `${shares.toLocaleString("en-US")} sh @ ${fmtBrainUsd(entry)}` : "digite capital";
+        const pnlNow = brainPnlNowValue(side, entry, current, shares);
+        const pnlNowEl = box.querySelector("[data-pnl-now]");
+        const pnlNowSubEl = box.querySelector("[data-pnl-now-sub]");
+        const pnlNowBox = box.querySelector(".stats-brain-pnl-now");
+        if (pnlNowEl) pnlNowEl.textContent = fmtBrainUsd(pnlNow);
+        if (pnlNowSubEl) {
+          const pct = brainPnlNowPct(side, entry, current);
+          pnlNowSubEl.textContent = pct === null ? `preço atual ${fmtBrainPrice(current) || "—"}` : `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}% · preço atual ${fmtBrainPrice(current) || "—"}`;
+        }
+        if (pnlNowBox) {
+          pnlNowBox.classList.toggle("is-profit", pnlNow !== null && pnlNow > 0);
+          pnlNowBox.classList.toggle("is-loss", pnlNow !== null && pnlNow < 0);
+          pnlNowBox.classList.toggle("is-flat", pnlNow === null || pnlNow === 0);
+        }
         brainPnlTargets.forEach(t => {
           const level = numBrain(box.getAttribute(`data-${t.key}`));
           const pnl = brainPnlValue(side, entry, level, shares);
