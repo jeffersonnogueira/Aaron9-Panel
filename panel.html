@@ -5695,6 +5695,34 @@
 #copilot-block .stats-brain-main-box.is-stop{border-left-color:#ff4869;}
 #copilot-block .stats-brain-main-box.is-stop strong,#copilot-block .stats-brain-main-box.is-resist strong{color:#ff4869;}
 #copilot-block .stats-brain-main-box small{display:block;margin-top:6px;font-size:9px;color:#65758a;font-weight:850;text-transform:uppercase;letter-spacing:.06em;}
+#copilot-block .stats-brain-trade-chart{position:relative;overflow:hidden;margin-top:14px;border:1px solid rgba(34,211,238,.25);border-radius:14px;background:linear-gradient(135deg,rgba(4,10,19,.94),rgba(7,15,27,.96));padding:13px 14px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+#copilot-block .stats-brain-trade-chart::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#22d3ee,#14f1a8,#f4b83f,#ff4869);opacity:.85;}
+#copilot-block .stats-brain-trade-chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px;}
+#copilot-block .stats-brain-trade-chart-head span{display:block;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.14em;color:#7ddff1;}
+#copilot-block .stats-brain-trade-chart-head strong{display:block;margin-top:4px;font-size:18px;line-height:1;font-weight:950;color:#f8fafc;}
+#copilot-block .stats-brain-trade-chart-head em{font-style:normal;font-size:10px;font-weight:900;text-transform:uppercase;color:#73849b;text-align:right;}
+#copilot-block .stats-brain-trade-chart svg{display:block;width:100%;height:auto;min-height:236px;}
+#copilot-block .stats-brain-chart-zone{fill:rgba(2,6,13,.52);stroke:rgba(148,163,184,.10);}
+#copilot-block .stats-brain-chart-grid line{stroke:rgba(148,163,184,.13);stroke-width:1;}
+#copilot-block .stats-brain-chart-line{fill:none;stroke:#8ef7ff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(34,211,238,.32));}
+#copilot-block .stats-brain-chart-line.is-synthetic{stroke:#f4b83f;stroke-width:4;stroke-dasharray:1 0;filter:drop-shadow(0 0 10px rgba(244,184,63,.28));}
+#copilot-block .stats-brain-chart-candle line{stroke:rgba(203,213,225,.62);stroke-width:2;}
+#copilot-block .stats-brain-chart-candle rect{stroke-width:1;}
+#copilot-block .stats-brain-chart-candle.is-up rect{fill:#14f1a8;stroke:#14f1a8;}
+#copilot-block .stats-brain-chart-candle.is-down rect{fill:#ff4869;stroke:#ff4869;}
+#copilot-block .stats-brain-chart-level line{stroke-width:2;stroke-dasharray:7 7;opacity:.92;}
+#copilot-block .stats-brain-chart-level text,#copilot-block .stats-brain-chart-current text{font-size:18px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-chart-level.is-entry line,#copilot-block .stats-brain-chart-level.is-entry text{stroke:#22d3ee;fill:#22d3ee;}
+#copilot-block .stats-brain-chart-level.is-stop line,#copilot-block .stats-brain-chart-level.is-stop text{stroke:#ff4869;fill:#ff4869;}
+#copilot-block .stats-brain-chart-level.is-target line,#copilot-block .stats-brain-chart-level.is-target text{stroke:#14f1a8;fill:#14f1a8;}
+#copilot-block .stats-brain-chart-level.is-runner line,#copilot-block .stats-brain-chart-level.is-runner text{stroke:#a78bfa;fill:#a78bfa;}
+#copilot-block .stats-brain-chart-level.is-breath line,#copilot-block .stats-brain-chart-level.is-breath text{stroke:#22d3ee;fill:#22d3ee;}
+#copilot-block .stats-brain-chart-level.is-reversal line,#copilot-block .stats-brain-chart-level.is-reversal text{stroke:#f4b83f;fill:#f4b83f;}
+#copilot-block .stats-brain-chart-level.is-support line,#copilot-block .stats-brain-chart-level.is-support text{stroke:#14f1a8;fill:#14f1a8;opacity:.72;}
+#copilot-block .stats-brain-chart-level.is-resist line,#copilot-block .stats-brain-chart-level.is-resist text{stroke:#ff4869;fill:#ff4869;opacity:.72;}
+#copilot-block .stats-brain-chart-current line{stroke:#fff7d6;stroke-width:2;stroke-dasharray:2 6;opacity:.9;}
+#copilot-block .stats-brain-chart-current circle{fill:#fff7d6;stroke:#f4b83f;stroke-width:3;filter:drop-shadow(0 0 8px rgba(244,184,63,.55));}
+#copilot-block .stats-brain-chart-current text{fill:#fff7d6;}
 #copilot-block .stats-brain-right-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
 #copilot-block .stats-brain-right-score{display:flex;align-items:flex-end;gap:8px;margin-bottom:10px;}
 #copilot-block .stats-brain-right-score strong{font-size:42px;line-height:.9;color:#8ef7ff;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
@@ -23816,6 +23844,146 @@ function updateCoPilotBlock(data){
       const val = fmtBrainPrice(brainLevelValue(row, key));
       return val ? `<span class="stats-brain-level ${cls}"><b>${escapeHtml(label)}</b>${escapeHtml(val)}</span>` : "";
     };
+    const brainChartNormalizeCandle = (c) => {
+      if (!isBrainObj(c)) return null;
+      const open = numBrain(c.open ?? c.o);
+      const high = numBrain(c.high ?? c.h);
+      const low = numBrain(c.low ?? c.l);
+      const close = numBrain(c.close ?? c.c ?? c.price);
+      if (open === null || high === null || low === null || close === null) return null;
+      return {
+        open,
+        high: Math.max(high, open, close),
+        low: Math.min(low, open, close),
+        close,
+        time: c.time ?? c.t ?? c.timestamp ?? c.date ?? "",
+      };
+    };
+    const brainChartPickCandles = (symbol, activeTrade = null, row = null) => {
+      const sym = String(symbol || "").trim().toUpperCase();
+      const packs = [
+        activeTrade?.candles,
+        activeTrade?.bars,
+        row?.candles,
+        row?.bars,
+        row?.raw?.candles,
+        row?.raw?.bars,
+        panel?.candles,
+        panel?.bars,
+        panel?.recent_candles,
+        panel?.intraday?.candles,
+        data?.candles,
+        data?.bars,
+        data?.raw?.candles,
+        data?.raw?.bars,
+        data?.raw?.panel?.candles,
+        digest?.candles,
+        digest?.bars,
+        Array.isArray(window.__A10_LIVE_LAST_45__) ? window.__A10_LIVE_LAST_45__ : null,
+      ];
+      for (const arr of packs) {
+        if (!Array.isArray(arr) || !arr.length) continue;
+        let rows = arr;
+        if (sym && arr.some(x => isBrainObj(x) && (x.symbol || x.s))) {
+          const filtered = arr.filter(x => String(x?.symbol || x?.s || "").trim().toUpperCase() === sym);
+          if (filtered.length) rows = filtered;
+        }
+        const normalized = rows.map(brainChartNormalizeCandle).filter(Boolean);
+        if (normalized.length >= 3) return normalized.slice(-90);
+      }
+      return [];
+    };
+    const renderBrainTradeChart = (row, ctx = {}) => {
+      const symbol = fmtBrainText(ctx.symbol || row?.symbol, "—");
+      const side = normBrainSide(ctx.side || row?.side);
+      const sideLabel = side === "BUY" ? "LONG" : side === "SELL" ? "SHORT" : "NONE";
+      const current = numBrain(ctx.currentRaw);
+      const entry = numBrain(ctx.entryDisplayRaw ?? ctx.entryRaw);
+      const levels = [
+        { key: "entry", label: "ENTRY", value: entry, cls: "is-entry" },
+        { key: "stop", label: "STOP", value: numBrain(ctx.stopRaw), cls: "is-stop" },
+        { key: "t1", label: "T1", value: numBrain(ctx.t1Raw), cls: "is-target" },
+        { key: "t2", label: "T2", value: numBrain(ctx.t2Raw), cls: "is-target" },
+        { key: "t3", label: "T3", value: numBrain(ctx.t3Raw), cls: "is-runner" },
+        { key: "respiro", label: "RESPIRO", value: numBrain(ctx.respiroRaw), cls: "is-breath" },
+        { key: "reversao", label: "REVERSÃO", value: numBrain(ctx.reversaoRaw), cls: "is-reversal" },
+        { key: "support", label: "SUPORTE", value: numBrain(ctx.supportRaw), cls: "is-support" },
+        { key: "resist", label: "RESIST", value: numBrain(ctx.resistRaw), cls: "is-resist" },
+      ].filter(x => x.value !== null);
+      const candles = brainChartPickCandles(symbol, ctx.activeTrade, row);
+      const closes = candles.map(c => c.close);
+      const rawPrices = [
+        current,
+        ...levels.map(x => x.value),
+        ...candles.flatMap(c => [c.high, c.low, c.close]),
+      ].filter(v => numBrain(v) !== null);
+      if (!rawPrices.length) return "";
+      let min = Math.min(...rawPrices);
+      let max = Math.max(...rawPrices);
+      const spread = Math.max(0.01, max - min);
+      min -= spread * 0.18;
+      max += spread * 0.18;
+      const W = 1000, H = 300, padL = 42, padR = 120, padT = 30, padB = 34;
+      const innerW = W - padL - padR;
+      const innerH = H - padT - padB;
+      const y = (price) => padT + ((max - price) / (max - min || 1)) * innerH;
+      const x = (i, n) => padL + (n <= 1 ? innerW : (i / (n - 1)) * innerW);
+      const synthetic = !candles.length;
+      const points = candles.length
+        ? closes.map((v, i) => `${x(i, closes.length).toFixed(1)},${y(v).toFixed(1)}`).join(" ")
+        : (() => {
+            const base = entry ?? current ?? levels[0]?.value ?? 0;
+            const now = current ?? base;
+            const seq = [base, base + (now - base) * .18, base + (now - base) * .32, now, now + (side === "SELL" ? -1 : 1) * spread * .08, now, levels.find(l => l.key === "t1")?.value ?? now].filter(v => numBrain(v) !== null);
+            return seq.map((v, i) => `${x(i, seq.length).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+          })();
+      const candleW = Math.max(5, Math.min(11, innerW / Math.max(candles.length, 48) * .58));
+      const candleEls = candles.map((c, i) => {
+        const cx = x(i, candles.length);
+        const up = c.close >= c.open;
+        const top = y(Math.max(c.open, c.close));
+        const bot = y(Math.min(c.open, c.close));
+        const bodyH = Math.max(2, bot - top);
+        return `<g class="stats-brain-chart-candle ${up ? "is-up" : "is-down"}"><line x1="${cx.toFixed(1)}" x2="${cx.toFixed(1)}" y1="${y(c.high).toFixed(1)}" y2="${y(c.low).toFixed(1)}"></line><rect x="${(cx - candleW / 2).toFixed(1)}" y="${top.toFixed(1)}" width="${candleW.toFixed(1)}" height="${bodyH.toFixed(1)}" rx="1.2"></rect></g>`;
+      }).join("");
+      const levelEls = levels.map(l => {
+        const yy = y(l.value);
+        return `<g class="stats-brain-chart-level ${l.cls}"><line x1="${padL}" x2="${W - padR + 88}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}"></line><text x="${W - padR + 94}" y="${(yy + 4).toFixed(1)}">${escapeHtml(l.label)} ${escapeHtml(fmtBrainPrice(l.value) || "—")}</text></g>`;
+      }).join("");
+      const currentY = current === null ? null : y(current);
+      const currentX = W - padR;
+      const currentEl = currentY === null ? "" : `<g class="stats-brain-chart-current"><line x1="${padL}" x2="${W - padR + 88}" y1="${currentY.toFixed(1)}" y2="${currentY.toFixed(1)}"></line><circle cx="${currentX}" cy="${currentY.toFixed(1)}" r="6"></circle><text x="${W - padR + 94}" y="${(currentY - 8).toFixed(1)}">AGORA ${escapeHtml(fmtBrainPrice(current) || "—")}</text></g>`;
+      const footer = synthetic ? "sem candles no payload · mapa operacional por níveis" : `${candles.length} candles · níveis do active trade`;
+      return `
+        <div class="stats-brain-trade-chart ${brainSideClass(side)}">
+          <div class="stats-brain-trade-chart-head">
+            <div>
+              <span>ACTIVE TRADE CHART</span>
+              <strong>${escapeHtml(symbol)} ${escapeHtml(sideLabel)}</strong>
+            </div>
+            <em>${escapeHtml(footer)}</em>
+          </div>
+          <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafico operacional ${escapeHtml(symbol)}">
+            <defs>
+              <linearGradient id="brainChartBg" x1="0" x2="1">
+                <stop offset="0%" stop-color="rgba(20,241,168,.16)"></stop>
+                <stop offset="100%" stop-color="rgba(255,72,105,.16)"></stop>
+              </linearGradient>
+            </defs>
+            <rect class="stats-brain-chart-zone" x="${padL}" y="${padT}" width="${innerW}" height="${innerH}" rx="12"></rect>
+            <g class="stats-brain-chart-grid">
+              <line x1="${padL}" x2="${W - padR}" y1="${padT}" y2="${padT}"></line>
+              <line x1="${padL}" x2="${W - padR}" y1="${padT + innerH / 2}" y2="${padT + innerH / 2}"></line>
+              <line x1="${padL}" x2="${W - padR}" y1="${padT + innerH}" y2="${padT + innerH}"></line>
+            </g>
+            ${levelEls}
+            ${candles.length ? candleEls : `<polyline class="stats-brain-chart-line is-synthetic" points="${points}"></polyline>`}
+            ${candles.length ? `<polyline class="stats-brain-chart-line" points="${points}"></polyline>` : ""}
+            ${currentEl}
+          </svg>
+        </div>
+      `;
+    };
     const renderBrainPills = (rows = [], limit = 8) => {
       const list = rows.slice(0, limit);
       if (!list.length) return `<span class="stats-brain-pill is-wait">—</span>`;
@@ -24664,6 +24832,22 @@ function updateCoPilotBlock(data){
               ${renderBrainMainBox("Suporte", support, "", "")}
               ${renderBrainMainBox("Resistência", resist, "", "is-resist")}
             </div>
+            ${renderBrainTradeChart(s, {
+              activeTrade,
+              side,
+              symbol: s.symbol || stats.selected_symbol,
+              currentRaw,
+              entryRaw,
+              entryDisplayRaw,
+              stopRaw,
+              t1Raw,
+              t2Raw,
+              t3Raw,
+              respiroRaw,
+              reversaoRaw,
+              supportRaw,
+              resistRaw,
+            })}
           </div>
           <div class="stats-brain-main-right">
             ${renderBrainTradeManager(s, {
