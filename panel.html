@@ -5657,6 +5657,7 @@
 #copilot-block .stats-brain-respiro-map-grid div{min-width:0;border:1px solid rgba(148,163,184,.12);border-radius:7px;background:rgba(2,6,13,.45);padding:6px 7px;}
 #copilot-block .stats-brain-respiro-map-grid span{display:block;font-size:8px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#718096;}
 #copilot-block .stats-brain-respiro-map-grid strong{display:block;margin-top:4px;font-size:12px;line-height:1;font-weight:950;color:#14f1a8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-respiro-map-grid strong.is-main{color:#22d3ee;text-shadow:0 0 12px rgba(34,211,238,.24);}
 #copilot-block .stats-brain-respiro-map-grid strong.is-warn{color:#f4b83f;}
 #copilot-block .stats-brain-respiro-map-grid strong.is-danger{color:#ff6b83;}
 #copilot-block .stats-brain-respiro-map-action{margin-top:7px;font-size:10px;line-height:1.25;font-weight:900;color:#a9bdd4;}
@@ -24267,58 +24268,77 @@ function updateCoPilotBlock(data){
       const respiro = numBrain(brainLevelValue(row, "respiro"));
       const reversao = numBrain(brainLevelValue(row, "reversao"));
       const stop = numBrain(brainLevelValue(row, "stop"));
-      if (!["BUY", "SELL"].includes(side) || current === null || respiro === null) return "";
-      const dist = Math.abs(current - respiro);
+      const supportRaw = numBrain(brainLevelValue(row, "support"));
+      const resistRaw = numBrain(brainLevelValue(row, "resist"));
+      const range = brainRangeLabel(row);
+      const edges = [supportRaw, resistRaw].filter(v => v !== null);
+      const lowerEdge = edges.length ? Math.min(...edges) : null;
+      const upperEdge = edges.length ? Math.max(...edges) : null;
+      const isBottom = range.cls === "is-fundo";
+      const isTop = range.cls === "is-topo";
+      const waitLevel = numBrain(
+        isBottom
+          ? brainFirst(lowerEdge, supportRaw, respiro, entry)
+          : isTop
+            ? brainFirst(upperEdge, resistRaw, respiro, entry)
+            : brainFirst(respiro, entry, lowerEdge, upperEdge)
+      );
+      if (!["BUY", "SELL"].includes(side) || current === null || waitLevel === null) return "";
+      const dist = Math.abs(current - waitLevel);
       const distPct = current ? (dist / Math.abs(current)) * 100 : null;
       const tolerance = Math.max(0.01, Math.abs(current) * 0.0015);
       const touched = dist <= tolerance;
       const invalidLevel = stop ?? reversao;
       const invalid = invalidLevel !== null && brainManagerInvalid(side, current, invalidLevel);
-      const respiroBehind = side === "BUY" ? respiro <= current : respiro >= current;
-      let state = "ESPERANDO";
+      const brokeBottom = isBottom && lowerEdge !== null && current < lowerEdge - tolerance;
+      const brokeTop = isTop && upperEdge !== null && current > upperEdge + tolerance;
+      const zoneLabel = isBottom ? "FUNDO" : isTop ? "TOPO" : "MEIO";
+      const edgeLabel = isBottom ? "fundo/suporte" : isTop ? "topo/resistência" : "zona";
+      let state = isBottom ? "ESPERAR FUNDO" : isTop ? "ESPERAR TOPO" : "ESPERAR BORDA";
       let cls = "is-warn";
-      let action = side === "BUY"
-        ? "BUY só no toque/reação do respiro; não perseguir candle esticado."
-        : "SELL só no toque/rejeição do respiro; não perseguir candle esticado.";
+      let action = "Meio do range: espere o preço chegar numa borda clara ou aguarde novo matcher.";
+      if (isBottom && side === "BUY") {
+        action = "Espere o preço buscar o fundo/suporte. BUY só se segurar nessa zona e o matcher confirmar reação.";
+      } else if (isBottom && side === "SELL") {
+        action = "Fundo é suporte: SELL só se romper e retestar. Não vender direto no suporte sem gatilho.";
+      } else if (isTop && side === "SELL") {
+        action = "Espere o preço buscar o topo/resistência. SELL só se rejeitar nessa zona e o matcher confirmar.";
+      } else if (isTop && side === "BUY") {
+        action = "Topo é resistência: BUY só em rompimento com reteste. Não comprar esticado no topo.";
+      }
       if (invalid) {
         state = "CANCELAR";
         cls = "is-danger";
-        action = "Respiro perdeu validade: preço cruzou stop/reversão contra o setup.";
+        action = "A zona perdeu validade: preço cruzou stop/reversão contra o setup.";
       } else if (touched) {
-        state = "TOCOU";
+        state = `NA ZONA ${zoneLabel}`;
         cls = "is-ready";
-        action = side === "BUY"
-          ? "Tocou o respiro: procurar candle de reação/confirm do matcher para BUY."
-          : "Tocou o respiro: procurar rejeição/confirm do matcher para SELL.";
-      } else if (!respiroBehind) {
-        state = "ATRÁS";
+      } else if (brokeBottom || brokeTop) {
+        state = `ROMPEU ${zoneLabel}`;
         cls = "is-danger";
-        action = "Respiro está do lado errado do preço; tratar como mapa fraco até novo matcher.";
       } else if (distPct !== null && distPct <= 0.35) {
         state = "PERTO";
         cls = "is-ready";
-        action = side === "BUY"
-          ? "Preço perto do respiro: preparar BUY se segurar e confirmar."
-          : "Preço perto do respiro: preparar SELL se rejeitar e confirmar.";
       } else {
-        state = "LONGE";
+        state = "AGUARDAR";
         cls = "is-warn";
       }
       const distText = distPct === null ? "—" : `${distPct.toFixed(2)}%`;
       const invalidText = fmtBrainPrice(invalidLevel) || "—";
+      const edgeText = fmtBrainPrice(isBottom ? lowerEdge : isTop ? upperEdge : waitLevel) || "—";
       return `
         <div class="stats-brain-respiro-map ${cls}">
           <div class="stats-brain-respiro-map-head">
-            <b>Respiro Map #1</b>
+            <b>Até onde esperar #1</b>
             <span>${escapeHtml(state)}</span>
           </div>
           <div class="stats-brain-respiro-map-grid">
             <div><span>agora</span><strong>${escapeHtml(fmtBrainPrice(current) || "—")}</strong></div>
-            <div><span>respiro</span><strong>${escapeHtml(fmtBrainPrice(respiro) || "—")}</strong></div>
+            <div><span>esperar em</span><strong class="is-main">${escapeHtml(fmtBrainPrice(waitLevel) || "—")}</strong></div>
             <div><span>distância</span><strong class="${cls === "is-danger" ? "is-danger" : cls === "is-warn" ? "is-warn" : ""}">${escapeHtml(distText)}</strong></div>
-            <div><span>entrada</span><strong>${escapeHtml(fmtBrainPrice(entry) || "—")}</strong></div>
-            <div><span>invalida</span><strong class="is-danger">${escapeHtml(invalidText)}</strong></div>
-            <div><span>side</span><strong>${escapeHtml(side)}</strong></div>
+            <div><span>${escapeHtml(edgeLabel)}</span><strong>${escapeHtml(edgeText)}</strong></div>
+            <div><span>cancelar</span><strong class="is-danger">${escapeHtml(invalidText)}</strong></div>
+            <div><span>matcher</span><strong>${escapeHtml(side)}</strong></div>
           </div>
           <div class="stats-brain-respiro-map-action"><b>Ação:</b> ${escapeHtml(action)}</div>
         </div>
