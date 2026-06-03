@@ -24486,6 +24486,32 @@ function updateCoPilotBlock(data){
         pnl,
       };
     };
+    const brainActiveTradePnlRecord = (activeTrade = null, row = {}) => {
+      const trade = isBrainObj(activeTrade) ? activeTrade : {};
+      const d = row?.__detail || {};
+      const side = normBrainSide(trade.side || trade.direction || row?.side);
+      const symbol = fmtBrainText(trade.symbol || row?.symbol, "").toUpperCase();
+      const entry = numBrain(brainFirst(trade.entry, trade.entry_price, d.entry, row?.entry, d.current, row?.current));
+      const current = numBrain(brainFirst(trade.current, trade.current_price, trade.last_price, d.current, row?.current, entry));
+      if (!symbol || !["BUY", "SELL"].includes(side) || entry === null || current === null) return null;
+      return {
+        id: `ACTIVE_TRADE|${symbol}|${side}`,
+        day: brainJournalDateKey(brainJournalTimestamp()),
+        time: brainJournalClock(brainJournalTimestamp()),
+        symbol,
+        side,
+        actionable: true,
+        accepted: true,
+        outcome: "OPEN",
+        entry,
+        current_start: entry,
+        current_last: current,
+        high_seen: Math.max(entry, current),
+        low_seen: Math.min(entry, current),
+        active_trade: isBrainObj(activeTrade),
+        shadow_trade: !isBrainObj(activeTrade),
+      };
+    };
     const brainJournalPnlMoney = (value) => {
       const n = numBrain(value);
       if (n === null) return "—";
@@ -24497,11 +24523,22 @@ function updateCoPilotBlock(data){
       if (n === null || n === 0) return "is-flat";
       return n > 0 ? "is-profit" : "is-loss";
     };
-    const brainJournalPnlSummary = (records = []) => {
+    const brainJournalPnlSummary = (records = [], activeRecord = null) => {
       const capital = brainGetCapital();
-      const rows = (records || [])
+      let rows = (records || [])
         .map(r => brainJournalRecordPnl(r, capital))
         .filter(Boolean);
+      const activePnl = activeRecord ? brainJournalRecordPnl(activeRecord, capital) : null;
+      if (activePnl) {
+        rows = rows.filter(r => !(r.outcome === "OPEN" && r.symbol === activePnl.symbol && r.side === activePnl.side));
+        rows.push({
+          ...activePnl,
+          outcome: "OPEN",
+          exit_label: activeRecord.active_trade ? "ACTIVE" : "MANAGER",
+          active_trade: activeRecord.active_trade === true,
+          shadow_trade: activeRecord.shadow_trade === true,
+        });
+      }
       const closed = rows.filter(r => r.outcome === "WIN" || r.outcome === "LOSS");
       const openRows = rows.filter(r => r.outcome === "OPEN");
       const sumPnl = (arr) => arr.reduce((acc, r) => acc + (numBrain(r.pnl) || 0), 0);
@@ -24555,7 +24592,7 @@ function updateCoPilotBlock(data){
     window.aaronRefreshBrainDailyPnl = () => {
       const summary = window.__AARON_STATS_BRAIN_JOURNAL__;
       if (!summary?.records) return;
-      summary.pnl = brainJournalPnlSummary(summary.records);
+      summary.pnl = brainJournalPnlSummary(summary.records, summary.activePnlRecord || null);
       const fields = brainJournalPnlDomData(summary.pnl);
       Object.entries(fields).forEach(([key, item]) => {
         document.querySelectorAll(`[data-brain-day-pnl-field="${key}"]`).forEach(el => { el.textContent = item.value; });
@@ -24635,7 +24672,7 @@ function updateCoPilotBlock(data){
       const rows = (summary?.records || []).slice(-180).reverse();
       const symbolRows = (summary?.symbols || []).slice(0, 12);
       const levelRows = summary?.levelSummaryDay || summary?.levelSummary || [];
-      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || []);
+      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || [], summary?.activePnlRecord || null);
       const pnlFields = brainJournalPnlDomData(pnl);
       const line = (cells, head = false) => `<tr>${cells.map(c => head ? `<th>${escapeHtml(c)}</th>` : `<td>${escapeHtml(c)}</td>`).join("")}</tr>`;
       return `<!doctype html><html><head><meta charset="utf-8"><title>AARON Brain Daily Report</title><style>
@@ -24677,7 +24714,12 @@ function updateCoPilotBlock(data){
       </body></html>`;
     };
     const brainJournalBuildCsv = (report) => {
-      const rows = report?.records || [];
+      const activeRecord = report?.activePnlRecord || null;
+      const rows = activeRecord
+        ? (report?.records || [])
+          .filter(r => !(r.outcome === "OPEN" && r.symbol === activeRecord.symbol && normBrainSide(r.side) === normBrainSide(activeRecord.side)))
+          .concat([activeRecord])
+        : (report?.records || []);
       const capital = brainGetCapital();
       const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop","pnl_exit_label","pnl_exit_price","pnl_shares","pnl_estimated"];
       return [headers.join(",")].concat(rows.map(r => {
@@ -24797,7 +24839,7 @@ function updateCoPilotBlock(data){
       const best = summary?.bestSymbol ? `${summary.bestSymbol.key} · ${brainJournalRateLabel(summary.bestSymbol)}` : "—";
       const worst = summary?.worstSymbol ? `${summary.worstSymbol.key} · ${brainJournalRateLabel(summary.worstSymbol)}` : "—";
       const bestHour = summary?.bestBucket ? `${summary.bestBucket.key} · ${brainJournalRateLabel(summary.bestBucket)}` : "—";
-      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || []);
+      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || [], summary?.activePnlRecord || null);
       const pnlFields = brainJournalPnlDomData(pnl);
       const lastRows = (summary?.last50 || []).slice(-4).reverse();
       const totalSignals = summary?.tradeSignals?.length || 0;
@@ -24878,7 +24920,7 @@ function updateCoPilotBlock(data){
       `;
     };
     const renderBrainDailyPnlStrip = (summary) => {
-      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || []);
+      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || [], summary?.activePnlRecord || null);
       const fields = brainJournalPnlDomData(pnl);
       const pnlCard = (key, label) => {
         const item = fields[key] || { value: "—", sub: "—", mood: "is-flat" };
@@ -25490,6 +25532,10 @@ function updateCoPilotBlock(data){
         ""
       );
       const dailyJournal = brainJournalUpdate(ranking);
+      const activeTradeForPnl = readout?.activeTrade || pickBrainActiveTrade(stats);
+      const activePnlRecord = brainActiveTradePnlRecord(activeTradeForPnl, selected);
+      dailyJournal.activePnlRecord = activePnlRecord;
+      dailyJournal.pnl = brainJournalPnlSummary(dailyJournal.records, activePnlRecord);
       const dayPnlSlot = document.getElementById("brain-day-pnl-above-copilot");
       if (dayPnlSlot) {
         dayPnlSlot.innerHTML = renderBrainDailyPnlStrip(dailyJournal);
