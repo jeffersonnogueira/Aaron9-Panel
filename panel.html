@@ -5639,6 +5639,7 @@
 #copilot-block .stats-brain-levels{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:24px;}
 #copilot-block .stats-brain-level{display:inline-flex;align-items:center;gap:5px;max-width:100%;height:23px;padding:0 8px;border-radius:7px;font-size:11px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:rgba(15,23,42,.78);border:1px solid rgba(148,163,184,.14);color:#b9c7d6;}
 #copilot-block .stats-brain-level b{color:#7d8da3;font-weight:950;}
+#copilot-block .stats-brain-level.is-entry{color:#38bdf8;background:rgba(56,189,248,.13);border-color:rgba(56,189,248,.30);}
 #copilot-block .stats-brain-level.is-t1,#copilot-block .stats-brain-level.is-t2{color:#14f1a8;background:rgba(20,241,168,.10);}
 #copilot-block .stats-brain-level.is-t3{color:#c4b5fd;background:rgba(139,92,246,.16);}
 #copilot-block .stats-brain-level.is-respiro{color:#22d3ee;background:rgba(34,211,238,.12);}
@@ -23910,6 +23911,22 @@ function updateCoPilotBlock(data){
     };
     const brainLevelValue = (row, name) => {
       const d = row?.__detail || {};
+      if (name === "entry") return brainFirst(
+        row?.entry,
+        row?.entry_price,
+        row?.entrada,
+        row?.entrada_market_price,
+        row?.entry_market_price,
+        row?.entry_zone_mid,
+        row?.entrada_zona_mid,
+        row?.entry_zone?.mid,
+        row?.entrada_zona?.mid,
+        row?.entry_zone?.low,
+        row?.entrada_zona?.low,
+        d.entry,
+        d.entryLow,
+        d.entryHigh
+      );
       if (name === "t1") return brainFirst(row?.t1, row?.target_1, row?.target1, row?.continuation_to, d.t1);
       if (name === "t2") return brainFirst(row?.t2, row?.target_2, row?.target2, d.t2);
       if (name === "t3") return brainFirst(row?.t3, row?.target_3, row?.target3, d.t3);
@@ -24194,6 +24211,7 @@ function updateCoPilotBlock(data){
       const rangeAction = brainRangeAction(r, side);
       const wr = numBrain(r.wr_pct);
       const levelsHtml = [
+        renderBrainLevel(r, "entry", "entry", "is-entry"),
         renderBrainLevel(r, "T1", "t1", "is-t1"),
         renderBrainLevel(r, "T2", "t2", "is-t2"),
         renderBrainLevel(r, "T3", "t3", "is-t3"),
