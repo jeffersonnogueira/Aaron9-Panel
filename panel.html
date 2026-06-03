@@ -24722,8 +24722,8 @@ function updateCoPilotBlock(data){
       const entered = workflowMode
         ? activeTrade?.entered === true || /ACTIVE|T1_HIT|T2_HIT|T3_HIT/.test(workflowStatus)
         : accepted && entryRaw !== null && brainManagerHit(side, currentRaw, entryRaw);
-      const t1Hit = workflowMode ? activeTrade?.hit_t1 === true || /T1_HIT|T2_HIT|T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t1Raw);
-      const t2Hit = workflowMode ? activeTrade?.hit_t2 === true || /T2_HIT|T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t2Raw);
+      const t1Hit = workflowMode ? activeTrade?.hit_t1 === true || /T1_HIT|T2_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t1Raw);
+      const t2Hit = workflowMode ? activeTrade?.hit_t2 === true || /T2_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t2Raw);
       const t3Hit = workflowMode ? activeTrade?.hit_t3 === true || /T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t3Raw);
       const stopHit = workflowMode ? activeTrade?.hit_stop === true || /STOP_HIT/.test(workflowStatus) : accepted && brainManagerInvalid(side, currentRaw, stopRaw);
       const reversalHit = workflowMode ? activeTrade?.hit_reversao === true || activeTrade?.hit_reversal === true || /INVALID|CANCELLED|CANCELED/.test(workflowStatus) : accepted && brainManagerInvalid(side, currentRaw, reversaoRaw);
@@ -24743,11 +24743,15 @@ function updateCoPilotBlock(data){
           state = { label: "T1 HIT", decision: "PARCIAL + PROTEGER", cls: "is-protect" };
           next = activeTrade?.next_action || "T1 batido. Fazer parcial e proteger perto do breakeven.";
         } else if (/T2_HIT/.test(workflowStatus)) {
-          state = { label: "T2 HIT", decision: "PROTEGER RUNNER", cls: "is-protect" };
-          next = activeTrade?.next_action || "T2 batido. Trade principal pago; manter apenas runner protegido.";
+          state = { label: "T2 HIT", decision: "ALVO PRINCIPAL", cls: "is-protect" };
+          next = "T2 batido. Trade principal completo; realizar/proteger e nao depender de T3.";
         } else if (/T3_HIT/.test(workflowStatus)) {
-          state = { label: "T3 HIT", decision: "ENCERRAR / RUNNER", cls: "is-protect" };
-          next = activeTrade?.next_action || "T3 batido. Encerrar ou deixar runner minimo.";
+          state = t2Hit
+            ? { label: "T2 HIT", decision: "ALVO PRINCIPAL", cls: "is-protect" }
+            : { label: "LIVE", decision: "BUSCAR T2", cls: "is-live" };
+          next = t2Hit
+            ? "Workflow marcou T3, mas o painel usa T2 como alvo principal. Trade completo no T2; T3 fica apenas como runner opcional."
+            : "Workflow marcou T3, mas o painel agora usa T2 como alvo principal. Acompanhar ate T2/stop, sem depender de T3.";
         } else if (/STOP_HIT|INVALID|CANCELLED|CANCELED/.test(workflowStatus)) {
           state = { label: "ENCERRADO", decision: "SAIR / CANCELAR", cls: "is-danger" };
           next = activeTrade?.next_action || "Workflow marcou invalidacao. Nao insistir no trade.";
@@ -24776,12 +24780,12 @@ function updateCoPilotBlock(data){
           next = `T1 ja foi alcançado no shadow. Proteger perto do breakeven ${fmtBrainPrice(entryDisplayRaw) || "entrada"} e deixar T2 respirar.`;
         }
         if (t2Hit) {
-          state = { label: "T2 HIT", decision: "PROTEGER RUNNER", cls: "is-protect" };
-          next = "T2 principal ja foi alcançado no shadow. Se continuar, somente runner pequeno e stop protegido.";
+          state = { label: "T2 HIT", decision: "ALVO PRINCIPAL", cls: "is-protect" };
+          next = "T2 principal ja foi alcançado no shadow. Trade estatistico completo; realizar/proteger e nao depender de T3.";
         }
-        if (t3Hit) {
-          state = { label: "T3 HIT", decision: "ENCERRAR / RUNNER", cls: "is-protect" };
-          next = "T3 runner ja foi alcançado no shadow. O trade estatistico principal esta completo.";
+        if (t3Hit && !t2Hit) {
+          state = { label: "SHADOW LIVE", decision: "BUSCAR T2", cls: "is-live" };
+          next = "T3 fica apenas como runner opcional. O alvo principal do manager agora e T2.";
         }
         if (stopHit || reversalHit) {
           state = { label: "INVALIDADO", decision: "SAIR / CANCELAR", cls: "is-danger" };
