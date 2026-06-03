@@ -10818,6 +10818,7 @@ main.layout{
 <!-- ===== /MICRO PREMONITION — ABOVE COPILOT ===== -->
                 <!-- ===== COPILOT / CLAUDE DIGEST — BELOW INDICATORS ===== -->
 <div class="prem-breakout-wrap" id="copilot-block" style="display:none; margin-top:10px; grid-column: 1 / -1;">
+  <div id="brain-day-pnl-above-copilot" style="display:none; margin-bottom:12px;"></div>
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
     <div class="prem-breakout-title">COPILOT</div>
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
@@ -25489,12 +25490,16 @@ function updateCoPilotBlock(data){
         ""
       );
       const dailyJournal = brainJournalUpdate(ranking);
+      const dayPnlSlot = document.getElementById("brain-day-pnl-above-copilot");
+      if (dayPnlSlot) {
+        dayPnlSlot.innerHTML = renderBrainDailyPnlStrip(dailyJournal);
+        dayPnlSlot.style.display = "";
+      }
       const rowHtml = ranking.map(renderBrainStockCard).join("");
       return `
         <div class="copilot-section-card is-stats-brain">
           <div class="stats-brain-board ${selectedClass}">
             ${renderBrainMarketStrip(ranking)}
-            ${renderBrainDailyPnlStrip(dailyJournal)}
             ${renderBrainMainPanel(selected, stats, ranking)}
             <div class="stats-brain-metrics">
               <div class="stats-brain-metric"><span>Scanned</span><strong>${escapeHtml(fmtBrainText(stats.scanned_count, ranking.length || "—"))}</strong></div>
@@ -25564,6 +25569,11 @@ function updateCoPilotBlock(data){
 
     const aaron10Readout = buildAaron10Readout();
     const statsBrainReadout = buildStatsBrainReadout();
+    const brainDayPnlSlot = document.getElementById("brain-day-pnl-above-copilot");
+    if (!statsBrainReadout && brainDayPnlSlot) {
+      brainDayPnlSlot.innerHTML = "";
+      brainDayPnlSlot.style.display = "none";
+    }
     try {
       window.__AARON_STATS_BRAIN__ = statsBrainReadout ? {
         selected: statsBrainReadout.selected,
