@@ -24260,7 +24260,7 @@ function updateCoPilotBlock(data){
         <div class="stats-brain-pills">${renderBrainPills(rows)}</div>
       </div>
     `;
-    const renderBrainRespiroMap = (row, sideValue) => {
+    const renderBrainRespiroMap = (row, sideValue, rankValue = null) => {
       const side = normBrainSide(sideValue ?? row?.side);
       const d = row?.__detail || {};
       const current = numBrain(brainFirst(row?.current, d.current, row?.entry, d.entry));
@@ -24326,10 +24326,11 @@ function updateCoPilotBlock(data){
       const distText = distPct === null ? "—" : `${distPct.toFixed(2)}%`;
       const invalidText = fmtBrainPrice(invalidLevel) || "—";
       const edgeText = fmtBrainPrice(isBottom ? lowerEdge : isTop ? upperEdge : waitLevel) || "—";
+      const rankText = numBrain(rankValue);
       return `
         <div class="stats-brain-respiro-map ${cls}">
           <div class="stats-brain-respiro-map-head">
-            <b>Até onde esperar #1</b>
+            <b>${escapeHtml(rankText ? `Até onde esperar #${rankText}` : "Até onde esperar")}</b>
             <span>${escapeHtml(state)}</span>
           </div>
           <div class="stats-brain-respiro-map-grid">
@@ -24357,7 +24358,7 @@ function updateCoPilotBlock(data){
       const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
       const rangeAction = brainRangeAction(r, side);
       const biasCue = brainBiasCue(r, side);
-      const respiroMapHtml = rank === 1 ? renderBrainRespiroMap(r, side) : "";
+      const respiroMapHtml = renderBrainRespiroMap(r, side, rank);
       const wr = numBrain(r.wr_pct);
       const levelsHtml = [
         renderBrainLevel(r, "entry", "entry", "is-entry"),
