@@ -5947,6 +5947,16 @@
 #copilot-block .stats-brain-manager-state.is-live b,#copilot-block .stats-brain-manager-state.is-protect b{color:#14f1a8;}
 #copilot-block .stats-brain-manager-state.is-danger b{color:#ff4869;}
 #copilot-block .stats-brain-manager-state.is-wait b{color:#f4b83f;}
+#copilot-block .stats-brain-manager-purpose{display:grid;grid-template-columns:minmax(190px,.7fr) minmax(0,1.3fr);gap:10px;margin-top:16px;}
+#copilot-block .stats-brain-manager-purpose-card{min-width:0;border:1px solid rgba(244,184,63,.24);border-radius:14px;background:linear-gradient(135deg,rgba(244,184,63,.13),rgba(5,10,19,.78));padding:12px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.045);}
+#copilot-block .stats-brain-manager-purpose-card span{display:block;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#f7d889;}
+#copilot-block .stats-brain-manager-purpose-card strong{display:block;margin-top:5px;font-size:19px;line-height:1.05;font-weight:950;color:#fff7d6;text-transform:uppercase;}
+#copilot-block .stats-brain-manager-purpose-card p{margin:6px 0 0;font-size:12px;line-height:1.28;font-weight:850;color:#aebed2;}
+#copilot-block .stats-brain-manager-purpose-card.is-profit{border-color:rgba(20,241,168,.34);background:linear-gradient(135deg,rgba(20,241,168,.13),rgba(5,10,19,.80));}
+#copilot-block .stats-brain-manager-purpose-card.is-profit strong{color:#14f1a8;}
+#copilot-block .stats-brain-manager-purpose-card.is-loss{border-color:rgba(255,72,105,.32);background:linear-gradient(135deg,rgba(255,72,105,.12),rgba(5,10,19,.80));}
+#copilot-block .stats-brain-manager-purpose-card.is-loss strong{color:#ff6b83;}
+#copilot-block .stats-brain-manager-purpose-card.is-wait strong{color:#f4b83f;}
 #copilot-block .stats-brain-manager-command{margin-top:18px;border:1px solid rgba(244,184,63,.34);border-radius:17px;background:linear-gradient(135deg,rgba(244,184,63,.18),rgba(34,211,238,.10),rgba(2,6,13,.72));padding:19px 19px 18px;}
 #copilot-block .stats-brain-manager-command span{display:block;font-size:12px;font-weight:950;text-transform:uppercase;color:#f7d889;}
 #copilot-block .stats-brain-manager-command strong{display:block;margin-top:7px;font-size:38px;line-height:1;font-weight:950;color:#fff7d6;}
@@ -6082,7 +6092,7 @@
 @media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl-lead,#copilot-block .stats-brain-day-pnl-title{grid-column:1 / -1;}}
 @media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
 @media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
+@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-manager-purpose,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -25388,6 +25398,20 @@ function updateCoPilotBlock(data){
         </div>
       `;
     };
+    const renderBrainManagerPurpose = (mission = {}) => `
+      <div class="stats-brain-manager-purpose">
+        <div class="stats-brain-manager-purpose-card is-wait">
+          <span>Manager mode</span>
+          <strong>One trade at a time</strong>
+          <p>${escapeHtml(mission.modeText || "Trava um ativo, gerencia ate sair/cancelar, depois procura o proximo melhor ranking.")}</p>
+        </div>
+        <div class="stats-brain-manager-purpose-card ${escapeHtml(mission.cls || "is-wait")}">
+          <span>Propósito agora</span>
+          <strong>${escapeHtml(mission.title || "Escolher melhor trade")}</strong>
+          <p>${escapeHtml(mission.text || "Analisa os 12 ativos, escolhe o melhor risco/retorno e evita perseguir entrada ruim.")}</p>
+        </div>
+      </div>
+    `;
     const renderBrainTradeManager = (row, ctx = {}) => {
       const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
       const workflowMode = !!activeTrade;
@@ -25432,6 +25456,11 @@ function updateCoPilotBlock(data){
       const t3Hit = workflowMode ? activeTrade?.hit_t3 === true || /T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t3Raw);
       const stopHit = workflowMode ? activeTrade?.hit_stop === true || /STOP_HIT/.test(workflowStatus) : accepted && brainManagerInvalid(side, currentRaw, stopRaw);
       const reversalHit = workflowMode ? activeTrade?.hit_reversao === true || activeTrade?.hit_reversal === true || /INVALID|CANCELLED|CANCELED/.test(workflowStatus) : accepted && brainManagerInvalid(side, currentRaw, reversaoRaw);
+      const capital = brainGetCapital();
+      const shares = brainPnlShares(capital, entryDisplayRaw);
+      const pnlNow = brainPnlNowValue(side, entryDisplayRaw, currentRaw, shares);
+      const pnlPct = brainPnlNowPct(side, entryDisplayRaw, currentRaw);
+      const pnlText = pnlNow === null ? "" : `${fmtBrainUsd(pnlNow)}${pnlPct === null ? "" : ` (${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}%)`}`;
       let state = { label: "SCANNING", decision: "AGUARDAR", cls: "is-wait" };
       let next = "Sem trade ativo nesta fase. O Brain esta apenas escolhendo o melhor setup do ranking.";
       if (workflowMode) {
@@ -25501,6 +25530,33 @@ function updateCoPilotBlock(data){
       const killText = activeTrade?.kill_switch || (accepted
         ? `${sideLabel} perde validade se o preço cruzar contra ${riskLevel || "stop/reversao"} ou se o Brain virar NO TRADE.`
         : "Sem setup operacional ativo. Nao entrar enquanto o Brain nao armar um candidato.");
+      const mission = {
+        modeText: workflowMode
+          ? "Workflow deve manter um active_trade travado; so troca depois de T2, stop, reversao ou cancelamento."
+          : "Shadow manager acompanha o melhor ranking como se fosse um trade; nao e ordem automatica.",
+        cls: "is-wait",
+        title: "Escolher melhor trade",
+        text: "Analisa os 12 ativos e escolhe o que tem melhor chance agora, mas so entra com gatilho limpo.",
+      };
+      if (!accepted) {
+        mission.title = "Sem trade aprovado";
+        mission.text = "Brain esta em modo scanner. Melhor ficar fora do que forcar entrada ruim.";
+      } else if (!entered) {
+        mission.title = "Esperar entrada limpa";
+        mission.text = "Ativo escolhido, mas o objetivo e evitar chase: esperar fundo/topo, rompimento ou reteste valido.";
+      } else if (pnlNow !== null && pnlNow < 0) {
+        mission.cls = "is-loss";
+        mission.title = "Defender o capital";
+        mission.text = `Trade esta ${pnlText}. Se perder respiro/reversao/stop, cancela e libera o proximo melhor setup.`;
+      } else if (t2Hit) {
+        mission.cls = "is-profit";
+        mission.title = "Pegar o sumo e sair";
+        mission.text = `Alvo principal T2 foi atingido. O objetivo agora e realizar/proteger; nao precisa esperar T3 se o edge ja pagou.`;
+      } else if (t1Hit || (pnlNow !== null && pnlNow > 0)) {
+        mission.cls = "is-profit";
+        mission.title = t1Hit ? "Proteger lucro" : "Virou positivo";
+        mission.text = `Trade esta ${pnlText || "positivo"}. Missao: proteger ganho, tentar T2, e nao devolver lucro por teimosia.`;
+      }
       const pnlRow = {
         ...(row || {}),
         symbol,
@@ -25534,6 +25590,7 @@ function updateCoPilotBlock(data){
               <b>${escapeHtml(state.label)}</b>
             </div>
           </div>
+          ${renderBrainManagerPurpose(mission)}
           <div class="stats-brain-manager-command">
             <span>Decisão agora</span>
             <strong>${escapeHtml(state.decision)}</strong>
