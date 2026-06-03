@@ -6014,6 +6014,16 @@
 #copilot-block .stats-brain-journal-pnl-card.is-loss::before{background:#ff4869;box-shadow:0 0 18px rgba(255,72,105,.62);}
 #copilot-block .stats-brain-journal-pnl-card.is-loss strong{color:#ff6f88;text-shadow:0 0 18px rgba(255,72,105,.18);}
 #copilot-block .stats-brain-journal-pnl-card.is-flat{border-color:rgba(148,163,184,.15);}
+#copilot-block .stats-brain-day-pnl{display:grid;grid-template-columns:1.1fr 170px repeat(5,minmax(0,1fr));gap:10px;align-items:stretch;border:1px solid rgba(244,184,63,.24);border-radius:16px;background:linear-gradient(135deg,rgba(244,184,63,.10),rgba(6,12,22,.92) 38%,rgba(4,10,18,.96));padding:12px;box-shadow:0 14px 34px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.045);}
+#copilot-block .stats-brain-day-pnl-title{min-width:0;border:1px solid rgba(244,184,63,.26);border-radius:13px;background:linear-gradient(135deg,rgba(244,184,63,.16),rgba(5,10,19,.70));padding:12px 14px;}
+#copilot-block .stats-brain-day-pnl-title span{display:inline-flex;align-items:center;min-height:22px;padding:0 9px;border-radius:999px;background:rgba(244,184,63,.18);border:1px solid rgba(244,184,63,.28);color:#f4b83f;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;}
+#copilot-block .stats-brain-day-pnl-title strong{display:block;margin-top:8px;font-size:20px;line-height:1.02;font-weight:950;color:#fff7d1;text-transform:uppercase;}
+#copilot-block .stats-brain-day-pnl-title small{display:block;margin-top:5px;font-size:11px;line-height:1.3;font-weight:850;color:#aebbd0;}
+#copilot-block .stats-brain-day-pnl .stats-brain-capital-box{width:auto;min-height:0;padding:10px;}
+#copilot-block .stats-brain-day-pnl .stats-brain-capital-input{height:31px;font-size:16px;}
+#copilot-block .stats-brain-day-pnl .stats-brain-journal-pnl-card{padding:12px 13px;}
+#copilot-block .stats-brain-day-pnl .stats-brain-journal-pnl-card strong{font-size:22px;}
+#copilot-block .stats-brain-day-pnl .stats-brain-journal-pnl-card small{font-size:10px;}
 #copilot-block .stats-brain-journal-grid{gap:12px;margin-top:16px;}
 #copilot-block .stats-brain-journal-card{position:relative;overflow:hidden;border-radius:14px;padding:18px 18px 17px;border-color:rgba(34,211,238,.16);background:linear-gradient(180deg,rgba(13,23,40,.90),rgba(5,10,19,.72));box-shadow:0 12px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.045);}
 #copilot-block .stats-brain-journal-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#22d3ee;opacity:.62;}
@@ -6041,10 +6051,10 @@
 #copilot-block .stats-brain-journal-row .is-win{background:rgba(20,241,168,.12);border:1px solid rgba(20,241,168,.22);color:#14f1a8;}
 #copilot-block .stats-brain-journal-row .is-loss{background:rgba(255,72,105,.12);border:1px solid rgba(255,72,105,.24);color:#ff6f88;}
 #copilot-block .stats-brain-journal-row .is-open{background:rgba(244,184,63,.12);border:1px solid rgba(244,184,63,.24);color:#f4b83f;}
-@media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl-lead{grid-column:1 / -1;}}
+@media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl-lead,#copilot-block .stats-brain-day-pnl-title{grid-column:1 / -1;}}
 @media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
-@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-journal-pnl{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
+@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -24866,6 +24876,37 @@ function updateCoPilotBlock(data){
         </div>
       `;
     };
+    const renderBrainDailyPnlStrip = (summary) => {
+      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || []);
+      const fields = brainJournalPnlDomData(pnl);
+      const pnlCard = (key, label) => {
+        const item = fields[key] || { value: "—", sub: "—", mood: "is-flat" };
+        return `<div class="stats-brain-journal-pnl-card ${escapeHtml(item.mood)}" data-brain-day-pnl-card="${escapeHtml(key)}">
+          <span>${escapeHtml(label)}</span>
+          <strong data-brain-day-pnl-field="${escapeHtml(key)}">${escapeHtml(item.value)}</strong>
+          <small data-brain-day-pnl-sub="${escapeHtml(key)}">${escapeHtml(item.sub)}</small>
+        </div>`;
+      };
+      return `
+        <div class="stats-brain-day-pnl">
+          <div class="stats-brain-day-pnl-title">
+            <span>Placar do dia</span>
+            <strong>P/L total visível</strong>
+            <small>Realizado, aberto e total usando o capital base. O trade atual continua no manager.</small>
+          </div>
+          <label class="stats-brain-capital-box">
+            <span>Capital base</span>
+            <input class="stats-brain-capital-input" type="number" min="0" step="100" inputmode="decimal" placeholder="100000" value="${escapeHtml(brainCapitalInputValue())}" oninput="window.aaronUpdateBrainPnlFromCapital && window.aaronUpdateBrainPnlFromCapital(this.value)" />
+            <small>calcula P/L</small>
+          </label>
+          ${pnlCard("realized", "Realizado")}
+          ${pnlCard("open", "Aberto")}
+          ${pnlCard("total", "Total")}
+          ${pnlCard("best", "Melhor")}
+          ${pnlCard("worst", "Pior")}
+        </div>
+      `;
+    };
     const renderBrainMainBox = (label, value, sub = "", cls = "") => `
       <div class="stats-brain-main-box ${cls}">
         <span>${escapeHtml(label)}</span>
@@ -25452,8 +25493,8 @@ function updateCoPilotBlock(data){
       return `
         <div class="copilot-section-card is-stats-brain">
           <div class="stats-brain-board ${selectedClass}">
-            ${renderBrainJournalPanel(dailyJournal)}
             ${renderBrainMarketStrip(ranking)}
+            ${renderBrainDailyPnlStrip(dailyJournal)}
             ${renderBrainMainPanel(selected, stats, ranking)}
             <div class="stats-brain-metrics">
               <div class="stats-brain-metric"><span>Scanned</span><strong>${escapeHtml(fmtBrainText(stats.scanned_count, ranking.length || "—"))}</strong></div>
@@ -25471,6 +25512,7 @@ function updateCoPilotBlock(data){
               ${renderBrainLane("Bloqueados", blockedRows)}
             </div>
             <div class="stats-brain-grid12">${rowHtml || ""}</div>
+            ${renderBrainJournalPanel(dailyJournal)}
             ${marketMapText ? `<div class="stats-brain-map-text">${escapeHtml(marketMapText)}</div>` : ""}
           </div>
         </div>
