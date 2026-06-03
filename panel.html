@@ -5957,6 +5957,30 @@
 #copilot-block .stats-brain-manager-kill b{display:block;font-size:13px;font-weight:950;text-transform:uppercase;color:#ff7a90;}
 #copilot-block .stats-brain-manager-kill span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;font-size:14px;line-height:1.35;font-weight:850;color:#fbd0d8;}
 #copilot-block .stats-brain-manager .stats-brain-manage{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:14px;border-radius:14px;background:rgba(34,211,238,.09);}
+#copilot-block .stats-brain-entry-radar{position:relative;overflow:hidden;margin-top:14px;border:1px solid rgba(244,184,63,.34);border-radius:15px;background:linear-gradient(135deg,rgba(244,184,63,.12),rgba(5,10,19,.84));padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.055);}
+#copilot-block .stats-brain-entry-radar::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#f4b83f,#22d3ee);opacity:.86;}
+#copilot-block .stats-brain-entry-radar>*{position:relative;z-index:1;}
+#copilot-block .stats-brain-entry-radar.is-ready{border-color:rgba(20,241,168,.45);background:linear-gradient(135deg,rgba(20,241,168,.14),rgba(5,10,19,.84));}
+#copilot-block .stats-brain-entry-radar.is-ready::before{background:linear-gradient(90deg,#14f1a8,#22d3ee);}
+#copilot-block .stats-brain-entry-radar.is-live{border-color:rgba(34,211,238,.42);background:linear-gradient(135deg,rgba(34,211,238,.13),rgba(5,10,19,.84));}
+#copilot-block .stats-brain-entry-radar.is-danger{border-color:rgba(255,72,105,.46);background:linear-gradient(135deg,rgba(255,72,105,.13),rgba(5,10,19,.84));}
+#copilot-block .stats-brain-entry-radar-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+#copilot-block .stats-brain-entry-radar-kicker{display:block;font-size:12px;font-weight:950;letter-spacing:.15em;text-transform:uppercase;color:#f7d889;}
+#copilot-block .stats-brain-entry-radar-title{display:block;margin-top:5px;font-size:28px;line-height:1.02;font-weight:950;color:#fff7d6;}
+#copilot-block .stats-brain-entry-radar-status{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 12px;border:1px solid rgba(244,184,63,.34);border-radius:999px;background:rgba(2,6,13,.70);font-size:12px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#f4b83f;white-space:nowrap;}
+#copilot-block .stats-brain-entry-radar.is-ready .stats-brain-entry-radar-status{border-color:rgba(20,241,168,.36);color:#14f1a8;}
+#copilot-block .stats-brain-entry-radar.is-live .stats-brain-entry-radar-status{border-color:rgba(34,211,238,.38);color:#22d3ee;}
+#copilot-block .stats-brain-entry-radar.is-danger .stats-brain-entry-radar-status{border-color:rgba(255,72,105,.38);color:#ff7a90;}
+#copilot-block .stats-brain-entry-radar p{margin:11px 0 0;font-size:15px;line-height:1.42;font-weight:850;color:#d8e1ee;}
+#copilot-block .stats-brain-entry-radar-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:13px;}
+#copilot-block .stats-brain-entry-radar-cell{min-width:0;border:1px solid rgba(148,163,184,.14);border-radius:11px;background:rgba(2,6,13,.56);padding:10px 11px;}
+#copilot-block .stats-brain-entry-radar-cell span{display:block;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#8194aa;}
+#copilot-block .stats-brain-entry-radar-cell strong{display:block;margin-top:6px;font-size:18px;line-height:1.05;font-weight:950;color:#14f1a8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere;}
+#copilot-block .stats-brain-entry-radar-cell.is-trigger strong{font-family:inherit;font-size:14px;line-height:1.24;color:#f4b83f;}
+#copilot-block .stats-brain-entry-radar-cell.is-stop strong{color:#ff4869;}
+#copilot-block .stats-brain-entry-radar-cell.is-trigger strong{color:#f4b83f;}
+#copilot-block .stats-brain-entry-radar-cell small{display:block;margin-top:5px;font-size:10px;line-height:1.25;color:#718096;font-weight:850;text-transform:uppercase;}
+#copilot-block .stats-brain-entry-radar.is-manager{margin-top:14px;border-radius:14px;}
 /* Stats Brain journal polish */
 #copilot-block .stats-brain-journal{position:relative;overflow:hidden;border-radius:18px;padding:24px;border-color:rgba(34,211,238,.34);background:linear-gradient(135deg,rgba(5,13,24,.98),rgba(4,10,19,.96) 46%,rgba(9,17,30,.98));box-shadow:0 18px 46px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06);}
 #copilot-block .stats-brain-journal::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#22d3ee,#14f1a8,#f4b83f,#ff4869);opacity:.9;}
@@ -6002,8 +6026,8 @@
 #copilot-block .stats-brain-journal-row .is-open{background:rgba(244,184,63,.12);border:1px solid rgba(244,184,63,.24);color:#f4b83f;}
 @media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
-@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
+@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -24698,6 +24722,189 @@ function updateCoPilotBlock(data){
         <strong>${escapeHtml(value || "—")}</strong>
       </div>
     `;
+    const brainEntryRadarClass = (status) => {
+      const s = String(status || "").toUpperCase();
+      if (/ENTRY_READY|READY/.test(s)) return "is-ready";
+      if (/ACTIVE|T1_HIT|T2_HIT/.test(s)) return "is-live";
+      if (/MISSED|INVALID|CANCEL|NO_TRADE|STOP/.test(s)) return "is-danger";
+      return "is-wait";
+    };
+    const brainEntryRadarManagerClass = (status) => {
+      const s = String(status || "").toUpperCase();
+      if (/ENTRY_READY|ACTIVE|T1_HIT|T2_HIT/.test(s)) return "is-live";
+      if (/MISSED|INVALID|CANCEL|NO_TRADE|STOP/.test(s)) return "is-danger";
+      return "is-wait";
+    };
+    const brainEntryRadarStatusLabel = (status) => {
+      const s = String(status || "").toUpperCase();
+      if (s === "ENTRY_READY") return "ENTRY READY";
+      if (s === "WAIT_BREAK_RETEST") return "WAIT RETEST";
+      if (s === "WAIT_BREAKOUT") return "WAIT BREAKOUT";
+      if (s === "WAIT_RECLAIM") return "WAIT RECLAIM";
+      if (s === "WAIT_CONFIRM") return "WAIT CONFIRM";
+      if (s === "IN_ZONE") return "IN ZONE";
+      if (s === "ACTIVE") return "ACTIVE";
+      if (s === "MISSED") return "MISSED";
+      if (s === "INVALIDATED") return "INVALID";
+      if (s === "NO_TRADE") return "NO TRADE";
+      return s || "WAIT";
+    };
+    const brainEntryRadarIsReadyText = (raw) => {
+      const s = String(raw || "").toUpperCase();
+      if (!s) return false;
+      if (/MISSED|PERDIDA|CHASE|LATE|ATRAS|WAIT|NO_TRADE|NO TRADE|BLOCK|CANCEL|EXPIRED/.test(s)) return false;
+      return /READY|ARMED|TRIGGER|GO|LIVE|CONFIRM|ACTIVE/.test(s);
+    };
+    const brainEntryRadarIsMissedText = (raw) => /MISSED|PERDIDA|CHASE|LATE|ATRAS|EXPIRED/.test(String(raw || "").toUpperCase());
+    const buildBrainEntryRadar = (row, ctx = {}) => {
+      const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
+      const stored = activeTrade?.entry_radar_v1 || activeTrade?.entry_radar || row?.entry_radar_v1 || row?.entry_radar || null;
+      if (isBrainObj(stored) && stored.status) {
+        const status = String(stored.status || "WAIT_CONFIRM").toUpperCase();
+        return {
+          status,
+          statusLabel: stored.status_label || brainEntryRadarStatusLabel(status),
+          decision: stored.decision || stored.action || "AGUARDAR",
+          reason: stored.reason || stored.next_action || "Radar de entrada recebido do workflow.",
+          trigger: stored.trigger || stored.trigger_text || stored.plan || "confirmacao",
+          entry: brainFirst(stored.entry, stored.entry_price, ctx.entryDisplayRaw, ctx.entryRaw),
+          stop: brainFirst(stored.stop, ctx.stopRaw),
+          t2: brainFirst(stored.t2, stored.target_2, ctx.t2Raw),
+          support: brainFirst(stored.support, ctx.supportRaw),
+          resist: brainFirst(stored.resist, stored.resistance, ctx.resistRaw),
+          canEnter: stored.can_enter === true || /ENTRY_READY|ACTIVE|T1_HIT|T2_HIT/.test(status),
+          cls: brainEntryRadarClass(status),
+          managerCls: brainEntryRadarManagerClass(status),
+        };
+      }
+
+      const side = normBrainSide(ctx.side || row?.side);
+      const workflowStatus = String(activeTrade?.status || activeTrade?.state || "").toUpperCase();
+      const accepted = row?.accepted === true && ["BUY", "SELL"].includes(side);
+      const range = brainRangeLabel(row);
+      const rangeCls = range.cls;
+      const rangeName = rangeCls === "is-fundo" ? "FUNDO/SUPORTE" : rangeCls === "is-topo" ? "TOPO/RESISTENCIA" : "MEIO DO RANGE";
+      const current = numBrain(brainFirst(activeTrade?.current, activeTrade?.current_price, activeTrade?.last_price, ctx.currentRaw));
+      const entry = numBrain(brainFirst(activeTrade?.entry, activeTrade?.entry_price, ctx.entryRaw, ctx.entryDisplayRaw));
+      const stop = numBrain(brainFirst(activeTrade?.stop, activeTrade?.stop_price, activeTrade?.stop_loss, ctx.stopRaw));
+      const t2 = numBrain(brainFirst(activeTrade?.t2, activeTrade?.target_2, activeTrade?.target2, ctx.t2Raw));
+      const support = numBrain(brainFirst(activeTrade?.support, ctx.supportRaw));
+      const resist = numBrain(brainFirst(activeTrade?.resist, activeTrade?.resistance, ctx.resistRaw));
+      const entryStatusRaw = String(activeTrade?.entry_status || row?.entry_status || ctx.entryStatus || "").toUpperCase();
+      const matcherReady = brainEntryRadarIsReadyText(entryStatusRaw);
+      const missed = brainEntryRadarIsMissedText(entryStatusRaw);
+      const alreadyLive = activeTrade?.entered === true || /ACTIVE|T1_HIT|T2_HIT/.test(workflowStatus);
+      const entryHit = brainManagerHit(side, current, entry);
+      const brokeSupport = side === "SELL" && current !== null && support !== null && current < support;
+      const brokeResist = side === "BUY" && current !== null && resist !== null && current > resist;
+
+      let status = "WAIT_CONFIRM";
+      let decision = "AGUARDAR CONFIRMACAO";
+      let reason = "Melhor setup do ranking, mas ainda precisa de gatilho de entrada.";
+      let trigger = "Confirmar entrada pelo matcher";
+      let canEnter = false;
+
+      if (!accepted) {
+        status = "NO_TRADE";
+        decision = "NAO OPERAR";
+        reason = "O Brain nao aprovou este setup para execucao.";
+        trigger = "Aguardar novo candidato";
+      } else if (alreadyLive) {
+        status = "ACTIVE";
+        decision = "GERENCIAR TRADE";
+        reason = "Entrada ja ativada; agora o foco e manejo, stop e T2.";
+        trigger = "Gerenciar ate T2/stop";
+        canEnter = true;
+      } else if (missed) {
+        status = "MISSED";
+        decision = "NAO PERSEGUIR";
+        reason = "A entrada ficou atrasada/perdida. Esperar novo pullback ou novo gatilho.";
+        trigger = "Novo setup, nao chase";
+      } else if (side === "SELL" && rangeCls === "is-fundo") {
+        status = matcherReady && entryHit && brokeSupport ? "ENTRY_READY" : "WAIT_BREAK_RETEST";
+        decision = status === "ENTRY_READY" ? "SHORT LIBERADO" : "NAO VENDER SUPORTE";
+        reason = status === "ENTRY_READY"
+          ? "SHORT no fundo so foi liberado porque o suporte rompeu e o matcher confirmou."
+          : "SHORT em fundo/suporte e venda atrasada. Esperar romper suporte e retestar, ou voltar para resistencia.";
+        trigger = support !== null ? `Romper ${fmtBrainPrice(support)} e retestar como resistencia` : "Romper suporte e retestar";
+        canEnter = status === "ENTRY_READY";
+      } else if (side === "BUY" && rangeCls === "is-topo") {
+        status = matcherReady && entryHit && brokeResist ? "ENTRY_READY" : "WAIT_BREAKOUT";
+        decision = status === "ENTRY_READY" ? "BUY LIBERADO" : "NAO COMPRAR RESISTENCIA";
+        reason = status === "ENTRY_READY"
+          ? "BUY no topo so foi liberado porque a resistencia rompeu e o matcher confirmou."
+          : "BUY em topo/resistencia e chase. Esperar rompimento confirmado ou pullback para suporte.";
+        trigger = resist !== null ? `Romper ${fmtBrainPrice(resist)} e retestar como suporte` : "Romper resistencia e retestar";
+        canEnter = status === "ENTRY_READY";
+      } else if (side === "BUY" && rangeCls === "is-fundo") {
+        status = matcherReady || entryHit ? "ENTRY_READY" : "IN_ZONE";
+        decision = status === "ENTRY_READY" ? "BUY LIBERADO" : "AGUARDAR REACAO";
+        reason = status === "ENTRY_READY"
+          ? "BUY perto do suporte com gatilho de entrada acionado."
+          : "BUY em suporte faz sentido, mas precisa de reclaim/reacao antes da entrada.";
+        trigger = entry !== null ? `Reclaim acima de ${fmtBrainPrice(entry)}` : "Reclaim do suporte";
+        canEnter = status === "ENTRY_READY";
+      } else if (side === "SELL" && rangeCls === "is-topo") {
+        status = matcherReady || entryHit ? "ENTRY_READY" : "IN_ZONE";
+        decision = status === "ENTRY_READY" ? "SELL LIBERADO" : "AGUARDAR REJEICAO";
+        reason = status === "ENTRY_READY"
+          ? "SELL perto da resistencia com gatilho de entrada acionado."
+          : "SELL na resistencia faz sentido, mas precisa de rejeicao/confirmacao antes da entrada.";
+        trigger = entry !== null ? `Rejeicao abaixo de ${fmtBrainPrice(entry)}` : "Rejeicao da resistencia";
+        canEnter = status === "ENTRY_READY";
+      } else if (String(row?.track || "").toUpperCase().includes("CONT")) {
+        status = matcherReady || entryHit ? "ENTRY_READY" : "WAIT_CONFIRM";
+        decision = status === "ENTRY_READY" ? `${side === "BUY" ? "BUY" : "SELL"} LIBERADO` : "ESPERAR GATILHO";
+        reason = status === "ENTRY_READY"
+          ? "Setup de continuacao com gatilho de entrada acionado."
+          : "Continuacao detectada, mas o melhor ponto ainda depende do gatilho do matcher.";
+        trigger = entry !== null ? `Gatilho em ${fmtBrainPrice(entry)}` : "Gatilho de continuacao";
+        canEnter = status === "ENTRY_READY";
+      } else {
+        status = matcherReady ? "ENTRY_READY" : "WAIT_CONFIRM";
+        decision = matcherReady ? `${side === "BUY" ? "BUY" : "SELL"} LIBERADO` : "AGUARDAR";
+        reason = matcherReady ? "Matcher liberou gatilho de entrada." : `Setup em ${rangeName}; aguardar confirmacao de entrada.`;
+        trigger = entry !== null ? `Confirmar ${fmtBrainPrice(entry)}` : "Confirmacao do matcher";
+        canEnter = status === "ENTRY_READY";
+      }
+
+      return {
+        status,
+        statusLabel: brainEntryRadarStatusLabel(status),
+        decision,
+        reason,
+        trigger,
+        entry,
+        stop,
+        t2,
+        support,
+        resist,
+        canEnter,
+        cls: brainEntryRadarClass(status),
+        managerCls: brainEntryRadarManagerClass(status),
+      };
+    };
+    const renderBrainEntryRadar = (radar, variant = "") => {
+      if (!radar) return "";
+      return `
+        <div class="stats-brain-entry-radar ${radar.cls || "is-wait"} ${variant}">
+          <div class="stats-brain-entry-radar-head">
+            <div>
+              <span class="stats-brain-entry-radar-kicker">Entry Radar</span>
+              <strong class="stats-brain-entry-radar-title">${escapeHtml(radar.decision || "AGUARDAR")}</strong>
+            </div>
+            <span class="stats-brain-entry-radar-status">${escapeHtml(radar.statusLabel || brainEntryRadarStatusLabel(radar.status))}</span>
+          </div>
+          <p>${escapeHtml(radar.reason || "Aguardar gatilho limpo antes de entrar.")}</p>
+          <div class="stats-brain-entry-radar-grid">
+            <div class="stats-brain-entry-radar-cell is-trigger"><span>Gatilho</span><strong>${escapeHtml(radar.trigger || "—")}</strong><small>onde apertar</small></div>
+            <div class="stats-brain-entry-radar-cell"><span>Entrada</span><strong>${escapeHtml(fmtBrainPrice(radar.entry) || "—")}</strong><small>preco valido</small></div>
+            <div class="stats-brain-entry-radar-cell is-stop"><span>Stop</span><strong>${escapeHtml(fmtBrainPrice(radar.stop) || "—")}</strong><small>invalida</small></div>
+            <div class="stats-brain-entry-radar-cell"><span>T2 alvo</span><strong>${escapeHtml(fmtBrainPrice(radar.t2) || "—")}</strong><small>principal</small></div>
+          </div>
+        </div>
+      `;
+    };
     const renderBrainTradeManager = (row, ctx = {}) => {
       const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
       const workflowMode = !!activeTrade;
@@ -24717,11 +24924,26 @@ function updateCoPilotBlock(data){
       const t3Raw = numBrain(brainFirst(activeTrade?.t3, activeTrade?.target_3, activeTrade?.target3, ctx.t3Raw));
       const respiroRaw = numBrain(brainFirst(activeTrade?.respiro, activeTrade?.pullback_to, activeTrade?.breath_to, ctx.respiroRaw));
       const reversaoRaw = numBrain(brainFirst(activeTrade?.reversao, activeTrade?.reversal_at, activeTrade?.invalid_at, ctx.reversaoRaw));
+      const supportRaw = numBrain(brainFirst(activeTrade?.support, activeTrade?.suporte, ctx.supportRaw));
+      const resistRaw = numBrain(brainFirst(activeTrade?.resist, activeTrade?.resistance, activeTrade?.resistencia, ctx.resistRaw));
       const entryStatusRaw = String(activeTrade?.entry_status || row?.entry_status || ctx.entryStatus || "").toUpperCase();
       const missed = /MISSED|PERDIDA|CHASE|LATE|ATRAS/.test(entryStatusRaw);
+      const entryRadar = buildBrainEntryRadar(row, {
+        activeTrade,
+        side,
+        currentRaw,
+        entryRaw,
+        entryDisplayRaw,
+        stopRaw,
+        t2Raw,
+        supportRaw,
+        resistRaw,
+        entryStatus: entryStatusRaw,
+      });
+      const radarAllowsEntry = entryRadar?.canEnter === true || /ENTRY_READY|ACTIVE|T1_HIT|T2_HIT/.test(String(entryRadar?.status || "").toUpperCase());
       const entered = workflowMode
         ? activeTrade?.entered === true || /ACTIVE|T1_HIT|T2_HIT|T3_HIT/.test(workflowStatus)
-        : accepted && entryRaw !== null && brainManagerHit(side, currentRaw, entryRaw);
+        : accepted && radarAllowsEntry && entryRaw !== null && brainManagerHit(side, currentRaw, entryRaw);
       const t1Hit = workflowMode ? activeTrade?.hit_t1 === true || /T1_HIT|T2_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t1Raw);
       const t2Hit = workflowMode ? activeTrade?.hit_t2 === true || /T2_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t2Raw);
       const t3Hit = workflowMode ? activeTrade?.hit_t3 === true || /T3_HIT/.test(workflowStatus) : entered && brainManagerHit(side, currentRaw, t3Raw);
@@ -24734,8 +24956,8 @@ function updateCoPilotBlock(data){
           state = { label: "NO TRADE", decision: "AGUARDAR", cls: "is-wait" };
           next = "Nenhum active_trade aberto pelo workflow. O Brain esta apenas ranqueando oportunidades.";
         } else if (/WAIT_ENTRY/.test(workflowStatus)) {
-          state = { label: "ARMED", decision: "AGUARDAR GATILHO", cls: "is-wait" };
-          next = activeTrade?.next_action || `Workflow armou ${symbol}. Aguardar gatilho em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}.`;
+          state = { label: entryRadar.statusLabel || "ENTRY WAIT", decision: entryRadar.decision || "AGUARDAR GATILHO", cls: entryRadar.managerCls || "is-wait" };
+          next = activeTrade?.next_action || entryRadar.reason || `Workflow armou ${symbol}. Aguardar gatilho em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}.`;
         } else if (/ACTIVE/.test(workflowStatus)) {
           state = { label: "LIVE", decision: "CONTINUAR", cls: "is-live" };
           next = activeTrade?.next_action || "Trade ativo no workflow. Continuar enquanto nao tocar stop, reversao ou perda de setup.";
@@ -24764,8 +24986,8 @@ function updateCoPilotBlock(data){
         }
       } else {
         if (accepted) {
-          state = { label: "ARMED", decision: "AGUARDAR GATILHO", cls: "is-wait" };
-          next = `Aguardar gatilho do matcher em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}. Nao perseguir fora da zona.`;
+          state = { label: entryRadar.statusLabel || "ENTRY WAIT", decision: entryRadar.decision || "AGUARDAR GATILHO", cls: entryRadar.managerCls || "is-wait" };
+          next = entryRadar.reason || `Aguardar gatilho do matcher em ${fmtBrainPrice(entryDisplayRaw) || "entrada"}. Nao perseguir fora da zona.`;
         }
         if (accepted && entered) {
           state = { label: "SHADOW LIVE", decision: "CONTINUAR", cls: "is-live" };
@@ -24834,6 +25056,7 @@ function updateCoPilotBlock(data){
             <strong>${escapeHtml(state.decision)}</strong>
             <p>${escapeHtml(next)}</p>
           </div>
+          ${renderBrainEntryRadar(entryRadar, "is-manager")}
           <div class="stats-brain-manager-live">
             ${renderBrainManagerMetric("Preço agora", fmtBrainPrice(currentRaw), "referencia", "is-live")}
             ${renderBrainManagerMetric("Entrada", fmtBrainPrice(entryDisplayRaw), ctx.entrySub || "gatilho", "is-entry")}
@@ -24889,8 +25112,20 @@ function updateCoPilotBlock(data){
       const continuationToRaw = brainFirst(d.continuationTo, t1Raw);
       const respiroRaw = brainLevelValue(s, "respiro");
       const reversaoRaw = brainLevelValue(s, "reversao");
-      const supportRaw = brainFirst(d.support);
-      const resistRaw = brainFirst(d.resist);
+      const supportRaw = brainLevelValue(s, "support");
+      const resistRaw = brainLevelValue(s, "resist");
+      const entryRadar = buildBrainEntryRadar(s, {
+        activeTrade,
+        side,
+        currentRaw,
+        entryRaw,
+        entryDisplayRaw,
+        stopRaw,
+        t2Raw,
+        supportRaw,
+        resistRaw,
+        entryStatus: d.status,
+      });
       const entry = fmtBrainPrice(entryDisplayRaw);
       const entrySub = d.entryMode || d.status || "";
       const stop = fmtBrainPrice(stopRaw);
@@ -24950,6 +25185,7 @@ function updateCoPilotBlock(data){
               <b>${escapeHtml(rangeAction.title)}</b>
               <span>${escapeHtml(rangeAction.text)}</span>
             </div>
+            ${renderBrainEntryRadar(entryRadar)}
             <div class="stats-brain-main-levels">
               ${renderBrainMainBox("Continuação até", continuationTo, "", "")}
               ${renderBrainMainBox("Respiro até", respiro, "", "")}
@@ -24995,6 +25231,8 @@ function updateCoPilotBlock(data){
               t3Raw,
               respiroRaw,
               reversaoRaw,
+              supportRaw,
+              resistRaw,
               conflict,
               management,
             })}
