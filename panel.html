@@ -5913,9 +5913,6 @@
 #copilot-block .stats-brain-manager-kicker{display:inline-flex;align-items:center;width:max-content;max-width:100%;padding:7px 10px;border:1px solid rgba(244,184,63,.45);border-radius:999px;background:linear-gradient(135deg,rgba(244,184,63,.24),rgba(244,184,63,.08));font-size:13px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#ffe58a;}
 #copilot-block .stats-brain-manager-title{display:block;margin-top:10px;font-size:46px;line-height:.92;font-weight:950;color:#fff7d6;text-shadow:0 0 22px rgba(244,184,63,.28);}
 #copilot-block .stats-brain-manager-sub{display:block;margin-top:9px;font-size:13px;font-weight:900;color:#d7b769;text-transform:uppercase;letter-spacing:.08em;}
-#copilot-block .stats-brain-manager-boss{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;border:1px solid rgba(244,184,63,.44);border-radius:14px;background:linear-gradient(135deg,rgba(244,184,63,.22),rgba(244,184,63,.06));padding:11px 13px;color:#ffe58a;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
-#copilot-block .stats-brain-manager-boss b{font-size:19px;line-height:1;font-weight:950;letter-spacing:.08em;text-transform:uppercase;}
-#copilot-block .stats-brain-manager-boss span{font-size:12px;font-weight:950;text-transform:uppercase;color:#f7d889;}
 #copilot-block .stats-brain-manager-state{min-width:190px;border:1px solid rgba(244,184,63,.34);border-radius:15px;background:rgba(2,6,13,.76);padding:14px 15px;text-align:right;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 #copilot-block .stats-brain-manager-state span{display:block;font-size:11px;font-weight:950;text-transform:uppercase;color:#8194aa;}
 #copilot-block .stats-brain-manager-state b{display:block;margin-top:6px;font-size:22px;line-height:1.05;font-weight:950;color:#67e8f9;}
@@ -24822,10 +24819,6 @@ function updateCoPilotBlock(data){
               <span class="stats-brain-manager-kicker">Active Trade Manager</span>
               <strong class="stats-brain-manager-title">${escapeHtml(symbol)} ${escapeHtml(sideLabel)}</strong>
               <small class="stats-brain-manager-sub">${workflowMode ? "Fase 2 · active_trade real · workflow" : "Fase 1 · shadow manager · UI somente"}</small>
-              <div class="stats-brain-manager-boss">
-                <b>CHEFAO DO TRADE ATIVO</b>
-                <span>manda entrada, alvo, defesa e saida</span>
-              </div>
             </div>
             <div class="stats-brain-manager-state ${state.cls}">
               <span>Status</span>
