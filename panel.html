@@ -5997,6 +5997,23 @@
 #copilot-block .stats-brain-journal-btn.is-reset{background:linear-gradient(180deg,rgba(255,72,105,.18),rgba(255,72,105,.08));}
 #copilot-block .stats-brain-capital-box{border-radius:15px;border-color:rgba(244,184,63,.48);background:linear-gradient(180deg,rgba(244,184,63,.16),rgba(5,10,19,.78));box-shadow:0 12px 30px rgba(244,184,63,.08),inset 0 1px 0 rgba(255,255,255,.06);}
 #copilot-block .stats-brain-capital-input{border-radius:10px;background:rgba(2,6,13,.92);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+#copilot-block .stats-brain-journal-pnl{position:relative;z-index:1;display:grid;grid-template-columns:1.35fr repeat(5,minmax(0,1fr));gap:12px;margin-top:16px;align-items:stretch;}
+#copilot-block .stats-brain-journal-pnl-lead{min-width:0;border:1px solid rgba(244,184,63,.28);border-radius:14px;background:linear-gradient(135deg,rgba(244,184,63,.16),rgba(10,18,30,.78));padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
+#copilot-block .stats-brain-journal-pnl-lead span{display:inline-flex;align-items:center;min-height:23px;padding:0 9px;border-radius:999px;background:rgba(244,184,63,.16);border:1px solid rgba(244,184,63,.30);color:#f4b83f;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;}
+#copilot-block .stats-brain-journal-pnl-lead strong{display:block;margin-top:10px;font-size:22px;line-height:1.04;font-weight:950;color:#fff7d1;text-transform:uppercase;letter-spacing:.02em;}
+#copilot-block .stats-brain-journal-pnl-lead small{display:block;margin-top:7px;font-size:12px;line-height:1.3;font-weight:850;color:#aebbd0;}
+#copilot-block .stats-brain-journal-pnl-card{position:relative;min-width:0;overflow:hidden;border:1px solid rgba(148,163,184,.16);border-radius:14px;background:linear-gradient(180deg,rgba(13,23,40,.92),rgba(5,10,19,.74));padding:15px 15px 14px;box-shadow:0 12px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.045);}
+#copilot-block .stats-brain-journal-pnl-card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:#64748b;opacity:.82;}
+#copilot-block .stats-brain-journal-pnl-card span{display:block;position:relative;z-index:1;font-size:10px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#8194aa;}
+#copilot-block .stats-brain-journal-pnl-card strong{display:block;position:relative;z-index:1;margin-top:8px;font-size:25px;line-height:1;font-weight:950;color:#f8fafc;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-journal-pnl-card small{display:block;position:relative;z-index:1;margin-top:7px;font-size:11px;line-height:1.25;font-weight:850;color:#8fa0b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-journal-pnl-card.is-profit{border-color:rgba(20,241,168,.30);background:linear-gradient(180deg,rgba(8,36,33,.88),rgba(5,10,19,.74));}
+#copilot-block .stats-brain-journal-pnl-card.is-profit::before{background:#14f1a8;box-shadow:0 0 18px rgba(20,241,168,.70);}
+#copilot-block .stats-brain-journal-pnl-card.is-profit strong{color:#14f1a8;text-shadow:0 0 18px rgba(20,241,168,.18);}
+#copilot-block .stats-brain-journal-pnl-card.is-loss{border-color:rgba(255,72,105,.32);background:linear-gradient(180deg,rgba(44,13,23,.86),rgba(5,10,19,.74));}
+#copilot-block .stats-brain-journal-pnl-card.is-loss::before{background:#ff4869;box-shadow:0 0 18px rgba(255,72,105,.62);}
+#copilot-block .stats-brain-journal-pnl-card.is-loss strong{color:#ff6f88;text-shadow:0 0 18px rgba(255,72,105,.18);}
+#copilot-block .stats-brain-journal-pnl-card.is-flat{border-color:rgba(148,163,184,.15);}
 #copilot-block .stats-brain-journal-grid{gap:12px;margin-top:16px;}
 #copilot-block .stats-brain-journal-card{position:relative;overflow:hidden;border-radius:14px;padding:18px 18px 17px;border-color:rgba(34,211,238,.16);background:linear-gradient(180deg,rgba(13,23,40,.90),rgba(5,10,19,.72));box-shadow:0 12px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.045);}
 #copilot-block .stats-brain-journal-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#22d3ee;opacity:.62;}
@@ -6024,10 +6041,10 @@
 #copilot-block .stats-brain-journal-row .is-win{background:rgba(20,241,168,.12);border:1px solid rgba(20,241,168,.22);color:#14f1a8;}
 #copilot-block .stats-brain-journal-row .is-loss{background:rgba(255,72,105,.12);border:1px solid rgba(255,72,105,.24);color:#ff6f88;}
 #copilot-block .stats-brain-journal-row .is-open{background:rgba(244,184,63,.12);border:1px solid rgba(244,184,63,.24);color:#f4b83f;}
-@media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl-lead{grid-column:1 / -1;}}
 @media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
-@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
+@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-journal-pnl{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -23655,6 +23672,7 @@ function updateCoPilotBlock(data){
           if (cellEl) cellEl.classList.toggle("is-loss", pnl !== null && pnl < 0);
         });
       });
+      if (typeof window.aaronRefreshBrainDailyPnl === "function") window.aaronRefreshBrainDailyPnl();
     };
     const brainClamp = (n, min = 0, max = 100) => {
       const x = numBrain(n);
@@ -24424,6 +24442,120 @@ function updateCoPilotBlock(data){
       const total = eligible.length;
       return { ...def, hits, total, rate: total > 0 ? Math.round((hits / total) * 100) : null };
     });
+    const brainJournalExitLevel = (record = {}) => {
+      const outcome = String(record?.outcome || "").toUpperCase();
+      if (outcome === "WIN") {
+        if (record.hit_t2 && numBrain(record.t2) !== null) return { key: "t2", label: "T2", level: record.t2 };
+        if (record.hit_t1 && numBrain(record.t1) !== null) return { key: "t1", label: "T1", level: record.t1 };
+        if (record.hit_t3 && numBrain(record.t3) !== null) return { key: "t3", label: "T3", level: record.t3 };
+      }
+      if (outcome === "LOSS") {
+        if (record.hit_stop && numBrain(record.stop) !== null) return { key: "stop", label: "STOP", level: record.stop };
+        if (record.hit_reversao && numBrain(record.reversao) !== null) return { key: "reversao", label: "REVERSAO", level: record.reversao };
+      }
+      if (outcome === "OPEN") return { key: "open", label: "ABERTO", level: record.current_last };
+      return { key: "obs", label: "OBS", level: null };
+    };
+    const brainJournalRecordPnl = (record = {}, capital = brainGetCapital()) => {
+      if (record?.actionable !== true) return null;
+      const entry = numBrain(record.entry);
+      const shares = brainPnlShares(capital, entry);
+      const exit = brainJournalExitLevel(record);
+      const exitPrice = numBrain(exit.level);
+      const pnl = brainPnlValue(record.side, entry, exitPrice, shares);
+      if (shares === null || pnl === null) return null;
+      return {
+        id: record.id,
+        symbol: record.symbol || "?",
+        side: normBrainSide(record.side),
+        outcome: record.outcome || "OPEN",
+        exit_label: exit.label,
+        exit_price: exitPrice,
+        shares,
+        pnl,
+      };
+    };
+    const brainJournalPnlMoney = (value) => {
+      const n = numBrain(value);
+      if (n === null) return "—";
+      if (n === 0) return "$0";
+      return `${n > 0 ? "+" : "-"}${fmtBrainUsd(Math.abs(n))}`;
+    };
+    const brainJournalPnlClass = (value) => {
+      const n = numBrain(value);
+      if (n === null || n === 0) return "is-flat";
+      return n > 0 ? "is-profit" : "is-loss";
+    };
+    const brainJournalPnlSummary = (records = []) => {
+      const capital = brainGetCapital();
+      const rows = (records || [])
+        .map(r => brainJournalRecordPnl(r, capital))
+        .filter(Boolean);
+      const closed = rows.filter(r => r.outcome === "WIN" || r.outcome === "LOSS");
+      const openRows = rows.filter(r => r.outcome === "OPEN");
+      const sumPnl = (arr) => arr.reduce((acc, r) => acc + (numBrain(r.pnl) || 0), 0);
+      const realized = closed.length ? sumPnl(closed) : 0;
+      const openValue = openRows.length ? sumPnl(openRows) : 0;
+      const total = realized + openValue;
+      const ranked = rows.slice().sort((a, b) => b.pnl - a.pnl);
+      const best = ranked[0] || null;
+      const worst = ranked.length ? ranked.slice().sort((a, b) => a.pnl - b.pnl)[0] : null;
+      return {
+        capital,
+        hasCapital: capital !== null,
+        realized,
+        open: openValue,
+        total,
+        closed_count: closed.length,
+        open_count: openRows.length,
+        trade_count: rows.length,
+        best,
+        worst,
+        rows,
+      };
+    };
+    const brainJournalPnlDomData = (pnl = {}) => ({
+      realized: {
+        value: pnl.hasCapital ? brainJournalPnlMoney(pnl.realized) : "—",
+        sub: pnl.hasCapital ? `${pnl.closed_count || 0} trades fechados` : "digite capital",
+        mood: brainJournalPnlClass(pnl.realized),
+      },
+      open: {
+        value: pnl.hasCapital ? brainJournalPnlMoney(pnl.open) : "—",
+        sub: pnl.hasCapital ? `${pnl.open_count || 0} trades abertos` : "digite capital",
+        mood: brainJournalPnlClass(pnl.open),
+      },
+      total: {
+        value: pnl.hasCapital ? brainJournalPnlMoney(pnl.total) : "—",
+        sub: pnl.hasCapital ? "realizado + aberto" : "digite capital",
+        mood: brainJournalPnlClass(pnl.total),
+      },
+      best: {
+        value: pnl.hasCapital && pnl.best ? `${pnl.best.symbol} ${brainJournalPnlMoney(pnl.best.pnl)}` : "—",
+        sub: pnl.hasCapital && pnl.best ? `${pnl.best.outcome} · ${pnl.best.exit_label}` : "melhor trade estimado",
+        mood: pnl.best ? brainJournalPnlClass(pnl.best.pnl) : "is-flat",
+      },
+      worst: {
+        value: pnl.hasCapital && pnl.worst ? `${pnl.worst.symbol} ${brainJournalPnlMoney(pnl.worst.pnl)}` : "—",
+        sub: pnl.hasCapital && pnl.worst ? `${pnl.worst.outcome} · ${pnl.worst.exit_label}` : "pior trade estimado",
+        mood: pnl.worst ? brainJournalPnlClass(pnl.worst.pnl) : "is-flat",
+      },
+    });
+    window.aaronRefreshBrainDailyPnl = () => {
+      const summary = window.__AARON_STATS_BRAIN_JOURNAL__;
+      if (!summary?.records) return;
+      summary.pnl = brainJournalPnlSummary(summary.records);
+      const fields = brainJournalPnlDomData(summary.pnl);
+      Object.entries(fields).forEach(([key, item]) => {
+        document.querySelectorAll(`[data-brain-day-pnl-field="${key}"]`).forEach(el => { el.textContent = item.value; });
+        document.querySelectorAll(`[data-brain-day-pnl-sub="${key}"]`).forEach(el => { el.textContent = item.sub; });
+        document.querySelectorAll(`[data-brain-day-pnl-card="${key}"]`).forEach(el => {
+          el.classList.toggle("is-profit", item.mood === "is-profit");
+          el.classList.toggle("is-loss", item.mood === "is-loss");
+          el.classList.toggle("is-flat", item.mood === "is-flat");
+        });
+      });
+    };
     const brainJournalSummarize = (records, day) => {
       const tradeSignals = records.filter(r => r.actionable === true);
       const last50 = tradeSignals.slice(-50);
@@ -24460,7 +24592,8 @@ function updateCoPilotBlock(data){
       const bestBucket = buckets.find(x => x.count >= 2 && x.win_rate !== null) || buckets[0] || null;
       const levelSummary = brainJournalLevelSummary(last50);
       const levelSummaryDay = brainJournalLevelSummary(tradeSignals);
-      return { day, records, tradeSignals, last50, wins, losses, open, obs, symbols, buckets, bestSymbol, worstSymbol, bestBucket, levelSummary, levelSummaryDay };
+      const pnl = brainJournalPnlSummary(records);
+      return { day, records, tradeSignals, last50, wins, losses, open, obs, symbols, buckets, bestSymbol, worstSymbol, bestBucket, levelSummary, levelSummaryDay, pnl };
     };
     const brainJournalUpdate = (ranking = []) => {
       const ts = brainJournalTimestamp();
@@ -24491,17 +24624,27 @@ function updateCoPilotBlock(data){
       const rows = (summary?.records || []).slice(-180).reverse();
       const symbolRows = (summary?.symbols || []).slice(0, 12);
       const levelRows = summary?.levelSummaryDay || summary?.levelSummary || [];
+      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || []);
+      const pnlFields = brainJournalPnlDomData(pnl);
       const line = (cells, head = false) => `<tr>${cells.map(c => head ? `<th>${escapeHtml(c)}</th>` : `<td>${escapeHtml(c)}</td>`).join("")}</tr>`;
       return `<!doctype html><html><head><meta charset="utf-8"><title>AARON Brain Daily Report</title><style>
         body{font-family:Arial,sans-serif;background:#08111f;color:#e5edf7;margin:28px;}
         h1{margin:0 0 6px;font-size:24px;} h2{margin:24px 0 10px;font-size:17px;}
-        .muted{color:#8fa0b8;font-size:12px;} .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0;}
+        .muted{color:#8fa0b8;font-size:12px;} .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0;} .grid.pnl{grid-template-columns:repeat(5,1fr);}
         .card{border:1px solid #26364e;border-radius:10px;padding:12px;background:#0b1423;} .card span{display:block;color:#8fa0b8;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.card b{display:block;margin-top:6px;font-size:22px;color:#14f1a8}
+        .card.is-loss b{color:#ff6b83}.card.is-flat b{color:#e5edf7}.card small{display:block;margin-top:5px;color:#8fa0b8;font-size:11px;}
         table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px;} th,td{border:1px solid #26364e;padding:7px;text-align:left;} th{background:#101b2c;color:#8fa0b8;text-transform:uppercase;font-size:10px;} .loss{color:#ff6b83}.win{color:#14f1a8}.open{color:#f4b83f}
         @media print{body{background:#fff;color:#111}.card,th,td{border-color:#ccc}.card{background:#fff}}
       </style></head><body>
         <h1>AARON Stats Brain Daily Report</h1>
         <div class="muted">Dia ${escapeHtml(summary?.day || "—")} · gerado ${escapeHtml(new Date().toLocaleString())} · journal local do painel</div>
+        <div class="grid pnl">
+          <div class="card ${escapeHtml(pnlFields.realized.mood)}"><span>P/L realizado</span><b>${escapeHtml(pnlFields.realized.value)}</b><small>${escapeHtml(pnlFields.realized.sub)}</small></div>
+          <div class="card ${escapeHtml(pnlFields.open.mood)}"><span>P/L aberto</span><b>${escapeHtml(pnlFields.open.value)}</b><small>${escapeHtml(pnlFields.open.sub)}</small></div>
+          <div class="card ${escapeHtml(pnlFields.total.mood)}"><span>P/L total</span><b>${escapeHtml(pnlFields.total.value)}</b><small>${escapeHtml(pnlFields.total.sub)}</small></div>
+          <div class="card ${escapeHtml(pnlFields.best.mood)}"><span>Melhor trade</span><b>${escapeHtml(pnlFields.best.value)}</b><small>${escapeHtml(pnlFields.best.sub)}</small></div>
+          <div class="card ${escapeHtml(pnlFields.worst.mood)}"><span>Pior trade</span><b>${escapeHtml(pnlFields.worst.value)}</b><small>${escapeHtml(pnlFields.worst.sub)}</small></div>
+        </div>
         <div class="grid">
           <div class="card"><span>Ultimos 50</span><b>${escapeHtml(`${summary?.wins || 0}W / ${summary?.losses || 0}L`)}</b></div>
           <div class="card"><span>Melhor simbolo</span><b>${escapeHtml(summary?.bestSymbol ? `${summary.bestSymbol.key} ${brainJournalRateLabel(summary.bestSymbol)}` : "—")}</b></div>
@@ -24524,8 +24667,18 @@ function updateCoPilotBlock(data){
     };
     const brainJournalBuildCsv = (report) => {
       const rows = report?.records || [];
-      const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop"];
-      return [headers.join(",")].concat(rows.map(r => headers.map(h => `"${String(r[h] ?? "").replace(/"/g, '""')}"`).join(","))).join("\n");
+      const capital = brainGetCapital();
+      const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop","pnl_exit_label","pnl_exit_price","pnl_shares","pnl_estimated"];
+      return [headers.join(",")].concat(rows.map(r => {
+        const pnl = brainJournalRecordPnl(r, capital);
+        const extra = {
+          pnl_exit_label: pnl?.exit_label,
+          pnl_exit_price: pnl?.exit_price,
+          pnl_shares: pnl?.shares,
+          pnl_estimated: pnl?.pnl,
+        };
+        return headers.map(h => `"${String(extra[h] ?? r[h] ?? "").replace(/"/g, '""')}"`).join(",");
+      })).join("\n");
     };
     const brainJournalRemoteSummary = (report) => ({
       wins: report?.wins || 0,
@@ -24535,6 +24688,9 @@ function updateCoPilotBlock(data){
       bestSymbol: report?.bestSymbol?.key || null,
       worstSymbol: report?.worstSymbol?.key || null,
       bestBucket: report?.bestBucket?.key || null,
+      pnlRealized: report?.pnl?.realized ?? null,
+      pnlOpen: report?.pnl?.open ?? null,
+      pnlTotal: report?.pnl?.total ?? null,
     });
     const brainJournalResolveDownloadUrl = (saved, day, type) => {
       const fallback = `${BRAIN_REPORT_DOWNLOAD_URL}?day=${encodeURIComponent(day || "today")}&type=${encodeURIComponent(type || "csv")}`;
@@ -24630,9 +24786,19 @@ function updateCoPilotBlock(data){
       const best = summary?.bestSymbol ? `${summary.bestSymbol.key} · ${brainJournalRateLabel(summary.bestSymbol)}` : "—";
       const worst = summary?.worstSymbol ? `${summary.worstSymbol.key} · ${brainJournalRateLabel(summary.worstSymbol)}` : "—";
       const bestHour = summary?.bestBucket ? `${summary.bestBucket.key} · ${brainJournalRateLabel(summary.bestBucket)}` : "—";
+      const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || []);
+      const pnlFields = brainJournalPnlDomData(pnl);
       const lastRows = (summary?.last50 || []).slice(-4).reverse();
       const totalSignals = summary?.tradeSignals?.length || 0;
       const levelItems = summary?.levelSummary || [];
+      const pnlCard = (key, label) => {
+        const item = pnlFields[key] || { value: "—", sub: "—", mood: "is-flat" };
+        return `<div class="stats-brain-journal-pnl-card ${escapeHtml(item.mood)}" data-brain-day-pnl-card="${escapeHtml(key)}">
+          <span>${escapeHtml(label)}</span>
+          <strong data-brain-day-pnl-field="${escapeHtml(key)}">${escapeHtml(item.value)}</strong>
+          <small data-brain-day-pnl-sub="${escapeHtml(key)}">${escapeHtml(item.sub)}</small>
+        </div>`;
+      };
       const levelHtml = levelItems.length
         ? `<div class="stats-brain-journal-levels">${levelItems.map(x => `
             <div class="stats-brain-journal-level ${escapeHtml(x.cls || "")}">
@@ -24673,6 +24839,18 @@ function updateCoPilotBlock(data){
                 <button type="button" class="stats-brain-journal-btn is-reset" onclick="window.aaronResetBrainDailyJournal && window.aaronResetBrainDailyJournal()">Reset</button>
               </div>
             </div>
+          </div>
+          <div class="stats-brain-journal-pnl">
+            <div class="stats-brain-journal-pnl-lead">
+              <span>P/L estimado</span>
+              <strong>Trade atual + total do dia</strong>
+              <small>Usa o capital base por setup; realizado fecha em T1/T2/T3, reversão ou stop.</small>
+            </div>
+            ${pnlCard("realized", "Realizado")}
+            ${pnlCard("open", "Aberto")}
+            ${pnlCard("total", "Total")}
+            ${pnlCard("best", "Melhor trade")}
+            ${pnlCard("worst", "Pior trade")}
           </div>
           <div class="stats-brain-journal-grid">
             <div class="stats-brain-journal-card is-good"><span>Ultimos 50 sinais</span><strong>${escapeHtml(`${summary?.wins || 0}W/${summary?.losses || 0}L`)}</strong><small>${escapeHtml(`${summary?.open || 0} abertos · ${totalSignals} sinais no dia`)}</small></div>
