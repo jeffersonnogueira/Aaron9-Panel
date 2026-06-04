@@ -6024,6 +6024,27 @@
 #copilot-block .stats-brain-entry-radar-cell.is-trigger strong{color:#f4b83f;}
 #copilot-block .stats-brain-entry-radar-cell small{display:block;margin-top:5px;font-size:10px;line-height:1.25;color:#718096;font-weight:850;text-transform:uppercase;}
 #copilot-block .stats-brain-entry-radar.is-manager{margin-top:14px;border-radius:14px;}
+#copilot-block .stats-brain-pattern-context{position:relative;overflow:hidden;margin-top:14px;border:1px solid rgba(34,211,238,.28);border-radius:15px;background:linear-gradient(135deg,rgba(34,211,238,.10),rgba(5,10,19,.82));padding:14px 15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.045);}
+#copilot-block .stats-brain-pattern-context::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#22d3ee,#14f1a8);opacity:.82;}
+#copilot-block .stats-brain-pattern-context.is-aligned{border-color:rgba(20,241,168,.38);background:linear-gradient(135deg,rgba(20,241,168,.12),rgba(5,10,19,.82));}
+#copilot-block .stats-brain-pattern-context.is-conflict{border-color:rgba(255,72,105,.42);background:linear-gradient(135deg,rgba(255,72,105,.13),rgba(5,10,19,.82));}
+#copilot-block .stats-brain-pattern-context.is-neutral{border-color:rgba(244,184,63,.34);background:linear-gradient(135deg,rgba(244,184,63,.11),rgba(5,10,19,.82));}
+#copilot-block .stats-brain-pattern-context>*{position:relative;z-index:1;}
+#copilot-block .stats-brain-pattern-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+#copilot-block .stats-brain-pattern-kicker{display:block;font-size:11px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#8ef7ff;}
+#copilot-block .stats-brain-pattern-title{display:block;margin-top:5px;font-size:22px;line-height:1.06;font-weight:950;color:#f8fafc;}
+#copilot-block .stats-brain-pattern-badge{display:inline-flex;align-items:center;justify-content:center;min-height:31px;padding:0 11px;border:1px solid rgba(34,211,238,.30);border-radius:999px;background:rgba(2,6,13,.70);font-size:11px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#22d3ee;white-space:nowrap;}
+#copilot-block .stats-brain-pattern-context.is-aligned .stats-brain-pattern-badge{border-color:rgba(20,241,168,.36);color:#14f1a8;}
+#copilot-block .stats-brain-pattern-context.is-conflict .stats-brain-pattern-badge{border-color:rgba(255,72,105,.38);color:#ff7a90;}
+#copilot-block .stats-brain-pattern-context.is-neutral .stats-brain-pattern-badge{border-color:rgba(244,184,63,.36);color:#f4b83f;}
+#copilot-block .stats-brain-pattern-context p{margin:10px 0 0;font-size:14px;line-height:1.38;font-weight:850;color:#d8e1ee;}
+#copilot-block .stats-brain-pattern-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px;}
+#copilot-block .stats-brain-pattern-cell{min-width:0;border:1px solid rgba(148,163,184,.14);border-radius:11px;background:rgba(2,6,13,.56);padding:9px 10px;}
+#copilot-block .stats-brain-pattern-cell span{display:block;font-size:9px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#8194aa;}
+#copilot-block .stats-brain-pattern-cell strong{display:block;margin-top:5px;font-size:15px;line-height:1.12;font-weight:950;color:#f8fafc;overflow-wrap:anywhere;}
+#copilot-block .stats-brain-pattern-cell small{display:block;margin-top:5px;font-size:9px;line-height:1.22;color:#718096;font-weight:850;text-transform:uppercase;}
+#copilot-block .stats-brain-pattern-cell.is-bias strong{color:#14f1a8;}
+#copilot-block .stats-brain-pattern-cell.is-rule strong{font-size:13px;line-height:1.22;color:#f4b83f;}
 /* Stats Brain journal polish */
 #copilot-block .stats-brain-journal{position:relative;overflow:hidden;border-radius:18px;padding:24px;border-color:rgba(34,211,238,.34);background:linear-gradient(135deg,rgba(5,13,24,.98),rgba(4,10,19,.96) 46%,rgba(9,17,30,.98));box-shadow:0 18px 46px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06);}
 #copilot-block .stats-brain-journal::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#22d3ee,#14f1a8,#f4b83f,#ff4869);opacity:.9;}
@@ -6102,8 +6123,8 @@
 #copilot-block .stats-brain-journal-row .is-open{background:rgba(244,184,63,.12);border:1px solid rgba(244,184,63,.24);color:#f4b83f;}
 @media (max-width:1280px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:repeat(3,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl-lead,#copilot-block .stats-brain-day-pnl-title{grid-column:1 / -1;}}
 @media (max-width:1100px){#copilot-block .stats-brain-main{grid-template-columns:1fr;}#copilot-block .stats-brain-market{grid-template-columns:1fr;}#copilot-block .stats-brain-market-counts{justify-content:flex-start;}}
-@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
+@media (max-width:900px){#copilot-block .stats-brain-grid12{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-map{grid-template-columns:1fr 1fr;}#copilot-block .stats-brain-head{grid-template-columns:1fr;}#copilot-block .stats-brain-score{align-items:flex-start;}#copilot-block .stats-brain-title{font-size:30px;}#copilot-block .stats-brain-trio,#copilot-block .stats-brain-main-levels{grid-template-columns:1fr;}#copilot-block .stats-brain-main-symbol{font-size:42px;}#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-pattern-grid{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:620px){#copilot-block .stats-brain-grid12,#copilot-block .stats-brain-map,#copilot-block .stats-brain-right-grid,#copilot-block .stats-brain-main-sr,#copilot-block .stats-brain-manager-live,#copilot-block .stats-brain-manager-route,#copilot-block .stats-brain-manager-grid,#copilot-block .stats-brain-manager-top,#copilot-block .stats-brain-entry-radar-grid,#copilot-block .stats-brain-pattern-grid,#copilot-block .stats-brain-journal-pnl,#copilot-block .stats-brain-day-pnl{grid-template-columns:1fr;}#copilot-block .stats-brain-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}#copilot-block .stats-brain-manager-state{text-align:left;min-width:0;}}
 /* ===== INDICATORS TOP ROW — SQUISH VWAP/RSI/EMA + 2X BIGGER FONTS ===== */
 #indicator-prem-card .prem-breakout-title{
   font-size: 28px !important;   /* era 15 */
@@ -25768,6 +25789,266 @@ function updateCoPilotBlock(data){
         </div>
       `;
     };
+    const brainPatternText = (...vals) => {
+      for (const v of vals) {
+        if (v === null || v === undefined) continue;
+        const s = String(v).trim();
+        if (s) return s;
+      }
+      return "";
+    };
+    const brainPatternObj = (...vals) => vals.find(v => isBrainObj(v)) || null;
+    const brainPatternNum = (...vals) => {
+      for (const v of vals) {
+        const n = numBrain(v);
+        if (n !== null) return n;
+      }
+      return null;
+    };
+    const brainPatternClean = (v, fallback = "—") => {
+      const s = brainPatternText(v);
+      if (!s) return fallback;
+      return s.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+    };
+    const brainPatternDirection = (v) => {
+      const s = String(v || "").trim().toUpperCase();
+      if (!s) return "";
+      if (/UP|BULL|BUY|LONG|ALTA|COMPRA/.test(s)) return "UP";
+      if (/DOWN|BEAR|SELL|SHORT|BAIXA|VENDA/.test(s)) return "DOWN";
+      if (/RANGE|NEUTRAL|NEUTRO|MIXED|FLAT|WAIT/.test(s)) return "NEUTRAL";
+      return "";
+    };
+    const brainPatternBiasLabel = (dir) => {
+      if (dir === "UP") return "UP / BULL";
+      if (dir === "DOWN") return "DOWN / BEAR";
+      if (dir === "NEUTRAL") return "NEUTRAL";
+      return "WATCH";
+    };
+    const buildBrainPatternContext = (row, ctx = {}) => {
+      const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
+      const d = row?.__detail || {};
+      const pc = brainPatternObj(
+        activeTrade?.pattern_context_v1,
+        activeTrade?.pattern_context,
+        activeTrade?.shape_context_v1,
+        row?.pattern_context_v1,
+        row?.pattern_context,
+        row?.shape_context_v1,
+        row?.raw?.pattern_context_v1,
+        row?.raw?.pattern_context,
+        row?.raw?.shape_context_v1,
+        panel?.pattern_context_v1,
+        panel?.pattern_context,
+        panel?.shape_context_v1,
+        data?.pattern_context_v1,
+        data?.pattern_context,
+        data?.shape_context_v1,
+        ui?.pattern_context_v1,
+        digest?.pattern_context_v1,
+        digest?.pattern_context,
+        digest?.shape_context_v1,
+        data?.raw?.pattern_context_v1,
+        data?.raw?.panel?.pattern_context_v1
+      );
+      const sf = brainPatternObj(
+        pc?.shape_focus,
+        pc?.shape,
+        activeTrade?.shape_focus,
+        activeTrade?.shape,
+        row?.shape_focus,
+        row?.shape,
+        row?.raw?.shape_focus,
+        panel?.shape_focus,
+        panel?.digest?.shape_focus,
+        data?.shape_focus,
+        ui?.shape_focus,
+        digest?.shape_focus,
+        data?.raw?.shape_focus,
+        data?.raw?.panel?.shape_focus
+      );
+      const pp = brainPatternObj(
+        pc?.pattern_premonition_v1,
+        pc?.shape_trigger_premonition_v1,
+        pc?.structural_pattern_premonition_v1,
+        activeTrade?.pattern_premonition_v1,
+        activeTrade?.shape_trigger_premonition_v1,
+        row?.pattern_premonition_v1,
+        row?.shape_trigger_premonition_v1,
+        row?.raw?.pattern_premonition_v1,
+        row?.raw?.shape_trigger_premonition_v1,
+        panel?.pattern_premonition_v1,
+        panel?.shape_trigger_premonition_v1,
+        panel?.structural_pattern_premonition_v1,
+        data?.pattern_premonition_v1,
+        ui?.pattern_premonition_v1,
+        digest?.pattern_premonition_v1,
+        digest?.shape_trigger_premonition_v1,
+        digest?.structural_pattern_premonition_v1,
+        data?.raw?.pattern_premonition_v1,
+        data?.raw?.panel?.pattern_premonition_v1
+      );
+      const candle = brainPatternObj(
+        pc?.candlestick,
+        pc?.candle_pattern,
+        activeTrade?.candlestick_pattern_v1,
+        activeTrade?.candlestick_pattern,
+        activeTrade?.pullback_candle_v1,
+        row?.candlestick_pattern_v1,
+        row?.candlestick_pattern,
+        row?.pullback_candle_v1,
+        row?.raw?.candlestick_pattern_v1,
+        row?.raw?.pullback_candle_v1,
+        panel?.candlestick_pattern_v1,
+        panel?.candlestick_pattern,
+        panel?.pullback_candle_v1,
+        data?.candlestick_pattern_v1,
+        ui?.candlestick_pattern_v1,
+        digest?.candlestick_pattern_v1,
+        digest?.pullback_candle_v1,
+        data?.raw?.candlestick_pattern_v1,
+        data?.raw?.panel?.candlestick_pattern_v1
+      );
+      const ref = brainPatternObj(
+        pc?.pattern_reference,
+        pc?.pattern_ref,
+        activeTrade?.pattern_reference,
+        row?.pattern_reference,
+        row?.pattern_ref,
+        panel?.pattern_reference,
+        panel?.pattern_ref,
+        data?.pattern_reference,
+        digest?.pattern_reference
+      );
+      const detectorShape = brainPatternText(
+        pc?.shape_name,
+        pc?.best_shape,
+        pc?.shape_label,
+        sf?.name_pt,
+        sf?.label,
+        sf?.name_en,
+        sf?.detector_key,
+        pp?.setup_label,
+        pp?.pattern_label,
+        pp?.pattern_name,
+        pp?.structure_name,
+        pp?.detector_key,
+        ref?.name_pt,
+        ref?.name_en,
+        ref?.name
+      );
+      const fallbackShape = `${brainTrackLabel(row?.track, row?.state)} · ${brainRangeLabel(row).label}`;
+      const shape = brainPatternClean(detectorShape, fallbackShape);
+      const directionRaw = brainPatternText(
+        pc?.shape_direction,
+        pc?.direction,
+        pc?.bias,
+        sf?.direction,
+        sf?.bias,
+        pp?.direction,
+        pp?.bias,
+        d.shapeDirection
+      );
+      const direction = brainPatternDirection(directionRaw);
+      const conf = brainPatternNum(
+        pc?.shape_score,
+        pc?.score,
+        pc?.score_pct,
+        pc?.confidence_pct,
+        sf?.confidence_pct,
+        sf?.score,
+        pp?.confidence_pct,
+        pp?.score,
+        row?.shape_score,
+        row?.pattern_score
+      );
+      const candleName = brainPatternClean(brainPatternText(
+        pc?.candle,
+        pc?.candle_name,
+        candle?.name_pt,
+        candle?.name_en,
+        candle?.name,
+        candle?.pattern,
+        candle?.pattern_name,
+        candle?.candle_type,
+        candle?.type,
+        pp?.candle_type,
+        pp?.trigger_candle
+      ), "Aguardando candle");
+      const rule = brainPatternText(
+        pc?.entry_rule,
+        pc?.entry_rule_pt,
+        pc?.rule,
+        pp?.entry_rule_pt,
+        pp?.entry_rule_en,
+        pp?.entry_rule,
+        pp?.rules_entry_pt,
+        pp?.rules_entry_en,
+        ref?.regras_entrada_pt,
+        ref?.regras_entrada_en,
+        ref?.entry_rule,
+        candle?.confirmation_pt,
+        candle?.confirmation_en,
+        candle?.confirmation,
+        ctx.entryRadar?.trigger
+      );
+      const atmSide = normBrainSide(ctx.side || activeTrade?.side || row?.side);
+      let alignment = "WATCH";
+      let cls = "is-neutral";
+      if (direction === "NEUTRAL") {
+        alignment = "NEUTRAL";
+        cls = "is-neutral";
+      } else if ((atmSide === "BUY" && direction === "UP") || (atmSide === "SELL" && direction === "DOWN")) {
+        alignment = "ALIGNED";
+        cls = "is-aligned";
+      } else if (["BUY", "SELL"].includes(atmSide) && ["UP", "DOWN"].includes(direction)) {
+        alignment = "CONFLICT";
+        cls = "is-conflict";
+      }
+      if (!detectorShape && !directionRaw && !brainPatternText(pc?.candle, candleName)) {
+        alignment = "WATCH";
+        cls = "is-neutral";
+      }
+      const message = alignment === "ALIGNED"
+        ? "Padrão confirma o lado do ATM. Ainda precisa respeitar Entry Radar, stop e alvo principal."
+        : alignment === "CONFLICT"
+          ? "Padrão forte contra o lado do ATM. Reduzir agressividade e esperar confirmação limpa."
+          : alignment === "NEUTRAL"
+            ? "Estrutura neutra/range. Usar como mapa, não como gatilho sozinho."
+            : "Aguardando padrão estrutural/candle do matcher. O ATM continua obedecendo Brain + Matcher.";
+      return {
+        shape,
+        direction,
+        bias: brainPatternBiasLabel(direction),
+        confidence: conf,
+        candle: candleName,
+        rule: rule || "Aguardar confirmação do matcher",
+        alignment,
+        cls,
+        message,
+      };
+    };
+    const renderBrainPatternContext = (pattern) => {
+      if (!pattern) return "";
+      const conf = pattern.confidence === null || pattern.confidence === undefined ? "—" : fmtBrainPct(pattern.confidence);
+      return `
+        <div class="stats-brain-pattern-context ${pattern.cls || "is-neutral"}">
+          <div class="stats-brain-pattern-head">
+            <div>
+              <span class="stats-brain-pattern-kicker">Pattern Context</span>
+              <strong class="stats-brain-pattern-title">${escapeHtml(pattern.shape || "Aguardando padrão")}</strong>
+            </div>
+            <span class="stats-brain-pattern-badge">${escapeHtml(pattern.alignment || "WATCH")}</span>
+          </div>
+          <p>${escapeHtml(pattern.message || "Contexto estrutural usado apenas como confirmação.")}</p>
+          <div class="stats-brain-pattern-grid">
+            <div class="stats-brain-pattern-cell"><span>Shape</span><strong>${escapeHtml(pattern.shape || "—")}</strong><small>${escapeHtml(conf)} confiança</small></div>
+            <div class="stats-brain-pattern-cell is-bias"><span>Bias</span><strong>${escapeHtml(pattern.bias || "WATCH")}</strong><small>estrutura</small></div>
+            <div class="stats-brain-pattern-cell"><span>Candle</span><strong>${escapeHtml(pattern.candle || "—")}</strong><small>gatilho</small></div>
+            <div class="stats-brain-pattern-cell is-rule"><span>Regra</span><strong>${escapeHtml(pattern.rule || "—")}</strong><small>entrada</small></div>
+          </div>
+        </div>
+      `;
+    };
     const renderBrainTradeManager = (row, ctx = {}) => {
       const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
       const workflowMode = !!activeTrade;
@@ -25802,6 +26083,11 @@ function updateCoPilotBlock(data){
         supportRaw,
         resistRaw,
         entryStatus: entryStatusRaw,
+      });
+      const patternContext = buildBrainPatternContext(row, {
+        activeTrade,
+        side,
+        entryRadar,
       });
       const radarAllowsEntry = entryRadar?.canEnter === true || /ENTRY_READY|ACTIVE|T1_HIT|T2_HIT/.test(String(entryRadar?.status || "").toUpperCase());
       const entered = workflowMode
@@ -25928,6 +26214,7 @@ function updateCoPilotBlock(data){
             <p>${escapeHtml(next)}</p>
           </div>
           ${renderBrainEntryRadar(entryRadar, "is-manager")}
+          ${renderBrainPatternContext(patternContext)}
           <div class="stats-brain-manager-live">
             ${renderBrainManagerMetric("Preço agora", fmtBrainPrice(currentRaw), "referencia", "is-live")}
             ${renderBrainManagerMetric("Entrada", fmtBrainPrice(entryDisplayRaw), ctx.entrySub || "gatilho", "is-entry")}
