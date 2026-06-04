@@ -5665,6 +5665,8 @@
 #copilot-block .stats-brain-action.is-sell b{color:#ff6b83;}
 #copilot-block .stats-brain-action.is-wait{border-color:rgba(148,163,184,.16);background:rgba(51,65,85,.18);}
 #copilot-block .stats-brain-action.is-wait b{color:#cbd5e1;}
+#copilot-block .stats-brain-action.is-danger{border-color:rgba(255,72,105,.40);background:linear-gradient(135deg,rgba(255,72,105,.13),rgba(5,10,19,.82));}
+#copilot-block .stats-brain-action.is-danger b{color:#ff6b83;}
 #copilot-block .stats-brain-respiro-map{margin-top:9px;border:1px solid rgba(34,211,238,.24);border-radius:9px;background:linear-gradient(135deg,rgba(34,211,238,.075),rgba(5,10,19,.76));padding:9px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
 #copilot-block .stats-brain-respiro-map.is-ready{border-color:rgba(20,241,168,.34);background:linear-gradient(135deg,rgba(20,241,168,.10),rgba(5,10,19,.78));}
 #copilot-block .stats-brain-respiro-map.is-warn{border-color:rgba(244,184,63,.36);background:linear-gradient(135deg,rgba(244,184,63,.10),rgba(5,10,19,.78));}
@@ -23716,6 +23718,25 @@ function updateCoPilotBlock(data){
         stop: brainLevelValue(row, "stop"),
       };
     };
+    const brainTargetProfitGate = (row, sideOverride = null, entryOverride = null) => {
+      const data = brainPnlAttrs(row || {});
+      const side = normBrainSide(sideOverride ?? data.side ?? row?.side);
+      const entry = brainFirst(entryOverride, data.entry, row?.entry, row?.__detail?.entry);
+      const t1 = brainFirst(data.t1, row?.t1, row?.target_1, row?.target1);
+      const t2 = brainFirst(data.t2, row?.t2, row?.target_2, row?.target2);
+      const t1Pnl = brainPnlValue(side, entry, t1, 1);
+      const t2Pnl = brainPnlValue(side, entry, t2, 1);
+      const t1Ok = t1Pnl !== null && t1Pnl > 0;
+      const t2Ok = t2Pnl !== null && t2Pnl > 0;
+      const allowed = ["BUY", "SELL"].includes(side) && t1Ok && t2Ok;
+      let reason = "T1 e T2 pagam positivo para o lado do trade.";
+      if (!["BUY", "SELL"].includes(side)) reason = "Sem lado BUY/SELL válido.";
+      else if (numBrain(entry) === null) reason = "Sem entrada válida para calcular T1/T2.";
+      else if (!t1Ok && !t2Ok) reason = "T1 e T2 não pagam positivo; ATM bloqueado.";
+      else if (!t1Ok) reason = "T1 não paga positivo; ATM bloqueado.";
+      else if (!t2Ok) reason = "T2 não paga positivo; ATM bloqueado.";
+      return { allowed, t1Ok, t2Ok, t1Pnl, t2Pnl, reason };
+    };
     const renderBrainPnlBox = (row, variant = "") => {
       const data = brainPnlAttrs(row);
       const capital = brainGetCapital();
@@ -24431,14 +24452,16 @@ function updateCoPilotBlock(data){
       const r = row || {};
       const side = normBrainSide(r.side);
       const rank = numBrain(r.rank) || (idx + 1);
-      const accepted = r.accepted === true;
+      const targetGate = brainTargetProfitGate(r, side);
+      const acceptedRaw = r.accepted === true;
+      const accepted = acceptedRaw && targetGate.allowed;
       const exhaustion = /EXHAUST/i.test(String(r.state || ""));
       const trend = brainTrend(r);
       const range = brainRangeLabel(r);
-      const status = brainStatus(r);
+      const status = acceptedRaw && !targetGate.allowed ? { label: "NO TRADE", cls: "is-block" } : brainStatus(r);
       const contActive = brainContActive(r);
       const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
-      const rangeAction = brainRangeAction(r, side);
+      const rangeAction = brainRangeAction({ ...r, accepted }, side);
       const biasCue = brainBiasCue(r, side);
       const respiroMapHtml = renderBrainRespiroMap(r, side, rank);
       const pattern = r.pattern_context_v1 || buildBrainPatternContext(r, { side, rowOnly: true });
@@ -24449,6 +24472,9 @@ function updateCoPilotBlock(data){
         : "";
       const adjustedScore = r.pattern_adjusted_score ?? r.score;
       const wr = numBrain(r.wr_pct);
+      const targetGateHtml = acceptedRaw && !targetGate.allowed
+        ? `<div class="stats-brain-action is-danger"><b>ATM BLOQUEADO · T1/T2 VERMELHO</b><span>${escapeHtml(targetGate.reason)} Ele só pode entrar quando T1 e T2 ficam verdes para ${escapeHtml(side)}.</span></div>`
+        : "";
       const levelsHtml = [
         renderBrainLevel(r, "entry", "entry", "is-entry"),
         renderBrainLevel(r, "T1", "t1", "is-t1"),
@@ -24494,6 +24520,7 @@ function updateCoPilotBlock(data){
             <b>${escapeHtml(rangeAction.title)}</b>
             <span>${escapeHtml(rangeAction.text)}</span>
           </div>
+          ${targetGateHtml}
           ${respiroMapHtml}
           <div class="stats-brain-stock-track">${escapeHtml(brainTrackLabel(r.track, r.state))}</div>
           <div class="stats-brain-levels">${levelsHtml || '<span class="stats-brain-level"><b>alvos</b>ranking</span>'}</div>
@@ -26407,6 +26434,27 @@ function updateCoPilotBlock(data){
       const t1Raw = numBrain(brainFirst(activeTrade?.t1, activeTrade?.target_1, activeTrade?.target1, ctx.t1Raw));
       const t2Raw = numBrain(brainFirst(activeTrade?.t2, activeTrade?.target_2, activeTrade?.target2, ctx.t2Raw));
       const t3Raw = numBrain(brainFirst(activeTrade?.t3, activeTrade?.target_3, activeTrade?.target3, ctx.t3Raw));
+      const localTargetGate = brainTargetProfitGate({
+        ...(row || {}),
+        side,
+        entry: entryDisplayRaw,
+        t1: t1Raw,
+        t2: t2Raw,
+        __detail: {
+          ...(row?.__detail || {}),
+          entry: entryDisplayRaw,
+          t1: t1Raw,
+          t2: t2Raw,
+        },
+      }, side, entryDisplayRaw);
+      const workflowTargetGateRaw = isBrainObj(activeTrade?.target_profit_gate_v1) ? activeTrade.target_profit_gate_v1 : null;
+      const managerTargetGate = workflowTargetGateRaw
+        ? {
+            ...localTargetGate,
+            allowed: activeTrade?.target_profit_ok !== false && workflowTargetGateRaw.ok !== false && localTargetGate.allowed,
+            reason: activeTrade?.target_profit_reason || workflowTargetGateRaw.reason || localTargetGate.reason,
+          }
+        : localTargetGate;
       const respiroRaw = numBrain(brainFirst(activeTrade?.respiro, activeTrade?.pullback_to, activeTrade?.breath_to, ctx.respiroRaw));
       const reversaoRaw = numBrain(brainFirst(activeTrade?.reversao, activeTrade?.reversal_at, activeTrade?.invalid_at, ctx.reversaoRaw));
       const supportRaw = numBrain(brainFirst(activeTrade?.support, activeTrade?.suporte, ctx.supportRaw));
@@ -26510,6 +26558,10 @@ function updateCoPilotBlock(data){
         state = { label: "STOP DAY", decision: "META BATIDA", cls: "is-protect" };
         next = `Meta do dia alcançada (${brainJournalPnlMoney(dayGoal.total)} de ${brainJournalPnlMoney(dayGoal.goal)}). Proteger capital e parar novas entradas.`;
       }
+      if (!managerTargetGate.allowed) {
+        state = { label: "NO TRADE", decision: "T1/T2 VERMELHO", cls: "is-danger" };
+        next = `${managerTargetGate.reason} ATM só entra quando T1 e T2 pagam positivo para ${sideLabel}.`;
+      }
       const riskLevel = fmtBrainPrice(brainFirst(stopRaw, reversaoRaw, respiroRaw));
       const killText = dayGoalHit
         ? "Meta do dia batida. Não abrir novo trade; apenas encerrar/proteger o que já existir."
@@ -26550,6 +26602,7 @@ function updateCoPilotBlock(data){
       if (missed) manualWarnings.push("Entrada marcada como atrasada/perdida.");
       if (stopHit || reversalHit) manualWarnings.push("Stop/reversão já foi tocado; corte registra o resultado atual.");
       if (patternAlignment === "CONFLICT") manualWarnings.push("Pattern Context está em conflito.");
+      if (!managerTargetGate.allowed) manualWarnings.push("T1/T2 não pagam positivo para este lado; ATM deve bloquear entrada.");
       if (numBrain(stopRaw) === null) manualWarnings.push("Stop sem preço válido.");
       if (numBrain(t1Raw) === null && numBrain(t2Raw) === null) manualWarnings.push("Sem T1/T2 para referência.");
       if (!manualQty || manualQty <= 0) manualWarnings.push("Capital base não gerou quantidade; n8n deve calcular ou recusar.");
