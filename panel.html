@@ -5527,6 +5527,11 @@
 #copilot-block .stats-brain-journal-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end;}
 #copilot-block .stats-brain-journal-btn{height:27px;padding:0 10px;border-radius:999px;border:1px solid rgba(34,211,238,.32);background:rgba(34,211,238,.10);color:#67e8f9;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;}
 #copilot-block .stats-brain-journal-btn.is-reset{border-color:rgba(255,72,105,.28);background:rgba(255,72,105,.10);color:#ff7a90;}
+#copilot-block .stats-brain-report-day-box{width:170px;min-height:86px;border:1px solid rgba(34,211,238,.28);border-radius:10px;background:linear-gradient(180deg,rgba(34,211,238,.10),rgba(5,10,19,.82));padding:10px 11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-report-day-box span{display:block;font-size:9px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#67e8f9;}
+#copilot-block .stats-brain-report-day-input{display:block;width:100%;height:34px;margin-top:6px;border:1px solid rgba(34,211,238,.26);border-radius:7px;background:rgba(2,6,13,.86);color:#f8fafc;font-size:13px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:0 8px;outline:none;color-scheme:dark;}
+#copilot-block .stats-brain-report-day-input:focus{border-color:#22d3ee;box-shadow:0 0 0 2px rgba(34,211,238,.16);}
+#copilot-block .stats-brain-report-day-box small{display:block;margin-top:5px;font-size:9px;font-weight:850;color:#8fa0b8;}
 #copilot-block .stats-brain-capital-box{width:170px;min-height:86px;border:1px solid rgba(244,184,63,.35);border-radius:10px;background:linear-gradient(180deg,rgba(244,184,63,.12),rgba(5,10,19,.82));padding:10px 11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
 #copilot-block .stats-brain-capital-box span{display:block;font-size:9px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#f4b83f;}
 #copilot-block .stats-brain-capital-input{display:block;width:100%;height:34px;margin-top:6px;border:1px solid rgba(244,184,63,.28);border-radius:7px;background:rgba(2,6,13,.86);color:#f8fafc;font-size:18px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:0 9px;outline:none;}
@@ -25038,6 +25043,40 @@ function updateCoPilotBlock(data){
       window.__AARON_STATS_BRAIN_JOURNAL__ = summary;
       return summary;
     };
+    const BRAIN_REPORT_DAY_KEY = "AARON_STATS_BRAIN_REPORT_DAY";
+    const brainJournalNormalizeDay = (value) => {
+      const s = String(value || "").trim();
+      return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : null;
+    };
+    const brainJournalSelectedReportDay = (fallbackDay) => {
+      const fallback = brainJournalNormalizeDay(fallbackDay) || brainJournalDateKey(brainJournalTimestamp());
+      try {
+        return brainJournalNormalizeDay(localStorage.getItem(BRAIN_REPORT_DAY_KEY)) || fallback;
+      } catch (_e) {
+        return fallback;
+      }
+    };
+    const brainJournalBuildReportForDay = (day, liveSummary = null) => {
+      const live = liveSummary || window.__AARON_STATS_BRAIN_JOURNAL__ || null;
+      const selectedDay = brainJournalNormalizeDay(day) || brainJournalSelectedReportDay(live?.day);
+      if (live?.day === selectedDay) {
+        const report = { ...live };
+        report.managerExecutions = report.managerExecutions || brainJournalLoadManagerExecutions(selectedDay);
+        report.pnl = brainJournalPnlSummary(report.records || [], report.activePnlRecord || null);
+        return report;
+      }
+      const records = brainJournalLoad(selectedDay);
+      const report = brainJournalSummarize(records, selectedDay);
+      report.pnl = brainJournalPnlSummary(report.records || [], null);
+      return report;
+    };
+    window.aaronSetBrainReportDay = (value) => {
+      const selected = brainJournalNormalizeDay(value) || brainJournalDateKey(brainJournalTimestamp());
+      try { localStorage.setItem(BRAIN_REPORT_DAY_KEY, selected); } catch (_e) {}
+      document.querySelectorAll(".stats-brain-report-day-input").forEach(input => {
+        if (document.activeElement !== input) input.value = selected;
+      });
+    };
     const brainJournalRateLabel = (obj) => obj && obj.win_rate !== null ? `${obj.win_rate}%` : "—";
     const brainJournalLevelRateLabel = (obj) => obj && obj.rate !== null ? `${obj.rate}%` : "—";
     const brainJournalMoney = (v) => {
@@ -25217,8 +25256,12 @@ function updateCoPilotBlock(data){
       setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
     };
     const brainJournalInstallDownloads = (summary) => {
+      const resolveReport = () => brainJournalBuildReportForDay(
+        brainJournalSelectedReportDay((window.__AARON_STATS_BRAIN_JOURNAL__ || summary)?.day),
+        window.__AARON_STATS_BRAIN_JOURNAL__ || summary
+      );
       window.aaronDownloadBrainDailyReportPdf = async () => {
-        const report = window.__AARON_STATS_BRAIN_JOURNAL__ || summary;
+        const report = resolveReport();
         const html = brainJournalBuildHtml(report);
         const filename = `aaron-brain-daily-${report?.day || "today"}.html`;
         const w = window.open("", "_blank");
@@ -25245,7 +25288,7 @@ function updateCoPilotBlock(data){
         }
       };
       window.aaronDownloadBrainDailyReportCsv = async () => {
-        const report = window.__AARON_STATS_BRAIN_JOURNAL__ || summary;
+        const report = resolveReport();
         const csv = brainJournalBuildCsv(report);
         const filename = `aaron-brain-daily-${report?.day || "today"}.csv`;
         try {
@@ -25261,8 +25304,11 @@ function updateCoPilotBlock(data){
           brainJournalDownloadLocal(csv, filename, "text/csv;charset=utf-8");
         }
       };
-      window.aaronResetBrainDailyJournal = () => {
-        const report = window.__AARON_STATS_BRAIN_JOURNAL__ || summary;
+      window.aaronResetBrainDailyJournal = (dayOverride = null) => {
+        const selectedDay = brainJournalNormalizeDay(dayOverride);
+        const report = selectedDay
+          ? brainJournalBuildReportForDay(selectedDay, window.__AARON_STATS_BRAIN_JOURNAL__ || summary)
+          : resolveReport();
         if (!report?.day) return;
         if (!confirm(`Resetar o journal local e o log do ATM do dia ${report.day}?`)) return;
         try { localStorage.removeItem(brainJournalStoreKey(report.day)); } catch (_e) {}
@@ -25272,6 +25318,7 @@ function updateCoPilotBlock(data){
     };
     const renderBrainJournalPanel = (summary) => {
       brainJournalInstallDownloads(summary);
+      const reportDay = brainJournalSelectedReportDay(summary?.day || brainJournalDateKey(brainJournalTimestamp()));
       const best = summary?.bestSymbol ? `${summary.bestSymbol.key} · ${brainJournalRateLabel(summary.bestSymbol)}` : "—";
       const worst = summary?.worstSymbol ? `${summary.worstSymbol.key} · ${brainJournalRateLabel(summary.worstSymbol)}` : "—";
       const bestHour = summary?.bestBucket ? `${summary.bestBucket.key} · ${brainJournalRateLabel(summary.bestBucket)}` : "—";
@@ -25317,6 +25364,11 @@ function updateCoPilotBlock(data){
               <div class="stats-brain-journal-sub">Journal local: mede se os sinais observados bateram T1/T2/T3, respiro, reversão ou stop enquanto o painel está aberto.</div>
             </div>
             <div class="stats-brain-journal-tools">
+              <label class="stats-brain-report-day-box">
+                <span>Dia do relatório</span>
+                <input class="stats-brain-report-day-input" type="date" value="${escapeHtml(reportDay)}" onchange="window.aaronSetBrainReportDay && window.aaronSetBrainReportDay(this.value)" />
+                <small>PDF/CSV usam esse dia</small>
+              </label>
               <label class="stats-brain-capital-box">
                 <span>Capital base</span>
                 <input class="stats-brain-capital-input" type="number" min="0" step="100" inputmode="decimal" placeholder="100000" value="${escapeHtml(brainCapitalInputValue())}" oninput="window.aaronUpdateBrainPnlFromCapital && window.aaronUpdateBrainPnlFromCapital(this.value)" />
@@ -25386,7 +25438,7 @@ function updateCoPilotBlock(data){
           <div class="stats-brain-day-reset">
             <span>Dia</span>
             <strong>${escapeHtml(summary?.day || brainJournalDateKey(brainJournalTimestamp()))}</strong>
-            <button type="button" onclick="window.aaronResetBrainDailyJournal && window.aaronResetBrainDailyJournal()">Reset Day</button>
+            <button type="button" onclick="window.aaronResetBrainDailyJournal && window.aaronResetBrainDailyJournal('${escapeHtml(summary?.day || brainJournalDateKey(brainJournalTimestamp()))}')">Reset Day</button>
           </div>
         </div>
       `;
