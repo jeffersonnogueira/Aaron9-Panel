@@ -5627,6 +5627,10 @@
 #copilot-block .stats-brain-chip.is-fundo{color:#53e6b0;background:rgba(20,241,168,.12);}
 #copilot-block .stats-brain-chip.is-topo{color:#ff5f7c;background:rgba(255,72,105,.14);}
 #copilot-block .stats-brain-chip.is-meio{color:#c4b5fd;background:rgba(139,92,246,.16);}
+#copilot-block .stats-brain-chip.is-pattern-aligned{color:#14f1a8;background:rgba(20,241,168,.13);box-shadow:inset 0 0 0 1px rgba(20,241,168,.10);}
+#copilot-block .stats-brain-chip.is-pattern-conflict{color:#ff7a90;background:rgba(255,72,105,.16);box-shadow:inset 0 0 0 1px rgba(255,72,105,.12);}
+#copilot-block .stats-brain-chip.is-pattern-neutral{color:#f4b83f;background:rgba(244,184,63,.13);}
+#copilot-block .stats-brain-chip.is-pattern-watch{color:#94a3b8;background:rgba(51,65,85,.36);}
 #copilot-block .stats-brain-win{display:flex;align-items:flex-end;gap:8px;margin-top:14px;}
 #copilot-block .stats-brain-win strong{font-size:38px;line-height:.92;font-weight:950;color:#14f1a8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 #copilot-block .stats-brain-win span{font-size:10px;line-height:1.05;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#68778d;}
@@ -24410,6 +24414,13 @@ function updateCoPilotBlock(data){
       const rangeAction = brainRangeAction(r, side);
       const biasCue = brainBiasCue(r, side);
       const respiroMapHtml = renderBrainRespiroMap(r, side, rank);
+      const pattern = r.pattern_context_v1 || buildBrainPatternContext(r, { side, rowOnly: true });
+      const patternAlignment = pattern?.hasPattern ? (pattern.alignment || "WATCH") : "WATCH";
+      const patternDelta = numBrain(r.pattern_score_delta_pct);
+      const patternDeltaLabel = patternDelta && patternDelta !== 0
+        ? `${patternDelta > 0 ? "+" : ""}${Math.round(patternDelta)}%`
+        : "";
+      const adjustedScore = r.pattern_adjusted_score ?? r.score;
       const wr = numBrain(r.wr_pct);
       const levelsHtml = [
         renderBrainLevel(r, "entry", "entry", "is-entry"),
@@ -24442,6 +24453,7 @@ function updateCoPilotBlock(data){
             <span class="stats-brain-chip ${trend.cls}">${escapeHtml(trend.label)}</span>
             <span class="stats-brain-chip ${contActive ? "is-cont" : "is-meio"}">cont ${contActive ? "SIM" : "não"}</span>
             <span class="stats-brain-chip ${range.cls}">${escapeHtml(range.label)}</span>
+            <span class="stats-brain-chip ${brainPatternChipClass(patternAlignment)}">pattern ${escapeHtml(patternAlignment)}${patternDeltaLabel ? ` ${escapeHtml(patternDeltaLabel)}` : ""}</span>
           </div>
           <div class="stats-brain-win">
             ${wr === null ? '<strong class="stats-brain-no-wr">—</strong><span>SEM<br>WR</span>' : `<strong>${escapeHtml(fmtBrainPct(wr))}</strong><span>WIN<br>5 ANOS</span>`}
@@ -24461,7 +24473,7 @@ function updateCoPilotBlock(data){
           ${renderBrainPnlBox(r)}
           <div class="stats-brain-stock-reason">${escapeHtml(fmtBrainText(r.reason, accepted ? "Setup aprovado pelo Brain." : "Não passou o gate final."))}</div>
           <div class="stats-brain-card-foot">
-            <span>cont <b>${escapeHtml(fmtBrainPct(r.continuation_pct))}</b> · exh <span class="exh">${escapeHtml(fmtBrainPct(r.exhaustion_pct))}</span></span>
+            <span>score <b>${escapeHtml(fmtBrainScore(adjustedScore))}</b> · cont <b>${escapeHtml(fmtBrainPct(r.continuation_pct))}</b> · exh <span class="exh">${escapeHtml(fmtBrainPct(r.exhaustion_pct))}</span></span>
             <span class="stats-brain-status ${status.cls}">${escapeHtml(status.label)}</span>
           </div>
         </div>
@@ -25826,6 +25838,7 @@ function updateCoPilotBlock(data){
     };
     const buildBrainPatternContext = (row, ctx = {}) => {
       const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
+      const allowGlobalPattern = ctx.rowOnly !== true;
       const d = row?.__detail || {};
       const pc = brainPatternObj(
         activeTrade?.pattern_context_v1,
@@ -25837,18 +25850,18 @@ function updateCoPilotBlock(data){
         row?.raw?.pattern_context_v1,
         row?.raw?.pattern_context,
         row?.raw?.shape_context_v1,
-        panel?.pattern_context_v1,
-        panel?.pattern_context,
-        panel?.shape_context_v1,
-        data?.pattern_context_v1,
-        data?.pattern_context,
-        data?.shape_context_v1,
-        ui?.pattern_context_v1,
-        digest?.pattern_context_v1,
-        digest?.pattern_context,
-        digest?.shape_context_v1,
-        data?.raw?.pattern_context_v1,
-        data?.raw?.panel?.pattern_context_v1
+        allowGlobalPattern ? panel?.pattern_context_v1 : null,
+        allowGlobalPattern ? panel?.pattern_context : null,
+        allowGlobalPattern ? panel?.shape_context_v1 : null,
+        allowGlobalPattern ? data?.pattern_context_v1 : null,
+        allowGlobalPattern ? data?.pattern_context : null,
+        allowGlobalPattern ? data?.shape_context_v1 : null,
+        allowGlobalPattern ? ui?.pattern_context_v1 : null,
+        allowGlobalPattern ? digest?.pattern_context_v1 : null,
+        allowGlobalPattern ? digest?.pattern_context : null,
+        allowGlobalPattern ? digest?.shape_context_v1 : null,
+        allowGlobalPattern ? data?.raw?.pattern_context_v1 : null,
+        allowGlobalPattern ? data?.raw?.panel?.pattern_context_v1 : null
       );
       const sf = brainPatternObj(
         pc?.shape_focus,
@@ -25858,13 +25871,13 @@ function updateCoPilotBlock(data){
         row?.shape_focus,
         row?.shape,
         row?.raw?.shape_focus,
-        panel?.shape_focus,
-        panel?.digest?.shape_focus,
-        data?.shape_focus,
-        ui?.shape_focus,
-        digest?.shape_focus,
-        data?.raw?.shape_focus,
-        data?.raw?.panel?.shape_focus
+        allowGlobalPattern ? panel?.shape_focus : null,
+        allowGlobalPattern ? panel?.digest?.shape_focus : null,
+        allowGlobalPattern ? data?.shape_focus : null,
+        allowGlobalPattern ? ui?.shape_focus : null,
+        allowGlobalPattern ? digest?.shape_focus : null,
+        allowGlobalPattern ? data?.raw?.shape_focus : null,
+        allowGlobalPattern ? data?.raw?.panel?.shape_focus : null
       );
       const pp = brainPatternObj(
         pc?.pattern_premonition_v1,
@@ -25876,16 +25889,16 @@ function updateCoPilotBlock(data){
         row?.shape_trigger_premonition_v1,
         row?.raw?.pattern_premonition_v1,
         row?.raw?.shape_trigger_premonition_v1,
-        panel?.pattern_premonition_v1,
-        panel?.shape_trigger_premonition_v1,
-        panel?.structural_pattern_premonition_v1,
-        data?.pattern_premonition_v1,
-        ui?.pattern_premonition_v1,
-        digest?.pattern_premonition_v1,
-        digest?.shape_trigger_premonition_v1,
-        digest?.structural_pattern_premonition_v1,
-        data?.raw?.pattern_premonition_v1,
-        data?.raw?.panel?.pattern_premonition_v1
+        allowGlobalPattern ? panel?.pattern_premonition_v1 : null,
+        allowGlobalPattern ? panel?.shape_trigger_premonition_v1 : null,
+        allowGlobalPattern ? panel?.structural_pattern_premonition_v1 : null,
+        allowGlobalPattern ? data?.pattern_premonition_v1 : null,
+        allowGlobalPattern ? ui?.pattern_premonition_v1 : null,
+        allowGlobalPattern ? digest?.pattern_premonition_v1 : null,
+        allowGlobalPattern ? digest?.shape_trigger_premonition_v1 : null,
+        allowGlobalPattern ? digest?.structural_pattern_premonition_v1 : null,
+        allowGlobalPattern ? data?.raw?.pattern_premonition_v1 : null,
+        allowGlobalPattern ? data?.raw?.panel?.pattern_premonition_v1 : null
       );
       const candle = brainPatternObj(
         pc?.candlestick,
@@ -25898,15 +25911,15 @@ function updateCoPilotBlock(data){
         row?.pullback_candle_v1,
         row?.raw?.candlestick_pattern_v1,
         row?.raw?.pullback_candle_v1,
-        panel?.candlestick_pattern_v1,
-        panel?.candlestick_pattern,
-        panel?.pullback_candle_v1,
-        data?.candlestick_pattern_v1,
-        ui?.candlestick_pattern_v1,
-        digest?.candlestick_pattern_v1,
-        digest?.pullback_candle_v1,
-        data?.raw?.candlestick_pattern_v1,
-        data?.raw?.panel?.candlestick_pattern_v1
+        allowGlobalPattern ? panel?.candlestick_pattern_v1 : null,
+        allowGlobalPattern ? panel?.candlestick_pattern : null,
+        allowGlobalPattern ? panel?.pullback_candle_v1 : null,
+        allowGlobalPattern ? data?.candlestick_pattern_v1 : null,
+        allowGlobalPattern ? ui?.candlestick_pattern_v1 : null,
+        allowGlobalPattern ? digest?.candlestick_pattern_v1 : null,
+        allowGlobalPattern ? digest?.pullback_candle_v1 : null,
+        allowGlobalPattern ? data?.raw?.candlestick_pattern_v1 : null,
+        allowGlobalPattern ? data?.raw?.panel?.candlestick_pattern_v1 : null
       );
       const ref = brainPatternObj(
         pc?.pattern_reference,
@@ -25914,10 +25927,10 @@ function updateCoPilotBlock(data){
         activeTrade?.pattern_reference,
         row?.pattern_reference,
         row?.pattern_ref,
-        panel?.pattern_reference,
-        panel?.pattern_ref,
-        data?.pattern_reference,
-        digest?.pattern_reference
+        allowGlobalPattern ? panel?.pattern_reference : null,
+        allowGlobalPattern ? panel?.pattern_ref : null,
+        allowGlobalPattern ? data?.pattern_reference : null,
+        allowGlobalPattern ? digest?.pattern_reference : null
       );
       const detectorShape = brainPatternText(
         pc?.shape_name,
@@ -25961,7 +25974,7 @@ function updateCoPilotBlock(data){
         row?.shape_score,
         row?.pattern_score
       );
-      const candleName = brainPatternClean(brainPatternText(
+      const candleRaw = brainPatternText(
         pc?.candle,
         pc?.candle_name,
         candle?.name_pt,
@@ -25973,7 +25986,8 @@ function updateCoPilotBlock(data){
         candle?.type,
         pp?.candle_type,
         pp?.trigger_candle
-      ), "Aguardando candle");
+      );
+      const candleName = brainPatternClean(candleRaw, "Aguardando candle");
       const rule = brainPatternText(
         pc?.entry_rule,
         pc?.entry_rule_pt,
@@ -25992,6 +26006,16 @@ function updateCoPilotBlock(data){
         ctx.entryRadar?.trigger
       );
       const atmSide = normBrainSide(ctx.side || activeTrade?.side || row?.side);
+      const hasPattern = Boolean(
+        detectorShape ||
+        directionRaw ||
+        candleRaw ||
+        isBrainObj(pc) ||
+        isBrainObj(sf) ||
+        isBrainObj(pp) ||
+        isBrainObj(candle) ||
+        isBrainObj(ref)
+      );
       let alignment = "WATCH";
       let cls = "is-neutral";
       if (direction === "NEUTRAL") {
@@ -26004,7 +26028,7 @@ function updateCoPilotBlock(data){
         alignment = "CONFLICT";
         cls = "is-conflict";
       }
-      if (!detectorShape && !directionRaw && !brainPatternText(pc?.candle, candleName)) {
+      if (!hasPattern) {
         alignment = "WATCH";
         cls = "is-neutral";
       }
@@ -26016,6 +26040,7 @@ function updateCoPilotBlock(data){
             ? "Estrutura neutra/range. Usar como mapa, não como gatilho sozinho."
             : "Aguardando padrão estrutural/candle do matcher. O ATM continua obedecendo Brain + Matcher.";
       return {
+        hasPattern,
         shape,
         direction,
         bias: brainPatternBiasLabel(direction),
@@ -26048,6 +26073,63 @@ function updateCoPilotBlock(data){
           </div>
         </div>
       `;
+    };
+    const brainPatternConfidencePct = (pattern) => {
+      if (!pattern?.hasPattern) return 0;
+      const n = numBrain(pattern.confidence);
+      if (n === null) return 50;
+      return brainClamp(Math.abs(n) <= 1 ? n * 100 : n, 0, 100) ?? 50;
+    };
+    const brainPatternChipClass = (alignment) => {
+      const a = String(alignment || "").trim().toUpperCase();
+      if (a === "ALIGNED") return "is-pattern-aligned";
+      if (a === "CONFLICT") return "is-pattern-conflict";
+      if (a === "NEUTRAL") return "is-pattern-neutral";
+      return "is-pattern-watch";
+    };
+    const brainPatternScoreDeltaPct = (pattern) => {
+      if (!pattern?.hasPattern) return 0;
+      const a = String(pattern.alignment || "").trim().toUpperCase();
+      const conf = brainPatternConfidencePct(pattern);
+      if (conf < 45) return 0;
+      const strength = brainClamp((conf - 45) / 55, 0, 1) ?? 0;
+      if (a === "ALIGNED") return 6 + (6 * strength);
+      if (a === "CONFLICT") return -(25 + (15 * strength));
+      if (a === "NEUTRAL") return -3;
+      return 0;
+    };
+    const brainApplyPatternCross = (row, stats = {}) => {
+      const base = enrichBrainRow(row || {}, stats);
+      const originalRank = numBrain(base.brain_rank ?? base.rank);
+      const side = normBrainSide(base.side || stats.selected_side);
+      const pattern = base.pattern_context_v1 && base.pattern_alignment
+        ? base.pattern_context_v1
+        : buildBrainPatternContext(base, { side, rowOnly: true });
+      const baseScore = numBrain(base.score ?? base.watch_score ?? stats.selected_score) ?? 0;
+      const deltaPct = brainPatternScoreDeltaPct(pattern);
+      const adjustedScore = baseScore * (1 + (deltaPct / 100));
+      return {
+        ...base,
+        brain_rank: originalRank,
+        pattern_context_v1: pattern,
+        pattern_alignment: pattern?.alignment || "WATCH",
+        pattern_confidence_pct: brainPatternConfidencePct(pattern),
+        pattern_score_delta_pct: Number(deltaPct.toFixed(2)),
+        score_before_pattern: Number(baseScore.toFixed(4)),
+        pattern_adjusted_score: Number(adjustedScore.toFixed(4)),
+      };
+    };
+    const brainApplyPatternCrossRanking = (rows = [], stats = {}) => {
+      return (rows || [])
+        .filter(r => isBrainObj(r))
+        .map((r, idx) => brainApplyPatternCross({ ...r, rank: numBrain(r.rank) || (idx + 1) }, stats))
+        .sort((a, b) => {
+          const as = numBrain(a.pattern_adjusted_score ?? a.score) ?? -9999;
+          const bs = numBrain(b.pattern_adjusted_score ?? b.score) ?? -9999;
+          if (bs !== as) return bs - as;
+          return (numBrain(a.brain_rank) || 999) - (numBrain(b.brain_rank) || 999);
+        })
+        .map((r, idx) => ({ ...r, rank: idx + 1, pattern_rank: idx + 1 }));
     };
     const renderBrainTradeManager = (row, ctx = {}) => {
       const activeTrade = isBrainObj(ctx.activeTrade) ? ctx.activeTrade : null;
@@ -26284,6 +26366,17 @@ function updateCoPilotBlock(data){
         resistRaw,
         entryStatus: d.status,
       });
+      const patternContext = s.pattern_context_v1 || buildBrainPatternContext(s, {
+        activeTrade,
+        side,
+        entryRadar,
+      });
+      const patternAlignment = patternContext?.hasPattern ? (patternContext.alignment || "WATCH") : "WATCH";
+      const patternDelta = numBrain(s.pattern_score_delta_pct);
+      const patternDeltaLabel = patternDelta && patternDelta !== 0
+        ? `${patternDelta > 0 ? "+" : ""}${Math.round(patternDelta)}%`
+        : "";
+      const adjustedScore = fmtBrainScore(s.pattern_adjusted_score ?? s.score ?? stats.selected_score);
       const entry = fmtBrainPrice(entryDisplayRaw);
       const entrySub = d.entryMode || d.status || "";
       const stop = fmtBrainPrice(stopRaw);
@@ -26333,6 +26426,8 @@ function updateCoPilotBlock(data){
               <span class="stats-brain-chip ${status.cls ? "is-topo" : "is-cont"}">${escapeHtml(status.label)}</span>
               <span class="stats-brain-chip">chance ${escapeHtml(chance)}</span>
               <span class="stats-brain-chip">conflito ${escapeHtml(conflict)}</span>
+              <span class="stats-brain-chip ${brainPatternChipClass(patternAlignment)}">pattern ${escapeHtml(patternAlignment)}${patternDeltaLabel ? ` ${escapeHtml(patternDeltaLabel)}` : ""}</span>
+              <span class="stats-brain-chip">score ${escapeHtml(adjustedScore)}</span>
             </div>
             ${renderBrainThermo(s, "is-main")}
             <div class="stats-brain-main-range">
@@ -26400,13 +26495,16 @@ function updateCoPilotBlock(data){
     };
     const renderStatsBrainBoardHtml = (readout) => {
       const stats = readout?.stats || {};
-      const ranking = (readout?.ranking || []).map(r => enrichBrainRow(r, stats));
-      const selected = enrichBrainRow(readout?.selected || {}, stats);
+      const ranking = brainApplyPatternCrossRanking(readout?.ranking || [], stats);
+      const sourceSelected = enrichBrainRow(readout?.selected || {}, stats);
+      const selected =
+        ranking[0] ||
+        brainApplyPatternCross(sourceSelected, stats);
       const selectedSide = normBrainSide(selected.side);
       const selectedClass = brainSideClass(selectedSide);
       const selectedRank = numBrain(selected.rank) || numBrain(stats.selected_rank) || 1;
       const selectedTrack = brainTrackLabel(selected.track || stats.selected_track, selected.state || stats.selected_state);
-      const score = selected.score ?? stats.selected_score;
+      const score = selected.pattern_adjusted_score ?? selected.score ?? stats.selected_score;
       const reason = fmtBrainText(selected.reason || stats.selected_reason, "Aguardando leitura do Brain.");
       const trendRows = ranking.filter(r => String(r.track || "").toUpperCase().includes("CONT"));
       const zigLowRows = ranking.filter(r => /NEAR_LOW|FUNDO/i.test(String(r.track || "")));
@@ -26491,12 +26589,13 @@ function updateCoPilotBlock(data){
     const buildStatsBrainReadout = () => {
       const stats = pickBrainStats();
       if (!stats) return null;
-      const ranking = Array.isArray(stats.ranking)
+      const baseRanking = Array.isArray(stats.ranking)
         ? stats.ranking
             .filter(r => isBrainObj(r))
             .map((r, idx) => ({ ...r, rank: numBrain(r.rank) || (idx + 1) }))
             .sort((a, b) => (numBrain(a.rank) || 999) - (numBrain(b.rank) || 999))
         : [];
+      const ranking = brainApplyPatternCrossRanking(baseRanking, stats);
       const selectedSymbol = String(
         stats.selected_symbol ||
         panel?.selected_symbol ||
@@ -26505,8 +26604,18 @@ function updateCoPilotBlock(data){
         ""
       ).trim().toUpperCase();
       const selected =
-        ranking.find(r => String(r.symbol || "").toUpperCase() === selectedSymbol) ||
         ranking[0] ||
+        (selectedSymbol ? brainApplyPatternCross({
+          rank: stats.selected_rank || 1,
+          symbol: selectedSymbol || stats.selected_symbol || panel?.selected_symbol || "—",
+          side: stats.selected_side,
+          state: stats.selected_state,
+          track: stats.selected_track,
+          score: stats.selected_score,
+          wr_pct: stats.selected_wr_pct,
+          chance_chegar_pct: stats.selected_chance_chegar_pct,
+          reason: stats.selected_reason,
+        }, stats) : null) ||
         {
           rank: stats.selected_rank || 1,
           symbol: selectedSymbol || stats.selected_symbol || panel?.selected_symbol || "—",
