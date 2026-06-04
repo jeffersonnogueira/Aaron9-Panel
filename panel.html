@@ -6042,7 +6042,7 @@
 #copilot-block .stats-brain-journal-pnl-card.is-loss::before{background:#ff4869;box-shadow:0 0 18px rgba(255,72,105,.62);}
 #copilot-block .stats-brain-journal-pnl-card.is-loss strong{color:#ff6f88;text-shadow:0 0 18px rgba(255,72,105,.18);}
 #copilot-block .stats-brain-journal-pnl-card.is-flat{border-color:rgba(148,163,184,.15);}
-#copilot-block .stats-brain-day-pnl{display:grid;grid-template-columns:1.1fr 170px repeat(5,minmax(0,1fr));gap:10px;align-items:stretch;border:1px solid rgba(244,184,63,.24);border-radius:16px;background:linear-gradient(135deg,rgba(244,184,63,.10),rgba(6,12,22,.92) 38%,rgba(4,10,18,.96));padding:12px;box-shadow:0 14px 34px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.045);}
+#copilot-block .stats-brain-day-pnl{display:grid;grid-template-columns:1.1fr 170px repeat(5,minmax(0,1fr)) 116px;gap:10px;align-items:stretch;border:1px solid rgba(244,184,63,.24);border-radius:16px;background:linear-gradient(135deg,rgba(244,184,63,.10),rgba(6,12,22,.92) 38%,rgba(4,10,18,.96));padding:12px;box-shadow:0 14px 34px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.045);}
 #copilot-block .stats-brain-day-pnl-title{min-width:0;border:1px solid rgba(244,184,63,.26);border-radius:13px;background:linear-gradient(135deg,rgba(244,184,63,.16),rgba(5,10,19,.70));padding:12px 14px;}
 #copilot-block .stats-brain-day-pnl-title span{display:inline-flex;align-items:center;min-height:22px;padding:0 9px;border-radius:999px;background:rgba(244,184,63,.18);border:1px solid rgba(244,184,63,.28);color:#f4b83f;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;}
 #copilot-block .stats-brain-day-pnl-title strong{display:block;margin-top:8px;font-size:20px;line-height:1.02;font-weight:950;color:#fff7d1;text-transform:uppercase;}
@@ -6052,6 +6052,10 @@
 #copilot-block .stats-brain-day-pnl .stats-brain-journal-pnl-card{padding:12px 13px;}
 #copilot-block .stats-brain-day-pnl .stats-brain-journal-pnl-card strong{font-size:22px;}
 #copilot-block .stats-brain-day-pnl .stats-brain-journal-pnl-card small{font-size:10px;}
+#copilot-block .stats-brain-day-reset{display:flex;flex-direction:column;justify-content:center;gap:7px;min-width:0;border:1px solid rgba(255,72,105,.24);border-radius:13px;background:linear-gradient(180deg,rgba(255,72,105,.10),rgba(5,10,19,.78));padding:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.045);}
+#copilot-block .stats-brain-day-reset span{font-size:9px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#ff8aa0;}
+#copilot-block .stats-brain-day-reset strong{font-size:11px;line-height:1.1;color:#e5edf7;}
+#copilot-block .stats-brain-day-reset button{height:28px;border:1px solid rgba(255,72,105,.42);border-radius:999px;background:linear-gradient(180deg,rgba(255,72,105,.22),rgba(255,72,105,.08));color:#ff8aa0;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;}
 #copilot-block .stats-brain-journal-grid{gap:12px;margin-top:16px;}
 #copilot-block .stats-brain-journal-card{position:relative;overflow:hidden;border-radius:14px;padding:18px 18px 17px;border-color:rgba(34,211,238,.16);background:linear-gradient(180deg,rgba(13,23,40,.90),rgba(5,10,19,.72));box-shadow:0 12px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.045);}
 #copilot-block .stats-brain-journal-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#22d3ee;opacity:.62;}
@@ -24800,7 +24804,11 @@ function updateCoPilotBlock(data){
     const brainJournalUpdateManagerExecutions = (day, manager = {}, activeRecord = null) => {
       const rec = brainJournalManagerExecutionRecord(manager, activeRecord);
       const rows = brainJournalLoadManagerExecutions(day);
-      if (rec) rows.push(rec);
+      if (rec) {
+        const existingIndex = rows.findIndex(r => r.id === rec.id);
+        if (existingIndex >= 0) rows[existingIndex] = { ...rows[existingIndex], ...rec };
+        else rows.push(rec);
+      }
       brainJournalSaveManagerExecutions(day, rows);
       return rows.slice(-700);
     };
@@ -25256,8 +25264,9 @@ function updateCoPilotBlock(data){
       window.aaronResetBrainDailyJournal = () => {
         const report = window.__AARON_STATS_BRAIN_JOURNAL__ || summary;
         if (!report?.day) return;
-        if (!confirm(`Resetar o journal local do dia ${report.day}?`)) return;
+        if (!confirm(`Resetar o journal local e o log do ATM do dia ${report.day}?`)) return;
         try { localStorage.removeItem(brainJournalStoreKey(report.day)); } catch (_e) {}
+        try { localStorage.removeItem(brainJournalManagerStoreKey(report.day)); } catch (_e) {}
         if (typeof loadPanel === "function") loadPanel(true);
       };
     };
@@ -25362,7 +25371,7 @@ function updateCoPilotBlock(data){
           <div class="stats-brain-day-pnl-title">
             <span>Placar do dia</span>
             <strong>P/L total visível</strong>
-            <small>Realizado, aberto e total usando o capital base. O trade atual continua no manager.</small>
+            <small>Realizado, aberto e total usando o capital base. Reseta automaticamente quando vira o dia.</small>
           </div>
           <label class="stats-brain-capital-box">
             <span>Capital base</span>
@@ -25374,6 +25383,11 @@ function updateCoPilotBlock(data){
           ${pnlCard("total", "Total")}
           ${pnlCard("best", "Melhor")}
           ${pnlCard("worst", "Pior")}
+          <div class="stats-brain-day-reset">
+            <span>Dia</span>
+            <strong>${escapeHtml(summary?.day || brainJournalDateKey(brainJournalTimestamp()))}</strong>
+            <button type="button" onclick="window.aaronResetBrainDailyJournal && window.aaronResetBrainDailyJournal()">Reset Day</button>
+          </div>
         </div>
       `;
     };
