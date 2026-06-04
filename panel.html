@@ -24737,6 +24737,73 @@ function updateCoPilotBlock(data){
         manager_invalid: invalid,
       };
     };
+    const brainJournalManagerStoreKey = (day) => `${brainJournalStoreKey(day)}:atm`;
+    const brainJournalLoadManagerExecutions = (day) => {
+      try {
+        const raw = localStorage.getItem(brainJournalManagerStoreKey(day));
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_e) {
+        return [];
+      }
+    };
+    const brainJournalSaveManagerExecutions = (day, rows = []) => {
+      try {
+        localStorage.setItem(brainJournalManagerStoreKey(day), JSON.stringify((rows || []).slice(-700)));
+      } catch (_e) {}
+    };
+    const brainJournalManagerExecutionRecord = (manager = {}, activeRecord = null) => {
+      if (!isBrainObj(manager) && !isBrainObj(activeRecord)) return null;
+      const ts = brainJournalTimestamp();
+      const symbol = fmtBrainText(manager.manager_active_symbol || manager.symbol || activeRecord?.symbol, "").toUpperCase();
+      const side = normBrainSide(manager.manager_side || manager.side || activeRecord?.side);
+      const status = fmtBrainText(manager.manager_status || activeRecord?.outcome || "SCANNING", "SCANNING").toUpperCase();
+      const pnlNow = numBrain(manager.manager_pnl_now);
+      const current = numBrain(brainFirst(manager.manager_current, activeRecord?.current_last));
+      const entry = numBrain(brainFirst(manager.manager_entry, activeRecord?.entry));
+      let result = "WAIT";
+      if (pnlNow !== null && pnlNow > 0) result = "POSITIVE";
+      else if (pnlNow !== null && pnlNow < 0) result = "NEGATIVE";
+      else if (/WIN|T1_HIT|T2_HIT|T3_HIT/.test(status)) result = "POSITIVE";
+      else if (/LOSS|STOP|INVALID|CANCEL/.test(status)) result = "NEGATIVE";
+      else if (!symbol || side === "WAIT" || /NO_TRADE|SCANNING|WAIT/.test(status)) result = "WAIT";
+      return {
+        id: `ATM|${String(ts)}|${symbol || "NONE"}|${side || "WAIT"}|${status}`,
+        day: brainJournalDateKey(ts),
+        time: brainJournalClock(ts),
+        timestamp: String(ts),
+        bucket: brainJournalBucket(ts),
+        symbol: symbol || "—",
+        side: side || "WAIT",
+        status,
+        result,
+        purpose: fmtBrainText(manager.manager_purpose, "—"),
+        decision: fmtBrainText(manager.manager_decision, "—"),
+        next_action: fmtBrainText(manager.manager_next_action, "—"),
+        entry,
+        current,
+        pnl_now: pnlNow,
+        pnl_pct: numBrain(manager.manager_pnl_pct),
+        shares: numBrain(manager.manager_shares),
+        t1: numBrain(activeRecord?.t1),
+        t2: numBrain(activeRecord?.t2),
+        t3: numBrain(activeRecord?.t3),
+        respiro: numBrain(activeRecord?.respiro),
+        reversao: numBrain(activeRecord?.reversao),
+        stop: numBrain(activeRecord?.stop),
+        hit_t1: manager.manager_hit_t1 === true || activeRecord?.hit_t1 === true,
+        hit_t2: manager.manager_hit_t2 === true || activeRecord?.hit_t2 === true,
+        hit_t3: manager.manager_hit_t3 === true || activeRecord?.hit_t3 === true,
+        invalid: manager.manager_invalid === true || activeRecord?.hit_stop === true || activeRecord?.hit_reversao === true,
+      };
+    };
+    const brainJournalUpdateManagerExecutions = (day, manager = {}, activeRecord = null) => {
+      const rec = brainJournalManagerExecutionRecord(manager, activeRecord);
+      const rows = brainJournalLoadManagerExecutions(day);
+      if (rec) rows.push(rec);
+      brainJournalSaveManagerExecutions(day, rows);
+      return rows.slice(-700);
+    };
     const brainActiveTradePnlRecord = (activeTrade = null, row = {}) => {
       const trade = isBrainObj(activeTrade) ? activeTrade : {};
       const d = row?.__detail || {};
@@ -24941,7 +25008,8 @@ function updateCoPilotBlock(data){
       const levelSummary = brainJournalLevelSummary(last50);
       const levelSummaryDay = brainJournalLevelSummary(tradeSignals);
       const pnl = brainJournalPnlSummary(records);
-      return { day, records, tradeSignals, last50, wins, losses, open, obs, symbols, buckets, bestSymbol, worstSymbol, bestBucket, levelSummary, levelSummaryDay, pnl };
+      const managerExecutions = brainJournalLoadManagerExecutions(day);
+      return { day, records, tradeSignals, last50, wins, losses, open, obs, symbols, buckets, bestSymbol, worstSymbol, bestBucket, levelSummary, levelSummaryDay, pnl, managerExecutions };
     };
     const brainJournalUpdate = (ranking = []) => {
       const ts = brainJournalTimestamp();
@@ -24975,7 +25043,30 @@ function updateCoPilotBlock(data){
       const pnl = summary?.pnl || brainJournalPnlSummary(summary?.records || [], summary?.activePnlRecord || null);
       const pnlFields = brainJournalPnlDomData(pnl);
       const manager = summary?.managerSnapshot || summary?.activePnlRecord || {};
+      const managerRows = (summary?.managerExecutions || []).slice(-260).reverse();
       const line = (cells, head = false) => `<tr>${cells.map(c => head ? `<th>${escapeHtml(c)}</th>` : `<td>${escapeHtml(c)}</td>`).join("")}</tr>`;
+      const managerLine = (r) => {
+        const cls = r.result === "POSITIVE" ? "is-profit" : r.result === "NEGATIVE" ? "is-loss" : "is-flat";
+        const pnlLabel = r.pnl_now === null || r.pnl_now === undefined ? "—" : brainJournalPnlMoney(r.pnl_now);
+        const pctLabel = r.pnl_pct === null || r.pnl_pct === undefined ? "—" : `${Number(r.pnl_pct) >= 0 ? "+" : ""}${Number(r.pnl_pct).toFixed(2)}%`;
+        return `<tr class="atm-row ${cls}">${[
+          r.time,
+          r.symbol,
+          r.side,
+          r.status,
+          r.result,
+          pnlLabel,
+          pctLabel,
+          brainJournalMoney(r.entry),
+          brainJournalMoney(r.current),
+          brainJournalMoney(r.t1),
+          brainJournalMoney(r.t2),
+          brainJournalMoney(r.t3),
+          brainJournalMoney(r.stop),
+          r.decision,
+          r.next_action,
+        ].map(c => `<td>${escapeHtml(c)}</td>`).join("")}</tr>`;
+      };
       return `<!doctype html><html><head><meta charset="utf-8"><title>AARON Brain Daily Report</title><style>
         body{font-family:Arial,sans-serif;background:#08111f;color:#e5edf7;margin:28px;}
         h1{margin:0 0 6px;font-size:24px;} h2{margin:24px 0 10px;font-size:17px;}
@@ -24983,6 +25074,9 @@ function updateCoPilotBlock(data){
         .card{border:1px solid #26364e;border-radius:10px;padding:12px;background:#0b1423;} .card span{display:block;color:#8fa0b8;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.card b{display:block;margin-top:6px;font-size:22px;color:#14f1a8}
         .card.is-loss b{color:#ff6b83}.card.is-flat b{color:#e5edf7}.card small{display:block;margin-top:5px;color:#8fa0b8;font-size:11px;}
         table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px;} th,td{border:1px solid #26364e;padding:7px;text-align:left;} th{background:#101b2c;color:#8fa0b8;text-transform:uppercase;font-size:10px;} .loss{color:#ff6b83}.win{color:#14f1a8}.open{color:#f4b83f}
+        .atm-row.is-profit td{background:rgba(20,241,168,.07);color:#cffff0}.atm-row.is-profit td:nth-child(6){color:#14f1a8;font-weight:700}
+        .atm-row.is-loss td{background:rgba(255,107,131,.08);color:#ffd2da}.atm-row.is-loss td:nth-child(6){color:#ff6b83;font-weight:700}
+        .atm-row.is-flat td{background:rgba(143,160,184,.04);color:#dce7f5}
         @media print{body{background:#fff;color:#111}.card,th,td{border-color:#ccc}.card{background:#fff}}
       </style></head><body>
         <h1>AARON Stats Brain Daily Report</h1>
@@ -25002,6 +25096,11 @@ function updateCoPilotBlock(data){
           <div class="card"><span>Propósito</span><b>${escapeHtml(manager.manager_purpose || "—")}</b><small>${escapeHtml(manager.manager_decision || "—")}</small></div>
         </div>
         <div class="card"><span>Próxima ação do manager</span><b>${escapeHtml(manager.manager_next_action || "—")}</b><small>Snapshot salvo no momento do download do relatório</small></div>
+        <h2>Execuções do Active Trade Manager</h2>
+        <div class="muted">Cada linha abaixo é um ciclo/decisão que o ATM tomou enquanto o painel estava aberto. Verde = positivo; vermelho = negativo.</div>
+        <table>${line(["Hora","Symbol","Side","Status","Resultado","P/L","%","Entry","Atual","T1","T2","T3","Stop","Decisão","OBS"], true)}
+          ${managerRows.length ? managerRows.map(managerLine).join("") : line(["—","—","—","—","Sem execuções ATM salvas ainda","—","—","—","—","—","—","—","—","—","Abra o painel e deixe o ATM rodar para formar o diário."])}
+        </table>
         <div class="grid">
           <div class="card"><span>Ultimos 50</span><b>${escapeHtml(`${summary?.wins || 0}W / ${summary?.losses || 0}L`)}</b></div>
           <div class="card"><span>Melhor simbolo</span><b>${escapeHtml(summary?.bestSymbol ? `${summary.bestSymbol.key} ${brainJournalRateLabel(summary.bestSymbol)}` : "—")}</b></div>
@@ -25031,7 +25130,8 @@ function updateCoPilotBlock(data){
         : (report?.records || []);
       const capital = brainGetCapital();
       const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop","pnl_exit_label","pnl_exit_price","pnl_shares","pnl_estimated","manager_mode","manager_status","manager_purpose","manager_decision","manager_next_action","manager_active_symbol","manager_side","manager_entry","manager_current","manager_pnl_now","manager_pnl_pct","manager_shares","manager_hit_t1","manager_hit_t2","manager_hit_t3","manager_invalid"];
-      return [headers.join(",")].concat(rows.map(r => {
+      const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+      const tradeCsv = [headers.join(",")].concat(rows.map(r => {
         const pnl = brainJournalRecordPnl(r, capital);
         const extra = {
           pnl_exit_label: pnl?.exit_label,
@@ -25039,8 +25139,14 @@ function updateCoPilotBlock(data){
           pnl_shares: pnl?.shares,
           pnl_estimated: pnl?.pnl,
         };
-        return headers.map(h => `"${String(extra[h] ?? r[h] ?? "").replace(/"/g, '""')}"`).join(",");
+        return headers.map(h => csvCell(extra[h] ?? r[h] ?? "")).join(",");
       })).join("\n");
+      const atmRows = report?.managerExecutions || [];
+      const atmHeaders = ["day","time","timestamp","bucket","symbol","side","status","result","pnl_now","pnl_pct","shares","entry","current","t1","t2","t3","respiro","reversao","stop","hit_t1","hit_t2","hit_t3","invalid","purpose","decision","next_action"];
+      const atmCsv = atmRows.length
+        ? ["", "ATM_EXECUTIONS", atmHeaders.join(",")].concat(atmRows.map(r => atmHeaders.map(h => csvCell(r[h])).join(","))).join("\n")
+        : "";
+      return `${tradeCsv}${atmCsv ? `\n${atmCsv}` : ""}`;
     };
     const brainJournalRemoteSummary = (report) => {
       const manager = report?.managerSnapshot || report?.activePnlRecord || {};
@@ -25856,6 +25962,11 @@ function updateCoPilotBlock(data){
       const activeTradeForPnl = readout?.activeTrade || pickBrainActiveTrade(stats);
       const activePnlRecord = brainActiveTradePnlRecord(activeTradeForPnl, selected);
       const managerSnapshot = brainManagerReportSnapshot(activeTradeForPnl, selected, activePnlRecord);
+      const managerExecutions = brainJournalUpdateManagerExecutions(
+        dailyJournal.day || brainJournalDateKey(brainJournalTimestamp()),
+        managerSnapshot,
+        activePnlRecord
+      );
       if (activePnlRecord && managerSnapshot) Object.assign(activePnlRecord, managerSnapshot);
       if (activePnlRecord && /WIN|LOSS/.test(String(activePnlRecord.outcome || "").toUpperCase())) {
         const records = Array.isArray(dailyJournal.records) ? dailyJournal.records.slice() : [];
@@ -25873,6 +25984,7 @@ function updateCoPilotBlock(data){
       }
       dailyJournal.activePnlRecord = activePnlRecord;
       dailyJournal.managerSnapshot = managerSnapshot;
+      dailyJournal.managerExecutions = managerExecutions;
       dailyJournal.pnl = brainJournalPnlSummary(dailyJournal.records, activePnlRecord);
       const dayPnlSlot = document.getElementById("brain-day-pnl-above-copilot");
       if (dayPnlSlot) {
