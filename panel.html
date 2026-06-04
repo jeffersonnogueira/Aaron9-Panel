@@ -24717,6 +24717,9 @@ function updateCoPilotBlock(data){
     });
     const brainJournalExitLevel = (record = {}) => {
       const outcome = String(record?.outcome || "").toUpperCase();
+      if (record.manual_cut === true && numBrain(record.current_last) !== null) {
+        return { key: "manual_cut", label: "MANUAL CUT", level: record.current_last };
+      }
       if (outcome === "WIN") {
         if (record.hit_t2 && numBrain(record.t2) !== null) return { key: "t2", label: "T2", level: record.t2 };
         if (record.hit_t1 && numBrain(record.t1) !== null) return { key: "t1", label: "T1", level: record.t1 };
@@ -26238,6 +26241,86 @@ function updateCoPilotBlock(data){
       const ok = await brainManualCopyPayload(payload);
       alert(ok ? "Payload manual copiado." : brainManualPayloadText(payload));
     };
+    const brainManualCutRecord = (payload) => {
+      const side = normBrainSide(payload?.side);
+      const entry = numBrain(payload?.entry);
+      const current = numBrain(payload?.price_now ?? payload?.current);
+      const symbol = fmtBrainText(payload?.symbol, "").toUpperCase();
+      if (!symbol || !["BUY", "SELL"].includes(side) || entry === null || current === null) return null;
+      const nowIso = new Date().toISOString();
+      const day = brainJournalDateKey(nowIso);
+      const pnl = brainPnlNowValue(side, entry, current, brainPnlShares(brainGetCapital(), entry));
+      const outcome = (numBrain(pnl) || 0) >= 0 ? "WIN" : "LOSS";
+      return {
+        id: `MANUAL_CUT|${day}|${symbol}|${side}|${entry.toFixed(4)}|${Date.now()}`,
+        day,
+        first_seen: nowIso,
+        last_seen: nowIso,
+        time: brainJournalClock(nowIso),
+        bucket: brainJournalBucket(nowIso),
+        symbol,
+        rank: numBrain(payload?.brain?.rank),
+        side,
+        actionable: true,
+        accepted: true,
+        outcome,
+        manual_cut: true,
+        manual_reason: "ATM cortado manualmente no painel",
+        entry,
+        current_start: entry,
+        current_last: current,
+        high_seen: Math.max(entry, current),
+        low_seen: Math.min(entry, current),
+        t1: numBrain(payload?.t1),
+        t2: numBrain(payload?.t2),
+        t3: numBrain(payload?.t3),
+        respiro: numBrain(payload?.respiro),
+        reversao: numBrain(payload?.reversao),
+        stop: numBrain(payload?.stop),
+        support: numBrain(payload?.support),
+        resist: numBrain(payload?.resistance),
+        hit_t1: false,
+        hit_t2: false,
+        hit_t3: false,
+        hit_respiro: false,
+        hit_reversao: false,
+        hit_stop: false,
+        active_trade: payload?.atm?.workflow_mode === true,
+        shadow_trade: payload?.atm?.workflow_mode !== true,
+        manager_mode: "MANUAL_CUT",
+        manager_status: "MANUAL_CUT",
+        manager_purpose: "Cortar ATM e realizar P/L visivel",
+        manager_decision: "CORTADO MANUAL",
+        manager_next_action: "Resultado realizado no placar do dia.",
+        manager_active_symbol: symbol,
+        manager_side: side,
+        manager_entry: entry,
+        manager_current: current,
+        manager_pnl_now: pnl,
+        manager_pnl_pct: brainPnlNowPct(side, entry, current),
+        manager_shares: brainPnlShares(brainGetCapital(), entry),
+      };
+    };
+    const brainManualSaveCut = (payload) => {
+      const rec = brainManualCutRecord(payload);
+      if (!rec) throw new Error("Sem dados suficientes para cortar ATM.");
+      const records = brainJournalLoad(rec.day);
+      records.push(rec);
+      const closedRecords = records
+        .sort((a, b) => String(a.first_seen || "").localeCompare(String(b.first_seen || "")))
+        .slice(-900);
+      brainJournalSave(rec.day, closedRecords);
+      const summary = brainJournalSummarize(closedRecords, rec.day);
+      summary.activePnlRecord = null;
+      summary.pnl = brainJournalPnlSummary(summary.records || [], null);
+      window.__AARON_STATS_BRAIN_JOURNAL__ = summary;
+      const dayPnlSlot = document.getElementById("brain-day-pnl-above-copilot");
+      if (dayPnlSlot) {
+        dayPnlSlot.innerHTML = renderBrainDailyPnlStrip(summary);
+        dayPnlSlot.style.display = "";
+      }
+      return { rec, summary };
+    };
     window.aaronBrainManualExecute = async (id) => {
       const payload = brainManualExecuteStore()[id];
       if (!payload) {
@@ -26246,40 +26329,35 @@ function updateCoPilotBlock(data){
       }
       const guard = payload.guardrails || {};
       if (!guard.allowed) {
-        alert(`Execução bloqueada:\n${(guard.hard_blocks || ["guardrail bloqueou"]).join("\n")}`);
+        alert(`Corte bloqueado:\n${(guard.hard_blocks || ["guardrail bloqueou"]).join("\n")}`);
         await brainManualCopyPayload(payload);
         return;
       }
       const msg = [
-        `${payload.intent === "EXECUTE_NOW" ? "Executar manual agora" : "Pedir validação manual"}?`,
+        `Cortar ATM agora?`,
         `${payload.symbol} ${payload.side} · qty ${payload.qty || "—"}`,
-        `Entry ${fmtBrainPrice(payload.entry) || "—"} · Stop ${fmtBrainPrice(payload.stop) || "—"} · T2 ${fmtBrainPrice(payload.t2) || "—"}`,
+        `Entry ${fmtBrainPrice(payload.entry) || "—"} · Agora ${fmtBrainPrice(payload.price_now) || "—"}`,
+        `O P/L vai virar REALIZADO no placar de cima.`,
         ...(guard.warnings || []).map(w => `Aviso: ${w}`),
       ].join("\n");
       if (!confirm(msg)) return;
       const request = {
         ...payload,
-        confirmed_at: new Date().toISOString(),
-        endpoint: BRAIN_MANUAL_EXECUTE_API_URL,
+        intent: "MANUAL_CUT_ATM",
+        confirmed_at: new Date().toISOString()
       };
-      brainManualLog(request, "REQUESTED");
       try {
-        const res = await fetch(BRAIN_MANUAL_EXECUTE_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(request),
+        const saved = brainManualSaveCut(request);
+        brainManualLog(request, "MANUAL_CUT_SAVED", {
+          outcome: saved.rec.outcome,
+          pnl: saved.rec.manager_pnl_now,
         });
-        const text = await res.text().catch(() => "");
-        let body = null;
-        try { body = text ? JSON.parse(text) : null; } catch (_e) { body = text; }
-        if (!res.ok) throw new Error(`HTTP ${res.status}${text ? ` ${text.slice(0, 220)}` : ""}`);
-        brainManualLog(request, "SENT", body);
-        alert(`Pedido manual enviado para validação.\n${request.symbol} ${request.side} · qty ${request.qty || "—"}`);
+        alert(`ATM cortado e P/L realizado.\n${saved.rec.symbol} ${saved.rec.side} · ${brainJournalPnlMoney(saved.rec.manager_pnl_now)} (${saved.rec.outcome})`);
         if (typeof loadPanel === "function") loadPanel(true);
       } catch (err) {
-        brainManualLog(request, "FAILED", String(err?.message || err));
+        brainManualLog(request, "MANUAL_CUT_FAILED", String(err?.message || err));
         await brainManualCopyPayload(request);
-        alert(`Não consegui enviar para o endpoint manual ainda.\nCopiei o payload para você testar no n8n.\n\n${String(err?.message || err).slice(0, 260)}`);
+        alert(`Não consegui cortar o ATM.\nCopiei o payload para conferir.\n\n${String(err?.message || err).slice(0, 260)}`);
       }
     };
     const renderBrainManualExecute = (payload) => {
@@ -26290,20 +26368,20 @@ function updateCoPilotBlock(data){
       const hard = Array.isArray(g.hard_blocks) ? g.hard_blocks : [];
       const warnings = Array.isArray(g.warnings) ? g.warnings : [];
       const cls = !allowed ? "is-blocked" : ready ? "is-ready" : "is-warn";
-      const title = !allowed ? "Execução bloqueada" : ready ? "Executar manual" : "Pedir execução";
+      const title = !allowed ? "Corte bloqueado" : ready ? "Cortar ATM agora" : "Cortar com aviso";
       const subtitle = !allowed
         ? (hard[0] || "Guardrail bloqueou a ordem.")
         : ready
-          ? "ATM verde. O n8n ainda valida de novo antes da Alpaca."
-          : (warnings[0] || "Pedido vai para validação; não pula os guardrails.");
-      const btnText = ready ? "Executar manual" : "Enviar pedido";
+          ? "Fecha o trade visual no preço atual e realiza o P/L no placar de cima."
+          : (warnings[0] || "Corta mesmo assim e registra o P/L realizado.");
+      const btnText = ready ? "Cortar ATM" : "Cortar";
       return `
         <div class="stats-brain-manual-exec ${cls}">
           <div class="stats-brain-manual-text">
-            <span>Manual Execute</span>
+            <span>Corte Manual ATM</span>
             <strong>${escapeHtml(title)}</strong>
             <p>${escapeHtml(subtitle)}</p>
-            <em class="stats-brain-manual-status">${escapeHtml(payload.symbol)} ${escapeHtml(payload.side)} · ${escapeHtml(payload.intent)} · qty ${escapeHtml(payload.qty || "—")}</em>
+            <em class="stats-brain-manual-status">${escapeHtml(payload.symbol)} ${escapeHtml(payload.side)} · agora ${escapeHtml(fmtBrainPrice(payload.price_now) || "—")} · qty ${escapeHtml(payload.qty || "—")}</em>
           </div>
           <div class="stats-brain-manual-actions">
             <button type="button" class="stats-brain-manual-btn ${ready ? "is-ready" : ""}" ${allowed ? "" : "disabled"} onclick="window.aaronBrainManualExecute && window.aaronBrainManualExecute('${escapeHtml(id)}')">${escapeHtml(btnText)}</button>
@@ -26465,17 +26543,17 @@ function updateCoPilotBlock(data){
       const manualQty = brainPnlShares(brainGetCapital(), entryDisplayRaw);
       if (!manualSymbol || manualSymbol === "—") manualHardBlocks.push("Sem símbolo válido.");
       if (!["BUY", "SELL"].includes(side)) manualHardBlocks.push("Sem direção BUY/SELL válida.");
-      if (!accepted) manualHardBlocks.push("ATM/Brain não aceitou trade operacional.");
-      if (dayGoalHit) manualHardBlocks.push("Meta do dia batida.");
-      if (missed) manualHardBlocks.push("Entrada marcada como atrasada/perdida.");
-      if (stopHit || reversalHit) manualHardBlocks.push("Stop/reversão já foi tocado.");
-      if (patternAlignment === "CONFLICT") manualHardBlocks.push("Pattern Context em conflito com o lado do ATM.");
       if (numBrain(entryDisplayRaw) === null) manualHardBlocks.push("Entrada sem preço válido.");
-      if (numBrain(stopRaw) === null) manualHardBlocks.push("Stop sem preço válido.");
-      if (numBrain(t1Raw) === null && numBrain(t2Raw) === null) manualHardBlocks.push("Sem T1/T2 para alvo principal.");
+      if (numBrain(currentRaw) === null) manualHardBlocks.push("Preço atual sem valor válido.");
+      if (!accepted) manualWarnings.push("ATM/Brain não está aceitando trade novo; corte será registrado mesmo assim.");
+      if (dayGoalHit) manualWarnings.push("Meta do dia já batida; corte apenas realiza o P/L.");
+      if (missed) manualWarnings.push("Entrada marcada como atrasada/perdida.");
+      if (stopHit || reversalHit) manualWarnings.push("Stop/reversão já foi tocado; corte registra o resultado atual.");
+      if (patternAlignment === "CONFLICT") manualWarnings.push("Pattern Context está em conflito.");
+      if (numBrain(stopRaw) === null) manualWarnings.push("Stop sem preço válido.");
+      if (numBrain(t1Raw) === null && numBrain(t2Raw) === null) manualWarnings.push("Sem T1/T2 para referência.");
       if (!manualQty || manualQty <= 0) manualWarnings.push("Capital base não gerou quantidade; n8n deve calcular ou recusar.");
-      if (!radarAllowsEntry) manualWarnings.push("Entry Radar ainda não liberou gatilho perfeito; n8n deve validar reteste/preço.");
-      if (workflowMode && /ACTIVE|T1_HIT|T2_HIT|T3_HIT/.test(workflowStatus)) manualWarnings.push("Já existe active_trade; pedido manual deve virar manejo/validação, não nova entrada.");
+      if (!radarAllowsEntry) manualWarnings.push("Entry Radar não está em gatilho perfeito; corte continua permitido.");
       const manualReady = manualHardBlocks.length === 0 && manualWarnings.length === 0;
       const manualPayload = {
         type: "ATM_MANUAL_EXECUTION_REQUEST",
@@ -26483,7 +26561,7 @@ function updateCoPilotBlock(data){
         source: "aaron9_panel",
         environment: "paper",
         created_at: new Date().toISOString(),
-        intent: manualReady ? "EXECUTE_NOW" : "REQUEST_VALIDATION",
+        intent: "MANUAL_CUT_ATM",
         symbol: manualSymbol,
         timeframe: activeTrade?.timeframe || row?.timeframe || ctx.timeframe || "1m",
         side,
