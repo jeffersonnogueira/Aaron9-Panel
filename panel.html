@@ -5711,6 +5711,26 @@
 #copilot-block .stats-brain-thermo.is-main .stats-brain-thermo-k{font-size:10px;}
 #copilot-block .stats-brain-thermo.is-main .stats-brain-thermo-v{font-size:18px;}
 #copilot-block .stats-brain-thermo.is-main .stats-brain-thermo-seg{height:10px;}
+#copilot-block .stats-brain-speed{margin-top:11px;border:1px solid rgba(59,130,246,.26);border-radius:9px;background:linear-gradient(135deg,rgba(59,130,246,.11),rgba(139,92,246,.075),rgba(5,10,19,.78));padding:9px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-speed-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-speed-k{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#8db7ff;}
+#copilot-block .stats-brain-speed-v{font-size:16px;line-height:1;font-weight:950;color:#38bdf8;text-shadow:0 0 13px rgba(56,189,248,.32);}
+#copilot-block .stats-brain-speed-rail{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:8px;}
+#copilot-block .stats-brain-speed-seg{height:9px;border-radius:999px;background:rgba(51,65,85,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+#copilot-block .stats-brain-speed-seg.is-on{background:linear-gradient(90deg,#2563eb,#22d3ee);box-shadow:0 0 12px rgba(34,211,238,.30);}
+#copilot-block .stats-brain-speed.is-hot .stats-brain-speed-seg.is-on{background:linear-gradient(90deg,#06b6d4,#fde047);box-shadow:0 0 13px rgba(253,224,71,.32);}
+#copilot-block .stats-brain-speed.is-danger .stats-brain-speed-seg.is-on{background:linear-gradient(90deg,#fb7185,#f97316);box-shadow:0 0 13px rgba(251,113,133,.34);}
+#copilot-block .stats-brain-speed.is-slow .stats-brain-speed-seg.is-on{background:linear-gradient(90deg,#7c3aed,#38bdf8);box-shadow:0 0 10px rgba(124,58,237,.28);}
+#copilot-block .stats-brain-speed.is-unknown{border-color:rgba(148,163,184,.15);background:rgba(15,23,42,.44);}
+#copilot-block .stats-brain-speed.is-unknown .stats-brain-speed-v{color:#94a3b8;text-shadow:none;}
+#copilot-block .stats-brain-speed-labels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:4px;font-size:8px;font-weight:950;color:#708197;text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+#copilot-block .stats-brain-speed-sub{margin-top:6px;font-size:10px;line-height:1.25;font-weight:900;color:#9fb2c9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-speed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;}
+#copilot-block .stats-brain-speed-grid div{min-width:0;border:1px solid rgba(148,163,184,.12);border-radius:7px;background:rgba(2,6,13,.44);padding:6px 7px;}
+#copilot-block .stats-brain-speed-grid span{display:block;font-size:8px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#718096;}
+#copilot-block .stats-brain-speed-grid strong{display:block;margin-top:4px;font-size:12px;line-height:1;font-weight:950;color:#38bdf8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-speed-grid strong.is-warn{color:#fde047;}
+#copilot-block .stats-brain-speed-grid strong.is-danger{color:#fb7185;}
 #copilot-block .stats-brain-range{margin-top:14px;}
 #copilot-block .stats-brain-range-labels{display:flex;justify-content:space-between;font-size:9px;font-weight:950;letter-spacing:.11em;text-transform:uppercase;color:#65758a;}
 #copilot-block .stats-brain-range-track{position:relative;height:8px;margin-top:6px;border-radius:999px;background:linear-gradient(90deg,rgba(20,241,168,.35),rgba(20,216,226,.18),rgba(255,72,105,.38));overflow:hidden;}
@@ -24236,6 +24256,26 @@ function updateCoPilotBlock(data){
         resist: brainFirst(panel?.resistance, pivotPrem?.pivot1?.zone_high, panel?.pivot1_zone_high, panel?.pivot_next_zone_high, pivotPrem?.pivot2?.zone_high),
         ema20: brainFirst(currentState?.ema20, pivotContext?.ema20, panel?.live_ema_fast),
         ema50: brainFirst(currentState?.ema50, pivotContext?.ema50, panel?.live_ema_slow),
+        atr14: brainFirst(
+          canonical?.atr14,
+          entryPrem?.atr14,
+          pivotPrem?.atr14,
+          currentState?.atr14,
+          currentState?.atr_14,
+          panel?.hud?.atr_14,
+          panel?.hud?.atr14,
+          panel?.atr14,
+          panel?.atr_14,
+          panel?.atr?.value,
+          panel?.atr_info?.value,
+          panel?.atrInfo?.value,
+          panel?.metrics?.atr14,
+          panel?.indicators?.atr14,
+          digest?.atr14,
+          digest?.atr_14,
+          digest?.hud?.atr_14,
+          digest?.macro_pack?.atr14
+        ),
         status: fmtBrainText(entryPrem?.status || canonical?.entrada_status_effective || canonical?.entrada_status || panel?.entry_premonition_status, ""),
         entryMode: fmtBrainText(entryPrem?.entry_mode || entryPrem?.best_entry_style || "", ""),
         conflict: fmtBrainText(canonical?.conflict_state || panel?.conflict_state || "", ""),
@@ -24280,6 +24320,152 @@ function updateCoPilotBlock(data){
     const renderBrainLevel = (row, label, key, cls) => {
       const val = fmtBrainPrice(brainLevelValue(row, key));
       return val ? `<span class="stats-brain-level ${cls}"><b>${escapeHtml(label)}</b>${escapeHtml(val)}</span>` : "";
+    };
+    const brainAtrValue = (row) => {
+      const d = row?.__detail || {};
+      const atrBlock = panel?.atr || panel?.atr_info || panel?.atrInfo || {};
+      return brainFirst(
+        row?.atr14,
+        row?.atr_14,
+        row?.atr,
+        row?.volatility_atr,
+        row?.vwap_digest_v1?.atr14,
+        row?.vwap_digest_v1?.atr,
+        row?.claude_focus_pack_v1?.vwap?.atr14,
+        row?.claude_focus_pack_v1?.vwap?.atr,
+        d.atr14,
+        d.atr,
+        panel?.hud?.atr_14,
+        panel?.hud?.atr14,
+        panel?.atr14,
+        panel?.atr_14,
+        panel?.metrics?.atr14,
+        panel?.indicators?.atr14,
+        panel?.indicators?.ATR14,
+        atrBlock?.value,
+        atrBlock?.atr14,
+        digest?.macro_pack?.atr14,
+        digest?.hud?.atr_14,
+        digest?.atr14,
+        digest?.atr_14,
+        digest?.metrics?.atr14,
+        digest?.indicators?.atr14,
+        data?.atr14,
+        data?.atr_14,
+        ui?.atr14,
+        ui?.atr_14,
+        document.getElementById("sb-atr-value")?.value,
+        document.getElementById("atr-value-input")?.value
+      );
+    };
+    const fmtBrainAtr = (v) => {
+      const n = numBrain(v);
+      return n === null ? "—" : `${n.toFixed(2)} ATR`;
+    };
+    const fmtBrainAtrValue = (v) => {
+      const n = numBrain(v);
+      return n === null ? "—" : n.toFixed(2);
+    };
+    const brainSpeedThermo = (row, sideValue) => {
+      const d = row?.__detail || {};
+      const atr = numBrain(brainAtrValue(row));
+      const current = numBrain(brainFirst(row?.current, row?.current_price, row?.price_now, row?.last_price, d.current, brainLevelValue(row, "entry")));
+      const entry = numBrain(brainLevelValue(row, "entry"));
+      const t1 = numBrain(brainLevelValue(row, "t1"));
+      const t2 = numBrain(brainLevelValue(row, "t2"));
+      const stop = numBrain(brainLevelValue(row, "stop"));
+      const side = normBrainSide(sideValue || row?.side);
+      const distanceAtr = (level) => {
+        const l = numBrain(level);
+        if (atr === null || atr <= 0 || current === null || l === null) return null;
+        return Math.abs(l - current) / atr;
+      };
+      const sidePays = (level) => {
+        const l = numBrain(level);
+        if (entry === null || l === null || !["BUY", "SELL"].includes(side)) return false;
+        return side === "SELL" ? l < entry : l > entry;
+      };
+      const t1Atr = sidePays(t1) ? distanceAtr(t1) : null;
+      const t2Atr = sidePays(t2) ? distanceAtr(t2) : null;
+      const stopAtr = distanceAtr(stop);
+      const targetAtrs = [t1Atr, t2Atr].filter(v => v !== null);
+      const nearestTarget = targetAtrs.length ? Math.min(...targetAtrs) : null;
+
+      if (atr === null || atr <= 0 || current === null) {
+        return {
+          level: 0,
+          cls: "is-unknown",
+          label: "SEM ATR",
+          sub: "Sem ATR/preço atual no payload para medir velocidade.",
+          atr,
+          t1Atr,
+          t2Atr,
+          stopAtr,
+        };
+      }
+
+      const stopVeryClose = stopAtr !== null && stopAtr <= 0.25;
+      const targetVeryClose = nearestTarget !== null && nearestTarget <= 0.25;
+      let level = 1;
+      let label = "DISTANTE";
+      let cls = "is-slow";
+      if (nearestTarget !== null) {
+        if (nearestTarget <= 0.25) {
+          level = 5;
+          label = "ALVO PERTO";
+          cls = "is-hot";
+        } else if (nearestTarget <= 0.55) {
+          level = 4;
+          label = "RÁPIDO";
+          cls = "is-hot";
+        } else if (nearestTarget <= 1.0) {
+          level = 3;
+          label = "NORMAL";
+          cls = "is-normal";
+        } else if (nearestTarget <= 1.6) {
+          level = 2;
+          label = "LENTO";
+          cls = "is-slow";
+        }
+      }
+      if (stopVeryClose && !targetVeryClose) {
+        level = Math.max(level, 4);
+        label = "RISCO RÁPIDO";
+        cls = "is-danger";
+      }
+      const sub = `T1 ${fmtBrainAtr(t1Atr)} · T2 ${fmtBrainAtr(t2Atr)} · stop ${fmtBrainAtr(stopAtr)}`;
+      return { level, cls, label, sub, atr, t1Atr, t2Atr, stopAtr };
+    };
+    const renderBrainSpeedThermo = (row, sideValue, rankValue) => {
+      const rank = numBrain(rankValue);
+      if (rank !== 1) return "";
+      const speed = brainSpeedThermo(row, sideValue);
+      const steps = [
+        { at: 1, label: "slow" },
+        { at: 2, label: "1.6" },
+        { at: 3, label: "1.0" },
+        { at: 4, label: ".55" },
+        { at: 5, label: ".25" },
+      ];
+      const nearestTargetAtr = Math.min(...[speed.t1Atr, speed.t2Atr].filter(v => v !== null));
+      return `
+        <div class="stats-brain-speed ${escapeHtml(speed.cls)}">
+          <div class="stats-brain-speed-head">
+            <span class="stats-brain-speed-k">Velocidade / ATR</span>
+            <strong class="stats-brain-speed-v">${escapeHtml(speed.label)}</strong>
+          </div>
+          <div class="stats-brain-speed-rail">
+            ${steps.map(step => `<span class="stats-brain-speed-seg ${speed.level >= step.at ? "is-on" : ""}"></span>`).join("")}
+          </div>
+          <div class="stats-brain-speed-labels">${steps.map(step => `<span>${escapeHtml(step.label)}</span>`).join("")}</div>
+          <div class="stats-brain-speed-sub">${escapeHtml(speed.sub)}</div>
+          <div class="stats-brain-speed-grid">
+            <div><span>ATR14</span><strong>${escapeHtml(fmtBrainAtrValue(speed.atr))}</strong></div>
+            <div><span>Alvo mais perto</span><strong class="${speed.cls === "is-danger" ? "is-warn" : ""}">${escapeHtml(fmtBrainAtr(nearestTargetAtr))}</strong></div>
+            <div><span>Stop</span><strong class="${speed.stopAtr !== null && speed.stopAtr <= 0.35 ? "is-danger" : ""}">${escapeHtml(fmtBrainAtr(speed.stopAtr))}</strong></div>
+          </div>
+        </div>
+      `;
     };
     const brainChartNormalizeCandle = (c) => {
       if (!isBrainObj(c)) return null;
@@ -24715,6 +24901,7 @@ function updateCoPilotBlock(data){
             ${wr === null ? '<strong class="stats-brain-no-wr">—</strong><span>SEM<br>WR</span>' : `<strong>${escapeHtml(fmtBrainPct(wr))}</strong><span>WIN<br>5 ANOS</span>`}
           </div>
           ${renderBrainThermo(r)}
+          ${renderBrainSpeedThermo(r, side, rank)}
           <div class="stats-brain-range">
             <div class="stats-brain-range-labels"><span>FUNDO</span><span>${escapeHtml(fmtBrainPct(rangePos))}</span><span>TOPO</span></div>
             <div class="stats-brain-range-track"><span class="stats-brain-range-dot" style="left:${escapeHtml(rangePos)}%;"></span></div>
