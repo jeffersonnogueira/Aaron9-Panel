@@ -5725,6 +5725,13 @@
 #copilot-block .stats-brain-speed.is-unknown .stats-brain-speed-v{color:#94a3b8;text-shadow:none;}
 #copilot-block .stats-brain-speed-labels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:4px;font-size:8px;font-weight:950;color:#708197;text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
 #copilot-block .stats-brain-speed-sub{margin-top:6px;font-size:10px;line-height:1.25;font-weight:900;color:#9fb2c9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-speed-read{margin-top:7px;border:1px solid rgba(59,130,246,.16);border-radius:7px;background:rgba(15,23,42,.40);padding:6px 7px;}
+#copilot-block .stats-brain-speed-read b{display:block;font-size:9px;line-height:1.15;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#8db7ff;}
+#copilot-block .stats-brain-speed-read span{display:block;margin-top:3px;font-size:10px;line-height:1.28;font-weight:900;color:#b8c7dc;}
+#copilot-block .stats-brain-speed-read small{display:block;margin-top:4px;font-size:8.5px;line-height:1.22;font-weight:850;color:#72829a;}
+#copilot-block .stats-brain-speed.is-hot .stats-brain-speed-read b{color:#fde047;}
+#copilot-block .stats-brain-speed.is-danger .stats-brain-speed-read{border-color:rgba(251,113,133,.22);background:rgba(255,72,105,.075);}
+#copilot-block .stats-brain-speed.is-danger .stats-brain-speed-read b{color:#fb7185;}
 #copilot-block .stats-brain-speed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;}
 #copilot-block .stats-brain-speed-grid div{min-width:0;border:1px solid rgba(148,163,184,.12);border-radius:7px;background:rgba(2,6,13,.44);padding:6px 7px;}
 #copilot-block .stats-brain-speed-grid span{display:block;font-size:8px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#718096;}
@@ -24436,8 +24443,40 @@ function updateCoPilotBlock(data){
       const sub = `T1 ${fmtBrainAtr(t1Atr)} · T2 ${fmtBrainAtr(t2Atr)} · stop ${fmtBrainAtr(stopAtr)}`;
       return { level, cls, label, sub, atr, t1Atr, t2Atr, stopAtr };
     };
+    const brainSpeedReadText = (speed = {}) => {
+      const label = String(speed.label || "").toUpperCase();
+      if (speed.cls === "is-danger" || label.includes("RISCO") || label.includes("PERIG")) {
+        return {
+          title: "Perigoso",
+          text: "Volatilidade alta + stop perto = risco de perda rápida.",
+        };
+      }
+      if (label.includes("RÁPID") || label.includes("RAPID") || label.includes("ALVO PERTO")) {
+        return {
+          title: "Rápido",
+          text: "Pode pagar rápido, mas stop também vem rápido.",
+        };
+      }
+      if (label.includes("LENTO") || label.includes("DISTANTE")) {
+        return {
+          title: "Lento",
+          text: "Setup bom, mas pode demorar; cuidado com ficar preso.",
+        };
+      }
+      if (label.includes("SEM ATR")) {
+        return {
+          title: "Sem ATR",
+          text: "Sem ATR suficiente para medir velocidade; usar o mapa como referência visual.",
+        };
+      }
+      return {
+        title: "Normal",
+        text: "Velocidade equilibrada; seguir gatilho, T1/T2 e stop sem perseguir.",
+      };
+    };
     const renderBrainSpeedThermo = (row, sideValue, rankValue) => {
       const speed = brainSpeedThermo(row, sideValue);
+      const read = brainSpeedReadText(speed);
       const steps = [
         { at: 1, label: "slow" },
         { at: 2, label: "1.6" },
@@ -24457,6 +24496,11 @@ function updateCoPilotBlock(data){
           </div>
           <div class="stats-brain-speed-labels">${steps.map(step => `<span>${escapeHtml(step.label)}</span>`).join("")}</div>
           <div class="stats-brain-speed-sub">${escapeHtml(speed.sub)}</div>
+          <div class="stats-brain-speed-read">
+            <b>${escapeHtml(read.title)}</b>
+            <span>${escapeHtml(read.text)}</span>
+            <small>Traços = distância em ATR até o alvo mais perto: .25 muito perto · .55 rápido · 1.0 normal · 1.6 lento · slow distante.</small>
+          </div>
           <div class="stats-brain-speed-grid">
             <div><span>ATR14</span><strong>${escapeHtml(fmtBrainAtrValue(speed.atr))}</strong></div>
             <div><span>Alvo mais perto</span><strong class="${speed.cls === "is-danger" ? "is-warn" : ""}">${escapeHtml(fmtBrainAtr(nearestTargetAtr))}</strong></div>
