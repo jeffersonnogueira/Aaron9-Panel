@@ -24544,7 +24544,7 @@ function updateCoPilotBlock(data){
       `;
     };
     const renderBrainCardPatternContext = (pattern, rank) => {
-      if (rank !== 1 || !pattern) return "";
+      if (!pattern) return "";
       const conf = pattern.confidence === null || pattern.confidence === undefined ? "—" : fmtBrainPct(pattern.confidence);
       const alignment = pattern.hasPattern ? (pattern.alignment || "WATCH") : "NO PATTERN";
       const cls = pattern.hasPattern ? (pattern.cls || "is-neutral") : "is-neutral";
@@ -24556,7 +24556,7 @@ function updateCoPilotBlock(data){
         <div class="stats-brain-card-pattern ${escapeHtml(cls)}">
           <div class="stats-brain-card-pattern-head">
             <div>
-              <span>Pattern Context #1</span>
+              <span>Pattern Context #${escapeHtml(rank)}</span>
               <strong>${escapeHtml(title)}</strong>
             </div>
             <b class="stats-brain-card-pattern-badge">${escapeHtml(alignment)}</b>
