@@ -5545,6 +5545,13 @@
 #copilot-block .stats-brain-loss-box input:focus{border-color:#f97373;box-shadow:0 0 0 2px rgba(249,115,115,.16);}
 #copilot-block .stats-brain-loss-box.is-triggered{border-color:rgba(249,115,115,.80);background:linear-gradient(180deg,rgba(249,115,115,.22),rgba(5,10,19,.82));box-shadow:0 0 28px rgba(249,115,115,.16),inset 0 1px 0 rgba(255,255,255,.06);}
 #copilot-block .stats-brain-loss-box.is-triggered .stats-brain-goal-status{color:#f97373;text-shadow:0 0 14px rgba(249,115,115,.30);}
+#copilot-block .stats-brain-atm-stop-box{border-color:rgba(244,184,63,.40);background:linear-gradient(180deg,rgba(244,184,63,.14),rgba(5,10,19,.84));}
+#copilot-block .stats-brain-atm-stop-box span{color:#f4b83f;}
+#copilot-block .stats-brain-atm-stop-box.is-stopped{border-color:rgba(255,72,105,.82);background:linear-gradient(180deg,rgba(255,72,105,.20),rgba(5,10,19,.86));box-shadow:0 0 30px rgba(255,72,105,.18),inset 0 1px 0 rgba(255,255,255,.06);}
+#copilot-block .stats-brain-atm-stop-box.is-stopped span,#copilot-block .stats-brain-atm-stop-box.is-stopped .stats-brain-goal-status{color:#ff7a90;text-shadow:0 0 14px rgba(255,72,105,.25);}
+#copilot-block .stats-brain-atm-stop-btn{display:flex;align-items:center;justify-content:center;width:100%;height:34px;margin-top:6px;border:1px solid rgba(244,184,63,.36);border-radius:7px;background:linear-gradient(180deg,rgba(244,184,63,.22),rgba(92,55,7,.35));color:#ffe8a3;font-size:12px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;}
+#copilot-block .stats-brain-atm-stop-btn:hover{border-color:rgba(244,184,63,.72);box-shadow:0 0 18px rgba(244,184,63,.14);}
+#copilot-block .stats-brain-atm-stop-btn.is-stopped{border-color:rgba(20,241,168,.42);background:linear-gradient(180deg,rgba(20,241,168,.18),rgba(4,82,61,.26));color:#7fffd8;}
 #copilot-block .stats-brain-goal-box span{display:block;font-size:9px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#14f1a8;}
 #copilot-block .stats-brain-goal-input{display:block;width:100%;height:34px;margin-top:6px;border:1px solid rgba(20,241,168,.28);border-radius:7px;background:rgba(2,6,13,.86);color:#f8fafc;font-size:18px;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:0 9px;outline:none;}
 #copilot-block .stats-brain-goal-input:focus{border-color:#14f1a8;box-shadow:0 0 0 2px rgba(20,241,168,.16);}
@@ -23647,9 +23654,35 @@ function updateCoPilotBlock(data){
     const BRAIN_CAPITAL_KEY = "AARON_STATS_BRAIN_CAPITAL_USD";
     const BRAIN_DAILY_GOAL_KEY = "AARON_STATS_BRAIN_DAILY_GOAL_USD";
     const BRAIN_DAILY_LOSS_KEY = "AARON_STATS_BRAIN_DAILY_MAX_LOSS_USD";
+    const BRAIN_ATM_DAY_STOP_KEY = "AARON_STATS_BRAIN_ATM_STOP_DAY";
+    const BRAIN_ATM_DAY_STOP_REASON_KEY = "AARON_STATS_BRAIN_ATM_STOP_REASON";
     const BRAIN_MAX_CONSECUTIVE_STOPS = 2;
     let _lastStopTimestamp = 0;
     const BRAIN_COOLDOWN_MS = 3 * 60 * 1000;
+    const brainAtmDayStopKey = () => {
+      try { return brainJournalDateKey(brainJournalTimestamp()); }
+      catch (_e) { return new Date().toISOString().slice(0, 10); }
+    };
+    const brainAtmDayStopReason = () => {
+      try { return localStorage.getItem(BRAIN_ATM_DAY_STOP_REASON_KEY) || ""; }
+      catch (_e) { return ""; }
+    };
+    const brainAtmDayStopActive = () => {
+      try { return localStorage.getItem(BRAIN_ATM_DAY_STOP_KEY) === brainAtmDayStopKey(); }
+      catch (_e) { return false; }
+    };
+    const brainAtmDayStopSet = (active, reason = "manual_panel") => {
+      try {
+        if (active) {
+          localStorage.setItem(BRAIN_ATM_DAY_STOP_KEY, brainAtmDayStopKey());
+          localStorage.setItem(BRAIN_ATM_DAY_STOP_REASON_KEY, String(reason || "manual_panel"));
+        } else {
+          localStorage.removeItem(BRAIN_ATM_DAY_STOP_KEY);
+          localStorage.removeItem(BRAIN_ATM_DAY_STOP_REASON_KEY);
+        }
+      } catch (_e) {}
+      window.__AARON_BRAIN_ATM_DAY_STOPPED__ = active === true;
+    };
     const brainCapitalNumber = (v) => {
       if (v === null || v === undefined) return null;
       const cleaned = String(v).replace(/[^0-9.]/g, "");
@@ -24848,6 +24881,30 @@ function updateCoPilotBlock(data){
       let nextAction = trade.next_action || "Analisa os 12 ativos, escolhe o melhor risco/retorno e evita perseguir entrada ruim.";
 
       const pnlSummary = window.__AARON_STATS_BRAIN_JOURNAL__?.pnl || {};
+      if (brainAtmDayStopActive()) {
+        return {
+          manager_mode: "ATM_STOPPED_DAY",
+          manager_mode_text: "ATM parado manualmente pelo painel. Ranking, dados e n8n continuam rodando.",
+          manager_status: "ATM_STOPPED",
+          manager_purpose: "ATM pausado pelo usuario",
+          manager_decision: "ATM PARADO",
+          manager_next_action: "Nenhum novo trade do ATM sera aprovado hoje. Use Retomar ATM para liberar entradas.",
+          manager_active_symbol: symbol || null,
+          manager_side: "WAIT",
+          manager_entry: null,
+          manager_current: current,
+          manager_pnl_now: null,
+          manager_pnl_pct: null,
+          manager_shares: null,
+          manager_hit_t1: false,
+          manager_hit_t2: false,
+          manager_hit_t3: false,
+          manager_invalid: false,
+          manager_atm_day_stopped: true,
+          manager_atm_day_stop_reason: brainAtmDayStopReason(),
+          manager_atm_day_stop_day: brainAtmDayStopKey(),
+        };
+      }
       if (brainDailyLossHit(pnlSummary)) {
         const maxLoss = brainGetDailyMaxLoss();
         return {
@@ -24980,6 +25037,7 @@ function updateCoPilotBlock(data){
         manager_hit_t2: hitT2,
         manager_hit_t3: hitT3,
         manager_invalid: invalid,
+        manager_atm_day_stopped: false,
       };
     };
     const brainJournalManagerStoreKey = (day) => `${brainJournalStoreKey(day)}:atm`;
@@ -25246,6 +25304,8 @@ function updateCoPilotBlock(data){
         : maxLoss
           ? `limite: -$${Math.round(maxLoss)}`
           : "sem limite";
+      const atmStopped = brainAtmDayStopActive();
+      const atmStopStatus = atmStopped ? "ATM PARADO HOJE" : "ATM RODANDO";
       return `<label class="stats-brain-goal-box ${escapeHtml(goal.mood)}" data-brain-goal-box>
         <span>Meta do dia</span>
         <input class="stats-brain-goal-input" type="number" min="0" step="50" inputmode="decimal" placeholder="500" value="${escapeHtml(brainDailyGoalInputValue())}" oninput="window.aaronUpdateBrainGoalFromTarget && window.aaronUpdateBrainGoalFromTarget(this.value)" />
@@ -25258,6 +25318,12 @@ function updateCoPilotBlock(data){
         <input class="stats-brain-goal-input" type="number" min="0" step="50" inputmode="decimal" placeholder="300" value="${escapeHtml(brainDailyLossInputValue())}" oninput="window.aaronUpdateBrainMaxLossFromInput && window.aaronUpdateBrainMaxLossFromInput(this.value)" />
         <div class="stats-brain-goal-status" data-brain-loss-status>${escapeHtml(lossStatus)}</div>
         <small>ex: 300 para se perder -$300</small>
+      </label>
+      <label class="stats-brain-goal-box stats-brain-atm-stop-box ${atmStopped ? "is-stopped" : ""}" data-brain-atm-stop-box>
+        <span>ATM do dia</span>
+        <button class="stats-brain-atm-stop-btn ${atmStopped ? "is-stopped" : ""}" data-brain-atm-stop-btn type="button" onclick="window.aaronToggleBrainAtmDayStop && window.aaronToggleBrainAtmDayStop()">${atmStopped ? "Retomar ATM" : "Parar ATM"}</button>
+        <div class="stats-brain-goal-status" data-brain-atm-stop-status>${escapeHtml(atmStopStatus)}</div>
+        <small>${atmStopped ? "ranking/n8n continuam; ATM nao entra" : "para so o ATM; resto continua"}</small>
       </label>`;
     };
     const brainJournalUpdateGoalDom = (pnl = {}) => {
@@ -25284,6 +25350,36 @@ function updateCoPilotBlock(data){
             : maxLoss ? `limite: -$${Math.round(maxLoss)}` : "sem limite";
         }
       });
+      const atmStopped = brainAtmDayStopActive();
+      window.__AARON_BRAIN_ATM_DAY_STOPPED__ = atmStopped;
+      document.querySelectorAll("[data-brain-atm-stop-box]").forEach(box => {
+        box.classList.toggle("is-stopped", atmStopped);
+        const status = box.querySelector("[data-brain-atm-stop-status]");
+        const btn = box.querySelector("[data-brain-atm-stop-btn]");
+        const small = box.querySelector("small");
+        if (status) status.textContent = atmStopped ? "ATM PARADO HOJE" : "ATM RODANDO";
+        if (btn) {
+          btn.textContent = atmStopped ? "Retomar ATM" : "Parar ATM";
+          btn.classList.toggle("is-stopped", atmStopped);
+        }
+        if (small) small.textContent = atmStopped
+          ? "Ranking/n8n continuam; ATM nao entra."
+          : "Para so o ATM; resto continua.";
+      });
+    };
+    window.aaronToggleBrainAtmDayStop = (force) => {
+      const current = brainAtmDayStopActive();
+      const next = typeof force === "boolean" ? force : !current;
+      if (next) {
+        const ok = window.confirm
+          ? window.confirm("Parar o ATM pelo resto do dia? Ranking, cards e dados continuam; o ATM nao aprova novas entradas.")
+          : true;
+        if (!ok) return;
+      }
+      brainAtmDayStopSet(next, "manual_panel");
+      brainJournalUpdateGoalDom(window.__AARON_STATS_BRAIN_JOURNAL__?.pnl || {});
+      if (typeof window.aaronRefreshBrainDailyPnl === "function") window.aaronRefreshBrainDailyPnl();
+      if (typeof loadPanel === "function") loadPanel(true);
     };
     window.aaronUpdateBrainMaxLossFromInput = (value) => {
       const raw = String(value ?? "").trim();
@@ -25529,7 +25625,7 @@ function updateCoPilotBlock(data){
           .concat([activeRecord])
         : (report?.records || []);
       const capital = brainGetCapital();
-      const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop","pnl_exit_label","pnl_exit_price","pnl_shares","pnl_estimated","manager_mode","manager_status","manager_purpose","manager_decision","manager_next_action","manager_active_symbol","manager_side","manager_entry","manager_current","manager_pnl_now","manager_pnl_pct","manager_shares","manager_hit_t1","manager_hit_t2","manager_hit_t3","manager_invalid"];
+      const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop","pnl_exit_label","pnl_exit_price","pnl_shares","pnl_estimated","manager_mode","manager_status","manager_purpose","manager_decision","manager_next_action","manager_active_symbol","manager_side","manager_entry","manager_current","manager_pnl_now","manager_pnl_pct","manager_shares","manager_hit_t1","manager_hit_t2","manager_hit_t3","manager_invalid","manager_atm_day_stopped","manager_atm_day_stop_reason","manager_atm_day_stop_day"];
       const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
       const tradeCsv = [headers.join(",")].concat(rows.map(r => {
         const pnl = brainJournalRecordPnl(r, capital);
@@ -25580,6 +25676,8 @@ function updateCoPilotBlock(data){
         dailyGoalHit: goal.hit === true,
         dailyMaxLoss: brainGetDailyMaxLoss() ?? null,
         dailyLossHit: brainDailyLossHit(reportPnl) === true,
+        atmDayStopped: manager.manager_atm_day_stopped === true || brainAtmDayStopActive() === true,
+        atmDayStopReason: manager.manager_atm_day_stop_reason || brainAtmDayStopReason() || null,
         managerMode: manager.manager_mode || null,
         managerStatus: manager.manager_status || null,
         managerPurpose: manager.manager_purpose || null,
@@ -26730,6 +26828,7 @@ function updateCoPilotBlock(data){
       }
       const dayGoal = brainJournalGoalData((window.__AARON_STATS_BRAIN_JOURNAL__ || {}).pnl || {});
       const dayGoalHit = dayGoal.hit === true;
+      const atmDayStopped = brainAtmDayStopActive();
       if (dayGoalHit) {
         state = { label: "STOP DAY", decision: "META BATIDA", cls: "is-protect" };
         next = `Meta do dia alcançada (${brainJournalPnlMoney(dayGoal.total)} de ${brainJournalPnlMoney(dayGoal.goal)}). Proteger capital e parar novas entradas.`;
@@ -26738,8 +26837,14 @@ function updateCoPilotBlock(data){
         state = { label: "NO TRADE", decision: "T1/T2 VERMELHO", cls: "is-danger" };
         next = `${managerTargetGate.reason} ATM só entra quando T1 e T2 pagam positivo para ${sideLabel}.`;
       }
+      if (atmDayStopped) {
+        state = { label: "ATM OFF", decision: "ATM PARADO", cls: "is-danger" };
+        next = "ATM parado manualmente para o dia. Ranking, cards, dados e n8n continuam; nenhuma entrada nova do ATM sera aprovada.";
+      }
       const riskLevel = fmtBrainPrice(brainFirst(stopRaw, reversaoRaw, respiroRaw));
-      const killText = dayGoalHit
+      const killText = atmDayStopped
+        ? "ATM parado manualmente para o dia. Use Retomar ATM para liberar novas entradas."
+        : dayGoalHit
         ? "Meta do dia batida. Não abrir novo trade; apenas encerrar/proteger o que já existir."
         : activeTrade?.kill_switch || (accepted
         ? `${sideLabel} perde validade se o preço cruzar contra ${riskLevel || "stop/reversao"} ou se o Brain virar NO TRADE.`
@@ -26775,6 +26880,7 @@ function updateCoPilotBlock(data){
       if (numBrain(currentRaw) === null) manualHardBlocks.push("Preço atual sem valor válido.");
       if (!accepted) manualWarnings.push("ATM/Brain não está aceitando trade novo; corte será registrado mesmo assim.");
       if (dayGoalHit) manualWarnings.push("Meta do dia já batida; corte apenas realiza o P/L.");
+      if (atmDayStopped) manualWarnings.push("ATM parado para o dia; corte manual continua permitido apenas para realizar/registrar P/L.");
       if (missed) manualWarnings.push("Entrada marcada como atrasada/perdida.");
       if (stopHit || reversalHit) manualWarnings.push("Stop/reversão já foi tocado; corte registra o resultado atual.");
       if (patternAlignment === "CONFLICT") manualWarnings.push("Pattern Context está em conflito.");
@@ -26850,6 +26956,7 @@ function updateCoPilotBlock(data){
         guardrails: {
           allowed: manualHardBlocks.length === 0,
           ready: manualReady,
+          atm_day_stopped: atmDayStopped,
           hard_blocks: manualHardBlocks,
           warnings: manualWarnings,
         },
