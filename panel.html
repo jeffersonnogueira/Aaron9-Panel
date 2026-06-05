@@ -24437,8 +24437,6 @@ function updateCoPilotBlock(data){
       return { level, cls, label, sub, atr, t1Atr, t2Atr, stopAtr };
     };
     const renderBrainSpeedThermo = (row, sideValue, rankValue) => {
-      const rank = numBrain(rankValue);
-      if (rank !== 1) return "";
       const speed = brainSpeedThermo(row, sideValue);
       const steps = [
         { at: 1, label: "slow" },
