@@ -5749,6 +5749,25 @@
 #copilot-block .stats-brain-speed-grid strong{display:block;margin-top:4px;font-size:12px;line-height:1;font-weight:950;color:#38bdf8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #copilot-block .stats-brain-speed-grid strong.is-warn{color:#fde047;}
 #copilot-block .stats-brain-speed-grid strong.is-danger{color:#fb7185;}
+#copilot-block .stats-brain-atm-edge{margin-top:10px;border:1px solid rgba(244,184,63,.28);border-radius:9px;background:linear-gradient(135deg,rgba(244,184,63,.10),rgba(5,10,19,.78));padding:9px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+#copilot-block .stats-brain-atm-edge.is-ok{border-color:rgba(20,241,168,.27);background:linear-gradient(135deg,rgba(20,241,168,.10),rgba(5,10,19,.78));}
+#copilot-block .stats-brain-atm-edge.is-warn{border-color:rgba(244,184,63,.34);background:linear-gradient(135deg,rgba(244,184,63,.13),rgba(5,10,19,.80));}
+#copilot-block .stats-brain-atm-edge.is-block{border-color:rgba(255,72,105,.34);background:linear-gradient(135deg,rgba(255,72,105,.10),rgba(5,10,19,.80));}
+#copilot-block .stats-brain-atm-edge-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+#copilot-block .stats-brain-atm-edge-head span{font-size:9px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:#f4b83f;}
+#copilot-block .stats-brain-atm-edge.is-ok .stats-brain-atm-edge-head span{color:#14f1a8;}
+#copilot-block .stats-brain-atm-edge.is-block .stats-brain-atm-edge-head span{color:#ff6b83;}
+#copilot-block .stats-brain-atm-edge-head b{display:inline-flex;align-items:center;min-height:18px;padding:0 7px;border-radius:999px;border:1px solid rgba(244,184,63,.28);background:rgba(244,184,63,.10);font-size:8px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#ffe58a;}
+#copilot-block .stats-brain-atm-edge.is-ok .stats-brain-atm-edge-head b{border-color:rgba(20,241,168,.28);background:rgba(20,241,168,.10);color:#14f1a8;}
+#copilot-block .stats-brain-atm-edge.is-block .stats-brain-atm-edge-head b{border-color:rgba(255,72,105,.30);background:rgba(255,72,105,.11);color:#ff7a90;}
+#copilot-block .stats-brain-atm-edge strong{display:block;margin-top:6px;font-size:13px;line-height:1.15;font-weight:950;color:#fff7d1;}
+#copilot-block .stats-brain-atm-edge p{margin:5px 0 0;font-size:10.5px;line-height:1.34;font-weight:850;color:#aebbd0;}
+#copilot-block .stats-brain-atm-edge-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;}
+#copilot-block .stats-brain-atm-edge-grid div{min-width:0;border:1px solid rgba(148,163,184,.12);border-radius:7px;background:rgba(2,6,13,.44);padding:6px 7px;}
+#copilot-block .stats-brain-atm-edge-grid span{display:block;font-size:8px;font-weight:950;letter-spacing:.10em;text-transform:uppercase;color:#718096;}
+#copilot-block .stats-brain-atm-edge-grid em{display:block;margin-top:4px;font-style:normal;font-size:11px;line-height:1;font-weight:950;color:#cbd5e1;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-atm-edge.is-ok .stats-brain-atm-edge-grid em{color:#14f1a8;}
+#copilot-block .stats-brain-atm-edge.is-block .stats-brain-atm-edge-grid em{color:#ff6b83;}
 #copilot-block .stats-brain-range{margin-top:14px;}
 #copilot-block .stats-brain-range-labels{display:flex;justify-content:space-between;font-size:9px;font-weight:950;letter-spacing:.11em;text-transform:uppercase;color:#65758a;}
 #copilot-block .stats-brain-range-track{position:relative;height:8px;margin-top:6px;border-radius:999px;background:linear-gradient(90deg,rgba(20,241,168,.35),rgba(20,216,226,.18),rgba(255,72,105,.38));overflow:hidden;}
@@ -25191,12 +25210,17 @@ function updateCoPilotBlock(data){
       const side = normBrainSide(r.side);
       const rank = numBrain(r.rank) || (idx + 1);
       const targetGate = brainTargetProfitGate(r, side);
+      const atmEdgeGate = brainAtmEdgeGate(r, { symbol: r.symbol, side });
       const acceptedRaw = r.accepted === true;
-      const accepted = acceptedRaw && targetGate.allowed;
+      const accepted = acceptedRaw && targetGate.allowed && atmEdgeGate.allowed;
       const exhaustion = /EXHAUST/i.test(String(r.state || ""));
       const trend = brainTrend(r);
       const range = brainRangeLabel(r);
-      const status = acceptedRaw && !targetGate.allowed ? { label: "NO TRADE", cls: "is-block" } : brainStatus(r);
+      const status = acceptedRaw && !targetGate.allowed
+        ? { label: "NO TRADE", cls: "is-block" }
+        : acceptedRaw && targetGate.allowed && !atmEdgeGate.allowed
+          ? { label: "NO TRADE", cls: "is-block" }
+          : brainStatus({ ...r, accepted });
       const contActive = brainContActive(r);
       const rangePos = brainClamp(range.pos, 0, 100) ?? 50;
       const rangeAction = brainRangeAction({ ...r, accepted }, side);
@@ -25251,6 +25275,7 @@ function updateCoPilotBlock(data){
           </div>
           ${renderBrainThermo(r)}
           ${renderBrainSpeedThermo(r, side, rank)}
+          ${renderBrainAtmEdgeGate(atmEdgeGate, true)}
           <div class="stats-brain-range">
             <div class="stats-brain-range-labels"><span>FUNDO</span><span>${escapeHtml(fmtBrainPct(rangePos))}</span><span>TOPO</span></div>
             <div class="stats-brain-range-track"><span class="stats-brain-range-dot" style="left:${escapeHtml(rangePos)}%;"></span></div>
@@ -25644,6 +25669,55 @@ function updateCoPilotBlock(data){
         }
       }
 
+      const snapshotGateRow = {
+        ...(row || {}),
+        symbol,
+        side,
+        current,
+        entry,
+        t1: brainFirst(activeRecord?.t1, trade.t1, trade.target_1, row?.t1),
+        t2: brainFirst(activeRecord?.t2, trade.t2, trade.target_2, row?.t2),
+        t3: brainFirst(activeRecord?.t3, trade.t3, trade.target_3, row?.t3),
+        stop: brainFirst(activeRecord?.stop, trade.stop, trade.stop_price, row?.stop),
+        __detail: {
+          ...(row?.__detail || {}),
+          current,
+          entry,
+          t1: brainFirst(activeRecord?.t1, trade.t1, trade.target_1, row?.__detail?.t1),
+          t2: brainFirst(activeRecord?.t2, trade.t2, trade.target_2, row?.__detail?.t2),
+          t3: brainFirst(activeRecord?.t3, trade.t3, trade.target_3, row?.__detail?.t3),
+          stop: brainFirst(activeRecord?.stop, trade.stop, trade.stop_price, row?.__detail?.stop),
+        },
+      };
+      const snapshotTargetGate = brainTargetProfitGate(snapshotGateRow, side, entry);
+      const snapshotEdgeGate = brainAtmEdgeGate(snapshotGateRow, { symbol, side });
+      if (!entered && snapshotTargetGate.allowed && !snapshotEdgeGate.allowed) {
+        return {
+          manager_mode: "ONE_TRADE_AT_A_TIME",
+          manager_mode_text: "ATM Edge Gate bloqueou entrada nova por ATR/histórico do horário.",
+          manager_status: "ATM_EDGE_BLOCKED",
+          manager_purpose: "Evitar entrada ruim",
+          manager_decision: snapshotEdgeGate.decision || "BLOQUEAR",
+          manager_next_action: `${snapshotEdgeGate.reason} Buscar o proximo ativo do ranking ou aguardar novo bucket.`,
+          manager_active_symbol: symbol || null,
+          manager_side: "WAIT",
+          manager_entry: entry,
+          manager_current: current,
+          manager_pnl_now: null,
+          manager_pnl_pct: null,
+          manager_shares: null,
+          manager_hit_t1: false,
+          manager_hit_t2: false,
+          manager_hit_t3: false,
+          manager_invalid: false,
+          manager_atm_edge_allowed: false,
+          manager_atm_edge_label: snapshotEdgeGate.label,
+          manager_atm_edge_reason: snapshotEdgeGate.reason,
+          manager_atm_edge_bucket: snapshotEdgeGate.bucket,
+          manager_atm_edge_speed: snapshotEdgeGate.speed?.label || null,
+        };
+      }
+
       if (!symbol || !["BUY", "SELL"].includes(side)) {
         managerStatus = "NO_TRADE";
         purpose = "Sem trade aprovado";
@@ -25700,6 +25774,11 @@ function updateCoPilotBlock(data){
         manager_hit_t3: hitT3,
         manager_invalid: invalid,
         manager_atm_day_stopped: false,
+        manager_atm_edge_allowed: snapshotEdgeGate.allowed,
+        manager_atm_edge_label: snapshotEdgeGate.label,
+        manager_atm_edge_reason: snapshotEdgeGate.reason,
+        manager_atm_edge_bucket: snapshotEdgeGate.bucket,
+        manager_atm_edge_speed: snapshotEdgeGate.speed?.label || null,
       };
     };
     const brainJournalManagerStoreKey = (day) => `${brainJournalStoreKey(day)}:atm`;
@@ -25760,6 +25839,11 @@ function updateCoPilotBlock(data){
         hit_t2: manager.manager_hit_t2 === true || activeRecord?.hit_t2 === true,
         hit_t3: manager.manager_hit_t3 === true || activeRecord?.hit_t3 === true,
         invalid: manager.manager_invalid === true || activeRecord?.hit_stop === true || activeRecord?.hit_reversao === true,
+        atm_edge_allowed: manager.manager_atm_edge_allowed ?? null,
+        atm_edge_label: manager.manager_atm_edge_label ?? null,
+        atm_edge_reason: manager.manager_atm_edge_reason ?? null,
+        atm_edge_bucket: manager.manager_atm_edge_bucket ?? null,
+        atm_edge_speed: manager.manager_atm_edge_speed ?? null,
       };
     };
     const brainJournalUpdateManagerExecutions = (day, manager = {}, activeRecord = null) => {
@@ -26133,6 +26217,203 @@ function updateCoPilotBlock(data){
       const managerExecutions = brainJournalLoadManagerExecutions(day);
       return { day, records, tradeSignals, last50, wins, losses, open, obs, symbols, buckets, bestSymbol, worstSymbol, bestBucket, levelSummary, levelSummaryDay, pnl, managerExecutions };
     };
+    const brainAtmStatBlank = (label) => ({ label, count: 0, wins: 0, losses: 0, stops: 0, t1: 0, t2: 0, t3: 0, positive: 0, negative: 0 });
+    const brainAtmStatAdd = (stat, item = {}, weight = 1) => {
+      if (!stat) return stat;
+      const outcome = String(item.outcome || item.result || item.status || "").toUpperCase();
+      const status = String(item.status || "").toUpperCase();
+      const pnl = numBrain(item.pnl_now ?? item.pnl);
+      const isWin = outcome === "WIN" || outcome === "POSITIVE" || /T1_HIT|T2_HIT|T3_HIT/.test(status) || (pnl !== null && pnl > 0);
+      const isLoss = outcome === "LOSS" || outcome === "NEGATIVE" || /STOP|INVALID|CANCEL/.test(status) || (pnl !== null && pnl < 0);
+      const isWait = /WAIT|OPEN|SCANNING|NO_TRADE|OBS/.test(outcome) && !isWin && !isLoss;
+      if (isWait) return stat;
+      stat.count += weight;
+      if (isWin) {
+        stat.wins += weight;
+        stat.positive += weight;
+      }
+      if (isLoss) {
+        stat.losses += weight;
+        stat.negative += weight;
+      }
+      if (item.hit_t1 === true) stat.t1 += weight;
+      if (item.hit_t2 === true) stat.t2 += weight;
+      if (item.hit_t3 === true) stat.t3 += weight;
+      if (item.hit_stop === true || item.invalid === true || /STOP|INVALID|CANCEL/.test(status)) stat.stops += weight;
+      return stat;
+    };
+    const brainAtmStatFinish = (stat) => {
+      const count = numBrain(stat?.count) || 0;
+      const wins = numBrain(stat?.wins) || 0;
+      const losses = numBrain(stat?.losses) || 0;
+      const decided = wins + losses;
+      const stops = numBrain(stat?.stops) || 0;
+      return {
+        ...(stat || {}),
+        count,
+        wins,
+        losses,
+        decided,
+        winRate: decided > 0 ? Math.round((wins / decided) * 100) : null,
+        stopRate: count > 0 ? Math.round((stops / count) * 100) : null,
+      };
+    };
+    const brainAtmHistoryStats = (symbol, day, bucket) => {
+      const sym = fmtBrainText(symbol, "").toUpperCase();
+      const currentBucket = fmtBrainText(bucket || brainJournalBucket(brainJournalTimestamp()), "—");
+      const out = {
+        symbol: brainAtmStatBlank("symbol"),
+        bucket: brainAtmStatBlank("bucket"),
+        symbolBucket: brainAtmStatBlank("symbol+hour"),
+      };
+      if (!sym || !day) {
+        return {
+          bucket: currentBucket,
+          symbol: brainAtmStatFinish(out.symbol),
+          bucketStats: brainAtmStatFinish(out.bucket),
+          symbolBucket: brainAtmStatFinish(out.symbolBucket),
+        };
+      }
+      const journalRows = brainJournalLoad(day).filter(r => r?.actionable === true);
+      for (const r of journalRows) {
+        const rSym = fmtBrainText(r.symbol, "").toUpperCase();
+        const rBucket = fmtBrainText(r.bucket, "—");
+        if (rSym === sym) brainAtmStatAdd(out.symbol, r, 1);
+        if (rBucket === currentBucket) brainAtmStatAdd(out.bucket, r, 1);
+        if (rSym === sym && rBucket === currentBucket) brainAtmStatAdd(out.symbolBucket, r, 1.25);
+      }
+      const managerRows = brainJournalLoadManagerExecutions(day);
+      const seenManager = new Set();
+      for (const r of managerRows) {
+        const rSym = fmtBrainText(r.symbol, "").toUpperCase();
+        const rBucket = fmtBrainText(r.bucket, "—");
+        const status = String(r.status || "").toUpperCase();
+        const result = String(r.result || "").toUpperCase();
+        if (!rSym || /WAIT|SCANNING|NO_TRADE/.test(status) || result === "WAIT") continue;
+        const key = `${rSym}|${rBucket}|${status}|${Math.round(numBrain(r.entry) || 0)}|${Math.round(numBrain(r.current) || 0)}|${result}`;
+        if (seenManager.has(key)) continue;
+        seenManager.add(key);
+        if (rSym === sym) brainAtmStatAdd(out.symbol, r, 0.65);
+        if (rBucket === currentBucket) brainAtmStatAdd(out.bucket, r, 0.45);
+        if (rSym === sym && rBucket === currentBucket) brainAtmStatAdd(out.symbolBucket, r, 0.85);
+      }
+      return {
+        bucket: currentBucket,
+        symbol: brainAtmStatFinish(out.symbol),
+        bucketStats: brainAtmStatFinish(out.bucket),
+        symbolBucket: brainAtmStatFinish(out.symbolBucket),
+      };
+    };
+    const brainAtmRateLabel = (stat) => {
+      if (!stat || stat.winRate === null) return "sem base";
+      return `${stat.winRate}% · ${Math.round(stat.count || 0)}x`;
+    };
+    const brainAtmEdgeGate = (row, opts = {}) => {
+      const symbol = fmtBrainText(opts.symbol || row?.symbol, "").toUpperCase();
+      const side = normBrainSide(opts.side || row?.side);
+      const day = brainJournalDateKey(brainJournalTimestamp());
+      const bucket = brainJournalBucket(brainJournalTimestamp());
+      const speed = brainSpeedThermo(row, side);
+      const history = brainAtmHistoryStats(symbol, day, bucket);
+      const exact = history.symbolBucket;
+      const sym = history.symbol;
+      const bucketStats = history.bucketStats;
+      const consecutiveStops = brainSymbolConsecutiveStops(symbol, day);
+      const nearestTarget = Math.min(...[speed.t1Atr, speed.t2Atr].filter(v => v !== null));
+      const nearestTargetOk = Number.isFinite(nearestTarget);
+      const stopAtr = numBrain(speed.stopAtr);
+      const rapidLossRisk =
+        speed.cls === "is-danger" ||
+        (stopAtr !== null && stopAtr <= 0.35 && (!nearestTargetOk || nearestTarget > 0.55)) ||
+        (stopAtr !== null && stopAtr <= 0.28 && nearestTargetOk && nearestTarget <= 0.28);
+      const exactBad = exact.count >= 2 && exact.losses >= 2 && exact.wins <= 0;
+      const exactWeak = exact.count >= 3 && exact.winRate !== null && exact.winRate < 45;
+      const symbolBad = sym.count >= 4 && sym.winRate !== null && sym.winRate < 38;
+      const bucketBad = bucketStats.count >= 5 && bucketStats.winRate !== null && bucketStats.winRate < 35;
+      const stopHeavy = (exact.count >= 3 && exact.stopRate !== null && exact.stopRate >= 55) || consecutiveStops >= BRAIN_MAX_CONSECUTIVE_STOPS;
+      let allowed = true;
+      let cls = "is-ok";
+      let label = "EDGE OK";
+      let decision = "ATM EDGE OK";
+      let reason = "T1/T2 pagam e o histórico atual não bloqueia este horário.";
+      if (!["BUY", "SELL"].includes(side)) {
+        allowed = false;
+        cls = "is-block";
+        label = "SEM LADO";
+        decision = "SEM DIREÇÃO";
+        reason = "Sem BUY/SELL válido; ATM não deve entrar.";
+      } else if (rapidLossRisk) {
+        allowed = false;
+        cls = "is-block";
+        label = "PERIGO ATR";
+        decision = "NÃO ENTRAR RÁPIDO";
+        reason = "ATR/stop mostra risco de perda rápida. Esperar gatilho melhor ou alvo mais limpo.";
+      } else if (stopHeavy) {
+        allowed = false;
+        cls = "is-block";
+        label = "STOP HEAVY";
+        decision = "BLOQUEAR SÍMBOLO";
+        reason = `${symbol || "Símbolo"} já mostrou stops/invalidacões demais hoje. Esperar outro ativo.`;
+      } else if (exactBad || exactWeak) {
+        allowed = false;
+        cls = "is-block";
+        label = "HORÁRIO RUIM";
+        decision = "BLOQUEAR HORÁRIO";
+        reason = `${symbol || "Este ativo"} está ruim neste bucket ${bucket}. Aguardar próximo horário.`;
+      } else if (symbolBad || bucketBad) {
+        allowed = false;
+        cls = "is-block";
+        label = symbolBad ? "SÍMBOLO FRACO" : "BUCKET FRACO";
+        decision = "ESPERAR EDGE MELHOR";
+        reason = symbolBad
+          ? `${symbol} está com baixa taxa no dia. O ATM deve buscar outro ranking.`
+          : `O horário ${bucket} está fraco no journal do dia. Reduzir risco/esperar.`;
+      } else if (sym.count < 2 && exact.count < 1) {
+        cls = "is-warn";
+        label = "SEM BASE";
+        decision = "WATCH";
+        reason = "Ainda não há base real suficiente hoje para este símbolo/horário; usar gatilho e tamanho conservador.";
+      } else if (String(speed.label || "").toUpperCase().includes("RÁPID") || String(speed.label || "").toUpperCase().includes("ALVO PERTO")) {
+        cls = "is-warn";
+        label = "RÁPIDO";
+        decision = "SÓ COM GATILHO";
+        reason = "Pode pagar rápido, mas o stop também vem rápido. Só liberar com Entry Radar limpo.";
+      }
+      return {
+        allowed,
+        cls,
+        label,
+        decision,
+        reason,
+        day,
+        bucket,
+        speed,
+        history,
+        consecutiveStops,
+        rapidLossRisk,
+      };
+    };
+    const renderBrainAtmEdgeGate = (gate = {}, compact = false) => {
+      const exact = gate?.history?.symbolBucket || {};
+      const sym = gate?.history?.symbol || {};
+      const bucketStats = gate?.history?.bucketStats || {};
+      return `
+        <div class="stats-brain-atm-edge ${escapeHtml(gate.cls || "is-warn")}">
+          <div class="stats-brain-atm-edge-head">
+            <span>${escapeHtml(compact ? "ATM Edge" : "ATM Edge Gate")}</span>
+            <b>${escapeHtml(gate.label || "WATCH")}</b>
+          </div>
+          <strong>${escapeHtml(gate.decision || "WATCH")}</strong>
+          <p>${escapeHtml(gate.reason || "Aguardando histórico suficiente do ATM.")}</p>
+          <div class="stats-brain-atm-edge-grid">
+            <div><span>horário</span><em>${escapeHtml(gate.bucket || "—")}</em></div>
+            <div><span>ativo/hora</span><em>${escapeHtml(brainAtmRateLabel(exact))}</em></div>
+            <div><span>ativo/dia</span><em>${escapeHtml(brainAtmRateLabel(sym))}</em></div>
+            ${compact ? "" : `<div><span>bucket dia</span><em>${escapeHtml(brainAtmRateLabel(bucketStats))}</em></div><div><span>ATR</span><em>${escapeHtml(gate?.speed?.label || "—")}</em></div><div><span>stops seg.</span><em>${escapeHtml(String(gate.consecutiveStops ?? 0))}</em></div>`}
+          </div>
+        </div>
+      `;
+    };
     const brainJournalUpdate = (ranking = []) => {
       const ts = brainJournalTimestamp();
       const day = brainJournalDateKey(ts);
@@ -26206,6 +26487,9 @@ function updateCoPilotBlock(data){
         const cls = r.result === "POSITIVE" ? "is-profit" : r.result === "NEGATIVE" ? "is-loss" : "is-flat";
         const pnlLabel = r.pnl_now === null || r.pnl_now === undefined ? "—" : brainJournalPnlMoney(r.pnl_now);
         const pctLabel = r.pnl_pct === null || r.pnl_pct === undefined ? "—" : `${Number(r.pnl_pct) >= 0 ? "+" : ""}${Number(r.pnl_pct).toFixed(2)}%`;
+        const edgeObs = r.atm_edge_label
+          ? `${r.atm_edge_label}${r.atm_edge_bucket ? ` · ${r.atm_edge_bucket}` : ""}${r.atm_edge_reason ? ` · ${r.atm_edge_reason}` : ""}`
+          : "—";
         return `<tr class="atm-row ${cls}">${[
           r.time,
           r.symbol,
@@ -26221,6 +26505,7 @@ function updateCoPilotBlock(data){
           brainJournalMoney(r.t3),
           brainJournalMoney(r.stop),
           r.decision,
+          edgeObs,
           r.next_action,
         ].map(c => `<td>${escapeHtml(c)}</td>`).join("")}</tr>`;
       };
@@ -26256,8 +26541,8 @@ function updateCoPilotBlock(data){
         <div class="card"><span>Próxima ação do manager</span><b>${escapeHtml(manager.manager_next_action || "—")}</b><small>Snapshot salvo no momento do download do relatório</small></div>
         <h2>Execuções do Active Trade Manager</h2>
         <div class="muted">Cada linha abaixo é um ciclo/decisão que o ATM tomou enquanto o painel estava aberto. Verde = positivo; vermelho = negativo.</div>
-        <table>${line(["Hora","Symbol","Side","Status","Resultado","P/L","%","Entry","Atual","T1","T2","T3","Stop","Decisão","OBS"], true)}
-          ${managerRows.length ? managerRows.map(managerLine).join("") : line(["—","—","—","—","Sem execuções ATM salvas ainda","—","—","—","—","—","—","—","—","—","Abra o painel e deixe o ATM rodar para formar o diário."])}
+        <table>${line(["Hora","Symbol","Side","Status","Resultado","P/L","%","Entry","Atual","T1","T2","T3","Stop","Decisão","ATM Edge","OBS"], true)}
+          ${managerRows.length ? managerRows.map(managerLine).join("") : line(["—","—","—","—","Sem execuções ATM salvas ainda","—","—","—","—","—","—","—","—","—","—","Abra o painel e deixe o ATM rodar para formar o diário."])}
         </table>
         <div class="grid">
           <div class="card"><span>Ultimos 50</span><b>${escapeHtml(`${summary?.wins || 0}W / ${summary?.losses || 0}L`)}</b></div>
@@ -26287,7 +26572,7 @@ function updateCoPilotBlock(data){
           .concat([activeRecord])
         : (report?.records || []);
       const capital = brainGetCapital();
-      const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop","pnl_exit_label","pnl_exit_price","pnl_shares","pnl_estimated","manager_mode","manager_status","manager_purpose","manager_decision","manager_next_action","manager_active_symbol","manager_side","manager_entry","manager_current","manager_pnl_now","manager_pnl_pct","manager_shares","manager_hit_t1","manager_hit_t2","manager_hit_t3","manager_invalid","manager_atm_day_stopped","manager_atm_day_stop_reason","manager_atm_day_stop_day"];
+      const headers = ["day","time","symbol","rank","side","accepted","actionable","outcome","entry","current_start","current_last","high_seen","low_seen","t1","t2","t3","respiro","reversao","stop","support","resist","hit_t1","hit_t2","hit_t3","hit_respiro","hit_reversao","hit_stop","pnl_exit_label","pnl_exit_price","pnl_shares","pnl_estimated","manager_mode","manager_status","manager_purpose","manager_decision","manager_next_action","manager_active_symbol","manager_side","manager_entry","manager_current","manager_pnl_now","manager_pnl_pct","manager_shares","manager_hit_t1","manager_hit_t2","manager_hit_t3","manager_invalid","manager_atm_day_stopped","manager_atm_day_stop_reason","manager_atm_day_stop_day","manager_atm_edge_allowed","manager_atm_edge_label","manager_atm_edge_reason","manager_atm_edge_bucket","manager_atm_edge_speed"];
       const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
       const tradeCsv = [headers.join(",")].concat(rows.map(r => {
         const pnl = brainJournalRecordPnl(r, capital);
@@ -26300,7 +26585,7 @@ function updateCoPilotBlock(data){
         return headers.map(h => csvCell(extra[h] ?? r[h] ?? "")).join(",");
       })).join("\n");
       const atmRows = report?.managerExecutions || [];
-      const atmHeaders = ["day","time","timestamp","bucket","symbol","side","status","result","pnl_now","pnl_pct","shares","entry","current","t1","t2","t3","respiro","reversao","stop","hit_t1","hit_t2","hit_t3","invalid","purpose","decision","next_action"];
+      const atmHeaders = ["day","time","timestamp","bucket","symbol","side","status","result","pnl_now","pnl_pct","shares","entry","current","t1","t2","t3","respiro","reversao","stop","hit_t1","hit_t2","hit_t3","invalid","purpose","decision","next_action","atm_edge_allowed","atm_edge_label","atm_edge_reason","atm_edge_bucket","atm_edge_speed"];
       const atmCsv = atmRows.length
         ? ["", "ATM_EXECUTIONS", atmHeaders.join(",")].concat(atmRows.map(r => atmHeaders.map(h => csvCell(r[h])).join(","))).join("\n")
         : "";
@@ -26349,6 +26634,11 @@ function updateCoPilotBlock(data){
         managerSide: manager.manager_side || manager.side || null,
         managerPnlNow: manager.manager_pnl_now ?? null,
         managerPnlPct: manager.manager_pnl_pct ?? null,
+        managerAtmEdgeAllowed: manager.manager_atm_edge_allowed ?? null,
+        managerAtmEdgeLabel: manager.manager_atm_edge_label ?? null,
+        managerAtmEdgeReason: manager.manager_atm_edge_reason ?? null,
+        managerAtmEdgeBucket: manager.manager_atm_edge_bucket ?? null,
+        managerAtmEdgeSpeed: manager.manager_atm_edge_speed ?? null,
       };
     };
     const brainJournalResolveDownloadUrl = (saved, day, type) => {
@@ -27414,6 +27704,27 @@ function updateCoPilotBlock(data){
         side,
         entryRadar,
       });
+      const managerGateRow = {
+        ...(row || {}),
+        symbol,
+        side,
+        current: currentRaw,
+        entry: entryDisplayRaw,
+        t1: t1Raw,
+        t2: t2Raw,
+        t3: t3Raw,
+        stop: stopRaw,
+        __detail: {
+          ...(row?.__detail || {}),
+          current: currentRaw,
+          entry: entryDisplayRaw,
+          t1: t1Raw,
+          t2: t2Raw,
+          t3: t3Raw,
+          stop: stopRaw,
+        },
+      };
+      const managerEdgeGate = brainAtmEdgeGate(managerGateRow, { symbol, side });
       const radarAllowsEntry = entryRadar?.canEnter === true || /ENTRY_READY|ACTIVE|T1_HIT|T2_HIT/.test(String(entryRadar?.status || "").toUpperCase());
       const entered = workflowMode
         ? activeTrade?.entered === true || /ACTIVE|T1_HIT|T2_HIT|T3_HIT/.test(workflowStatus)
@@ -27499,6 +27810,13 @@ function updateCoPilotBlock(data){
         state = { label: "NO TRADE", decision: "T1/T2 VERMELHO", cls: "is-danger" };
         next = `${managerTargetGate.reason} ATM só entra quando T1 e T2 pagam positivo para ${sideLabel}.`;
       }
+      const managerCanBlockNewEntry = !workflowMode || /NO_TRADE|WAIT_ENTRY|SCANNING|WATCH/.test(workflowStatus || state.label || "");
+      if (managerCanBlockNewEntry && managerTargetGate.allowed && !managerEdgeGate.allowed) {
+        state = { label: "NO TRADE", decision: managerEdgeGate.decision || "ATM EDGE BLOCK", cls: "is-danger" };
+        next = `${managerEdgeGate.reason} O ATM deve procurar outro ativo/horário antes de enviar ordem.`;
+      } else if (!managerCanBlockNewEntry && !managerEdgeGate.allowed) {
+        next = `${next} ATM Edge ficou ruim agora (${managerEdgeGate.label}); proteger posição e não adicionar tamanho.`;
+      }
       if (atmDayStopped) {
         state = { label: "ATM OFF", decision: "ATM PARADO", cls: "is-danger" };
         next = "ATM parado manualmente para o dia. Ranking, cards, dados e n8n continuam; nenhuma entrada nova do ATM sera aprovada.";
@@ -27547,6 +27865,7 @@ function updateCoPilotBlock(data){
       if (stopHit || reversalHit) manualWarnings.push("Stop/reversão já foi tocado; corte registra o resultado atual.");
       if (patternAlignment === "CONFLICT") manualWarnings.push("Pattern Context está em conflito.");
       if (!managerTargetGate.allowed) manualWarnings.push("T1/T2 não pagam positivo para este lado; ATM deve bloquear entrada.");
+      if (!managerEdgeGate.allowed) manualWarnings.push(`ATM Edge bloqueia entrada: ${managerEdgeGate.reason}`);
       if (numBrain(stopRaw) === null) manualWarnings.push("Stop sem preço válido.");
       if (numBrain(t1Raw) === null && numBrain(t2Raw) === null) manualWarnings.push("Sem T1/T2 para referência.");
       if (!manualQty || manualQty <= 0) manualWarnings.push("Capital base não gerou quantidade; n8n deve calcular ou recusar.");
@@ -27619,6 +27938,10 @@ function updateCoPilotBlock(data){
           allowed: manualHardBlocks.length === 0,
           ready: manualReady,
           atm_day_stopped: atmDayStopped,
+          atm_edge_allowed: managerEdgeGate.allowed,
+          atm_edge_label: managerEdgeGate.label,
+          atm_edge_reason: managerEdgeGate.reason,
+          atm_edge_bucket: managerEdgeGate.bucket,
           hard_blocks: manualHardBlocks,
           warnings: manualWarnings,
         },
@@ -27641,6 +27964,7 @@ function updateCoPilotBlock(data){
             <strong>${escapeHtml(state.decision)}</strong>
             <p>${escapeHtml(next)}</p>
           </div>
+          ${renderBrainAtmEdgeGate(managerEdgeGate)}
           ${renderBrainEntryRadar(entryRadar, "is-manager")}
           ${renderBrainManualExecute(manualPayload)}
           ${renderBrainPatternContext(patternContext)}
