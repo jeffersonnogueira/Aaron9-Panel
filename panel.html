@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>AARON 9 – Painel Institucional em Tempo Real </title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 
   <style>
@@ -10227,6 +10227,286 @@ body.aaron-terminal-shell .top-right .kv .v{
   .aaron-live-status{
     min-width:82px;
     font-size:8px;
+  }
+}
+
+@media (max-width: 1400px) and (pointer: coarse), (max-width: 1400px) and (hover: none){
+  html{
+    -webkit-text-size-adjust:100%;
+  }
+
+  body{
+    overflow-x:hidden;
+  }
+
+  .app-shell,
+  .page{
+    min-height:100dvh;
+  }
+
+  body.aaron-terminal-shell .page{
+    padding:calc(68px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) calc(90px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)) !important;
+  }
+
+  .aaron-live-tape{
+    left:0;
+    height:56px;
+    padding:0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
+    gap:10px;
+  }
+
+  .aaron-live-brand{
+    min-width:auto;
+    font-size:10px;
+    letter-spacing:.12em;
+  }
+
+  .aaron-live-brand span{
+    display:none;
+  }
+
+  .aaron-live-viewport{
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    mask-image:none;
+    scrollbar-width:none;
+  }
+
+  .aaron-live-viewport::-webkit-scrollbar{
+    display:none;
+  }
+
+  .aaron-live-track{
+    min-width:max-content;
+    animation:none;
+  }
+
+  .aaron-live-item{
+    min-width:150px;
+    padding:8px 13px;
+    font-size:12px;
+  }
+
+  .aaron-live-status{
+    display:none;
+  }
+
+  .aaron-live-refresh{
+    min-width:86px;
+    height:36px;
+    font-size:10px;
+  }
+
+  .aaron-side-tabs{
+    top:auto;
+    left:0;
+    right:0;
+    bottom:0;
+    width:auto;
+    height:76px;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items:center;
+    gap:8px;
+    padding:8px max(10px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
+    border-right:0;
+    border-top:1px solid rgba(61,165,255,.24);
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .aaron-side-logo{
+    width:48px;
+    height:48px;
+    margin:0 4px 0 0;
+    flex:0 0 auto;
+    border-radius:14px;
+  }
+
+  .aaron-side-tabs-inner{
+    display:flex;
+    flex-direction:row;
+    gap:8px;
+    width:auto;
+  }
+
+  .aaron-side-tab{
+    flex:0 0 58px;
+    width:58px;
+    height:52px;
+    border-radius:14px;
+  }
+
+  .aaron-side-tab:hover,
+  .aaron-side-tab.is-active{
+    transform:translateY(-2px);
+  }
+
+  body.aaron-terminal-shell .top-bar{
+    flex-direction:column;
+    align-items:stretch;
+    gap:9px;
+    padding:10px 12px 12px;
+    border-radius:12px;
+  }
+
+  body.aaron-terminal-shell .top-left,
+  body.aaron-terminal-shell .top-right{
+    width:100%;
+    justify-content:flex-start;
+    gap:8px;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+
+  body.aaron-terminal-shell .top-left::-webkit-scrollbar,
+  body.aaron-terminal-shell .top-right::-webkit-scrollbar{
+    display:none;
+  }
+
+  body.aaron-terminal-shell .brand-title{
+    flex:0 0 auto;
+    font-size:15px !important;
+    letter-spacing:.22em;
+  }
+
+  body.aaron-terminal-shell .pill-small,
+  body.aaron-terminal-shell .tf-picker,
+  body.aaron-terminal-shell .lang-toggle,
+  body.aaron-terminal-shell .pill-state,
+  body.aaron-terminal-shell .pill-soft,
+  body.aaron-terminal-shell .btn-refresh{
+    flex:0 0 auto;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .k{
+    font-size:10px !important;
+  }
+
+  body.aaron-terminal-shell .top-right .kv .v{
+    font-size:18px !important;
+  }
+
+  body.aaron-terminal-shell #copilot-block,
+  body.aaron-terminal-shell #mc-card,
+  body.aaron-terminal-shell #triple-conv-card,
+  body.aaron-terminal-shell #indicator-prem-card{
+    margin-top:10px;
+  }
+
+  #copilot-block .stats-brain-board,
+  #copilot-block .copilot-shell{
+    padding:12px;
+    gap:12px;
+  }
+
+  #copilot-block .stats-brain-main{
+    grid-template-columns:1fr !important;
+    gap:15px;
+    padding:16px;
+  }
+
+  #copilot-block .stats-brain-grid12{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px;
+  }
+
+  #copilot-block .stats-brain-stock{
+    min-height:auto;
+    padding:15px;
+    overflow:visible;
+  }
+
+  #copilot-block .stats-brain-main-symbol{
+    font-size:56px;
+  }
+
+  #copilot-block .stats-brain-main-track{
+    font-size:18px;
+  }
+
+  #copilot-block .stats-brain-main-levels,
+  #copilot-block .stats-brain-main-sr,
+  #copilot-block .stats-brain-manager-live,
+  #copilot-block .stats-brain-manager-route,
+  #copilot-block .stats-brain-manager-grid,
+  #copilot-block .stats-brain-entry-radar-grid,
+  #copilot-block .stats-brain-pattern-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  #copilot-block .stats-brain-day-pnl,
+  #copilot-block .stats-brain-journal-pnl{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  #copilot-block .stats-brain-day-pnl-title,
+  #copilot-block .stats-brain-journal-pnl-lead{
+    grid-column:1 / -1;
+  }
+
+  #copilot-block .stats-brain-journal-grid,
+  #copilot-block .stats-brain-metrics{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  #copilot-block .stats-brain-journal-table{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  #copilot-block .stats-brain-journal-row{
+    min-width:760px;
+  }
+
+  #copilot-block .stats-brain-speed-help-panel{
+    width:min(330px, calc(100vw - 48px));
+  }
+}
+
+@media (max-width: 820px) and (pointer: coarse), (max-width: 820px) and (hover: none){
+  body.aaron-terminal-shell .page{
+    padding-left:max(10px, env(safe-area-inset-left, 0px)) !important;
+    padding-right:max(10px, env(safe-area-inset-right, 0px)) !important;
+  }
+
+  body.aaron-terminal-shell .brand-title{
+    font-size:13px !important;
+    letter-spacing:.18em;
+  }
+
+  #copilot-block .stats-brain-main{
+    padding:14px;
+  }
+
+  #copilot-block .stats-brain-grid12{
+    grid-template-columns:1fr !important;
+  }
+
+  #copilot-block .stats-brain-main-symbol{
+    font-size:46px;
+  }
+
+  #copilot-block .stats-brain-main-track{
+    font-size:15px;
+  }
+
+  #copilot-block .stats-brain-main-levels,
+  #copilot-block .stats-brain-main-sr,
+  #copilot-block .stats-brain-manager-live,
+  #copilot-block .stats-brain-manager-route,
+  #copilot-block .stats-brain-manager-grid,
+  #copilot-block .stats-brain-entry-radar-grid,
+  #copilot-block .stats-brain-pattern-grid,
+  #copilot-block .stats-brain-day-pnl,
+  #copilot-block .stats-brain-journal-pnl,
+  #copilot-block .stats-brain-journal-grid{
+    grid-template-columns:1fr !important;
   }
 }
 
