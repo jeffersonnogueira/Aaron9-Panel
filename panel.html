@@ -40498,12 +40498,22 @@ const tpTxt = (() => {
     document.body.prepend(tape);
   }
 
-  function buildPremonitionDropdowns(){
+  function moveTripleConvergenceIntoTechnicalStack(){
     const triple = el("triple-conv-card");
     const levelFlip = el("level-flip-card");
-    if (triple && levelFlip && triple.nextElementSibling !== levelFlip) {
+    const technicalRow = el("zz-volume-row");
+    if (!triple || !levelFlip || !technicalRow) return;
+
+    if (levelFlip.nextElementSibling !== technicalRow) {
+      technicalRow.insertAdjacentElement("beforebegin", levelFlip);
+    }
+    if (triple.nextElementSibling !== levelFlip) {
       levelFlip.insertAdjacentElement("beforebegin", triple);
     }
+  }
+
+  function buildPremonitionDropdowns(){
+    moveTripleConvergenceIntoTechnicalStack();
 
     const cards = [
       "triple-conv-card",
@@ -40771,6 +40781,9 @@ const tpTxt = (() => {
     buildLiveTape();
     buildSideTabs();
     buildPremonitionDropdowns();
+    window.addEventListener("aaron:panelUpdated", moveTripleConvergenceIntoTechnicalStack);
+    setTimeout(moveTripleConvergenceIntoTechnicalStack, 250);
+    setTimeout(moveTripleConvergenceIntoTechnicalStack, 1200);
 
     el("aaron-live-refresh")?.addEventListener("click", refreshQuotes);
     refreshQuotes();
