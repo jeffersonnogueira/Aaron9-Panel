@@ -40499,6 +40499,12 @@ const tpTxt = (() => {
   }
 
   function buildPremonitionDropdowns(){
+    const triple = el("triple-conv-card");
+    const zzRow = el("zz-volume-row");
+    if (triple && zzRow && triple.previousElementSibling !== zzRow) {
+      zzRow.insertAdjacentElement("afterend", triple);
+    }
+
     const cards = [
       "vol-engine-card",
       "ema-exhaust-card",
@@ -40508,7 +40514,8 @@ const tpTxt = (() => {
       "exhaust-reversal-card",
       "level-flip-card",
       "zz-route-card",
-      "replay-mode-card"
+      "replay-mode-card",
+      "triple-conv-card"
     ];
 
     cards.forEach((id, index) => {
