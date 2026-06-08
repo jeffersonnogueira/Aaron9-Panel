@@ -5385,6 +5385,67 @@
   white-space: pre-wrap;
 }
 
+#copilot-block .copilot-section-card.is-dropdown{
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+#copilot-block .copilot-section-card.is-dropdown:not(.is-open){
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255,204,102,.08), transparent 28%),
+    linear-gradient(180deg, rgba(10,16,28,.90), rgba(3,7,14,.94));
+}
+
+#copilot-block .copilot-section-card.is-dropdown > .copilot-section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:0;
+  cursor:pointer;
+  user-select:none;
+  outline:none;
+}
+
+#copilot-block .copilot-section-card.is-dropdown.is-open > .copilot-section-header{
+  margin-bottom:14px;
+}
+
+#copilot-block .copilot-dropdown-title{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+#copilot-block .copilot-dropdown-toggle{
+  flex:0 0 auto;
+  height:30px;
+  border-radius:999px;
+  border:1px solid rgba(255,204,102,.32);
+  background:rgba(255,204,102,.10);
+  color:#ffcc66;
+  padding:0 12px;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+#copilot-block .copilot-section-card.is-dropdown.is-open .copilot-dropdown-toggle{
+  border-color:rgba(34,211,238,.34);
+  background:rgba(34,211,238,.10);
+  color:#67e8f9;
+}
+
+#copilot-block .copilot-dropdown-body[hidden]{
+  display:none!important;
+}
+
+#copilot-block .copilot-dropdown-body{
+  min-width:0;
+}
+
 #copilot-block .copilot-section-body{
   white-space: pre-wrap;
   word-break: break-word;
@@ -28701,6 +28762,68 @@ if (explainSectionEl && explainContentEl) {
   }
 }
 
+const applyCopilotDropdowns = () => {
+  if (!sectionsEl) return;
+  const cards = Array.from(sectionsEl.querySelectorAll(":scope > .copilot-section-card"));
+  const startIndex = cards.findIndex((card) => {
+    const title = String(card.querySelector(".copilot-section-header")?.textContent || "").toUpperCase();
+    return card.classList.contains("is-aaron10") || title.includes("RISK GATE") || title.includes("AARON 10");
+  });
+  if (startIndex < 0) return;
+
+  cards.slice(startIndex).forEach((card, offset) => {
+    const header = card.querySelector(":scope > .copilot-section-header");
+    if (!header || card.classList.contains("is-dropdown")) return;
+
+    const titleText = String(header.textContent || `Bloco ${offset + 1}`).trim() || `Bloco ${offset + 1}`;
+    const safeKey = titleText.toLowerCase().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").slice(0, 80);
+    const storageKey = `aaron:copilot-dropdown:${offset}:${safeKey}`;
+    const saved = (() => {
+      try { return localStorage.getItem(storageKey); } catch { return null; }
+    })();
+    const isOpen = saved === "open";
+
+    const body = document.createElement("div");
+    body.className = "copilot-dropdown-body";
+    while (header.nextSibling) body.appendChild(header.nextSibling);
+    card.appendChild(body);
+
+    card.classList.add("is-dropdown");
+    header.classList.add("copilot-dropdown-header");
+    header.setAttribute("role", "button");
+    header.setAttribute("tabindex", "0");
+    header.innerHTML = "";
+
+    const title = document.createElement("span");
+    title.className = "copilot-dropdown-title";
+    title.textContent = titleText;
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "copilot-dropdown-toggle";
+
+    header.appendChild(title);
+    header.appendChild(toggle);
+
+    const setOpen = (open) => {
+      card.classList.toggle("is-open", open);
+      body.hidden = !open;
+      toggle.textContent = open ? "Esconder" : "Ver";
+      header.setAttribute("aria-expanded", open ? "true" : "false");
+      try { localStorage.setItem(storageKey, open ? "open" : "closed"); } catch {}
+    };
+
+    const flip = () => setOpen(!card.classList.contains("is-open"));
+    header.addEventListener("click", flip);
+    header.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      flip();
+    });
+    setOpen(isOpen);
+  });
+};
+
     if (visibleSections.length > 0) {
   sectionsEl.innerHTML = visibleSections.map(section => {
     if (section.type === "statsbrain") {
@@ -28737,6 +28860,7 @@ if (explainSectionEl && explainContentEl) {
     `;
   }).join("");
 
+  applyCopilotDropdowns();
   sectionsEl.style.display = "grid";
   textEl.style.display = "none";
   textEl.textContent = normalizedText;
