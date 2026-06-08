@@ -40356,8 +40356,8 @@ const tpTxt = (() => {
   const NAV_ITEMS = [
     { id:"prem", label:"Prem", icon:"P", tone:"gold", title:"Premonition", targets:["premonition-section"] },
     { id:"ind", label:"Indic", icon:"I", tone:"green", title:"Indicators", targets:["indicator-prem-card", "first-hour-prem-card"] },
-    { id:"tri", label:"Triple", icon:"T", tone:"gold", title:"Triple Convergence", targets:["triple-conv-card"] },
     { id:"cop", label:"Copilot", icon:"C", tone:"purple", title:"Copilot", targets:["copilot-block"] },
+    { id:"tri", label:"Triple", icon:"T", tone:"gold", title:"Triple Convergence", targets:["triple-conv-card"] },
     { id:"vol", label:"Volume", icon:"V", tone:"green", title:"Volume Premonition", targets:["zz-volume-row", "vol-engine-card"] },
     { id:"ent", label:"Entry", icon:"E", tone:"gold", title:"Entry Engine", targets:["entry-prem-card", "ee-engine-card"] },
     { id:"gps", label:"GPS", icon:"G", tone:"purple", title:"GPS ZigZag", targets:["zz-route-card", "pivot-prem-card"] },
@@ -40510,6 +40510,25 @@ const tpTxt = (() => {
     if (levelFlip && triple.nextElementSibling !== levelFlip) {
       triple.insertAdjacentElement("afterend", levelFlip);
     }
+  }
+
+  let copilotTripleObserver = null;
+  let copilotTripleRaf = 0;
+
+  function watchCopilotTripleStack(){
+    const copilot = el("copilot-block");
+    const parent = copilot?.parentElement;
+    if (!parent || copilotTripleObserver) return;
+
+    copilotTripleObserver = new MutationObserver(() => {
+      if (copilotTripleRaf) return;
+      copilotTripleRaf = requestAnimationFrame(() => {
+        copilotTripleRaf = 0;
+        moveTripleConvergenceBelowCopilot();
+      });
+    });
+
+    copilotTripleObserver.observe(parent, { childList: true });
   }
 
   function buildPremonitionDropdowns(){
@@ -40781,9 +40800,10 @@ const tpTxt = (() => {
     buildLiveTape();
     buildSideTabs();
     buildPremonitionDropdowns();
+    watchCopilotTripleStack();
     window.addEventListener("aaron:panelUpdated", moveTripleConvergenceBelowCopilot);
-    setTimeout(moveTripleConvergenceBelowCopilot, 250);
-    setTimeout(moveTripleConvergenceBelowCopilot, 1200);
+    setTimeout(() => { moveTripleConvergenceBelowCopilot(); watchCopilotTripleStack(); }, 250);
+    setTimeout(() => { moveTripleConvergenceBelowCopilot(); watchCopilotTripleStack(); }, 1200);
 
     el("aaron-live-refresh")?.addEventListener("click", refreshQuotes);
     refreshQuotes();
