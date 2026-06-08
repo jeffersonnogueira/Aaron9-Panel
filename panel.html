@@ -40500,22 +40500,22 @@ const tpTxt = (() => {
 
   function buildPremonitionDropdowns(){
     const triple = el("triple-conv-card");
-    const zzRow = el("zz-volume-row");
-    if (triple && zzRow && triple.previousElementSibling !== zzRow) {
-      zzRow.insertAdjacentElement("afterend", triple);
+    const levelFlip = el("level-flip-card");
+    if (triple && levelFlip && triple.nextElementSibling !== levelFlip) {
+      levelFlip.insertAdjacentElement("beforebegin", triple);
     }
 
     const cards = [
+      "triple-conv-card",
+      "level-flip-card",
       "vol-engine-card",
       "ema-exhaust-card",
       "pivot-prem-card",
       "bw-prem-card",
       "entry-prem-card",
       "exhaust-reversal-card",
-      "level-flip-card",
       "zz-route-card",
-      "replay-mode-card",
-      "triple-conv-card"
+      "replay-mode-card"
     ];
 
     cards.forEach((id, index) => {
