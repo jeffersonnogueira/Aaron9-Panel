@@ -3356,6 +3356,10 @@
 }
 
 .prem-dropdown-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   cursor: pointer;
   user-select: none;
   outline: none;
@@ -40510,8 +40514,23 @@ const tpTxt = (() => {
     cards.forEach((id, index) => {
       const card = el(id);
       if (!card || card.dataset.premDropdownReady === "1") return;
-      const title = card.querySelector(":scope .prem-breakout-title");
-      const head = title?.parentElement;
+      let title = card.querySelector(":scope .prem-breakout-title");
+      let head = title?.parentElement;
+      let body = document.createElement("div");
+      body.className = "prem-dropdown-body";
+
+      if (!title && id === "level-flip-card") {
+        const titleText = String(card.querySelector(":scope .lfv44-k")?.textContent || "V44 FLIP / REVERSAO").trim();
+        head = document.createElement("div");
+        title = document.createElement("div");
+        title.className = "prem-breakout-title";
+        title.textContent = titleText;
+        head.appendChild(title);
+        while (card.firstChild) body.appendChild(card.firstChild);
+        card.appendChild(head);
+        card.appendChild(body);
+      }
+
       if (!title || !head) return;
 
       const titleText = String(title.textContent || id).trim() || id;
@@ -40521,10 +40540,10 @@ const tpTxt = (() => {
       })();
       const isOpen = saved === "open";
 
-      const body = document.createElement("div");
-      body.className = "prem-dropdown-body";
-      while (head.nextSibling) body.appendChild(head.nextSibling);
-      card.appendChild(body);
+      if (!body.childNodes.length) {
+        while (head.nextSibling) body.appendChild(head.nextSibling);
+        card.appendChild(body);
+      }
 
       const toggle = document.createElement("button");
       toggle.type = "button";
