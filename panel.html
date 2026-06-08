@@ -11556,7 +11556,7 @@ main.layout{
     <div class="copilot-raw" id="copilot-text" style="display:none;">—</div>
   </div>
 </div>
-<!-- ===== TRIPLE CONVERGENCE — ABOVE COPILOT ===== -->
+<!-- ===== TRIPLE CONVERGENCE — BELOW COPILOT ===== -->
 <div class="prem-breakout-wrap" id="triple-conv-card" style="margin-top:10px; grid-column: 1 / -1;">
   <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">
     <div class="prem-breakout-title">TRIPLE CONVERGENCE</div>
@@ -40498,22 +40498,22 @@ const tpTxt = (() => {
     document.body.prepend(tape);
   }
 
-  function moveTripleConvergenceIntoTechnicalStack(){
+  function moveTripleConvergenceBelowCopilot(){
+    const copilot = el("copilot-block");
     const triple = el("triple-conv-card");
     const levelFlip = el("level-flip-card");
-    const technicalRow = el("zz-volume-row");
-    if (!triple || !levelFlip || !technicalRow) return;
+    if (!copilot || !triple) return;
 
-    if (levelFlip.nextElementSibling !== technicalRow) {
-      technicalRow.insertAdjacentElement("beforebegin", levelFlip);
+    if (copilot.nextElementSibling !== triple) {
+      copilot.insertAdjacentElement("afterend", triple);
     }
-    if (triple.nextElementSibling !== levelFlip) {
-      levelFlip.insertAdjacentElement("beforebegin", triple);
+    if (levelFlip && triple.nextElementSibling !== levelFlip) {
+      triple.insertAdjacentElement("afterend", levelFlip);
     }
   }
 
   function buildPremonitionDropdowns(){
-    moveTripleConvergenceIntoTechnicalStack();
+    moveTripleConvergenceBelowCopilot();
 
     const cards = [
       "triple-conv-card",
@@ -40781,9 +40781,9 @@ const tpTxt = (() => {
     buildLiveTape();
     buildSideTabs();
     buildPremonitionDropdowns();
-    window.addEventListener("aaron:panelUpdated", moveTripleConvergenceIntoTechnicalStack);
-    setTimeout(moveTripleConvergenceIntoTechnicalStack, 250);
-    setTimeout(moveTripleConvergenceIntoTechnicalStack, 1200);
+    window.addEventListener("aaron:panelUpdated", moveTripleConvergenceBelowCopilot);
+    setTimeout(moveTripleConvergenceBelowCopilot, 250);
+    setTimeout(moveTripleConvergenceBelowCopilot, 1200);
 
     el("aaron-live-refresh")?.addEventListener("click", refreshQuotes);
     refreshQuotes();
