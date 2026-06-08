@@ -25,6 +25,10 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
    body {
   margin: 0;
   padding: 0;
@@ -5837,7 +5841,7 @@
 #copilot-block .stats-brain-main-side.is-wait{border-color:rgba(148,163,184,.25);background:rgba(51,65,85,.22);color:#9fb4c9;}
 #copilot-block .stats-brain-main-track{margin-top:10px;font-size:14px;font-weight:850;color:#91a4bd;}
 #copilot-block .stats-brain-main-track b{color:#f1f5f9;}
-#copilot-block .stats-brain-mc-mini{margin-top:12px;border:1px solid rgba(255,204,102,.42);border-radius:10px;background:radial-gradient(circle at 96% 0%,rgba(255,204,102,.15),transparent 34%),linear-gradient(135deg,rgba(255,204,102,.075),rgba(4,9,18,.78));box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 24px rgba(255,204,102,.08);padding:10px 11px;}
+#copilot-block .stats-brain-mc-mini{display:block!important;visibility:visible!important;margin-top:12px;border:1px solid rgba(255,204,102,.42);border-radius:10px;background:radial-gradient(circle at 96% 0%,rgba(255,204,102,.15),transparent 34%),linear-gradient(135deg,rgba(255,204,102,.075),rgba(4,9,18,.78));box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 24px rgba(255,204,102,.08);padding:10px 11px;}
 #copilot-block .stats-brain-mc-mini-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
 #copilot-block .stats-brain-mc-mini-head span{font-size:10px;line-height:1;font-weight:950;letter-spacing:.16em;text-transform:uppercase;color:#ffcc66;}
 #copilot-block .stats-brain-mc-mini-head b{font-size:10px;line-height:1;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:rgba(203,213,225,.68);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -37330,8 +37334,51 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
     const node = el(id);
     if (node) node.textContent = value == null || value === "" ? "—" : String(value);
   };
+  const mcEnsureMini = () => {
+    let node = el("brain-mc-mini");
+    if (node) return node;
+    const host = document.querySelector("#copilot-block .stats-brain-main-left");
+    if (!host) return null;
+    const wrap = document.createElement("div");
+    wrap.innerHTML = `
+      <div class="stats-brain-mc-mini is-wait" id="brain-mc-mini">
+        <div class="stats-brain-mc-mini-head">
+          <span>Monte Carlo</span>
+          <b id="brain-mc-mini-title">mesma simulação</b>
+        </div>
+        <div class="stats-brain-mc-mini-grid">
+          <div class="stats-brain-mc-mini-cell is-t2">
+            <span>T2 plan</span>
+            <strong id="brain-mc-mini-t2">—</strong>
+            <em id="brain-mc-mini-verdict">aguardando</em>
+          </div>
+          <div class="stats-brain-mc-mini-cell is-up">
+            <span>Break up</span>
+            <strong id="brain-mc-mini-up">—</strong>
+            <em id="brain-mc-mini-up-level">—</em>
+          </div>
+          <div class="stats-brain-mc-mini-cell is-down">
+            <span>Break down</span>
+            <strong id="brain-mc-mini-down">—</strong>
+            <em id="brain-mc-mini-down-level">—</em>
+          </div>
+          <div class="stats-brain-mc-mini-cell is-risk">
+            <span>Risco falso</span>
+            <strong id="brain-mc-mini-false">—</strong>
+            <em id="brain-mc-mini-eta">ETA —</em>
+          </div>
+        </div>
+      </div>
+    `.trim();
+    node = wrap.firstElementChild;
+    const track = host.querySelector(".stats-brain-main-track");
+    if (track?.parentNode) track.insertAdjacentElement("afterend", node);
+    else host.prepend(node);
+    return node;
+  };
+  mcEnsureMini();
   const mcMiniMood = (mood = "is-wait") => {
-    const node = el("brain-mc-mini");
+    const node = mcEnsureMini();
     if (!node) return;
     node.classList.remove("is-good", "is-wait", "is-bad");
     node.classList.add(mood);
@@ -37852,7 +37899,10 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
       ctx.fillText(`${mcSims} sims | ${mcHorizon} bars | ${mcFirstSide}`, pad.l + 110, 20);
     };
 
-    mcRenderChart();
+    const mcCardVisible = mcCard &&
+      window.getComputedStyle(mcCard).display !== "none" &&
+      mcCard.getClientRects().length > 0;
+    if (mcCardVisible) mcRenderChart();
 
     try {
       window.__AARON_MONTE_CARLO_V1__ = {
@@ -40203,6 +40253,15 @@ const tpTxt = (() => {
     if (best) setActiveTab(best);
   }
 
+  let activeScrollRaf = 0;
+  function scheduleActiveFromScroll(){
+    if (activeScrollRaf) return;
+    activeScrollRaf = window.requestAnimationFrame(() => {
+      activeScrollRaf = 0;
+      updateActiveFromScroll();
+    });
+  }
+
   function buildSideTabs(){
     if (el("aaron-side-tabs")) return;
 
@@ -40234,8 +40293,8 @@ const tpTxt = (() => {
     nav.appendChild(inner);
     document.body.prepend(nav);
 
-    window.addEventListener("scroll", updateActiveFromScroll, { passive:true });
-    window.addEventListener("resize", updateActiveFromScroll, { passive:true });
+    window.addEventListener("scroll", scheduleActiveFromScroll, { passive:true });
+    window.addEventListener("resize", scheduleActiveFromScroll, { passive:true });
     setTimeout(updateActiveFromScroll, 350);
     setTimeout(updateActiveFromScroll, 1200);
   }
