@@ -5837,6 +5837,23 @@
 #copilot-block .stats-brain-main-side.is-wait{border-color:rgba(148,163,184,.25);background:rgba(51,65,85,.22);color:#9fb4c9;}
 #copilot-block .stats-brain-main-track{margin-top:10px;font-size:14px;font-weight:850;color:#91a4bd;}
 #copilot-block .stats-brain-main-track b{color:#f1f5f9;}
+#copilot-block .stats-brain-mc-mini{margin-top:12px;border:1px solid rgba(255,204,102,.42);border-radius:10px;background:radial-gradient(circle at 96% 0%,rgba(255,204,102,.15),transparent 34%),linear-gradient(135deg,rgba(255,204,102,.075),rgba(4,9,18,.78));box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 24px rgba(255,204,102,.08);padding:10px 11px;}
+#copilot-block .stats-brain-mc-mini-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+#copilot-block .stats-brain-mc-mini-head span{font-size:10px;line-height:1;font-weight:950;letter-spacing:.16em;text-transform:uppercase;color:#ffcc66;}
+#copilot-block .stats-brain-mc-mini-head b{font-size:10px;line-height:1;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:rgba(203,213,225,.68);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-mc-mini-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;}
+#copilot-block .stats-brain-mc-mini-cell{min-width:0;border:1px solid rgba(35,49,72,.86);border-radius:8px;background:rgba(2,6,13,.56);padding:8px 9px;}
+#copilot-block .stats-brain-mc-mini-cell span{display:block;font-size:8px;line-height:1;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#7d8da3;}
+#copilot-block .stats-brain-mc-mini-cell strong{display:block;margin-top:5px;font-size:15px;line-height:1;font-weight:950;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-mc-mini-cell em{display:block;margin-top:4px;font-size:8px;line-height:1.15;font-style:normal;font-weight:850;color:rgba(145,164,189,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#copilot-block .stats-brain-mc-mini.is-good .stats-brain-mc-mini-cell.is-t2 strong{color:#4ade80;}
+#copilot-block .stats-brain-mc-mini.is-wait .stats-brain-mc-mini-cell.is-t2 strong{color:#fde68a;}
+#copilot-block .stats-brain-mc-mini.is-bad .stats-brain-mc-mini-cell.is-t2 strong{color:#f87171;}
+#copilot-block .stats-brain-mc-mini-cell.is-up strong{color:#4ade80;}
+#copilot-block .stats-brain-mc-mini-cell.is-down strong{color:#f87171;}
+#copilot-block .stats-brain-mc-mini-cell.is-risk strong{color:#ffcc66;}
+@media (max-width:900px){#copilot-block .stats-brain-mc-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:520px){#copilot-block .stats-brain-mc-mini-grid{grid-template-columns:1fr;}}
 #copilot-block .stats-brain-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px;}
 #copilot-block .stats-brain-trio-card{min-width:0;border:1px solid rgba(35,49,72,.9);border-radius:9px;background:rgba(5,10,19,.74);padding:12px;text-align:center;}
 #copilot-block .stats-brain-trio-card.is-bear{border-bottom-color:#ff4869;}
@@ -8541,6 +8558,10 @@
     inset 6px 0 0 rgba(255,204,102,.78),
     0 18px 48px rgba(0,0,0,.36);
   padding: 18px 20px;
+}
+
+#mc-card{
+  display:none !important;
 }
 
 #mc-card .mc-head{
@@ -28146,6 +28167,34 @@ function updateCoPilotBlock(data){
               <div class="stats-brain-main-side ${brainSideClass(side)}">${escapeHtml(sideLabel)}</div>
             </div>
             <div class="stats-brain-main-track">Trilho <b>${escapeHtml(brainTrackLabel(s.track, s.state))}</b> · ${escapeHtml(trackRaw)}</div>
+            <div class="stats-brain-mc-mini is-wait" id="brain-mc-mini">
+              <div class="stats-brain-mc-mini-head">
+                <span>Monte Carlo</span>
+                <b id="brain-mc-mini-title">mesma simulação</b>
+              </div>
+              <div class="stats-brain-mc-mini-grid">
+                <div class="stats-brain-mc-mini-cell is-t2">
+                  <span>T2 plan</span>
+                  <strong id="brain-mc-mini-t2">—</strong>
+                  <em id="brain-mc-mini-verdict">aguardando</em>
+                </div>
+                <div class="stats-brain-mc-mini-cell is-up">
+                  <span>Break up</span>
+                  <strong id="brain-mc-mini-up">—</strong>
+                  <em id="brain-mc-mini-up-level">—</em>
+                </div>
+                <div class="stats-brain-mc-mini-cell is-down">
+                  <span>Break down</span>
+                  <strong id="brain-mc-mini-down">—</strong>
+                  <em id="brain-mc-mini-down-level">—</em>
+                </div>
+                <div class="stats-brain-mc-mini-cell is-risk">
+                  <span>Risco falso</span>
+                  <strong id="brain-mc-mini-false">—</strong>
+                  <em id="brain-mc-mini-eta">ETA —</em>
+                </div>
+              </div>
+            </div>
             <div class="stats-brain-trio">
               <div class="stats-brain-trio-card ${trend.cls}">
                 <span>Tendência</span>
@@ -37281,6 +37330,12 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
     const node = el(id);
     if (node) node.textContent = value == null || value === "" ? "—" : String(value);
   };
+  const mcMiniMood = (mood = "is-wait") => {
+    const node = el("brain-mc-mini");
+    if (!node) return;
+    node.classList.remove("is-good", "is-wait", "is-bad");
+    node.classList.add(mood);
+  };
   const mcMoney = (v) => v != null && Number.isFinite(Number(v)) ? `$${fmt2(Number(v))}` : "—";
   const mcPct = (v) => v != null && Number.isFinite(Number(v)) ? `${Math.round(Number(v))}%` : "—";
   const mcClamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -37378,6 +37433,16 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
       mcSet("mc-eta", "—");
       mcSet("mc-false-risk", "—");
       mcSet("mc-chart-caption", "aguardando preço e volatilidade");
+      mcMiniMood("is-wait");
+      mcSet("brain-mc-mini-title", "aguardando dados");
+      mcSet("brain-mc-mini-t2", "—");
+      mcSet("brain-mc-mini-verdict", "sem simulação");
+      mcSet("brain-mc-mini-up", "—");
+      mcSet("brain-mc-mini-up-level", "sem nível");
+      mcSet("brain-mc-mini-down", "—");
+      mcSet("brain-mc-mini-down-level", "sem nível");
+      mcSet("brain-mc-mini-false", "—");
+      mcSet("brain-mc-mini-eta", "ETA —");
       const canvas = el("mc-chart");
       const ctx = canvas?.getContext?.("2d");
       if (canvas && ctx) {
@@ -37581,9 +37646,11 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
       mcT2Pct >= 35 ? "ESPERAR" :
       "NÃO PERSEGUIR";
 
+    const mcMood = !mcPlanT2Valid ? "is-wait" : mcT2Pct >= 46 ? "is-good" : mcT2Pct >= 35 ? "is-wait" : "is-bad";
     mcCard.style.display = "";
     mcCard.classList.remove("is-good", "is-wait", "is-bad");
-    mcCard.classList.add(!mcPlanT2Valid ? "is-wait" : mcT2Pct >= 46 ? "is-good" : mcT2Pct >= 35 ? "is-wait" : "is-bad");
+    mcCard.classList.add(mcMood);
+    mcMiniMood(mcMood);
 
     mcSet("mc-title", `${root?.symbol || panel?.symbol || payload?.symbol || "AARON"} | ${mcSims} sims | ${mcHorizon}m`);
     mcSet("mc-badge", tcOperatorDecisionV1.mode === "is-no-trade" ? "APOIO / BLOQUEIO" : "APOIO");
@@ -37609,6 +37676,15 @@ if (el("tc-action-consensus")) el("tc-action-consensus").textContent = tcConsens
     mcSet("mc-eta", mcEtaBreakAvg == null ? "—" : `~${Math.round(mcEtaBreakAvg)}m`);
     mcSet("mc-false-risk", mcFalsePct == null ? "—" : mcPct(mcFalsePct));
     mcSet("mc-chart-caption", `${mcPaths.length} caminhos visuais | σ ${mcMoney(mcSigma)}/bar | bias ${(mcBias * 100).toFixed(0)}%`);
+    mcSet("brain-mc-mini-title", `${mcSims} sims · ${mcHorizon}m`);
+    mcSet("brain-mc-mini-t2", mcPlanT2Valid ? mcPct(mcT2Pct) : "—");
+    mcSet("brain-mc-mini-verdict", mcT2Verdict);
+    mcSet("brain-mc-mini-up", mcPct(mcUpPct));
+    mcSet("brain-mc-mini-up-level", `${mcUp.name} ${mcMoney(mcUp.level)}`);
+    mcSet("brain-mc-mini-down", mcPct(mcDownPct));
+    mcSet("brain-mc-mini-down-level", `${mcDown.name} ${mcMoney(mcDown.level)}`);
+    mcSet("brain-mc-mini-false", mcFalsePct == null ? "—" : mcPct(mcFalsePct));
+    mcSet("brain-mc-mini-eta", mcEtaBreakAvg == null ? "ETA —" : `ETA ~${Math.round(mcEtaBreakAvg)}m`);
 
     let mcChartBands = null;
     const mcRenderChart = () => {
@@ -40057,7 +40133,6 @@ const tpTxt = (() => {
     { id:"prem", label:"Prem", icon:"P", tone:"gold", title:"Premonition", targets:["premonition-section"] },
     { id:"ind", label:"Indic", icon:"I", tone:"green", title:"Indicators", targets:["indicator-prem-card", "first-hour-prem-card"] },
     { id:"tri", label:"Triple", icon:"T", tone:"gold", title:"Triple Convergence", targets:["triple-conv-card"] },
-    { id:"mc", label:"MC", icon:"M", tone:"gold", title:"Monte Carlo", targets:["mc-card"] },
     { id:"cop", label:"Copilot", icon:"C", tone:"purple", title:"Copilot", targets:["copilot-block"] },
     { id:"vol", label:"Volume", icon:"V", tone:"green", title:"Volume Premonition", targets:["zz-volume-row", "vol-engine-card"] },
     { id:"ent", label:"Entry", icon:"E", tone:"gold", title:"Entry Engine", targets:["entry-prem-card", "ee-engine-card"] },
